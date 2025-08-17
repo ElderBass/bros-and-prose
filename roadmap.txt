@@ -1,0 +1,22 @@
+/bookclub-app
+ ├── frontend/            # Vue 3 app
+ │    ├── src/
+ │    │    ├── assets/
+ │    │    ├── components/
+ │    │    ├── views/        # Page-level components
+ │    │    ├── store/        # Vuex store modules
+ │    │    ├── router/       # Vue Router setup
+ │    │    ├── services/     # Axios API wrappers
+ │    │    └── main.ts
+ │    ├── vite.config.ts
+ │    └── package.json
+ ├── backend/             # Express + TS API
+ │    ├── src/
+ │    │    ├── routes/
+ │    │    ├── controllers/
+ │    │    ├── services/     # Firebase Firestore service layer
+ │    │    ├── middleware/
+ │    │    └── index.ts
+ │    ├── tsconfig.json
+ │    └── package.json
+ └── README.md
