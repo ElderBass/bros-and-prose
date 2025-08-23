@@ -1,26 +1,54 @@
-<script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
-import HelloWorld from "./components/HelloWorld.vue";
-</script>
-
 <template>
-    <header>
-        <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-        <div class="wrapper">
-            <HelloWorld msg="You did it!" />
-
-            <nav>
-                <RouterLink to="/">Home</RouterLink>
-                <RouterLink to="/about">About</RouterLink>
-            </nav>
-        </div>
-    </header>
-
     <RouterView />
 </template>
 
-<style scoped>
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { RouterView, useRouter } from "vue-router";
+
+const router = useRouter();
+
+onMounted(() => {
+    const userFromStorage = localStorage.getItem("userData");
+    if (!userFromStorage) {
+        router.push("/");
+    } else {
+        router.push("/home");
+    }
+});
+</script>
+
+<style>
+:root {
+    /* Base colors */
+    --background-color: #121212;
+    --surface-color: #1e1e2f;
+    --main-text: #f5f5f5;
+
+    /* Neon accents */
+    --accent-blue: #00bfff; /* light neon blue */
+    --accent-lavender: #b388ff; /* neon lavender */
+    --accent-green: #39ff14; /* neon green */
+    --accent-fuschia: #ff4dff; /* hot pink-fuschia */
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--main-text);
+    font-family: "Crimson Text", serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100vw;
+    height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+    font-family: "Libre Baskerville", serif;
+}
+
 header {
     line-height: 1.5;
     max-height: 100vh;
