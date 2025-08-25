@@ -1,12 +1,13 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
 
-interface User {
-    id: number | null;
-    name: string | null;
-    email: string | null;
+interface UserState {
+    id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
     isLoggedIn: boolean;
-    currentBookProgress: number | null;
+    currentBookProgress: number;
     reviews: Review[];
 }
 
@@ -20,17 +21,20 @@ interface Review {
     reviewComment: string;
 }
 
-export const useUserStore = defineStore("user", () => {
-    const user = ref<User>({
-        id: null,
-        name: null,
-        email: null,
-        isLoggedIn: false,
-        currentBookProgress: null,
-        reviews: [],
-    });
+const initialState: UserState = {
+    id: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    isLoggedIn: false,
+    currentBookProgress: 0,
+    reviews: [],
+};
 
-    const loginUser = (userData: User) => {
+export const useUserStore = defineStore("user", () => {
+    const user = ref<UserState>(initialState);
+
+    const loginUser = (userData: UserState) => {
         user.value = {
             ...userData,
             isLoggedIn: true,
@@ -39,12 +43,7 @@ export const useUserStore = defineStore("user", () => {
 
     const logoutUser = () => {
         user.value = {
-            id: null,
-            name: null,
-            email: null,
-            isLoggedIn: false,
-            currentBookProgress: null,
-            reviews: [],
+            ...initialState,
         };
     };
 

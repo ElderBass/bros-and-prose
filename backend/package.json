@@ -4,6 +4,9 @@
   "type": "module",
   "main": "index.ts",
   "scripts": {
+    "login": "firebase login",
+    "init": "firebase init",
+    "deploy": "firebase deploy",
     "start:dev": "concurrently \"nodemon --exec 'node --loader ts-node/esm' --ignore 'frontend/*' index.ts\" \"cd ../frontend && npm run dev\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,12 +15,15 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "firebase": "^12.1.0",
     "firebase-admin": "^13.4.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.3.0",

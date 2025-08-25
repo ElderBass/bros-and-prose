@@ -6,6 +6,7 @@
         :size="size"
         :variant="variant"
         :title="title"
+        :style="style"
         @click="$emit('click', $event)"
     >
         <slot></slot>
@@ -13,13 +14,23 @@
 </template>
 
 <script setup lang="ts">
+import type { CSSProperties } from "vue";
+
+type ButtonVariant =
+    | "primary"
+    | "secondary"
+    | "tertiary"
+    | "outline"
+    | "outline-secondary";
+
 withDefaults(
     defineProps<{
         title?: string;
         disabled?: boolean;
         type?: "button" | "submit" | "reset";
         size?: "small" | "medium" | "large";
-        variant?: "primary" | "secondary" | "tertiary";
+        variant?: ButtonVariant;
+        style?: CSSProperties;
     }>(),
     {
         title: "some dumb shitty button",
@@ -37,9 +48,9 @@ defineEmits<{
 
 <style scoped>
 .base-button {
-    color: var(--surface-color);
+    color: var(--background-color);
     padding: 0.75rem 1.5rem;
-    border-radius: 1rem;
+    border-radius: 2rem;
     border: none;
     font-family: "Crimson Text", serif;
     font-size: 1.125rem;
@@ -57,7 +68,42 @@ defineEmits<{
     background-color: var(--accent-fuschia);
 }
 
-/* Secondary variant - fuschia to blue */
+.base-button[variant="outline"] {
+    background-color: transparent;
+    border: 2px solid var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+.base-button[variant="outline"]:hover {
+    background-color: var(--accent-blue);
+    color: var(--background-color);
+}
+
+.base-button[variant="outline"]:disabled {
+    background-color: transparent;
+    border: 2px solid var(--slate-gray);
+    color: var(--slate-gray);
+    opacity: 0.75;
+}
+
+.base-button[variant="outline-secondary"] {
+    background-color: transparent;
+    border: 2px solid var(--accent-fuschia);
+    color: var(--accent-fuschia);
+}
+
+.base-button[variant="outline-secondary"]:hover {
+    background-color: var(--accent-fuschia);
+    color: var(--background-color);
+}
+
+.base-button[variant="outline-secondary"]:disabled {
+    background-color: transparent;
+    border: 2px solid var(--slate-gray);
+    color: var(--slate-gray);
+    opacity: 0.75;
+}
+
 .base-button[variant="secondary"] {
     background-color: var(--accent-fuschia);
 }
@@ -66,7 +112,6 @@ defineEmits<{
     background-color: var(--accent-blue);
 }
 
-/* Tertiary variant - green to lavender */
 .base-button[variant="tertiary"] {
     background-color: var(--accent-green);
 }
@@ -79,21 +124,18 @@ defineEmits<{
 .base-button[size="small"] {
     padding: 0.375rem 0.75rem;
     font-size: 0.875rem;
-    border-radius: 0.75rem;
     min-height: 2rem;
 }
 
 .base-button[size="medium"] {
     padding: 0.75rem 1.25rem;
-    font-size: 1.125rem;
-    border-radius: 1rem;
+    font-size: 1.25rem;
     min-height: 3rem;
 }
 
 .base-button[size="large"] {
     padding: 1rem 1.5rem;
     font-size: 1.5rem;
-    border-radius: 1.25rem;
     min-height: 4rem;
 }
 

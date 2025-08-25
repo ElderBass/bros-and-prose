@@ -9,7 +9,7 @@ import { RouterView, useRouter } from "vue-router";
 const router = useRouter();
 
 onMounted(() => {
-    const userFromStorage = localStorage.getItem("userData");
+    const userFromStorage = localStorage.getItem("superCoolBroData");
     if (!userFromStorage) {
         router.push("/");
     } else {
@@ -30,6 +30,8 @@ onMounted(() => {
     --accent-lavender: #b388ff; /* neon lavender */
     --accent-green: #39ff14; /* neon green */
     --accent-fuschia: #ff4dff; /* hot pink-fuschia */
+    --accent-red: #ff0000; /* hot pink-fuschia */
+    --slate-gray: #808080; /* slate gray */
 }
 
 body {
