@@ -47,7 +47,7 @@ export const useUserStore = defineStore("user", () => {
         };
     };
 
-    const setUserReviews = (reviews: any[]) => {
+    const setUserReviews = (reviews: Review[]) => {
         user.value.reviews = reviews;
     };
 

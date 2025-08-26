@@ -1,6 +1,6 @@
 <template>
     <div class="app-layout">
-        <Header />
+        <AppHeader />
         <main class="main-content">
             <slot />
         </main>
@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import Header from "./Header.vue";
+import AppHeader from "./AppHeader.vue";
 </script>
 
 <style scoped>
