@@ -32,13 +32,11 @@ const showSuccessModal = computed(() => {
     return userStore.user.isLoggedIn && !isLoading.value;
 });
 
-const onSuccessModalClick = () => {
-    router.push("/home");
-};
+const onSuccessModalClick = () => router.push("/present");
 
 onMounted(() => {
     if (localStorage.getItem("superCoolBroData")) {
-        router.push("/home");
+        router.push("/present");
     }
 });
 </script>

@@ -1,12 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router";
+import Landing from "@/views/Landing.vue";
+import Present from "@/views/Present.vue";
+import Past from "@/views/Past.vue";
+import BookDetail from "@/views/BookDetail.vue";
+import Future from "@/views/Future.vue";
+import Profile from "@/views/Profile.vue";
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        { path: "/", component: () => import("@/views/Landing.vue") },
-        { path: "/home", component: () => import("@/views/Home.vue") },
-        // { path: "/ping-me", component: PingMe },
-        // { path: "/prolixities", component: VariousProlixities },
+        { path: "/", component: () => Landing },
+        { path: "/present", component: () => Present },
+        { path: "/past", component: () => Past },
+        { path: "/past/:bookId", component: () => BookDetail },
+        { path: "/future", component: () => Future },
+        { path: "/profile", component: () => Profile },
     ],
 });
 

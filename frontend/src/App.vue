@@ -13,7 +13,7 @@ onMounted(() => {
     if (!userFromStorage) {
         router.push("/");
     } else {
-        router.push("/home");
+        router.push("/present");
     }
 });
 </script>
