@@ -43,7 +43,7 @@ defineProps<{
     modelValue: string;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
     (e: "update:modelValue", value: string): void;
 }>();
 </script>

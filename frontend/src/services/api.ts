@@ -14,8 +14,7 @@ export const apiClient = axios.create({
 export class ApiError extends Error {
     constructor(
         public status: number,
-        message: string,
-        public data?: any
+        message: string
     ) {
         super(message);
         this.name = "ApiError";
@@ -39,8 +38,8 @@ export class ApiError extends Error {
 export const apiRequest = async <T>(
     method: "GET" | "POST" | "PUT" | "DELETE",
     url: string,
-    data?: any,
-    config?: any
+    data?: { [key: string]: string | number | boolean | object },
+    config?: { [key: string]: string | number | boolean | object }
 ): Promise<T> => {
     try {
         const response = await apiClient({

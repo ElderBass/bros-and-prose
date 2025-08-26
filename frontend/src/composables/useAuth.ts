@@ -31,7 +31,7 @@ export const useAuth = () => {
                     ...response.user,
                     isLoggedIn: true,
                 });
-                router.push("/home");
+                router.push("/present");
                 return response;
             }
         } catch (err) {
