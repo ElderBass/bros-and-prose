@@ -19,7 +19,7 @@ import type { CSSProperties } from "vue";
 type ButtonVariant =
     | "primary"
     | "secondary"
-    | "tertiary"
+    | "success"
     | "outline"
     | "outline-secondary";
 
@@ -112,30 +112,30 @@ defineEmits<{
     background-color: var(--accent-blue);
 }
 
-.base-button[variant="tertiary"] {
+.base-button[variant="success"] {
     background-color: var(--accent-green);
 }
 
-.base-button[variant="tertiary"]:hover {
+.base-button[variant="success"]:hover {
     background-color: var(--accent-lavender);
 }
 
 /* Size variants */
 .base-button[size="small"] {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 1.125rem;
     min-height: 2rem;
 }
 
 .base-button[size="medium"] {
     padding: 0.75rem 1.25rem;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     min-height: 3rem;
 }
 
 .base-button[size="large"] {
     padding: 1rem 1.5rem;
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     min-height: 4rem;
 }
 

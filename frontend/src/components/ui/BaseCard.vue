@@ -1,11 +1,13 @@
 <template>
     <div
+        @click="handleClick"
         class="base-card"
         :class="[
             `shadow-${shadowColor}`,
             `size-${size}`,
             { 'is-hoverable': hoverable },
         ]"
+        :style="style"
     >
         <div class="card-content">
             <slot />
@@ -14,16 +16,21 @@
 </template>
 
 <script setup lang="ts">
+import type { CSSProperties } from "vue";
+
 withDefaults(
     defineProps<{
         shadowColor?: "blue" | "lavender" | "green" | "fuschia";
         size?: "small" | "medium" | "large";
         hoverable?: boolean;
+        handleClick?: () => void;
+        style?: CSSProperties;
     }>(),
     {
         shadowColor: "blue",
         size: "medium",
         hoverable: false,
+        handleClick: () => {},
     }
 );
 </script>
@@ -102,9 +109,13 @@ withDefaults(
 }
 
 .shadow-fuschia {
-    box-shadow:
+    /* box-shadow:
         0 4px 20px rgba(255, 77, 255, 0.15),
         0 0 40px rgba(255, 77, 255, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1); */
+    box-shadow:
+        0 4px 20px var(--accent-fuschia),
+        0 0 40px var(--accent-fuschia),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 

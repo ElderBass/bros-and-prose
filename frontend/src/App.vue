@@ -5,16 +5,19 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { RouterView, useRouter } from "vue-router";
+import { useBooks } from "@/composables/useBooks";
 
+const { getCurrentBook } = useBooks();
 const router = useRouter();
 
-onMounted(() => {
+onMounted(async () => {
     const userFromStorage = localStorage.getItem("superCoolBroData");
     if (!userFromStorage) {
         router.push("/");
     } else {
         router.push("/present");
     }
+    await getCurrentBook();
 });
 </script>
 

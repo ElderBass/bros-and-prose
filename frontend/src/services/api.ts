@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { LoginCredentials, SignupCredentials } from "./auth";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -21,32 +22,16 @@ export class ApiError extends Error {
     }
 }
 
-// apiClient.interceptors.request.use(
-//     (config) => {
-//         // Add auth token if available
-//         const token = localStorage.getItem("auth_token");
-//         if (token) {
-//             config.headers.Authorization = `Bearer ${token}`;
-//         }
-//         return config;
-//     },
-//     (error) => {
-//         return Promise.reject(error);
-//     }
-// );
-
 export const apiRequest = async <T>(
     method: "GET" | "POST" | "PUT" | "DELETE",
     url: string,
-    data?: { [key: string]: string | number | boolean | object },
-    config?: { [key: string]: string | number | boolean | object }
+    data?: SignupCredentials | LoginCredentials
 ): Promise<T> => {
     try {
         const response = await apiClient({
             method,
             url,
             data,
-            ...config,
         });
         return response.data;
     } catch (error) {
