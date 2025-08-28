@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Landing from "@/views/LandingView.vue";
-import Present from "@/views/PresentView.vue";
-import Past from "@/views/PastView.vue";
-import BookDetail from "@/views/BookDetailView.vue";
-import Future from "@/views/FutureView.vue";
-import Profile from "@/views/ProfileView.vue";
+import Landing from "@/components/views/LandingView.vue";
+import Present from "@/components/views/PresentView.vue";
+import Past from "@/components/views/PastView.vue";
+import BookDetail from "@/components/views/BookDetailView.vue";
+import Future from "@/components/views/FutureView.vue";
+import Profile from "@/components/views/ProfileView.vue";
 
 const router = createRouter({
     history: createWebHistory(),

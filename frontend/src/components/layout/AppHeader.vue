@@ -59,8 +59,8 @@ import { RouterLink } from "vue-router";
 import router from "@/router";
 
 const navLinks = [
-    { path: "/present", label: "present" },
     { path: "/past", label: "past" },
+    { path: "/present", label: "present" },
     { path: "/future", label: "future" },
 ];
 
@@ -148,10 +148,15 @@ h1 {
 }
 
 .user-actions {
-    padding: 0.75rem;
+    padding: 0.5rem;
     border-radius: 50%;
     background-color: var(--background-color);
     border: 2px solid var(--accent-blue);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .user-actions:hover {
