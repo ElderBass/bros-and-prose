@@ -16,14 +16,14 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
-import CurrentBook from "@/components/features/CurrentBook/index.vue";
+import CurrentBook from "@/components/features/CurrentBook/CurrentBookContainer.vue";
 import { useBooks } from "@/composables/useBooks";
 import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
-const { getCurrentBook, getAllBooks } = useBooks();
+const { getCurrentBook } = useBooks();
 
 const isLoading = ref(true);
 const book = ref<Book | null>(storedCurrentBook);
@@ -32,8 +32,6 @@ onMounted(async () => {
     try {
         if (!book.value) {
             isLoading.value = true;
-            const books = await getAllBooks();
-            console.log("KERTWANG BOOKS?? ", books);
             const currentBook = await getCurrentBook();
             book.value = currentBook;
         }
@@ -42,7 +40,7 @@ onMounted(async () => {
     } finally {
         setTimeout(() => {
             isLoading.value = false;
-        }, 3000);
+        }, 2000);
     }
 });
 </script>

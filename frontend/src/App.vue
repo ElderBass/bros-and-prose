@@ -5,9 +5,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { RouterView, useRouter } from "vue-router";
-import { useBooks } from "@/composables/useBooks";
 
-const { getCurrentBook } = useBooks();
 const router = useRouter();
 
 onMounted(async () => {
@@ -17,7 +15,6 @@ onMounted(async () => {
     } else {
         router.push("/present");
     }
-    await getCurrentBook();
 });
 </script>
 
