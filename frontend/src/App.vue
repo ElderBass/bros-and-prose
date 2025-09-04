@@ -5,14 +5,17 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { RouterView, useRouter } from "vue-router";
+import { getUserFromStorage } from "./utils";
+import { useUserStore } from "./stores/user";
 
 const router = useRouter();
 
 onMounted(async () => {
-    const userFromStorage = localStorage.getItem("superCoolBroData");
+    const userFromStorage = getUserFromStorage();
     if (!userFromStorage) {
         router.push("/");
     } else {
+        useUserStore().setLoggedInUser(userFromStorage);
         router.push("/present");
     }
 });

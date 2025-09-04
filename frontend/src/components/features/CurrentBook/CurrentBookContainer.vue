@@ -22,24 +22,17 @@ const { currentBook } = useBooksStore();
     width: 100%;
     gap: 3rem;
 }
-.card-container {
-    width: 100%;
-}
 h1 {
     font-size: 1.55rem;
     color: var(--main-text);
     border-bottom: 2px solid var(--accent-blue);
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
     font-weight: 600;
     text-align: center;
     margin-bottom: 0.5rem;
 }
 
 @media (min-width: 768px) {
-    .card-container {
-        width: 60%;
-        min-width: 560px;
-    }
     h1 {
         font-size: 2rem;
     }

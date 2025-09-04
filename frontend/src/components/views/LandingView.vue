@@ -23,19 +23,20 @@ import SignupSuccessCard from "@/components/form/SignupSuccessCard.vue";
 import { useAuth } from "@/composables/useAuth";
 import { useUserStore } from "@/stores/user";
 import FadeIn from "@/components/transitions/FadeIn.vue";
+import { getUserFromStorage } from "@/utils";
 
 const { isLoading } = useAuth();
 
 const userStore = useUserStore();
 
 const showSuccessModal = computed(() => {
-    return userStore.user.isLoggedIn && !isLoading.value;
+    return userStore.loggedInUser.id && !isLoading.value;
 });
 
 const onSuccessModalClick = () => router.push("/present");
 
 onMounted(() => {
-    if (localStorage.getItem("superCoolBroData")) {
+    if (getUserFromStorage()) {
         router.push("/present");
     }
 });
