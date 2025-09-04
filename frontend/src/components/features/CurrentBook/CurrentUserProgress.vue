@@ -53,7 +53,7 @@
 import ProgressSliderInput from "@/components/form/ProgressSliderInput.vue";
 import { useUserStore } from "@/stores/user";
 import { useUser } from "@/composables/useUser";
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, onMounted } from "vue";
 
 const { loggedInUser } = useUserStore();
 
@@ -120,6 +120,10 @@ const buttonSize = computed(() => {
 
 const userPageNumber = computed(() => {
     return Math.round(props.totalPages * (updatedProgress.value / 100));
+});
+
+onMounted(() => {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
 });
 </script>
 
