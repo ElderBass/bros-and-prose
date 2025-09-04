@@ -94,7 +94,6 @@ header {
     background-color: var(--background-color);
     color: var(--accent-blue);
     font-size: 1.5rem;
-    margin-bottom: 1rem;
     position: relative;
 }
 

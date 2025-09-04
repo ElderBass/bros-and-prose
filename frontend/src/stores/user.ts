@@ -1,55 +1,46 @@
-import { ref } from "vue";
 import { defineStore } from "pinia";
+import type { User } from "@/types";
+import { setUserInStorage, removeUserFromStorage } from "@/utils";
 
-interface UserState {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    isLoggedIn: boolean;
-    currentBookProgress: number;
-    reviews: Review[];
-}
+export const useUserStore = defineStore("user", {
+    state: () => ({
+        loggedInUser: {} as User,
+        allUsers: [] as User[],
+    }),
 
-interface Review {
-    id: number;
-    book: {
-        name: string;
-        author: string;
-    };
-    rating: number;
-    reviewComment: string;
-}
+    getters: {
+        isLoggedIn: (state) => !!state.loggedInUser,
+        currentUserName: (state) =>
+            state.loggedInUser
+                ? `${state.loggedInUser.firstName} ${state.loggedInUser.lastName}`
+                : "",
+        currentUserReviews: (state) => state.loggedInUser?.reviews || [],
+    },
 
-const initialState: UserState = {
-    id: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    isLoggedIn: false,
-    currentBookProgress: 0,
-    reviews: [],
-};
+    actions: {
+        loginUser(userData: User) {
+            this.loggedInUser = userData;
+            setUserInStorage(userData);
+        },
 
-export const useUserStore = defineStore("user", () => {
-    const user = ref<UserState>(initialState);
+        logoutUser() {
+            this.loggedInUser = {} as User;
+            removeUserFromStorage();
+        },
 
-    const loginUser = (userData: UserState) => {
-        user.value = {
-            ...userData,
-            isLoggedIn: true,
-        };
-    };
+        setLoggedInUser(userData: User) {
+            this.loggedInUser = userData;
+            setUserInStorage(userData);
+        },
 
-    const logoutUser = () => {
-        user.value = {
-            ...initialState,
-        };
-    };
+        updateUserProgress(progress: number) {
+            if (this.loggedInUser) {
+                this.loggedInUser.currentBookProgress = progress;
+            }
+        },
 
-    const setUserReviews = (reviews: Review[]) => {
-        user.value.reviews = reviews;
-    };
-
-    return { user, loginUser, logoutUser, setUserReviews };
+        setAllUsers(users: User[]) {
+            this.allUsers = users;
+        },
+    },
 });

@@ -13,10 +13,10 @@ defineProps<{
 <style scoped>
 .progress-bar {
     width: 100%;
-    height: 1rem;
-    background-color: var(--slate-gray);
+    height: 1.5rem;
+    background-color: var(--surface-color);
     border: 1px solid var(--accent-fuschia);
-    border-radius: 0.5rem;
+    border-radius: 1rem;
 }
 
 .progress-bar-fill {

@@ -19,6 +19,7 @@ import type { CSSProperties } from "vue";
 type ButtonVariant =
     | "primary"
     | "secondary"
+    | "tertiary"
     | "success"
     | "outline"
     | "outline-secondary";
@@ -109,6 +110,14 @@ defineEmits<{
 }
 
 .base-button[variant="secondary"]:hover {
+    background-color: var(--accent-blue);
+}
+
+.base-button[variant="tertiary"] {
+    background-color: var(--accent-lavender);
+}
+
+.base-button[variant="tertiary"]:hover {
     background-color: var(--accent-blue);
 }
 

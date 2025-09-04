@@ -8,3 +8,9 @@ export interface User {
     currentBookProgress: number;
     reviews: Review[];
 }
+
+export interface UserResponse {
+    success: boolean;
+    message: string;
+    user: User;
+}

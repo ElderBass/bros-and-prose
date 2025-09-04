@@ -2,6 +2,7 @@
     <div class="base-input-container">
         <input
             class="base-input"
+            :class="`size-${size}`"
             :value="modelValue"
             @input="
                 $emit(
@@ -33,14 +34,22 @@
 import { computed, ref } from "vue";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
-const props = defineProps<{
-    modelValue: string;
-    label: string;
-    placeholder: string;
-    type: string;
-    disabled: boolean;
-    prependInnerIcon: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        modelValue: string;
+        label: string;
+        placeholder: string;
+        type: string;
+        disabled?: boolean;
+        prependInnerIcon?: string;
+        size?: "small" | "medium" | "large";
+    }>(),
+    {
+        disabled: false,
+        prependInnerIcon: "",
+        size: "large",
+    }
+);
 
 defineEmits<{
     "update:modelValue": [value: string];
@@ -66,14 +75,11 @@ const inputType = computed(() => {
 
 .base-input {
     width: 100%;
-    height: 4rem;
     background-color: var(--background-color);
     color: var(--main-text);
     border: 2px solid var(--accent-blue);
     border-radius: 0.5rem;
-    padding: 1rem;
     font-family: "Crimson Text", serif;
-    font-size: 1.75rem;
     font-weight: 400;
 
     &::placeholder {
@@ -85,6 +91,25 @@ const inputType = computed(() => {
         outline: none;
         border: 2px solid var(--accent-lavender);
     }
+}
+
+/* Size variants */
+.base-input.size-small {
+    height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+}
+
+.base-input.size-medium {
+    height: 3rem;
+    padding: 0.75rem 1rem;
+    font-size: 1.25rem;
+}
+
+.base-input.size-large {
+    height: 4rem;
+    padding: 1rem;
+    font-size: 1.75rem;
 }
 .has-toggle .base-input {
     padding-right: 4rem;
@@ -122,8 +147,24 @@ const inputType = computed(() => {
 
 .password-toggle-icon {
     fill: var(--accent-blue);
-    width: 32px;
-    height: 32px;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+/* Size-specific password toggle icons */
+.size-small ~ .password-toggle .password-toggle-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.size-medium ~ .password-toggle .password-toggle-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.size-large ~ .password-toggle .password-toggle-icon {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 .password-toggle:hover {

@@ -27,10 +27,7 @@ export const useAuth = () => {
             const response = await authService.login(credentials);
 
             if (response.success) {
-                userStore.loginUser({
-                    ...response.user,
-                    isLoggedIn: true,
-                });
+                userStore.loginUser(response.user);
                 router.push("/present");
                 return response;
             }
@@ -57,10 +54,7 @@ export const useAuth = () => {
             const response = await authService.signup(credentials);
 
             if (response.success) {
-                userStore.loginUser({
-                    ...response.user,
-                    isLoggedIn: true,
-                });
+                userStore.loginUser(response.user);
                 return response;
             }
         } catch (err) {

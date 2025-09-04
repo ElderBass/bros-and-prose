@@ -16,12 +16,14 @@
     "format": "prettier --write \"src/**/*.{vue,ts,css,md}\""
   },
   "dependencies": {
+    "@emotion/styled": "^11.14.1",
     "@fortawesome/fontawesome-free": "^6.6.0",
     "@fortawesome/fontawesome-svg-core": "^7.0.0",
     "@fortawesome/free-brands-svg-icons": "^7.0.0",
     "@fortawesome/free-regular-svg-icons": "^7.0.0",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/vue-fontawesome": "^3.1.1",
+    "@mui/material": "^7.3.2",
     "axios": "^1.7.9",
     "pinia": "^2.3.0",
     "sass": "^1.90.0",
