@@ -6,7 +6,9 @@ export interface User {
     lastName: string;
     email: string;
     currentBookProgress: number;
-    reviews: Review[];
+    reviews: {
+        [key: string]: Review;
+    };
 }
 
 export interface UserResponse {

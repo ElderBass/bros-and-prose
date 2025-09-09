@@ -1,0 +1,1 @@
+export const FINISHED_BOOK_PROGRESS = 69420;

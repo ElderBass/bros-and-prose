@@ -1,21 +1,23 @@
 <template>
     <div class="progress-slider-input">
+        <FontAwesomeIcon :icon="faBookBookmark" class="progress-slider-icon" />
         <v-slider
             :model-value="progress"
-            :max="100"
+            :max="maxPages"
             @update:model-value="emit('progressChange', $event)"
             color="#ff4dff"
             thumb-color="#00bfff"
             thumb-size="24"
-            :disabled="props.disabled"
+            :readonly="props.disabled"
             height="24"
             track-size="12"
         />
-        <p>{{ maxPages }}</p>
     </div>
 </template>
 
 <script setup lang="ts">
+import { faBookBookmark } from "@fortawesome/free-solid-svg-icons";
+
 const props = defineProps<{
     progress: number;
     maxPages: number;
@@ -31,7 +33,12 @@ const emit = defineEmits<{
 .progress-slider-input {
     width: 100%;
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
+}
+.progress-slider-icon {
+    padding-top: 0.35rem;
+    font-size: 1.5rem;
+    color: var(--accent-lavender);
 }
 p {
     font-size: 1.25rem;

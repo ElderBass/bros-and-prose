@@ -1,9 +1,14 @@
 export interface Review {
-    id: number;
+    id: string;
     book: {
         name: string;
         author: string;
     };
+    rating: number;
+    reviewComment: string;
+}
+
+export interface SubmitReviewArgs {
     rating: number;
     reviewComment: string;
 }

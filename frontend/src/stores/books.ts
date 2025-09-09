@@ -3,7 +3,7 @@ import type { Book, BooksState } from "@/types";
 
 export const useBooksStore = defineStore("books", {
     state: (): BooksState => ({
-        currentBook: null,
+        currentBook: {} as Book,
         pastBooks: [],
         futureBooks: [],
     }),
