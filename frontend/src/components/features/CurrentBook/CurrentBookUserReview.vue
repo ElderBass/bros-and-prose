@@ -230,10 +230,6 @@ const toggleComment = () => {
         gap: 0.75rem;
     }
 
-    h3 {
-        font-size: 1.25rem;
-    }
-
     .book-icons {
         font-size: 1rem;
         gap: 0.125rem;
@@ -253,12 +249,7 @@ const toggleComment = () => {
 
 @media (max-width: 480px) {
     .current-book-user-review {
-        gap: 0.75rem;
         padding: 0;
-    }
-
-    h3 {
-        font-size: 1.125rem;
     }
 
     .book-icons {

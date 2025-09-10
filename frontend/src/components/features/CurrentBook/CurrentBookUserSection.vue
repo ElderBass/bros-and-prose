@@ -114,7 +114,9 @@ const onReviewSubmit = async ({ rating, reviewComment }: SubmitReviewArgs) => {
     loadingMessage.value = "submitting your shitty review...";
     const udpatedUser = await addReview({ rating, reviewComment }, props.book);
     bookReview.value = udpatedUser.reviews[props.book.id];
-    loadingMessage.value = "";
+    setTimeout(() => {
+        loadingMessage.value = "";
+    }, 1000);
 };
 
 const onUpdateProgress = async (updatedProgress: number) => {
@@ -123,7 +125,9 @@ const onUpdateProgress = async (updatedProgress: number) => {
         ...loggedInUser,
         currentBookProgress: Math.round(updatedProgress),
     });
-    loadingMessage.value = "";
+    setTimeout(() => {
+        loadingMessage.value = "";
+    }, 1000);
 
     if (updatedProgress === props.book.totalPages) {
         setShowReviewModal(true);
