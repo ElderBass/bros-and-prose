@@ -6,32 +6,191 @@
                 shadowColor="fuschia"
                 size="medium"
             >
-                <h3>your progress</h3>
-                <CurrentUserProgress :totalPages="props.totalPages" />
+                <div class="card-header">
+                    <h3>{{ cardHeader }}</h3>
+                    <button
+                        @click="setShowReviewModal(true)"
+                        class="edit-review-button"
+                        title="you can't fix stupid, but I suppose you can try"
+                    >
+                        <FontAwesomeIcon :icon="faMarker" />
+                    </button>
+                </div>
+                <LoadingSpinner
+                    v-if="loadingMessage.length"
+                    size="medium"
+                    :message="loadingMessage"
+                />
+                <CurrentUserProgress
+                    v-if="!hasFinishedBook && !loadingMessage.length"
+                    :totalPages="book.totalPages"
+                    :setShowReviewModal="setShowReviewModal"
+                    :handleUpdate="onUpdateProgress"
+                />
+                <CurrentBookUserReview
+                    v-if="hasFinishedBook && !loadingMessage.length"
+                    :rating="bookReview.rating"
+                    :comment="bookReview.reviewComment"
+                    :showReviewModal="() => setShowReviewModal(true)"
+                />
             </BaseCard>
         </Transition>
     </div>
+    <BaseModal
+        v-model="showRateAndReviewModal"
+        title="what'dya think, bro?"
+        size="medium"
+    >
+        <RateAndReviewBookForm
+            :currentBook="book"
+            :rating="bookReview.rating || 5"
+            :comment="bookReview.reviewComment || ''"
+            :handleCancel="() => setShowReviewModal(false)"
+            :handleSubmit="onReviewSubmit"
+        />
+    </BaseModal>
 </template>
 
 <script setup lang="ts">
 import CurrentUserProgress from "./CurrentUserProgress.vue";
+import CurrentBookUserReview from "./CurrentBookUserReview.vue";
+import RateAndReviewBookForm from "@/components/form/RateAndReviewBookForm.vue";
+import { faMarker } from "@fortawesome/free-solid-svg-icons";
+import { useUserStore } from "@/stores/user";
+import { watch, ref, computed } from "vue";
+import {
+    DEFAULT_REVIEW,
+    DEFAULT_RATING,
+    FINISHED_BOOK_PROGRESS,
+} from "@/utils";
+import type { Book, SubmitReviewArgs } from "@/types";
+import { useUser } from "@/composables/useUser";
 
 const props = defineProps<{
-    totalPages: number;
+    book: Book;
 }>();
+
+const { loggedInUser } = useUserStore();
+const { addReview, updateUser } = useUser();
+
+const loadingMessage = ref("");
+const showRateAndReviewModal = ref(false);
+const hasFinishedBook = ref(
+    loggedInUser.currentBookProgress === FINISHED_BOOK_PROGRESS
+);
+const bookReview = ref({
+    rating: loggedInUser.reviews[props.book?.id]?.rating || DEFAULT_RATING,
+    reviewComment: loggedInUser.reviews[props.book?.id]?.reviewComment || "",
+});
+
+watch(
+    () => loggedInUser.currentBookProgress,
+    (newProgress) => {
+        hasFinishedBook.value = newProgress === FINISHED_BOOK_PROGRESS;
+    }
+);
+
+watch(
+    () => loggedInUser.reviews[props.book?.id],
+    (newReview) => {
+        if (newReview) {
+            bookReview.value = {
+                rating: newReview.rating || DEFAULT_RATING,
+                reviewComment: newReview.reviewComment || "",
+            };
+        } else {
+            bookReview.value = DEFAULT_REVIEW;
+        }
+    },
+    { deep: true, immediate: true }
+);
+
+const setShowReviewModal = (show: boolean) => {
+    showRateAndReviewModal.value = show;
+};
+
+const onReviewSubmit = async ({ rating, reviewComment }: SubmitReviewArgs) => {
+    setShowReviewModal(false);
+    loadingMessage.value = "submitting your shitty review...";
+    const udpatedUser = await addReview({ rating, reviewComment }, props.book);
+    bookReview.value = udpatedUser.reviews[props.book.id];
+    setTimeout(() => {
+        loadingMessage.value = "";
+    }, 1000);
+};
+
+const onUpdateProgress = async (updatedProgress: number) => {
+    loadingMessage.value = "updating your measly progress...";
+    await updateUser(loggedInUser.id, {
+        ...loggedInUser,
+        currentBookProgress: Math.round(updatedProgress),
+    });
+    setTimeout(() => {
+        loadingMessage.value = "";
+    }, 1000);
+
+    if (updatedProgress === props.book.totalPages) {
+        setShowReviewModal(true);
+    }
+};
+
+const cardHeader = computed(() => {
+    return hasFinishedBook.value
+        ? "your shitty review"
+        : "your measly progress";
+});
 </script>
 
 <style scoped>
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
 h3 {
-    font-size: 1.25rem;
-    margin: 0 auto;
+    font-size: 1.125rem;
     padding: 0 0.25rem 0.25rem 0.25rem;
     border-bottom: 2px solid var(--accent-blue);
 }
 
+.edit-review-button {
+    border: 2px solid var(--accent-blue);
+    border-radius: 50%;
+    padding: 0.5rem;
+    color: var(--accent-blue);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+}
+
+.edit-review-button:hover {
+    color: var(--accent-fuschia);
+    background-color: rgba(255, 77, 255, 0.1);
+    transform: scale(1.1);
+    border-color: var(--accent-fuschia);
+}
+
+.edit-review-button:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
 @media (min-width: 768px) {
     h3 {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
+    }
+
+    .edit-review-button {
+        font-size: 1rem;
+        width: 2.5rem;
+        height: 2.5rem;
     }
 }
 

@@ -2,7 +2,7 @@
     <div class="current-book-container">
         <h1>current prose ferda bros</h1>
         <CurrentBookInfo :book="book" />
-        <CurrentBookUserSection :totalPages="book?.totalPages ?? 0" />
+        <CurrentBookUserSection :book="book" />
     </div>
 </template>
 

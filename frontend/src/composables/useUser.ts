@@ -43,7 +43,7 @@ export const useUser = () => {
             rating: reviewArgs.rating,
             reviewComment: reviewArgs.reviewComment,
         };
-        await updateUser(loggedInUser.id, {
+        const updatedUser = await updateUser(loggedInUser.id, {
             ...loggedInUser,
             currentBookProgress: FINISHED_BOOK_PROGRESS,
             reviews: {
@@ -51,6 +51,7 @@ export const useUser = () => {
                 [currentBook.id]: newReview,
             },
         });
+        return updatedUser;
     };
 
     return {

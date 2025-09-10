@@ -1,11 +1,11 @@
 <template>
     <div class="book-rating-input">
-        <h6>how'd you like this book?</h6>
+        <h6 v-if="!readOnly">how'd you like this book?</h6>
         <div class="book-rating-container">
             <div
                 v-for="book in 10"
                 :key="book"
-                class="book-wrapper"
+                :class="`book-wrapper ${readOnly && 'disabled'}`"
                 @click="handleBookClick(book)"
                 @mousemove="handleMouseMove(book)"
                 @mouseleave="handleMouseLeave"
@@ -14,9 +14,7 @@
             </div>
         </div>
         <div class="rating-message-container">
-            <p class="rating-message">
-                {{ ratingMessage }}
-            </p>
+            <p class="rating-message">"{{ ratingMessage }}"</p>
         </div>
     </div>
 </template>
@@ -41,12 +39,13 @@ const ratingMap = {
 const props = withDefaults(
     defineProps<{
         modelValue: number;
-        disabled?: boolean;
+        readOnly?: boolean;
         size?: "small" | "medium" | "large";
     }>(),
     {
         disabled: false,
         showValue: false,
+        readOnly: false,
         size: "medium",
     }
 );
@@ -69,21 +68,29 @@ const displayRating = computed(() => {
 const getBookClass = (bookValue: number): string => {
     const currentRating = displayRating.value;
 
+    let bookClass = "";
+
     if (currentRating >= bookValue) {
-        return "book-filled";
+        bookClass = "book-filled";
     } else {
-        return "book-empty";
+        bookClass = "book-empty";
     }
+
+    if (props.readOnly) {
+        bookClass += " disabled";
+    }
+
+    return bookClass;
 };
 
 const handleBookClick = (book: number) => {
-    if (props.disabled) return;
+    if (props.readOnly) return;
 
     emit("update:modelValue", book);
 };
 
 const handleMouseMove = (book: number) => {
-    if (props.disabled) return;
+    if (props.readOnly) return;
 
     hoverRating.value = book;
     isHovering.value = true;
@@ -129,8 +136,7 @@ h6 {
 }
 
 .book-wrapper.disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
+    cursor: default;
 }
 
 .book-wrapper.disabled:hover {
@@ -165,15 +171,23 @@ h6 {
     opacity: 1;
 }
 
-/* Hover effects */
-.book-wrapper:hover .book-empty {
+/* Hover effects - only when not disabled */
+.book-wrapper:not(.disabled):hover .book-empty {
     color: var(--accent-fuschia);
     opacity: 0.6;
 }
 
-.book-wrapper:hover .book-filled {
+.book-wrapper:not(.disabled):hover .book-filled {
     color: var(--accent-blue);
     filter: drop-shadow(0 0 4px var(--accent-blue));
+}
+
+/* Disabled state - no hover effects */
+.book-wrapper.disabled:hover .book-empty,
+.book-wrapper.disabled:hover .book-filled {
+    color: inherit;
+    opacity: inherit;
+    filter: none;
 }
 
 .rating-message-container {
@@ -197,7 +211,7 @@ h6 {
         gap: 0.125rem;
     }
 
-    .book-wrapper:hover {
+    .book-wrapper:not(.disabled):hover {
         transform: scale(1.05);
     }
 
