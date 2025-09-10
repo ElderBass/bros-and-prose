@@ -1,17 +1,19 @@
 <template>
     <div class="current-book-container">
         <h1>current prose ferda bros</h1>
-        <CurrentBookInfo :book="currentBook" />
-        <CurrentBookUserSection :totalPages="currentBook?.totalPages ?? 0" />
+        <CurrentBookInfo :book="book" />
+        <CurrentBookUserSection :totalPages="book?.totalPages ?? 0" />
     </div>
 </template>
 
 <script setup lang="ts">
+import type { Book } from "@/types";
 import CurrentBookInfo from "./CurrentBookInfo.vue";
 import CurrentBookUserSection from "./CurrentBookUserSection.vue";
-import { useBooksStore } from "@/stores/books";
 
-const { currentBook } = useBooksStore();
+defineProps<{
+    book: Book;
+}>();
 </script>
 
 <style scoped>
@@ -23,7 +25,7 @@ const { currentBook } = useBooksStore();
     gap: 3rem;
 }
 h1 {
-    font-size: 1.55rem;
+    font-size: 1.5rem;
     color: var(--main-text);
     border-bottom: 2px solid var(--accent-blue);
     padding-bottom: 0.25rem;
@@ -34,7 +36,7 @@ h1 {
 
 @media (min-width: 768px) {
     h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
 }
 </style>

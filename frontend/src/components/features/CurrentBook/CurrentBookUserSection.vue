@@ -23,7 +23,7 @@ const props = defineProps<{
 
 <style scoped>
 h3 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     margin: 0 auto;
     padding: 0 0.25rem 0.25rem 0.25rem;
     border-bottom: 2px solid var(--accent-blue);
@@ -31,7 +31,7 @@ h3 {
 
 @media (min-width: 768px) {
     h3 {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
     }
 }
 

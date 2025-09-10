@@ -9,7 +9,7 @@ export interface Book {
 }
 
 export interface BooksState {
-    currentBook: Book | null;
+    currentBook: Book;
     pastBooks: Book[];
     futureBooks: Book[];
 }

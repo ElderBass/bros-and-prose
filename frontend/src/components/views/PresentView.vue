@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import CurrentBook from "@/components/features/CurrentBook/CurrentBookContainer.vue";
 import { useBooks } from "@/composables/useBooks";
@@ -26,11 +26,16 @@ const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
 
 const isLoading = ref(true);
-const book = ref<Book | null>(storedCurrentBook);
+const book = ref<Book>(storedCurrentBook);
+
+watch(storedCurrentBook, (newBook) => {
+    console.log("newBook", newBook);
+    book.value = newBook;
+});
 
 onMounted(async () => {
     try {
-        if (!book.value) {
+        if (!book.value.id) {
             isLoading.value = true;
             const currentBook = await getCurrentBook();
             book.value = currentBook;
@@ -52,7 +57,6 @@ onMounted(async () => {
     align-items: center;
     width: 100%;
     height: 100%;
-    padding: 1rem;
     margin: 0 auto;
 }
 
