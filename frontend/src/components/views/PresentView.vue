@@ -29,7 +29,6 @@ const isLoading = ref(true);
 const book = ref<Book>(storedCurrentBook);
 
 watch(storedCurrentBook, (newBook) => {
-    console.log("newBook", newBook);
     book.value = newBook;
 });
 

@@ -12,9 +12,9 @@
             <BookRatingInput v-model="starRating" size="medium" />
         </div>
         <div class="review-comment-input-container">
-            <label for="review-comment-input"
-                >got more to say? (optional)</label
-            >
+            <label for="review-comment-input">
+                got more to say? (optional)
+            </label>
             <textarea
                 rows="8"
                 v-model="reviewComment"
@@ -54,12 +54,14 @@ import type { SubmitReviewArgs, Book } from "@/types";
 
 const props = defineProps<{
     currentBook: Book;
+    rating: number;
+    comment: string;
     handleCancel: () => void;
     handleSubmit: (review: SubmitReviewArgs) => Promise<void>;
 }>();
 
-const starRating = ref(5);
-const reviewComment = ref("");
+const starRating = ref(props.rating);
+const reviewComment = ref(props.comment);
 
 const onSubmit = async () =>
     await props.handleSubmit({
@@ -78,8 +80,6 @@ const buttonSize = computed(() => {
     flex-direction: column;
     gap: 1.5rem;
     width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
     height: 100%;
 }
 

@@ -33,7 +33,6 @@ export const usersService = {
                 `/api/users/${userId}`,
                 user
             );
-            console.log("\n UPDATE USER response", response, "\n");
             return response.data;
         } catch (error) {
             console.error(error);

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!loadingMessage.length" class="user-progress">
+    <div class="user-progress">
         <div class="progress-info">
             <span class="progress-page-info">
                 page {{ updatedProgress }} / {{ props.totalPages }}
@@ -15,15 +15,10 @@
             :disabled="!updateModeEnabled"
         />
     </div>
-    <LoadingSpinner
-        v-if="loadingMessage.length"
-        size="medium"
-        :message="loadingMessage"
-    />
     <div class="progress-actions">
         <BaseButton
             v-if="!updateModeEnabled"
-            @click="handleFinishReading"
+            @click="() => setShowReviewModal(true)"
             :size="buttonSize"
             variant="outline-secondary"
             title="Finish Reading"
@@ -51,46 +46,26 @@
             <span>{{ updateButtonLabel }}</span>
         </BaseButton>
     </div>
-    <BaseModal
-        v-model="showRateAndReviewModal"
-        title="what'dya think, bro?"
-        size="medium"
-    >
-        <RateAndReviewBookForm
-            :currentBook="currentBook"
-            :handleCancel="closeReviewModal"
-            :handleSubmit="onReviewSubmit"
-        />
-    </BaseModal>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import ProgressSliderInput from "@/components/form/ProgressSliderInput.vue";
-import RateAndReviewBookForm from "@/components/form/RateAndReviewBookForm.vue";
 import { useUserStore } from "@/stores/user";
 import { useBooksStore } from "@/stores/books";
-import { useUser } from "@/composables/useUser";
-import type { SubmitReviewArgs } from "@/types";
 import { convertToPercentage, FINISHED_BOOK_PROGRESS } from "@/utils";
-import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 
-const { updateUser, addReview } = useUser();
 const { loggedInUser } = useUserStore();
 const { currentBook } = useBooksStore();
 
-const loadingMessage = ref("");
 const updateModeEnabled = ref(false);
-const showRateAndReviewModal = ref(false);
 const updatedProgress = ref(loggedInUser.currentBookProgress);
 const initialProgress = ref(loggedInUser.currentBookProgress);
-const hasFinishedBook = ref(false);
 
 // Watch for changes in the store and update local refs
 watch(
     () => loggedInUser.currentBookProgress,
     (newProgress) => {
-        console.log("\n KERTWANG newProgress??", newProgress);
         if (newProgress === FINISHED_BOOK_PROGRESS) {
             updatedProgress.value = currentBook.totalPages;
             initialProgress.value = currentBook.totalPages;
@@ -103,13 +78,9 @@ watch(
 
 const props = defineProps<{
     totalPages: number;
+    setShowReviewModal: (show: boolean) => void;
+    handleUpdate: (updatedProgress: number) => Promise<void>;
 }>();
-
-const handleFinishReading = () => {
-    showRateAndReviewModal.value = true;
-};
-
-const closeReviewModal = () => (showRateAndReviewModal.value = false);
 
 const handleProgressChange = (value: number) => {
     if (value >= initialProgress.value) {
@@ -125,30 +96,14 @@ const onUpdateClick = async () => {
     if (!updateModeEnabled.value) {
         setUpdateModeEnabled(true);
     } else {
-        loadingMessage.value = "updating your measly progress...";
-        await updateUser(loggedInUser.id, {
-            ...loggedInUser,
-            currentBookProgress: Math.round(updatedProgress.value),
-        });
+        await props.handleUpdate(updatedProgress.value);
         setUpdateModeEnabled(false);
-        loadingMessage.value = "";
-
-        if (updatedProgress.value === currentBook.totalPages) {
-            showRateAndReviewModal.value = true;
-        }
     }
 };
 
 const onCancelClick = () => {
     setUpdateModeEnabled(false);
     updatedProgress.value = loggedInUser.currentBookProgress;
-};
-
-const onReviewSubmit = async ({ rating, reviewComment }: SubmitReviewArgs) => {
-    showRateAndReviewModal.value = false;
-    loadingMessage.value = "submitting your shitty review...";
-    await addReview({ rating, reviewComment }, currentBook);
-    loadingMessage.value = "";
 };
 
 const updateButtonLabel = computed(() => {
@@ -162,16 +117,6 @@ const buttonSize = computed(() => {
 
 const userPercentage = computed(() => {
     return convertToPercentage(updatedProgress.value, props.totalPages);
-});
-
-onMounted(() => {
-    window.scrollTo({
-        top: document.body.scrollHeight,
-        behavior: "smooth",
-    });
-    if (loggedInUser.currentBookProgress === FINISHED_BOOK_PROGRESS) {
-        hasFinishedBook.value = true;
-    }
 });
 </script>
 

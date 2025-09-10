@@ -7,6 +7,7 @@ import {
     faBookOpenReader,
     faEye,
     faEyeSlash,
+    faMarker,
     faUserAstronaut,
     faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
@@ -20,6 +21,7 @@ export const registerIcons = () => {
         faBookOpenReader,
         faEye,
         faEyeSlash,
+        faMarker,
         faUserAstronaut,
         faXmarkCircle
     );
