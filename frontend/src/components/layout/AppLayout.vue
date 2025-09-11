@@ -21,11 +21,13 @@ import AppHeader from "./AppHeader.vue";
 .main-content {
     flex: 1;
     padding: 1rem;
+    padding-top: 0.25rem;
 }
 
 @media (min-width: 768px) {
     .main-content {
         padding: 1.5rem;
+        padding-top: 0.5rem;
     }
 }
 </style>

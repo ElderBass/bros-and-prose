@@ -48,7 +48,7 @@ const props = defineProps<{
 const showFullComment = ref(false);
 const currentRating = ref(props.rating);
 
-const COMMENT_TRUNCATE_LENGTH = 200;
+const COMMENT_TRUNCATE_LENGTH = 300;
 
 const isLongComment = computed(() => {
     return props.comment.length > COMMENT_TRUNCATE_LENGTH;
@@ -80,7 +80,7 @@ const toggleComment = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
 }
 
 .rating-display {
@@ -106,7 +106,7 @@ const toggleComment = () => {
 }
 
 .rating-text {
-    font-size: 1rem;
+    font-size: 1.125rem;
     color: var(--accent-blue);
     font-weight: 600;
 }
@@ -130,8 +130,7 @@ const toggleComment = () => {
 }
 
 .comment-text {
-    font-family: "Crimson Text", serif;
-    font-size: 1rem;
+    font-size: 1.125rem;
     line-height: 1.6;
     color: var(--main-text);
     margin: 0;
@@ -190,7 +189,7 @@ const toggleComment = () => {
     background: none;
     border: none;
     color: var(--accent-fuschia);
-    font-size: 0.875rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     text-decoration: underline;
@@ -245,6 +244,9 @@ const toggleComment = () => {
     .comment-text {
         font-size: 1rem;
     }
+    .show-more-btn {
+        font-size: 0.875rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -261,6 +263,9 @@ const toggleComment = () => {
     }
 
     .comment-text {
+        font-size: 0.875rem;
+    }
+    .show-more-btn {
         font-size: 0.875rem;
     }
 }

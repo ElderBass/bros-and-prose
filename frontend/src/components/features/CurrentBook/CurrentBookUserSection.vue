@@ -150,8 +150,8 @@ const cardHeader = computed(() => {
 }
 
 h3 {
-    font-size: 1.125rem;
-    padding: 0 0.25rem 0.25rem 0.25rem;
+    font-size: 1.5rem;
+    padding-bottom: 0.1rem;
     border-bottom: 2px solid var(--accent-blue);
 }
 
@@ -182,18 +182,6 @@ h3 {
     outline-offset: 2px;
 }
 
-@media (min-width: 768px) {
-    h3 {
-        font-size: 1.25rem;
-    }
-
-    .edit-review-button {
-        font-size: 1rem;
-        width: 2.5rem;
-        height: 2.5rem;
-    }
-}
-
 .transition-container {
     width: 100%;
 }
@@ -217,5 +205,19 @@ h3 {
 .fade-leave-from {
     opacity: 1;
     transform: translateY(0) scale(1);
+}
+
+@media (min-width: 768px) {
+    .edit-review-button {
+        font-size: 1rem;
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    h3 {
+        font-size: 1.25rem;
+    }
 }
 </style>
