@@ -8,7 +8,17 @@
                     message="retrieving the current prose, bros..."
                 />
             </div>
-            <CurrentBook v-else :book="book" />
+            <CurrentBookLayout>
+                <template v-slot:current-book>
+                    <CurrentBookInfo :book="book" />
+                </template>
+                <template v-slot:user-progress>
+                    <CurrentBookUserSection :book="book" />
+                </template>
+                <template v-slot:other-bros-progress>
+                    <CurrentBookOtherBrosProgress />
+                </template>
+            </CurrentBookLayout>
         </div>
     </AppLayout>
 </template>
@@ -16,7 +26,10 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
-import CurrentBook from "@/components/features/CurrentBook/CurrentBookContainer.vue";
+import CurrentBookLayout from "@/components/layout/CurrentBookLayout.vue";
+import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.vue";
+import CurrentBookUserSection from "@/components/features/CurrentBook/CurrentBookUserSection.vue";
+import CurrentBookOtherBrosProgress from "@/components/features/CurrentBook/CurrentBookOtherBrosProgress.vue";
 import { useBooks } from "@/composables/useBooks";
 import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
@@ -65,11 +78,5 @@ onMounted(async () => {
     align-items: center;
     width: 100%;
     height: 100%;
-}
-
-@media (min-width: 768px) {
-    .present-view {
-        width: 50%;
-    }
 }
 </style>

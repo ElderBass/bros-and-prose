@@ -90,7 +90,7 @@ header {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 1.25rem;
+    padding: 1rem 1.25rem;
     background-color: var(--background-color);
     color: var(--accent-blue);
     font-size: 1.5rem;
@@ -272,7 +272,7 @@ h1 {
     }
 
     header {
-        padding: 1rem;
+        padding: 0.75rem 1rem;
     }
 
     h1 {
