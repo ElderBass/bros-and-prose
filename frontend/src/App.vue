@@ -13,7 +13,6 @@ const { cleanup: cleanupUIListeners, initializeScreenSize } = useUIStore();
 const router = useRouter();
 
 onMounted(async () => {
-    console.log("🚀 App mounted");
     initializeScreenSize();
     const userFromStorage = getUserFromStorage();
     if (!userFromStorage) {
