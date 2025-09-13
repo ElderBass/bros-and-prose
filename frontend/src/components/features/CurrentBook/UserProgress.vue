@@ -50,13 +50,16 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 import ProgressSliderInput from "@/components/form/ProgressSliderInput.vue";
 import { useUserStore } from "@/stores/user";
 import { useBooksStore } from "@/stores/books";
+import { useUIStore } from "@/stores/ui";
 import { convertToPercentage, FINISHED_BOOK_PROGRESS } from "@/utils";
 
 const { loggedInUser } = useUserStore();
 const { currentBook } = useBooksStore();
+const { isMobile } = storeToRefs(useUIStore());
 
 const updateModeEnabled = ref(false);
 const updatedProgress = ref(loggedInUser.currentBookProgress);
@@ -113,9 +116,8 @@ const updateButtonConfig = computed(() => {
     };
 });
 
-// TODO: save screen size to state/pinia store on App.vue mount
 const buttonSize = computed(() => {
-    return window.innerWidth < 768 ? "small" : "medium";
+    return isMobile ? "small" : "medium";
 });
 
 const userPercentage = computed(() => {
