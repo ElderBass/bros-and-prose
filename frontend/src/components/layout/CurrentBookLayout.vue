@@ -17,11 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
 
-const isMobile = computed(() => {
-    return window.innerWidth < 768;
-});
+const { isMobile } = storeToRefs(useUIStore());
 </script>
 
 <style scoped>

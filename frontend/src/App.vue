@@ -3,14 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { RouterView, useRouter } from "vue-router";
 import { getUserFromStorage } from "./utils";
 import { useUserStore } from "./stores/user";
+import { useUIStore } from "./stores/ui";
 
+const { cleanup: cleanupUIListeners, initializeScreenSize } = useUIStore();
 const router = useRouter();
 
 onMounted(async () => {
+    initializeScreenSize();
     const userFromStorage = getUserFromStorage();
     if (!userFromStorage) {
         router.push("/");
@@ -18,6 +21,10 @@ onMounted(async () => {
         useUserStore().setLoggedInUser(userFromStorage);
         router.push("/present");
     }
+});
+
+onUnmounted(() => {
+    cleanupUIListeners();
 });
 </script>
 

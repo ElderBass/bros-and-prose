@@ -50,6 +50,10 @@ import { defineProps, computed } from "vue";
 import type { User, Book, SubmitReviewArgs } from "@/types";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import ReviewComment from "../features/Review/ReviewComment.vue";
+import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
+
+const { isMobile } = storeToRefs(useUIStore());
 
 const props = defineProps<{
     showModal: boolean;
@@ -61,10 +65,6 @@ const props = defineProps<{
 const broReview = computed(() => {
     const review: SubmitReviewArgs = { rating: 0, reviewComment: "" };
     if (props.otherBro.reviews[props.book.id]) {
-        console.log(
-            "props.otherBro.reviews[props.book.id]",
-            props.otherBro.reviews[props.book.id]
-        );
         review.rating = props.otherBro.reviews[props.book.id]?.rating;
         review.reviewComment =
             props.otherBro.reviews[props.book.id]?.reviewComment;
@@ -73,7 +73,7 @@ const broReview = computed(() => {
 });
 
 const buttonSize = computed(() => {
-    return window.innerWidth < 768 ? "small" : "medium";
+    return isMobile ? "small" : "medium";
 });
 </script>
 

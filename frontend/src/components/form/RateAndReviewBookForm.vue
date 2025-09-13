@@ -51,6 +51,10 @@
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import { ref, computed } from "vue";
 import type { SubmitReviewArgs, Book } from "@/types";
+import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
+
+const { isMobile } = storeToRefs(useUIStore());
 
 const props = defineProps<{
     currentBook: Book;
@@ -70,7 +74,7 @@ const onSubmit = async () =>
     });
 
 const buttonSize = computed(() => {
-    return window.innerWidth < 768 ? "small" : "medium";
+    return isMobile ? "small" : "medium";
 });
 </script>
 
