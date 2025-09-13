@@ -21,8 +21,8 @@ export const useUser = () => {
         return users;
     };
 
-    const getOtherBros = async () => {
-        const users = await usersService.getUsers();
+    const getOtherBros = async (shouldMock: boolean = false) => {
+        const users = await usersService.getUsers(shouldMock);
         return users.filter((user) => user.id !== loggedInUser.id);
     };
 

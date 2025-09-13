@@ -21,7 +21,7 @@
             @click="() => setShowReviewModal(true)"
             :size="buttonSize"
             variant="outline-secondary"
-            title="Finish Reading"
+            title="bro, you done? finish reading book"
             style="width: 100%"
         >
             <span>finished</span>
@@ -31,7 +31,7 @@
             @click="onCancelClick"
             :size="buttonSize"
             variant="outline-secondary"
-            title="Cancel"
+            title="cancel this shitty progress update"
             style="width: 100%"
         >
             <span>cancel</span>
@@ -40,7 +40,7 @@
             @click="onUpdateClick"
             :size="buttonSize"
             :variant="updateButtonConfig.variant"
-            title="Update Current Book Progress"
+            title="prove you can read and update your progress"
             style="width: 100%"
         >
             <span>{{ updateButtonConfig.label }}</span>

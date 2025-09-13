@@ -59,7 +59,7 @@ const onPeepReviewClick = (bro: User) => {
 };
 
 onMounted(async () => {
-    const allBros = await useUser().getOtherBros();
+    const allBros = await useUser().getOtherBros(true);
     bros.value = allBros;
     setTimeout(() => {
         loading.value = false;

@@ -1,9 +1,6 @@
 <template>
     <header>
-        <button class="logo" @click="router.push('/present')">
-            <FontAwesomeIcon icon="fa-solid fa-book-open-reader" />
-            <h1>b&p</h1>
-        </button>
+        <LogoButton :handleClick="goToPresent" />
 
         <!-- Desktop Navigation -->
         <div class="nav-links desktop-nav">
@@ -15,12 +12,7 @@
                 >{{ link.label }}</RouterLink
             >
         </div>
-        <button
-            class="user-actions desktop-nav"
-            @click="router.push('/profile')"
-        >
-            <FontAwesomeIcon icon="fa-solid fa-user-astronaut" />
-        </button>
+        <ProfileButton :handleClick="goToProfile" />
 
         <!-- Mobile Hamburger Button -->
         <button
@@ -57,6 +49,8 @@
 import { computed, ref } from "vue";
 import { RouterLink } from "vue-router";
 import router from "@/router";
+import LogoButton from "@/components/layout/LogoButton.vue";
+import ProfileButton from "@/components/layout/ProfileButton.vue";
 
 const navLinks = [
     { path: "/past", label: "past" },
@@ -69,6 +63,10 @@ const isMobileMenuOpen = ref(false);
 const activeLink = computed(() => {
     return router.currentRoute.value.path;
 });
+
+const goToPresent = () => {
+    router.push("/present");
+};
 
 const toggleMobileMenu = () => {
     isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -95,32 +93,6 @@ header {
     color: var(--accent-blue);
     font-size: 1.5rem;
     position: relative;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    text-decoration: none;
-    z-index: 1001;
-    margin: 0;
-}
-
-.logo:hover {
-    color: var(--accent-fuschia);
-    h1 {
-        color: var(--accent-fuschia);
-    }
-}
-
-h1 {
-    font-family: "Libre Baskerville", serif;
-    font-size: 1.75rem;
-    font-weight: 400;
-    color: var(--accent-blue);
-    text-align: center;
-    margin: 0;
-    padding: 0;
 }
 
 /* Desktop Navigation */
@@ -273,10 +245,6 @@ h1 {
 
     header {
         padding: 0.75rem 1rem;
-    }
-
-    h1 {
-        font-size: 1.5rem;
     }
 }
 

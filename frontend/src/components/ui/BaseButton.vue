@@ -1,5 +1,29 @@
 <template>
+    <BaseTooltip
+        v-if="showTooltip"
+        :text="title.toLowerCase().trim()"
+        :shadow-color="tooltipShadowColor"
+        :disabled="disabled"
+        :open-delay="750"
+    >
+        <template #activator="{ props: tooltipProps }">
+            <button
+                v-bind="tooltipProps"
+                class="base-button"
+                :disabled="disabled"
+                :type="type"
+                :size="size"
+                :variant="variant"
+                :style="style"
+                @click="$emit('click', $event)"
+            >
+                <slot></slot>
+            </button>
+        </template>
+    </BaseTooltip>
+
     <button
+        v-else
         class="base-button"
         :disabled="disabled"
         :type="type"
@@ -15,6 +39,7 @@
 
 <script setup lang="ts">
 import type { CSSProperties } from "vue";
+import { computed } from "vue";
 
 type ButtonVariant =
     | "primary"
@@ -25,7 +50,9 @@ type ButtonVariant =
     | "outline-secondary"
     | "outline-success";
 
-withDefaults(
+type TooltipShadowColor = "lavender" | "fuschia" | "green" | "blue";
+
+const props = withDefaults(
     defineProps<{
         title?: string;
         disabled?: boolean;
@@ -33,6 +60,7 @@ withDefaults(
         size?: "xsmall" | "small" | "medium" | "large";
         variant?: ButtonVariant;
         style?: CSSProperties;
+        showTooltip?: boolean;
     }>(),
     {
         title: "some dumb shitty button",
@@ -40,12 +68,41 @@ withDefaults(
         type: "button",
         size: "medium",
         variant: "primary",
+        showTooltip: true,
     }
 );
 
 defineEmits<{
     click: [event: MouseEvent];
 }>();
+
+// Map button variants to tooltip shadow colors
+const tooltipShadowColor = computed((): TooltipShadowColor => {
+    switch (props.variant) {
+        case "primary":
+        case "outline":
+            return "blue";
+        case "secondary":
+        case "outline-secondary":
+            return "fuschia";
+        case "tertiary":
+            return "lavender";
+        case "success":
+        case "outline-success":
+            return "green";
+        default:
+            return "blue";
+    }
+});
+
+// Only show tooltip if title is meaningful and showTooltip is true
+const showTooltip = computed(() => {
+    return (
+        props.showTooltip &&
+        props.title !== "some dumb shitty button" &&
+        props.title.trim().length > 0
+    );
+});
 </script>
 
 <style scoped>
