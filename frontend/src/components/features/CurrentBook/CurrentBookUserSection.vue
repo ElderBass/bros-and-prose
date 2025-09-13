@@ -9,6 +9,7 @@
                 <div class="card-header">
                     <h3>{{ cardHeader }}</h3>
                     <button
+                        v-if="hasFinishedBook"
                         @click="setShowReviewModal(true)"
                         class="edit-review-button"
                         title="you can't fix stupid, but I suppose you can try"
@@ -36,25 +37,19 @@
             </BaseCard>
         </Transition>
     </div>
-    <BaseModal
-        v-model="showRateAndReviewModal"
-        title="what'dya think, bro?"
-        size="medium"
-    >
-        <RateAndReviewBookForm
-            :currentBook="book"
-            :rating="bookReview.rating || 5"
-            :comment="bookReview.reviewComment || ''"
-            :handleCancel="() => setShowReviewModal(false)"
-            :handleSubmit="onReviewSubmit"
-        />
-    </BaseModal>
+    <UserRateAndReviewModal
+        :showReviewModal="showRateAndReviewModal"
+        :book="book"
+        :bookReview="bookReview"
+        :onReviewSubmit="onReviewSubmit"
+        :onClose="() => setShowReviewModal(false)"
+    />
 </template>
 
 <script setup lang="ts">
 import CurrentUserProgress from "./CurrentUserProgress.vue";
 import CurrentBookUserReview from "./CurrentBookUserReview.vue";
-import RateAndReviewBookForm from "@/components/form/RateAndReviewBookForm.vue";
+import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useUserStore } from "@/stores/user";
 import { watch, ref, computed } from "vue";

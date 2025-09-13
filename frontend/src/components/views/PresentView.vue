@@ -8,7 +8,7 @@
                     message="retrieving the current prose, bros..."
                 />
             </div>
-            <CurrentBookLayout>
+            <CurrentBookLayout v-else>
                 <template v-slot:current-book>
                     <CurrentBookInfo :book="book" />
                 </template>
@@ -16,7 +16,7 @@
                     <CurrentBookUserSection :book="book" />
                 </template>
                 <template v-slot:other-bros-progress>
-                    <CurrentBookOtherBrosProgress />
+                    <CurrentBookOtherBrosProgress :book="book" />
                 </template>
             </CurrentBookLayout>
         </div>
@@ -69,7 +69,7 @@ onMounted(async () => {
     align-items: center;
     width: 100%;
     height: 100%;
-    margin: 0 auto;
+    padding: 0 1rem;
 }
 
 .spinner-container {

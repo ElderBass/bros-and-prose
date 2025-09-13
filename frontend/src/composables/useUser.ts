@@ -21,6 +21,11 @@ export const useUser = () => {
         return users;
     };
 
+    const getOtherBros = async () => {
+        const users = await usersService.getUsers();
+        return users.filter((user) => user.id !== loggedInUser.id);
+    };
+
     const updateUser = async (userId: string, user: User) => {
         const updatedUser = await usersService.updateUser(userId, user);
         if (userId === loggedInUser.id) {
@@ -57,6 +62,7 @@ export const useUser = () => {
     return {
         getUser,
         getUsers,
+        getOtherBros,
         updateUser,
         addReview,
     };

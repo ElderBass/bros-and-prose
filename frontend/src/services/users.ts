@@ -1,5 +1,6 @@
 import type { ApiResponse, User } from "@/types";
 import { apiRequest } from "./api";
+import { mockUsers } from "@/data/mockUsers";
 
 export const usersService = {
     getUser: async (userId: string) => {
@@ -14,8 +15,11 @@ export const usersService = {
             throw error;
         }
     },
-    getUsers: async () => {
+    getUsers: async (shouldMock: boolean = false) => {
         try {
+            if (shouldMock) {
+                return mockUsers;
+            }
             const response = await apiRequest<ApiResponse<User[]>>(
                 "GET",
                 `/api/users`
