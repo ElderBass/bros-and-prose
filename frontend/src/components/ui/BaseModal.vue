@@ -8,7 +8,7 @@
             >
                 <div
                     class="modal-container"
-                    :class="`size-${size}`"
+                    :class="`size-${size} shadow-${shadowColor}`"
                     @click.stop
                 >
                     <div class="modal-header" v-if="title || !hideCloseButton">
@@ -44,12 +44,14 @@ const props = withDefaults(
         modelValue: boolean;
         title?: string;
         size?: "small" | "medium" | "large";
+        shadowColor?: "lavender" | "fuschia" | "green" | "blue";
         hideCloseButton?: boolean;
         closeOnBackdrop?: boolean;
         closeButtonTitle?: string;
     }>(),
     {
         size: "medium",
+        shadowColor: "lavender",
         hideCloseButton: false,
         closeOnBackdrop: true,
         closeButtonTitle: "Close modal",
@@ -95,10 +97,6 @@ const handleBackdropClick = () => {
     padding: 1.5rem;
     border-radius: 1rem;
     backdrop-filter: blur(10px);
-    box-shadow:
-        0 8px 32px var(--accent-lavender),
-        0 0 60px var(--accent-lavender),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
     max-height: 90vh;
@@ -107,6 +105,33 @@ const handleBackdropClick = () => {
     flex-direction: column;
 }
 
+.modal-container.shadow-lavender {
+    box-shadow:
+        0 8px 32px var(--accent-lavender),
+        0 0 60px var(--accent-lavender),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.modal-container.shadow-fuschia {
+    box-shadow:
+        0 8px 32px var(--accent-fuschia),
+        0 0 60px var(--accent-fuschia),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.modal-container.shadow-green {
+    box-shadow:
+        0 8px 32px var(--accent-green),
+        0 0 60px var(--accent-green),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.modal-container.shadow-blue {
+    box-shadow:
+        0 8px 32px var(--accent-blue),
+        0 0 60px var(--accent-blue),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
 /* Add subtle gradient overlay for depth - matching BaseCard */
 .modal-container::before {
     content: "";
@@ -246,10 +271,6 @@ const handleBackdropClick = () => {
 
     .modal-header {
         padding-bottom: 1rem;
-    }
-
-    .modal-content {
-        padding: 0 1rem;
     }
 
     .modal-footer {

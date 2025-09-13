@@ -39,11 +39,11 @@
         <BaseButton
             @click="onUpdateClick"
             :size="buttonSize"
-            variant="primary"
+            :variant="updateButtonConfig.variant"
             title="Update Current Book Progress"
             style="width: 100%"
         >
-            <span>{{ updateButtonLabel }}</span>
+            <span>{{ updateButtonConfig.label }}</span>
         </BaseButton>
     </div>
 </template>
@@ -106,8 +106,11 @@ const onCancelClick = () => {
     updatedProgress.value = loggedInUser.currentBookProgress;
 };
 
-const updateButtonLabel = computed(() => {
-    return updateModeEnabled.value ? "confirm" : "update";
+const updateButtonConfig = computed(() => {
+    return {
+        label: updateModeEnabled.value ? "confirm" : "update",
+        variant: updateModeEnabled.value ? "outline-success" : "outline",
+    };
 });
 
 // TODO: save screen size to state/pinia store on App.vue mount

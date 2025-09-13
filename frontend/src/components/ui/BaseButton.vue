@@ -22,14 +22,15 @@ type ButtonVariant =
     | "tertiary"
     | "success"
     | "outline"
-    | "outline-secondary";
+    | "outline-secondary"
+    | "outline-success";
 
 withDefaults(
     defineProps<{
         title?: string;
         disabled?: boolean;
         type?: "button" | "submit" | "reset";
-        size?: "small" | "medium" | "large";
+        size?: "xsmall" | "small" | "medium" | "large";
         variant?: ButtonVariant;
         style?: CSSProperties;
     }>(),
@@ -129,7 +130,31 @@ defineEmits<{
     background-color: var(--accent-lavender);
 }
 
+.base-button[variant="outline-success"] {
+    background-color: transparent;
+    border: 2px solid var(--accent-green);
+    color: var(--accent-green);
+}
+
+.base-button[variant="outline-success"]:hover {
+    background-color: var(--accent-green);
+    color: var(--background-color);
+}
+
+.base-button[variant="outline-success"]:disabled {
+    background-color: transparent;
+    border: 2px solid var(--slate-gray);
+    color: var(--slate-gray);
+    opacity: 0.75;
+}
+
 /* Size variants */
+.base-button[size="xsmall"] {
+    padding: 0.25rem 0.5rem;
+    font-size: 1rem;
+    min-height: 1.5rem;
+}
+
 .base-button[size="small"] {
     padding: 0.5rem 0.75rem;
     font-size: 1.125rem;

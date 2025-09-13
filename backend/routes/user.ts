@@ -25,10 +25,11 @@ export const getUsers = async (_: express.Request, res: express.Response) => {
     try {
         const usersRef = db.ref("users");
         const users = await usersRef.once("value");
+        const usersArray = Object.values(users.val());
         return res.json({
             success: true,
             message: "Users fetched successfully",
-            data: users.val(),
+            data: usersArray,
         });
     } catch (error) {
         res.status(500).json({

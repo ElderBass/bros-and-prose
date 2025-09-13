@@ -1,0 +1,233 @@
+<template>
+    <BaseModal
+        :modelValue="showModal"
+        @close="onClose"
+        title="bro's got thoughts"
+        size="medium"
+        shadowColor="green"
+    >
+        <div class="other-bro-review">
+            <div class="heading">
+                <p class="heading-text">
+                    peeping
+                    <span class="other-bro-name">{{ otherBro.firstName }}</span
+                    >'s review for
+                </p>
+                <div class="book-info">
+                    <span class="book-title">{{ props.book?.title }}</span>
+                    <p class="heading-text">by</p>
+                    <span class="book-author">{{ props.book?.author }}</span>
+                </div>
+            </div>
+            <div class="star-rating-container">
+                <BookRatingInput
+                    v-model="broReview.rating"
+                    size="medium"
+                    :readOnly="true"
+                />
+            </div>
+            <ReviewComment
+                :comment="broReview.reviewComment"
+                :isFromCurrentUser="false"
+            />
+            <div class="form-actions">
+                <BaseButton
+                    :size="buttonSize"
+                    @click="onClose"
+                    variant="outline-secondary"
+                    style="width: 100%"
+                    title="back out of this shitty review"
+                >
+                    close
+                </BaseButton>
+            </div>
+        </div>
+    </BaseModal>
+</template>
+
+<script setup lang="ts">
+import { defineProps, computed } from "vue";
+import type { User, Book, SubmitReviewArgs } from "@/types";
+import BookRatingInput from "@/components/form/BookRatingInput.vue";
+import ReviewComment from "../features/Review/ReviewComment.vue";
+
+const props = defineProps<{
+    showModal: boolean;
+    book: Book;
+    otherBro: User;
+    onClose: () => void;
+}>();
+
+const broReview = computed(() => {
+    const review: SubmitReviewArgs = { rating: 0, reviewComment: "" };
+    if (props.otherBro.reviews[props.book.id]) {
+        console.log(
+            "props.otherBro.reviews[props.book.id]",
+            props.otherBro.reviews[props.book.id]
+        );
+        review.rating = props.otherBro.reviews[props.book.id]?.rating;
+        review.reviewComment =
+            props.otherBro.reviews[props.book.id]?.reviewComment;
+    }
+    return review;
+});
+
+const buttonSize = computed(() => {
+    return window.innerWidth < 768 ? "small" : "medium";
+});
+</script>
+
+<style scoped>
+.other-bro-review {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    height: 100%;
+}
+
+.heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding-top: 0.5rem;
+}
+
+.heading-text {
+    font-size: 1.125rem;
+    color: var(--main-text);
+    text-align: center;
+}
+
+.other-bro-name {
+    font-size: 1.25rem;
+    color: var(--accent-green);
+    font-family: "Libre Baskerville", serif;
+    font-weight: 600;
+}
+
+.book-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    text-align: center;
+    gap: 0.5rem;
+}
+
+.book-title {
+    font-size: 1.5rem;
+    font-style: italic;
+    font-weight: 600;
+    color: var(--accent-fuschia);
+    font-family: "Courier New", serif;
+}
+
+.book-author {
+    font-size: 1.25rem;
+    color: var(--accent-lavender);
+    font-family: "Libre Baskerville", serif;
+}
+
+.star-rating-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.review-comment-input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.review-comment-input {
+    width: 100%;
+    height: 100%;
+    resize: none;
+    border: 2px solid var(--accent-blue);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-family: "Crimson Text", serif;
+    font-size: 1.125rem;
+    color: var(--main-text);
+    background-color: var(--background-color);
+    opacity: 0.8; /* Slightly dimmed since it's disabled */
+}
+
+label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent-lavender);
+    margin-left: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 768px) {
+    .book-info {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .book-title {
+        font-size: 1.25rem;
+    }
+
+    .book-author {
+        font-size: 1rem;
+    }
+
+    .other-bro-name {
+        font-size: 1.125rem;
+    }
+
+    .heading {
+        padding-top: 0.25rem;
+        gap: 0;
+    }
+
+    .heading-text {
+        font-size: 1rem;
+    }
+
+    label {
+        font-size: 1.125rem;
+    }
+
+    .review-comment-input {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .book-title {
+        font-size: 1.125rem;
+    }
+
+    .book-author {
+        font-size: 0.875rem;
+    }
+
+    .other-bro-name {
+        font-size: 1rem;
+    }
+
+    .book-info {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .heading-text {
+        font-size: 0.875rem;
+    }
+}
+</style>

@@ -36,10 +36,10 @@ h1 {
     font-size: 1.5rem;
     color: var(--main-text);
     border-bottom: 2px solid var(--accent-blue);
-    padding-bottom: 0.25rem;
     font-weight: 600;
     text-align: center;
     margin: 0 auto;
+    margin-bottom: 0.25rem;
 }
 
 .layout-column {
