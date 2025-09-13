@@ -47,8 +47,8 @@
 </template>
 
 <script setup lang="ts">
-import CurrentUserProgress from "./CurrentUserProgress.vue";
-import CurrentBookUserReview from "./CurrentBookUserReview.vue";
+import CurrentUserProgress from "./UserProgress.vue";
+import CurrentBookUserReview from "./UserReview.vue";
 import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useUserStore } from "@/stores/user";

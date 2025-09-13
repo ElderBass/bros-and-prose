@@ -58,6 +58,9 @@ const hoverRating = ref(0);
 const isHovering = ref(false);
 
 const ratingMessage = computed(() => {
+    if (isHovering.value && !props.readOnly) {
+        return ratingMap[hoverRating.value as keyof typeof ratingMap];
+    }
     return ratingMap[props.modelValue as keyof typeof ratingMap];
 });
 
