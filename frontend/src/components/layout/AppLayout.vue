@@ -3,12 +3,17 @@
         <AppHeader />
         <main class="main-content">
             <slot />
+            <BaseAlert v-model="alert" />
         </main>
     </div>
 </template>
 
 <script setup lang="ts">
 import AppHeader from "./AppHeader.vue";
+import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
+
+const { alert } = storeToRefs(useUIStore());
 </script>
 
 <style scoped>
@@ -22,6 +27,7 @@ import AppHeader from "./AppHeader.vue";
     flex: 1;
     padding: 1rem;
     padding-top: 0.25rem;
+    position: relative;
 }
 
 @media (min-width: 768px) {

@@ -64,4 +64,10 @@ defineProps<{
 .desktop-nav {
     display: flex;
 }
+
+@media (max-width: 768px) {
+    .desktop-nav {
+        display: none;
+    }
+}
 </style>

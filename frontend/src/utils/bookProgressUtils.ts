@@ -1,5 +1,5 @@
 import type { User } from "@/types";
-import { FINISHED_BOOK_PROGRESS } from "./constants";
+import { FINISHED_BOOK_PROGRESS } from "@/constants";
 import { convertToPercentage } from "./convertToPercentage";
 
 export const getProgressString = (bro: User, totalPages: number) => {

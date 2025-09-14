@@ -14,7 +14,7 @@ export const useUserStore = defineStore("user", {
             state.loggedInUser
                 ? `${state.loggedInUser.firstName} ${state.loggedInUser.lastName}`
                 : "",
-        currentUserReviews: (state) => state.loggedInUser?.reviews || [],
+        currentUserReviews: (state) => state.loggedInUser?.reviews || {},
     },
 
     actions: {

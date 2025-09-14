@@ -55,9 +55,7 @@ onMounted(async () => {
     } catch (error) {
         console.error("Error fetching current book", error);
     } finally {
-        setTimeout(() => {
-            isLoading.value = false;
-        }, 2000);
+        isLoading.value = false;
     }
 });
 </script>

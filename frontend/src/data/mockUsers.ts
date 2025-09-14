@@ -33,8 +33,18 @@ export const mockUsers: User[] = [
         firstName: "Chris",
         lastName: "Dub",
         email: "chris.dub@example.com",
-        currentBookProgress: 279,
-        reviews: {},
+        currentBookProgress: 262,
+        reviews: {
+            starter_villain_scalzi: {
+                id: "nunya-bidness",
+                book: {
+                    name: "Starter Villain",
+                    author: "John Scalzi",
+                },
+                rating: 7,
+                reviewComment: "",
+            },
+        },
     },
     {
         id: "4",
