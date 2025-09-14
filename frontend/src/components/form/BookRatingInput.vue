@@ -25,12 +25,12 @@ import { faBook } from "@fortawesome/free-solid-svg-icons";
 
 const ratingMap = {
     1: "burn it",
-    2: "yikes",
-    3: "oof",
-    4: "meh",
-    5: "solid",
-    6: "rock solid",
-    7: "excellent",
+    2: "trash",
+    3: "yikes",
+    4: "oof",
+    5: "meh",
+    6: "solid",
+    7: "rock solid",
     8: "superb",
     9: "truly exceptional",
     10: "would read again",
