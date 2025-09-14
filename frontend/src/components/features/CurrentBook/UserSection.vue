@@ -38,6 +38,7 @@
         </Transition>
     </div>
     <UserRateAndReviewModal
+        v-if="showRateAndReviewModal"
         :showReviewModal="showRateAndReviewModal"
         :book="book"
         :bookReview="bookReview"
@@ -57,7 +58,7 @@ import {
     DEFAULT_REVIEW,
     DEFAULT_RATING,
     FINISHED_BOOK_PROGRESS,
-} from "@/utils";
+} from "@/constants";
 import type { Book, SubmitReviewArgs } from "@/types";
 import { useUser } from "@/composables/useUser";
 
@@ -66,7 +67,7 @@ const props = defineProps<{
 }>();
 
 const { loggedInUser } = useUserStore();
-const { addReview, updateUser } = useUser();
+const { addReview, updateUserProgress } = useUser();
 
 const loadingMessage = ref("");
 const showRateAndReviewModal = ref(false);
@@ -74,8 +75,14 @@ const hasFinishedBook = ref(
     loggedInUser.currentBookProgress === FINISHED_BOOK_PROGRESS
 );
 const bookReview = ref({
-    rating: loggedInUser.reviews[props.book?.id]?.rating || DEFAULT_RATING,
-    reviewComment: loggedInUser.reviews[props.book?.id]?.reviewComment || "",
+    rating:
+        (loggedInUser.reviews[props.book?.id] &&
+            loggedInUser.reviews[props.book?.id].rating) ||
+        DEFAULT_RATING,
+    reviewComment:
+        (loggedInUser.reviews[props.book?.id] &&
+            loggedInUser.reviews[props.book?.id].reviewComment) ||
+        "",
 });
 
 watch(
@@ -108,21 +115,25 @@ const onReviewSubmit = async ({ rating, reviewComment }: SubmitReviewArgs) => {
     setShowReviewModal(false);
     loadingMessage.value = "submitting your shitty review...";
     const udpatedUser = await addReview({ rating, reviewComment }, props.book);
-    bookReview.value = udpatedUser.reviews[props.book.id];
-    setTimeout(() => {
-        loadingMessage.value = "";
-    }, 1000);
+
+    if (udpatedUser) {
+        bookReview.value = udpatedUser.reviews[props.book.id];
+    }
+    loadingMessage.value = "";
+    hasFinishedBook.value = true;
 };
 
 const onUpdateProgress = async (updatedProgress: number) => {
     loadingMessage.value = "updating your measly progress...";
-    await updateUser(loggedInUser.id, {
-        ...loggedInUser,
-        currentBookProgress: Math.round(updatedProgress),
-    });
-    setTimeout(() => {
-        loadingMessage.value = "";
-    }, 1000);
+    const udpatedUser = await updateUserProgress(
+        loggedInUser.id,
+        updatedProgress
+    );
+    loadingMessage.value = "";
+
+    if (udpatedUser) {
+        bookReview.value = udpatedUser.reviews[props.book.id];
+    }
 
     if (updatedProgress === props.book.totalPages) {
         setShowReviewModal(true);

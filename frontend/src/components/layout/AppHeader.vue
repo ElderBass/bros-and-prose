@@ -3,7 +3,7 @@
         <LogoButton :handleClick="goToPresent" />
 
         <!-- Desktop Navigation -->
-        <div class="nav-links desktop-nav">
+        <div v-if="!isMobile" class="nav-links desktop-nav">
             <RouterLink
                 v-for="link in navLinks"
                 :key="link.path"
@@ -12,10 +12,11 @@
                 >{{ link.label }}</RouterLink
             >
         </div>
-        <ProfileButton :handleClick="goToProfile" />
+        <ProfileButton v-if="!isMobile" :handleClick="goToProfile" />
 
         <!-- Mobile Hamburger Button -->
         <button
+            v-if="isMobile"
             class="hamburger mobile-nav"
             @click="toggleMobileMenu"
             :class="{ active: isMobileMenuOpen }"
@@ -26,7 +27,11 @@
         </button>
 
         <!-- Mobile Menu Overlay -->
-        <div class="mobile-menu" :class="{ active: isMobileMenuOpen }">
+        <div
+            v-if="isMobile"
+            class="mobile-menu"
+            :class="{ active: isMobileMenuOpen }"
+        >
             <div class="mobile-nav-links">
                 <RouterLink
                     v-for="link in navLinks"
@@ -51,6 +56,8 @@ import { RouterLink } from "vue-router";
 import router from "@/router";
 import LogoButton from "@/components/layout/LogoButton.vue";
 import ProfileButton from "@/components/layout/ProfileButton.vue";
+import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
 
 const navLinks = [
     { path: "/past", label: "past" },
@@ -59,6 +66,7 @@ const navLinks = [
 ];
 
 const isMobileMenuOpen = ref(false);
+const isMobile = storeToRefs(useUIStore()).isMobile;
 
 const activeLink = computed(() => {
     return router.currentRoute.value.path;
@@ -116,23 +124,6 @@ header {
 
 .nav-links a.router-link-active {
     border-bottom: 2px solid var(--accent-blue);
-}
-
-.user-actions {
-    padding: 0.5rem;
-    border-radius: 50%;
-    background-color: var(--background-color);
-    border: 2px solid var(--accent-blue);
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.user-actions:hover {
-    background-color: var(--accent-blue);
-    color: var(--background-color);
 }
 
 /* Mobile Navigation */
@@ -235,10 +226,6 @@ header {
 
 /* Responsive Breakpoints */
 @media (max-width: 768px) {
-    .desktop-nav {
-        display: none;
-    }
-
     .mobile-nav {
         display: flex;
     }

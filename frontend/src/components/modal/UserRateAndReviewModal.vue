@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import RateAndReviewBookForm from "@/components/form/RateAndReviewBookForm.vue";
 import type { Book, SubmitReviewArgs } from "@/types";
-import { DEFAULT_RATING } from "@/utils";
+import { DEFAULT_RATING } from "@/constants";
 
 defineProps<{
     showReviewModal: boolean;

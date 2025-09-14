@@ -55,7 +55,8 @@ import ProgressSliderInput from "@/components/form/ProgressSliderInput.vue";
 import { useUserStore } from "@/stores/user";
 import { useBooksStore } from "@/stores/books";
 import { useUIStore } from "@/stores/ui";
-import { convertToPercentage, FINISHED_BOOK_PROGRESS } from "@/utils";
+import { FINISHED_BOOK_PROGRESS } from "@/constants";
+import { convertToPercentage } from "@/utils";
 
 const { loggedInUser } = useUserStore();
 const { currentBook } = useBooksStore();

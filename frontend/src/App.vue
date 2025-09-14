@@ -6,19 +6,22 @@
 import { onMounted, onUnmounted } from "vue";
 import { RouterView, useRouter } from "vue-router";
 import { getUserFromStorage } from "./utils";
-import { useUserStore } from "./stores/user";
 import { useUIStore } from "./stores/ui";
+import { useUser } from "./composables/useUser";
+import { useUserStore } from "./stores/user";
 
 const { cleanup: cleanupUIListeners, initializeScreenSize } = useUIStore();
 const router = useRouter();
 
 onMounted(async () => {
     initializeScreenSize();
+
     const userFromStorage = getUserFromStorage();
     if (!userFromStorage) {
         router.push("/");
     } else {
-        useUserStore().setLoggedInUser(userFromStorage);
+        const user = await useUser().getUser(userFromStorage.id);
+        useUserStore().setLoggedInUser(user);
         router.push("/present");
     }
 });
