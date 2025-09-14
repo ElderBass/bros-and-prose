@@ -1,4 +1,4 @@
-import type { Alert } from "@/stores/ui";
+import type { Alert } from "@/types";
 
 export const DEFAULT_ALERT: Alert = {
     show: false,
