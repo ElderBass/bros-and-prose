@@ -1,6 +1,6 @@
 <template>
     <div class="current-book-layout">
-        <h1>current prose ferda bros</h1>
+        <PageTitle title="current prose ferda bros" />
         <div v-if="isMobile" class="layout-column">
             <slot name="current-book" />
             <slot name="user-progress" />
@@ -19,6 +19,7 @@
 <script setup lang="ts">
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
+import PageTitle from "@/components/ui/PageTitle.vue";
 
 const { isMobile } = storeToRefs(useUIStore());
 </script>
@@ -29,16 +30,6 @@ const { isMobile } = storeToRefs(useUIStore());
     flex-direction: column;
     width: 100%;
     gap: 2rem;
-}
-
-h1 {
-    font-size: 1.5rem;
-    color: var(--main-text);
-    border-bottom: 2px solid var(--accent-blue);
-    font-weight: 600;
-    text-align: center;
-    margin: 0 auto;
-    margin-bottom: 0.25rem;
 }
 
 .layout-column {
@@ -60,11 +51,8 @@ h1 {
 }
 
 @media (min-width: 768px) {
-    .current-book-container {
+    .current-book-layout {
         gap: 3rem;
-    }
-    h1 {
-        font-size: 1.75rem;
     }
 }
 </style>

@@ -28,7 +28,7 @@ export const getBooks = async (_: express.Request, res: express.Response) => {
         res.json({
             success: true,
             message: "Books fetched successfully",
-            data: books.val(),
+            data: Object.values(books.val()),
         });
     } catch (error) {
         res.status(500).json({

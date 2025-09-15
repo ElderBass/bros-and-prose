@@ -7,7 +7,9 @@
             <RouterLink
                 v-for="link in navLinks"
                 :key="link.path"
-                :class="{ 'router-link-active': activeLink === link.path }"
+                :class="{
+                    'router-link-active': activeLink.includes(link.label),
+                }"
                 :to="link.path"
                 >{{ link.label }}</RouterLink
             >
@@ -52,7 +54,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRoute } from "vue-router";
 import router from "@/router";
 import LogoButton from "@/components/layout/LogoButton.vue";
 import ProfileButton from "@/components/layout/ProfileButton.vue";
@@ -65,11 +67,13 @@ const navLinks = [
     { path: "/future", label: "future" },
 ];
 
+const route = useRoute();
+
 const isMobileMenuOpen = ref(false);
 const isMobile = storeToRefs(useUIStore()).isMobile;
 
 const activeLink = computed(() => {
-    return router.currentRoute.value.path;
+    return route.path;
 });
 
 const goToPresent = () => {
