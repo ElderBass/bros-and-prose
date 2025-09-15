@@ -13,6 +13,7 @@ const router = createRouter({
         },
         {
             path: "/past",
+            strict: true,
             component: () => import("@/components/views/PastView.vue"),
         },
         {

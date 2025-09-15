@@ -2,7 +2,9 @@
     <div class="app-layout">
         <AppHeader />
         <main class="main-content">
-            <slot />
+            <ViewContainer>
+                <slot />
+            </ViewContainer>
             <BaseAlert v-model="alert" />
         </main>
     </div>
@@ -12,6 +14,7 @@
 import AppHeader from "./AppHeader.vue";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
+import ViewContainer from "./ViewContainer.vue";
 
 const { alert } = storeToRefs(useUIStore());
 </script>

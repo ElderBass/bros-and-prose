@@ -9,20 +9,28 @@ import { getUserFromStorage } from "./utils";
 import { useUIStore } from "./stores/ui";
 import { useUser } from "./composables/useUser";
 import { useUserStore } from "./stores/user";
+import { useBooks } from "./composables/useBooks";
 
-const { cleanup: cleanupUIListeners, initializeScreenSize } = useUIStore();
 const router = useRouter();
+const { cleanup: cleanupUIListeners, initializeScreenSize } = useUIStore();
+const { getPastBooks } = useBooks();
+const { getUser, getUsers } = useUser();
 
 onMounted(async () => {
-    initializeScreenSize();
+    try {
+        initializeScreenSize();
+        await getPastBooks();
+        await getUsers();
 
-    const userFromStorage = getUserFromStorage();
-    if (!userFromStorage) {
-        router.push("/");
-    } else {
-        const user = await useUser().getUser(userFromStorage.id);
-        useUserStore().setLoggedInUser(user);
-        router.push("/present");
+        const userFromStorage = getUserFromStorage();
+        if (!userFromStorage) {
+            router.push("/");
+        } else {
+            const user = await getUser(userFromStorage.id);
+            useUserStore().setLoggedInUser(user);
+        }
+    } catch (error) {
+        console.error("Error initializing app:", error);
     }
 });
 

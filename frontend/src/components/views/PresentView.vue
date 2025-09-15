@@ -1,25 +1,23 @@
 <template>
     <AppLayout>
-        <div class="present-view">
-            <div v-if="isLoading" class="spinner-container">
-                <LoadingSpinner
-                    v-if="isLoading"
-                    size="large"
-                    message="retrieving the current prose, bros..."
-                />
-            </div>
-            <CurrentBookLayout v-else>
-                <template v-slot:current-book>
-                    <CurrentBookInfo :book="book" />
-                </template>
-                <template v-slot:user-progress>
-                    <CurrentBookUserSection :book="book" />
-                </template>
-                <template v-slot:other-bros-progress>
-                    <CurrentBookOtherBrosProgress :book="book" />
-                </template>
-            </CurrentBookLayout>
+        <div v-if="isLoading" class="spinner-container">
+            <LoadingSpinner
+                v-if="isLoading"
+                size="large"
+                message="retrieving the current prose, bros..."
+            />
         </div>
+        <CurrentBookLayout v-else>
+            <template v-slot:current-book>
+                <CurrentBookInfo :book="book" />
+            </template>
+            <template v-slot:user-progress>
+                <CurrentBookUserSection :book="book" />
+            </template>
+            <template v-slot:other-bros-progress>
+                <CurrentBookOtherBrosProgress :book="book" />
+            </template>
+        </CurrentBookLayout>
     </AppLayout>
 </template>
 
