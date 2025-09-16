@@ -22,10 +22,11 @@
         </div>
     </BaseCard>
     <OtherBroReviewModal
+        v-if="showOtherBroReviewModal"
         :showModal="showOtherBroReviewModal"
         :book="book"
         :brosName="selectedBro.firstName"
-        :brosReview="selectedBro.reviews[book.id] || {}"
+        :brosReview="selectedBro?.reviews[book?.id] || {}"
         :onClose="() => setShowOtherBroReviewModal(false)"
     />
 </template>

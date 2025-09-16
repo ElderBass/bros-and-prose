@@ -27,7 +27,7 @@ import { useRoute } from "vue-router";
 import { useBooksStore } from "@/stores/books";
 
 const book = ref<Book>({} as Book);
-const { allUsers } = useUserStore();
+const { allUsers, loggedInUser } = useUserStore();
 const { pastBooks } = useBooksStore();
 
 const route = useRoute();

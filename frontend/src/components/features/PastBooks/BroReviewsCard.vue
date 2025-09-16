@@ -1,5 +1,10 @@
 <template>
-    <BaseCard shadowColor="green" size="medium">
+    <LoadingSpinner
+        v-if="loadingMessage.length"
+        size="medium"
+        :message="loadingMessage"
+    />
+    <BaseCard v-else shadowColor="green" size="medium">
         <div class="heading">
             <h3>what the bros thought</h3>
             <div class="average-rating-container">
@@ -17,9 +22,7 @@
                     getRatingReviewString(broReview.review, isMobile)
                 "
                 :on-peep-review-click="() => onPeepReviewClick(broReview)"
-                :is-logged-in-user="
-                    loggedInUser.firstName === broReview.reviewer
-                "
+                :is-logged-in-user="loggedInUserName === broReview.reviewer"
             />
         </div>
     </BaseCard>
@@ -42,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
+import { defineProps, ref, onMounted, watch } from "vue";
 import type { Book, BroReview, Review, SubmitReviewArgs } from "@/types";
 import BroProgressItem from "../common/BroProgressItem.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
@@ -54,7 +57,7 @@ import { DEFAULT_RATING } from "@/constants";
 import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui";
 
-const { loggedInUser } = useUserStore();
+const { loggedInUser } = storeToRefs(useUserStore());
 const { addReview } = useUser();
 const { isMobile } = storeToRefs(useUIStore());
 
@@ -73,6 +76,7 @@ const bookReview = ref({
     rating: DEFAULT_RATING,
     reviewComment: "",
 });
+const loggedInUserName = ref("");
 
 const setShowOtherBroReviewModal = (value: boolean) => {
     showOtherBroReviewModal.value = value;
@@ -83,7 +87,7 @@ const setShowUserReviewModal = (show: boolean) => {
 };
 
 const onPeepReviewClick = (broReview: BroReview) => {
-    if (loggedInUser.firstName === broReview.reviewer) {
+    if (loggedInUserName.value === broReview.reviewer) {
         selectedBroReview.value = broReview.review;
         setShowUserReviewModal(true);
     } else {
@@ -103,6 +107,13 @@ const onReviewSubmit = async ({ rating, reviewComment }: SubmitReviewArgs) => {
     }
     loadingMessage.value = "";
 };
+
+onMounted(() => {
+    loggedInUserName.value = loggedInUser.value.firstName;
+});
+watch(loggedInUser, () => {
+    loggedInUserName.value = loggedInUser.value.firstName;
+});
 </script>
 
 <style scoped>
