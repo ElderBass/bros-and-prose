@@ -11,7 +11,7 @@
             message="loading bros progress..."
         />
         <div v-else class="other-bros-progress-container">
-            <OtherBroProgressItem
+            <BroProgressItem
                 v-for="bro in bros"
                 :key="bro.id"
                 :bro-name="bro.firstName"
@@ -24,7 +24,8 @@
     <OtherBroReviewModal
         :showModal="showOtherBroReviewModal"
         :book="book"
-        :otherBro="selectedBro"
+        :brosName="selectedBro.firstName"
+        :brosReview="selectedBro.reviews[book.id] || {}"
         :onClose="() => setShowOtherBroReviewModal(false)"
     />
 </template>
@@ -33,7 +34,7 @@
 import { ref, onMounted } from "vue";
 import BaseCard from "@/components/ui/BaseCard.vue";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
-import OtherBroProgressItem from "./OtherBroProgressItem.vue";
+import BroProgressItem from "../common/BroProgressItem.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import { useUser } from "@/composables/useUser";
 import type { User, Book } from "@/types";

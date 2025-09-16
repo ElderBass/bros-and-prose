@@ -10,7 +10,7 @@
             <div class="heading">
                 <p class="heading-text">
                     peeping
-                    <span class="other-bro-name">{{ otherBro.firstName }}</span
+                    <span class="other-bro-name">{{ brosName }}</span
                     >'s review for
                 </p>
                 <div class="book-info">
@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
-import type { User, Book, SubmitReviewArgs } from "@/types";
+import type { Book, Review } from "@/types";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import ReviewComment from "../features/Review/ReviewComment.vue";
 import { useUIStore } from "@/stores/ui";
@@ -58,18 +58,16 @@ const { isMobile } = storeToRefs(useUIStore());
 const props = defineProps<{
     showModal: boolean;
     book: Book;
-    otherBro: User;
+    brosName: string;
+    brosReview: Review;
     onClose: () => void;
 }>();
 
 const broReview = computed(() => {
-    const review: SubmitReviewArgs = { rating: 0, reviewComment: "" };
-    if (props.otherBro.reviews[props.book.id]) {
-        review.rating = props.otherBro.reviews[props.book.id]?.rating;
-        review.reviewComment =
-            props.otherBro.reviews[props.book.id]?.reviewComment;
-    }
-    return review;
+    return {
+        rating: props.brosReview.rating || 0,
+        reviewComment: props.brosReview.reviewComment || "",
+    };
 });
 
 const buttonSize = computed(() => {

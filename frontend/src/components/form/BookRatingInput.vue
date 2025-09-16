@@ -22,19 +22,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
-
-const ratingMap = {
-    1: "burn it",
-    2: "trash",
-    3: "yikes",
-    4: "oof",
-    5: "meh",
-    6: "solid",
-    7: "rock solid",
-    8: "superb",
-    9: "truly exceptional",
-    10: "would read again",
-};
+import { RATING_MAP } from "@/constants";
 
 const props = withDefaults(
     defineProps<{
@@ -59,9 +47,9 @@ const isHovering = ref(false);
 
 const ratingMessage = computed(() => {
     if (isHovering.value && !props.readOnly) {
-        return ratingMap[hoverRating.value as keyof typeof ratingMap];
+        return RATING_MAP[hoverRating.value as keyof typeof RATING_MAP];
     }
-    return ratingMap[props.modelValue as keyof typeof ratingMap];
+    return RATING_MAP[props.modelValue as keyof typeof RATING_MAP];
 });
 
 const displayRating = computed(() => {

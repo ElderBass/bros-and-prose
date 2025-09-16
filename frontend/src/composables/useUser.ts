@@ -22,8 +22,8 @@ export const useUser = () => {
         return user;
     };
 
-    const getUsers = async () => {
-        const users = await usersService.getUsers();
+    const getUsers = async (shouldMock: boolean = false) => {
+        const users = await usersService.getUsers(shouldMock);
         setAllUsers(users);
         return users;
     };
