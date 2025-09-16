@@ -5,9 +5,11 @@
             <BaseCard shadowColor="blue" size="medium">
                 <BookInfo :book="book" />
             </BaseCard>
-            <BaseCard shadowColor="green" size="medium">
-                <div class="review-container"></div>
-            </BaseCard>
+            <BroReviewsCard
+                :book="book"
+                :broReviews="userReviews"
+                :aggregateRating="aggregateRating"
+            />
         </div>
     </AppLayout>
 </template>
@@ -15,26 +17,22 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import AppLayout from "../layout/AppLayout.vue";
+import PageTitle from "@/components/ui/PageTitle.vue";
 import BaseCard from "@/components/ui/BaseCard.vue";
 import BookInfo from "@/components/features/common/BookInfo.vue";
+import BroReviewsCard from "@/components/features/PastBooks/BroReviewsCard.vue";
+import type { Book, BroReview } from "@/types";
 import { useUserStore } from "@/stores/user";
-import type { Book, Review } from "@/types";
 import { useRoute } from "vue-router";
 import { useBooksStore } from "@/stores/books";
-import PageTitle from "@/components/ui/PageTitle.vue";
 
 const book = ref<Book>({} as Book);
-const { allUsers } = useUserStore();
+const { allUsers, loggedInUser } = useUserStore();
 const { pastBooks } = useBooksStore();
-
-interface UserReview {
-    reviewer: string;
-    review: Review;
-}
 
 const route = useRoute();
 
-const userReviews = ref<UserReview[]>([]);
+const userReviews = ref<BroReview[]>([]);
 const aggregateRating = ref("");
 
 const emptyReview = {
@@ -79,6 +77,7 @@ watch(
     padding-top: 2rem;
     width: 100%;
     justify-content: space-between;
+    align-items: center;
     gap: 3rem;
 }
 hr {
@@ -93,7 +92,7 @@ hr {
 @media (max-width: 768px) {
     .book-detail-container {
         flex-direction: column;
-        gap: 1rem;
+        gap: 2rem;
     }
 }
 </style>

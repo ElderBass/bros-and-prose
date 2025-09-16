@@ -48,6 +48,7 @@ type ButtonVariant =
     | "success"
     | "outline"
     | "outline-secondary"
+    | "outline-tertiary"
     | "outline-success";
 
 type TooltipShadowColor = "lavender" | "fuschia" | "green" | "blue";
@@ -90,6 +91,8 @@ const tooltipShadowColor = computed((): TooltipShadowColor => {
         case "success":
         case "outline-success":
             return "green";
+        case "outline-tertiary":
+            return "lavender";
         default:
             return "blue";
     }
@@ -203,6 +206,17 @@ const showTooltip = computed(() => {
     border: 2px solid var(--slate-gray);
     color: var(--slate-gray);
     opacity: 0.75;
+}
+
+.base-button[variant="outline-tertiary"] {
+    background-color: transparent;
+    border: 2px solid var(--accent-lavender);
+    color: var(--accent-lavender);
+}
+
+.base-button[variant="outline-tertiary"]:hover {
+    background-color: var(--accent-lavender);
+    color: var(--background-color);
 }
 
 /* Size variants */

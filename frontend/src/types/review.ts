@@ -12,3 +12,8 @@ export interface SubmitReviewArgs {
     rating: number;
     reviewComment: string;
 }
+
+export interface BroReview {
+    reviewer: string;
+    review: Review;
+}

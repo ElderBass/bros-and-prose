@@ -1,6 +1,8 @@
 <template>
     <div class="other-bro-progress-item">
-        <p>{{ props.broName }}</p>
+        <p :class="{ isLoggedInUser }">
+            {{ isLoggedInUser ? "you" : props.broName }}
+        </p>
         <div class="progress-value-container">
             <p :class="{ finished: props.hasFinished }" class="progress-value">
                 {{ props.progressString }}
@@ -9,24 +11,38 @@
                 v-if="props.hasFinished"
                 @click="props.onPeepReviewClick"
                 size="xsmall"
-                variant="outline"
-                title="peep this bro's review which is probably way smarter than yours"
+                :variant="isLoggedInUser ? 'outline' : 'outline-tertiary'"
+                :title="buttonTitle"
             >
-                peep review
+                <FontAwesomeIcon v-if="isLoggedInUser" :icon="faMarker" />
+                {{ isLoggedInUser ? "edit" : "peep" }} review
             </BaseButton>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, withDefaults, computed } from "vue";
+import { faMarker } from "@fortawesome/free-solid-svg-icons";
 
-const props = defineProps<{
-    broName: string;
-    hasFinished: boolean;
-    progressString: string;
-    onPeepReviewClick: () => void;
-}>();
+const props = withDefaults(
+    defineProps<{
+        broName: string;
+        hasFinished: boolean;
+        progressString: string;
+        onPeepReviewClick: () => void;
+        isLoggedInUser?: boolean;
+    }>(),
+    {
+        isLoggedInUser: false,
+    }
+);
+
+const buttonTitle = computed(() => {
+    return props.isLoggedInUser
+        ? "you can't fix stupid, but I suppose you can try"
+        : "peep this bro's review which is probably way smarter than yours";
+});
 </script>
 
 <style scoped>
@@ -57,6 +73,12 @@ p {
 
 .finished {
     color: var(--accent-fuschia);
+}
+
+.isLoggedInUser {
+    color: var(--accent-green);
+    font-weight: 600;
+    font-size: 1.25rem;
 }
 
 @media (max-width: 768px) {
