@@ -135,33 +135,6 @@ const buttonSize = computed(() => {
     width: 100%;
 }
 
-.review-comment-input-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.review-comment-input {
-    width: 100%;
-    height: 100%;
-    resize: none;
-    border: 2px solid var(--accent-blue);
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    font-family: "Crimson Text", serif;
-    font-size: 1.125rem;
-    color: var(--main-text);
-    background-color: var(--background-color);
-    opacity: 0.8; /* Slightly dimmed since it's disabled */
-}
-
-label {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--accent-lavender);
-    margin-left: 0.5rem;
-}
-
 .form-actions {
     display: flex;
     align-items: center;
@@ -194,14 +167,6 @@ label {
     }
 
     .heading-text {
-        font-size: 1rem;
-    }
-
-    label {
-        font-size: 1.125rem;
-    }
-
-    .review-comment-input {
         font-size: 1rem;
     }
 }

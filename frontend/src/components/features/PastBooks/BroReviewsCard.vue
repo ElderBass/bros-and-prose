@@ -5,13 +5,7 @@
         :message="loadingMessage"
     />
     <BaseCard v-else shadowColor="green" size="medium">
-        <div class="heading">
-            <h3>what the bros thought</h3>
-            <div class="average-rating-container">
-                <p class="average-rating">average score:</p>
-                <span class="average-rating-value">{{ aggregateRating }}</span>
-            </div>
-        </div>
+        <h3>what the bros thought</h3>
         <div class="bro-reviews-container">
             <BroProgressItem
                 v-for="broReview in broReviews"
@@ -64,7 +58,6 @@ const { isMobile } = storeToRefs(useUIStore());
 const props = defineProps<{
     book: Book;
     broReviews: BroReview[];
-    aggregateRating: string;
 }>();
 
 const showOtherBroReviewModal = ref(false);
@@ -130,55 +123,9 @@ h3 {
     gap: 0.5rem;
 }
 
-.heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.average-rating-container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 1rem;
-}
-
-.average-rating {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--accent-blue);
-}
-
-.average-rating-value {
-    font-family: "Crimson Text", serif;
-    font-style: italic;
-    font-size: 1.75rem;
-    font-weight: 600;
-    color: var(--accent-fuschia);
-}
-
 @media (max-width: 768px) {
-    .heading {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-
     h3 {
         font-size: 1.25rem;
-    }
-
-    .average-rating-container {
-        width: 100%;
-        justify-content: space-evenly;
-    }
-
-    .average-rating-value {
-        font-size: 1.5rem;
-    }
-
-    .average-rating {
-        font-size: 1rem;
     }
 }
 </style>

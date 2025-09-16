@@ -6,6 +6,7 @@ export interface Book {
     goodreadsRating: string;
     yearPublished: number;
     imageSrc: string;
+    groupConsensus?: string;
 }
 
 export interface BooksState {

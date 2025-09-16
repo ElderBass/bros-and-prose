@@ -127,3 +127,8 @@ export const mockUsers: User[] = [
         },
     },
 ];
+
+export const groupConsensus = {
+    eleven_twenty_two_sixty_three_king:
+        "The group unanimously praised '11/22/63' as one of King's finest works, with ratings ranging from 8-9/10. Everyone was impressed by King's departure from horror into historical fiction, noting his meticulous research and immersive recreation of the late 1950s and early 1960s. The time travel premise, initially seeming gimmicky, was universally acclaimed for its thoughtful execution and exploration of consequences. The romance subplot with Sadie resonated across the board, adding emotional depth to the historical mission. While the 850+ page length was acknowledged as substantial, all members found themselves completely absorbed. The group particularly appreciated King's handling of the butterfly effect and the concept that 'the past pushes back against change.' Overall consensus: an essential read that transcends genre boundaries and showcases King's versatility as a storyteller.",
+};
