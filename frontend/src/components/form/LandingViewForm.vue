@@ -6,7 +6,7 @@
         <BroSelect v-model="broName" />
         <div class="form-container-wrapper">
             <transition name="slide-in">
-                <div v-if="activeForm === 'signup'" class="form-container">
+                <div v-if="isSignup" class="form-container">
                     <h3>register once, then never again</h3>
                     <div class="inputField">
                         <h4 class="inputFieldLabel">yada yada etc. so forth</h4>
@@ -76,7 +76,6 @@
                             placeholder="studly password"
                             type="password"
                             :disabled="false"
-                            prepend-inner-icon="mdi-lock"
                         />
                     </div>
                     <div class="button-container">
@@ -89,7 +88,7 @@
                                 size="large"
                                 :disabled="buttonDisabled"
                             >
-                                <span>initiate god's plan</span>
+                                <span>resume god's plan</span>
                             </BaseButton>
                         </FadeIn>
                     </div>
@@ -142,27 +141,28 @@ const handleSignup = async () => {
             email: email.value.trim().toLowerCase(),
             password: password.value.trim(),
         };
-        const action = activeForm.value === "signup" ? signup : login;
+        const action = isSignup.value ? signup : login;
         await action(payload);
     } catch (err) {
         console.error(err);
     }
 };
 
+const isSignup = computed(() => {
+    return activeForm.value === "signup";
+});
+
 const buttonDisabled = computed(() => {
     if (
         email.value === "" ||
         password.value === "" ||
-        (confirmPassword.value === "" && activeForm.value === "signup") ||
+        (confirmPassword.value === "" && isSignup.value) ||
         broName.value === ""
     ) {
         return true;
     }
 
-    if (
-        password.value !== confirmPassword.value &&
-        activeForm.value === "signup"
-    ) {
+    if (password.value !== confirmPassword.value && isSignup.value) {
         return true;
     }
 
