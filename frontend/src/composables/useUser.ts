@@ -73,6 +73,14 @@ export const useUser = () => {
         return updatedUser;
     };
 
+    const updateUserUsername = async (userId: string, username: string) => {
+        const updatedUser = await updateUser(userId, {
+            ...loggedInUser,
+            username,
+        });
+        return updatedUser;
+    };
+
     const addReview = async (
         reviewArgs: SubmitReviewArgs,
         currentBook: Book
@@ -116,6 +124,7 @@ export const useUser = () => {
         getOtherBros,
         updateUser,
         updateUserAvatar,
+        updateUserUsername,
         addReview,
         updateUserProgress,
     };

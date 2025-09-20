@@ -5,11 +5,7 @@
             <BaseCard shadowColor="blue" size="medium">
                 <BookInfo :book="book" />
             </BaseCard>
-            <BroReviewsCard
-                :book="book"
-                :broReviews="userReviews"
-                :aggregateRating="aggregateRating"
-            />
+            <BroReviewsCard :book="book" :broReviews="userReviews" />
         </div>
         <div class="group-consensus-container">
             <GroupConsensus
@@ -53,7 +49,7 @@ const loadBookData = () => {
     const bookId = route.params.bookId as string;
     book.value = pastBooks.find((book) => book.id === bookId) as Book;
     userReviews.value = allUsers.map((user) => ({
-        reviewer: user.firstName,
+        reviewer: user,
         review: user.reviews[bookId] || emptyReview,
     }));
 

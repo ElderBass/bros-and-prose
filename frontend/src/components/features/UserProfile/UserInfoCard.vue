@@ -11,10 +11,13 @@
                 />
                 <div class="name">
                     <h2>
-                        {{ loggedInUser.firstName }}
-                        {{ loggedInUser.lastName }}
+                        {{ loggedInUser?.username }}
                     </h2>
-                    <p class="email">{{ loggedInUser.email }}</p>
+                    <p>
+                        {{ loggedInUser?.firstName.toLowerCase() }}
+                        {{ loggedInUser?.lastName.toLowerCase() }}
+                    </p>
+                    <p class="email">{{ loggedInUser?.email }}</p>
                 </div>
             </div>
             <v-menu content-class="profile-actions-menu">
@@ -23,13 +26,16 @@
                         v-bind="menuProps"
                         :icon="faMarker"
                         :handleClick="() => {}"
-                        title="change your stupid avatar"
-                        :size="isMobile ? 'medium' : 'large'"
+                        title="edit your dumbass details"
+                        :size="isMobile ? 'small' : 'medium'"
                     />
                 </template>
                 <v-list>
-                    <v-list-item class="menu-item" @click="openModal">
+                    <v-list-item @click="openModal('avatar')">
                         <v-list-item-title>change avatar</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="openModal('username')">
+                        <v-list-item-title>change username</v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-menu>
@@ -37,17 +43,25 @@
     </BaseCard>
 
     <AvatarSelectorModal
-        v-if="isModalOpen"
-        :open="isModalOpen"
+        v-if="isAvatarModalOpen"
+        :open="isAvatarModalOpen"
         :currentAvatar="loggedInUser.avatar"
         @close="closeModal"
-        @confirm="handleConfirm"
+        @confirm="handleConfirmAvatar"
+    />
+    <UsernameModal
+        v-if="isUsernameModalOpen"
+        :open="isUsernameModalOpen"
+        :currentUsername="loggedInUser.username"
+        @close="closeModal"
+        @confirm="handleConfirmUsername"
     />
 </template>
 
 <script setup lang="ts">
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import AvatarSelectorModal from "@/components/modal/AvatarSelectorModal.vue";
+import UsernameModal from "@/components/modal/UsernameModal.vue";
 import { useUserStore } from "@/stores/user";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
@@ -55,12 +69,17 @@ import { faMarker, faUserAstronaut } from "@fortawesome/free-solid-svg-icons";
 import { computed, ref } from "vue";
 import { AVATAR_ICON_LIST } from "@/constants";
 import { useUser } from "@/composables/useUser";
+import {
+    PROFILE_UPDATED_SUCCESS_ALERT,
+    USERNAME_UPDATED_SUCCESS_ALERT,
+} from "@/constants";
 
-const { updateUserAvatar } = useUser();
+const { updateUserAvatar, updateUserUsername } = useUser();
 const { loggedInUser } = storeToRefs(useUserStore());
 const { isMobile } = storeToRefs(useUIStore());
+const { showAlert } = useUIStore();
 
-const isModalOpen = ref(false);
+const activeModal = ref<"avatar" | "username" | "">("");
 
 const currentIcon = computed(() => {
     return (
@@ -70,19 +89,33 @@ const currentIcon = computed(() => {
     );
 });
 
-const openModal = () => {
-    console.log("KERTWANGING openModal");
-    isModalOpen.value = true;
+const openModal = (modal: "avatar" | "username") => {
+    activeModal.value = modal;
 };
 
 const closeModal = () => {
-    isModalOpen.value = false;
+    activeModal.value = "";
 };
 
-const handleConfirm = (newAvatar: string) => {
+const handleConfirmAvatar = (newAvatar: string) => {
     updateUserAvatar(loggedInUser.value.id, newAvatar);
+    showAlert(PROFILE_UPDATED_SUCCESS_ALERT);
     closeModal();
 };
+
+const handleConfirmUsername = (newUsername: string) => {
+    updateUserUsername(loggedInUser.value.id, newUsername);
+    showAlert(USERNAME_UPDATED_SUCCESS_ALERT);
+    closeModal();
+};
+
+const isAvatarModalOpen = computed(() => {
+    return activeModal.value === "avatar";
+});
+
+const isUsernameModalOpen = computed(() => {
+    return activeModal.value === "username";
+});
 </script>
 
 <style scoped>
@@ -101,6 +134,8 @@ const handleConfirm = (newAvatar: string) => {
 
 .name h2 {
     margin: 0;
+    color: var(--accent-blue);
+    font-family: "Libre Baskerville", serif;
 }
 
 .email {

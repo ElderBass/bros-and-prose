@@ -1,21 +1,25 @@
 import type { User } from "@/types";
 import {
     BRO_NOT_STARTED,
+    BRO_NOT_STARTED_MOBILE,
     FINISHED,
     FINISHED_BOOK_PROGRESS,
+    FINISHED_MOBILE,
     RATING_MAP,
 } from "@/constants";
 import { convertToPercentage } from "./convertToPercentage";
 import type { Review } from "@/types";
+import { useUIStore } from "@/stores/ui";
 
 export const getProgressString = (bro: User, totalPages: number) => {
+    const { isMobile } = useUIStore();
     const broProgress = bro.currentBookProgress;
     if (broProgress === FINISHED_BOOK_PROGRESS || broProgress === totalPages) {
-        return FINISHED;
+        return isMobile ? FINISHED_MOBILE : FINISHED;
     } else if (broProgress === 0) {
-        return BRO_NOT_STARTED;
+        return isMobile ? BRO_NOT_STARTED_MOBILE : BRO_NOT_STARTED;
     }
-    return `page ${broProgress} / ${totalPages} (${convertToPercentage(broProgress, totalPages)}%)`;
+    return `${isMobile && "page"} ${broProgress} / ${totalPages} (${convertToPercentage(broProgress, totalPages)}%)`;
 };
 
 export const getRatingReviewString = (broReview: Review, isMobile: boolean) => {

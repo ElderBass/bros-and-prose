@@ -53,13 +53,13 @@ const sizeClass = computed(() => `size-${props.size}`);
 .avatar-item.size-xsmall {
     width: 1.5rem;
     height: 1.5rem;
-    font-size: 1rem;
+    font-size: 0.75rem;
 }
 
 .avatar-item.size-small {
-    width: 2rem;
-    height: 2rem;
-    font-size: 1.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
 }
 
 .avatar-item.size-medium {

@@ -12,7 +12,7 @@
                         v-if="hasFinishedBook"
                         title="you can't fix stupid, but I suppose you can try"
                         :icon="faMarker"
-                        size="medium"
+                        :size="isMobile ? 'small' : 'medium'"
                         :handleClick="() => setShowReviewModal(true)"
                     />
                 </div>
@@ -60,6 +60,8 @@ import {
 } from "@/constants";
 import type { Book, SubmitReviewArgs } from "@/types";
 import { useUser } from "@/composables/useUser";
+import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
 
 const props = defineProps<{
     book: Book;
@@ -67,6 +69,7 @@ const props = defineProps<{
 
 const { loggedInUser } = useUserStore();
 const { addReview, updateUserProgress } = useUser();
+const { isMobile } = storeToRefs(useUIStore());
 
 const loadingMessage = ref("");
 const showRateAndReviewModal = ref(false);

@@ -9,6 +9,7 @@
             <button
                 v-bind="{ ...tooltipProps, ...$attrs }"
                 class="icon-button"
+                :class="`size-${size}`"
                 :title="title"
                 @click="handleClick"
             >
@@ -69,20 +70,24 @@ defineOptions({ inheritAttrs: false });
 .icon-button.size-xsmall {
     width: 1.5rem;
     height: 1.5rem;
+    font-size: 0.75rem;
 }
 
 .icon-button.size-small {
     width: 2rem;
     height: 2rem;
+    font-size: 1rem;
 }
 
 .icon-button.size-medium {
     width: 3rem;
     height: 3rem;
+    font-size: 1.5rem;
 }
 
 .icon-button.size-large {
     width: 4rem;
     height: 4rem;
+    font-size: 2rem;
 }
 </style>

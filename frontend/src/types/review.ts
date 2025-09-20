@@ -1,3 +1,5 @@
+import type { User } from "./user";
+
 export interface Review {
     id: string;
     book: {
@@ -14,6 +16,6 @@ export interface SubmitReviewArgs {
 }
 
 export interface BroReview {
-    reviewer: string;
+    reviewer: User;
     review: Review;
 }

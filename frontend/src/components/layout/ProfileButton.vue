@@ -10,6 +10,7 @@
         <template #activator="{ props: tooltipProps }">
             <button
                 v-bind="tooltipProps"
+                type="button"
                 class="user-actions desktop-nav"
                 @click="handleClick"
             >
