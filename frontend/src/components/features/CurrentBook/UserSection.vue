@@ -60,7 +60,6 @@ import {
 } from "@/constants";
 import type { Book, SubmitReviewArgs } from "@/types";
 import { useUser } from "@/composables/useUser";
-import IconButton from "@/components/ui/IconButton.vue";
 
 const props = defineProps<{
     book: Book;

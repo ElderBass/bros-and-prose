@@ -43,7 +43,6 @@ const selectableIcons = computed(() => {
     gap: 1rem;
     width: 100%;
     padding: 1rem 0;
-    /* height: 100%; */
     justify-content: center;
     align-items: center;
 }

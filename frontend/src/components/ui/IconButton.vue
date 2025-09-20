@@ -85,31 +85,4 @@ defineOptions({ inheritAttrs: false });
     width: 4rem;
     height: 4rem;
 }
-
-/* .edit-review-button {
-    border: 2px solid var(--accent-blue);
-    border-radius: 50%;
-    padding: 0.5rem;
-    color: var(--accent-blue);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    width: 2rem;
-    height: 2rem;
-}
-
-.edit-review-button:hover {
-    color: var(--accent-fuschia);
-    background-color: rgba(255, 77, 255, 0.1);
-    transform: scale(1.1);
-    border-color: var(--accent-fuschia);
-}
-
-.edit-review-button:focus {
-    outline: 2px solid var(--accent-blue);
-    outline-offset: 2px;
-} */
 </style>
