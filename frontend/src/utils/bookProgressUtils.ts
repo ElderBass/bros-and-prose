@@ -19,7 +19,7 @@ export const getProgressString = (bro: User, totalPages: number) => {
     } else if (broProgress === 0) {
         return isMobile ? BRO_NOT_STARTED_MOBILE : BRO_NOT_STARTED;
     }
-    return `${isMobile && "page"} ${broProgress} / ${totalPages} (${convertToPercentage(broProgress, totalPages)}%)`;
+    return `${!isMobile ? "page" : ""} ${broProgress} / ${totalPages} (${convertToPercentage(broProgress, totalPages)}%)`;
 };
 
 export const getRatingReviewString = (broReview: Review, isMobile: boolean) => {

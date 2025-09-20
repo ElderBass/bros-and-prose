@@ -2,76 +2,136 @@
     <form @submit.prevent="handleSignup">
         <div class="header-container">
             <h1>welcome to bros and prose</h1>
-            <h3>register once, then never again</h3>
         </div>
         <BroSelect v-model="broName" />
-        <div class="inputField">
-            <h4 class="inputFieldLabel">yada yada etc. so forth</h4>
-            <BaseInput
-                id="email"
-                v-model="email"
-                label="sexxxy email"
-                placeholder="sexxxy email"
-                type="email"
-                :disabled="false"
-                prepend-inner-icon="mdi-email"
-            />
-            <div class="spacer" />
-            <BaseInput
-                v-model="password"
-                label="studly password"
-                placeholder="studly password"
-                type="password"
-                :disabled="false"
-                prepend-inner-icon="mdi-lock"
-            />
-            <div class="spacer" />
-            <BaseInput
-                v-model="confirmPassword"
-                label="this better match"
-                placeholder="this better match..."
-                type="password"
-                :disabled="false"
-                prepend-inner-icon="mdi-lock"
-            />
-        </div>
-        <div class="passwordMessage">
-            <p v-if="showPasswordError" style="color: var(--accent-red)">
-                bro the fuck are you doing, match the password...
-            </p>
-            <p v-if="showPasswordMessage" style="color: var(--accent-green)">
-                wow you're not as dumb as you look...
-            </p>
-        </div>
-        <div class="button-container">
-            <FadeIn>
-                <BaseButton
-                    v-if="!buttonDisabled"
-                    :title="buttonTitle"
-                    type="submit"
-                    variant="outline-secondary"
-                    size="large"
-                    :disabled="buttonDisabled"
-                >
-                    <span>Initiate God's Plan</span>
-                </BaseButton>
-            </FadeIn>
+        <div class="form-container-wrapper">
+            <transition name="slide-in">
+                <div v-if="activeForm === 'signup'" class="form-container">
+                    <h3>register once, then never again</h3>
+                    <div class="inputField">
+                        <h4 class="inputFieldLabel">yada yada etc. so forth</h4>
+                        <BaseInput
+                            id="email"
+                            v-model="email"
+                            label="sexxxy email"
+                            placeholder="sexxxy email"
+                            type="email"
+                            :disabled="false"
+                            prepend-inner-icon="mdi-email"
+                        />
+                        <div class="spacer" />
+                        <BaseInput
+                            v-model="password"
+                            label="studly password"
+                            placeholder="studly password"
+                            type="password"
+                            :disabled="false"
+                        />
+                        <div class="spacer" />
+                        <BaseInput
+                            v-model="confirmPassword"
+                            label="this better match"
+                            placeholder="this better match..."
+                            type="password"
+                            :disabled="false"
+                        />
+                    </div>
+                    <div class="passwordMessage">
+                        <p
+                            v-if="showPasswordError"
+                            style="color: var(--accent-red)"
+                        >
+                            bro the fuck are you doing, match the password...
+                        </p>
+                        <p
+                            v-if="showPasswordMessage"
+                            style="color: var(--accent-green)"
+                        >
+                            wow you're not as dumb as you look...
+                        </p>
+                    </div>
+                    <div class="button-container">
+                        <FadeIn>
+                            <BaseButton
+                                v-if="!buttonDisabled"
+                                :title="buttonTitle"
+                                type="submit"
+                                variant="outline-secondary"
+                                size="large"
+                                :disabled="buttonDisabled"
+                            >
+                                <span>initiate god's plan</span>
+                            </BaseButton>
+                        </FadeIn>
+                    </div>
+                </div>
+            </transition>
+            <transition name="slide-in">
+                <div v-if="activeForm === 'login'" class="form-container">
+                    <div class="inputField">
+                        <h4 class="inputFieldLabel">his broness returns...</h4>
+                        <BaseInput
+                            v-model="password"
+                            label="studly password"
+                            placeholder="studly password"
+                            type="password"
+                            :disabled="false"
+                            prepend-inner-icon="mdi-lock"
+                        />
+                    </div>
+                    <div class="button-container">
+                        <FadeIn>
+                            <BaseButton
+                                v-if="!buttonDisabled"
+                                :title="buttonTitle"
+                                type="submit"
+                                variant="outline-secondary"
+                                size="large"
+                                :disabled="buttonDisabled"
+                            >
+                                <span>initiate god's plan</span>
+                            </BaseButton>
+                        </FadeIn>
+                    </div>
+                </div>
+            </transition>
         </div>
     </form>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import BroSelect from "@/components/form/BroSelect.vue";
 import { useAuth } from "@/composables/useAuth";
+import { useUser } from "@/composables/useUser";
 import FadeIn from "../transitions/FadeIn.vue";
+import { getIdFromBroName } from "@/utils";
 
-const { signup } = useAuth();
+const { signup, login } = useAuth();
+const { getUser } = useUser();
 
 const broName = ref("");
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
+const activeForm = ref("");
+
+watch(broName, async (newVal) => {
+    if (newVal) {
+        activeForm.value = "";
+        const broId = getIdFromBroName(newVal);
+        const bro = await getUser(broId);
+        if (bro) {
+            email.value = bro.email;
+            activeForm.value = "login";
+        } else {
+            email.value = "";
+            password.value = "";
+            confirmPassword.value = "";
+            activeForm.value = "signup";
+        }
+    }
+});
 
 const handleSignup = async () => {
     try {
@@ -82,8 +142,8 @@ const handleSignup = async () => {
             email: email.value.trim().toLowerCase(),
             password: password.value.trim(),
         };
-
-        await signup(payload);
+        const action = activeForm.value === "signup" ? signup : login;
+        await action(payload);
     } catch (err) {
         console.error(err);
     }
@@ -93,13 +153,16 @@ const buttonDisabled = computed(() => {
     if (
         email.value === "" ||
         password.value === "" ||
-        confirmPassword.value === "" ||
+        (confirmPassword.value === "" && activeForm.value === "signup") ||
         broName.value === ""
     ) {
         return true;
     }
 
-    if (password.value !== confirmPassword.value) {
+    if (
+        password.value !== confirmPassword.value &&
+        activeForm.value === "signup"
+    ) {
         return true;
     }
 
@@ -153,14 +216,28 @@ h1 {
     text-align: center;
     font-size: 1.5rem;
     border-bottom: 2px solid var(--accent-blue);
-    padding-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+    font-family: "Libre Baskerville", serif;
+}
+
+.form-container-wrapper {
+    height: 100%;
+    width: 100%;
+    min-height: 400px;
+}
+
+.form-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 h3 {
     text-align: center;
     font-size: 1.25rem;
     font-weight: 400;
-    margin-bottom: 1rem;
+    font-family: "Libre Baskerville", serif;
 }
 
 .selectField {
@@ -201,6 +278,17 @@ h3 {
     height: 4.5rem;
     display: flex;
     justify-content: center;
+}
+
+.slide-in-enter-active,
+.slide-in-leave-active {
+    transition: all 0.5s ease;
+}
+
+.slide-in-enter-from,
+.slide-in-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
 }
 
 @media (min-width: 1024px) {

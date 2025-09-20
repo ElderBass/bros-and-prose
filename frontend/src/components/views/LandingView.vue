@@ -16,14 +16,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import router from "@/router";
 import LandingViewForm from "@/components/form/LandingViewForm.vue";
 import SignupSuccessCard from "@/components/form/SignupSuccessCard.vue";
 import { useAuth } from "@/composables/useAuth";
 import { useUserStore } from "@/stores/user";
 import FadeIn from "@/components/transitions/FadeIn.vue";
-import { getUserFromStorage } from "@/utils";
 
 const { isLoading } = useAuth();
 
@@ -34,12 +33,6 @@ const showSuccessModal = computed(() => {
 });
 
 const onSuccessModalClick = () => router.push("/present");
-
-onMounted(() => {
-    if (getUserFromStorage()) {
-        router.push("/present");
-    }
-});
 </script>
 
 <style scoped>
