@@ -9,14 +9,17 @@
         <div class="bro-reviews-container">
             <BroProgressItem
                 v-for="broReview in broReviews"
-                :key="broReview.reviewer"
-                :bro-name="broReview.reviewer"
+                :key="broReview.reviewer.username"
+                :bro-name="broReview.reviewer.username"
+                :bro-avatar="getAvatar(broReview.reviewer.avatar)"
                 :has-finished="true"
                 :progress-string="
                     getRatingReviewString(broReview.review, isMobile)
                 "
                 :on-peep-review-click="() => onPeepReviewClick(broReview)"
-                :is-logged-in-user="loggedInUserName === broReview.reviewer"
+                :is-logged-in-user="
+                    loggedInUserName === broReview.reviewer.username
+                "
             />
         </div>
     </BaseCard>
@@ -44,7 +47,7 @@ import type { Book, BroReview, Review, SubmitReviewArgs } from "@/types";
 import BroProgressItem from "../common/BroProgressItem.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import UserReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
-import { getRatingReviewString } from "@/utils";
+import { getRatingReviewString, getAvatar } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { useUser } from "@/composables/useUser";
 import { DEFAULT_RATING } from "@/constants";
@@ -80,11 +83,11 @@ const setShowUserReviewModal = (show: boolean) => {
 };
 
 const onPeepReviewClick = (broReview: BroReview) => {
-    if (loggedInUserName.value === broReview.reviewer) {
+    if (loggedInUserName.value === broReview.reviewer.username) {
         selectedBroReview.value = broReview.review;
         setShowUserReviewModal(true);
     } else {
-        selectedBroName.value = broReview.reviewer;
+        selectedBroName.value = broReview.reviewer.username;
         selectedBroReview.value = broReview.review;
         setShowOtherBroReviewModal(true);
     }
@@ -102,10 +105,10 @@ const onReviewSubmit = async ({ rating, reviewComment }: SubmitReviewArgs) => {
 };
 
 onMounted(() => {
-    loggedInUserName.value = loggedInUser.value.firstName;
+    loggedInUserName.value = loggedInUser.value.username;
 });
 watch(loggedInUser, () => {
-    loggedInUserName.value = loggedInUser.value.firstName;
+    loggedInUserName.value = loggedInUser.value.username;
 });
 </script>
 

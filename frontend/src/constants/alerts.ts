@@ -34,8 +34,19 @@ export const REVIEW_SUBMITTED_SUCCESS_ALERT: Alert = {
 export const PROFILE_UPDATED_SUCCESS_ALERT: Alert = {
     show: true,
     messages: [
-        "profile updated successfully.",
+        "avatar updated successfully.",
         "your face looks better, but your personality still sucks.",
+    ],
+    type: "success",
+    duration: 3000,
+    dismissable: false,
+};
+
+export const USERNAME_UPDATED_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "username updated successfully.",
+        "this is NOT helping with your street cred, my dude.",
     ],
     type: "success",
     duration: 3000,

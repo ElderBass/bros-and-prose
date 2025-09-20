@@ -21,4 +21,6 @@ export const RATING_MAP = {
 };
 
 export const FINISHED = "finished";
+export const FINISHED_MOBILE = "fin";
 export const BRO_NOT_STARTED = "lazy fuck hasn't started";
+export const BRO_NOT_STARTED_MOBILE = "fuckin zero";

@@ -13,13 +13,19 @@
                 />
             </div>
             <div class="actions">
-                <BaseButton variant="outline-secondary" @click="onClose"
+                <BaseButton
+                    variant="outline-secondary"
+                    @click="onClose"
+                    :size="isMobile ? 'small' : 'medium'"
+                    :style="{ width: isMobile ? '100%' : '75%' }"
                     >cancel</BaseButton
                 >
                 <BaseButton
                     variant="outline"
                     @click="onConfirm"
                     :disabled="!localAvatar || localAvatar === currentAvatar"
+                    :size="isMobile ? 'small' : 'medium'"
+                    :style="{ width: isMobile ? '100%' : '75%' }"
                     >update</BaseButton
                 >
             </div>
@@ -30,6 +36,10 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import AvatarSelector from "@/components/features/UserProfile/AvatarSelector.vue";
+import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
+
+const { isMobile } = storeToRefs(useUIStore());
 
 const emit = defineEmits<{
     (e: "close"): void;
@@ -73,5 +83,15 @@ const onConfirm = () => emit("confirm", localAvatar.value);
     justify-content: flex-end;
     gap: 0.75rem;
     margin-top: 1rem;
+    align-self: end;
+    width: 75%;
+}
+
+@media (max-width: 768px) {
+    .actions {
+        justify-content: space-between;
+        width: 100%;
+        align-self: center;
+    }
 }
 </style>

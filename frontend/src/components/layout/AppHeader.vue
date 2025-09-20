@@ -50,6 +50,7 @@
                 <button
                     v-if="currentAvatar"
                     class="mobile-profile-btn"
+                    type="button"
                     @click="goToProfile"
                 >
                     <FontAwesomeIcon :icon="currentAvatar" />
@@ -99,8 +100,8 @@ const activeLink = computed(() => {
     return route.path;
 });
 
-const goToPresent = () => {
-    router.push("/present");
+const goToPresent = async () => {
+    await router.push("/present");
 };
 
 const toggleMobileMenu = () => {
@@ -111,8 +112,8 @@ const closeMobileMenu = () => {
     isMobileMenuOpen.value = false;
 };
 
-const goToProfile = () => {
-    router.push("/profile");
+const goToProfile = async () => {
+    await router.push("/profile");
     closeMobileMenu();
 };
 

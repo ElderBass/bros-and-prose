@@ -1,8 +1,14 @@
 <template>
     <div class="other-bro-progress-item">
-        <p :class="{ isLoggedInUser }">
-            {{ isLoggedInUser ? "you" : props.broName }}
-        </p>
+        <div class="bro-avatar-container">
+            <AvatarImage
+                :icon="props.broAvatar"
+                :size="isMobile ? 'xsmall' : 'small'"
+            />
+            <p :class="{ isLoggedInUser }">
+                {{ isLoggedInUser ? "you" : props.broName }}
+            </p>
+        </div>
         <div class="progress-value-container">
             <p :class="{ finished: props.hasFinished }" class="progress-value">
                 {{ props.progressString }}
@@ -14,8 +20,11 @@
                 :variant="isLoggedInUser ? 'outline' : 'outline-tertiary'"
                 :title="buttonTitle"
             >
-                <FontAwesomeIcon v-if="isLoggedInUser" :icon="faMarker" />
-                {{ isLoggedInUser ? "edit" : "peep" }} review
+                <div class="button-content">
+                    <FontAwesomeIcon v-if="isLoggedInUser" :icon="faMarker" />
+                    <FontAwesomeIcon v-else :icon="faGlasses" />
+                    <span>review</span>
+                </div>
             </BaseButton>
         </div>
     </div>
@@ -23,11 +32,18 @@
 
 <script setup lang="ts">
 import { defineProps, withDefaults, computed } from "vue";
-import { faMarker } from "@fortawesome/free-solid-svg-icons";
+import AvatarImage from "@/components/ui/AvatarImage.vue";
+import { faGlasses, faMarker } from "@fortawesome/free-solid-svg-icons";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
+
+const { isMobile } = storeToRefs(useUIStore());
 
 const props = withDefaults(
     defineProps<{
         broName: string;
+        broAvatar: IconDefinition;
         hasFinished: boolean;
         progressString: string;
         onPeepReviewClick: () => void;
@@ -50,6 +66,13 @@ const buttonTitle = computed(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.bro-avatar-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .progress-value-container {
@@ -79,6 +102,13 @@ p {
     color: var(--accent-green);
     font-weight: 600;
     font-size: 1.25rem;
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 @media (max-width: 768px) {
