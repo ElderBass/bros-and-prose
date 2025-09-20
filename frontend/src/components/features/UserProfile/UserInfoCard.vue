@@ -14,8 +14,8 @@
                         {{ loggedInUser?.username }}
                     </h2>
                     <p>
-                        {{ loggedInUser?.firstName.toLowerCase() }}
-                        {{ loggedInUser?.lastName.toLowerCase() }}
+                        {{ loggedInUser?.firstName?.toLowerCase() }}
+                        {{ loggedInUser?.lastName?.toLowerCase() }}
                     </p>
                     <p class="email">{{ loggedInUser?.email }}</p>
                 </div>
