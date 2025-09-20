@@ -65,6 +65,14 @@ export const useUser = () => {
         }
     };
 
+    const updateUserAvatar = async (userId: string, avatar: string) => {
+        const updatedUser = await updateUser(userId, {
+            ...loggedInUser,
+            avatar,
+        });
+        return updatedUser;
+    };
+
     const addReview = async (
         reviewArgs: SubmitReviewArgs,
         currentBook: Book
@@ -107,6 +115,7 @@ export const useUser = () => {
         getUsers,
         getOtherBros,
         updateUser,
+        updateUserAvatar,
         addReview,
         updateUserProgress,
     };

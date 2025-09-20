@@ -13,16 +13,18 @@
                 class="user-actions desktop-nav"
                 @click="handleClick"
             >
-                <FontAwesomeIcon icon="fa-solid fa-user-astronaut" />
+                <FontAwesomeIcon :icon="currentAvatar" />
             </button>
         </template>
     </BaseTooltip>
 </template>
 
 <script setup lang="ts">
+import type { AvatarProp } from "@/types";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 defineProps<{
+    currentAvatar: AvatarProp;
     handleClick: () => void;
 }>();
 </script>
