@@ -2,7 +2,6 @@
     <v-tooltip
         :model-value="modelValue"
         :location="location"
-        :disabled="disabled"
         :open-delay="openDelay"
         :close-delay="closeDelay"
         :offset="offset"
@@ -41,7 +40,6 @@ withDefaults(
         text?: string;
         modelValue?: boolean;
         location?: TooltipLocation;
-        disabled?: boolean;
         openDelay?: number;
         closeDelay?: number;
         offset?: number;
@@ -50,7 +48,6 @@ withDefaults(
     }>(),
     {
         location: "top",
-        disabled: false,
         openDelay: 200,
         closeDelay: 100,
         offset: 8,

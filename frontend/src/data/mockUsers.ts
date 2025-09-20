@@ -7,6 +7,7 @@ export const mockUsers: User[] = [
         lastName: "Braxton",
         email: "joel.braxton@example.com",
         currentBookProgress: 69420,
+        avatar: "user-astronaut",
         reviews: {
             starter_villain_scalzi: {
                 id: "nunya-bidness",
@@ -36,6 +37,7 @@ export const mockUsers: User[] = [
         lastName: "McGurran",
         email: "ken.mcgurran@example.com",
         currentBookProgress: 70,
+        avatar: "user-astronaut",
         reviews: {
             eleven_twenty_two_sixty_three_king: {
                 id: "ken-man",
@@ -55,6 +57,7 @@ export const mockUsers: User[] = [
         lastName: "Dub",
         email: "chris.dub@example.com",
         currentBookProgress: 262,
+        avatar: "user-astronaut",
         reviews: {
             starter_villain_scalzi: {
                 id: "nunya-bidness",
@@ -84,6 +87,7 @@ export const mockUsers: User[] = [
         lastName: "Prasnicky",
         email: "judd.prasnicky@example.com",
         currentBookProgress: 0,
+        avatar: "user-astronaut",
         reviews: {
             eleven_twenty_two_sixty_three_king: {
                 id: "judd-review",
@@ -103,6 +107,7 @@ export const mockUsers: User[] = [
         lastName: "Zygarlicke",
         email: "zygster11@gmail.com",
         currentBookProgress: 69420,
+        avatar: "user-astronaut",
         reviews: {
             starter_villain_scalzi: {
                 id: "nunya-bidness",

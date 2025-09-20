@@ -14,7 +14,11 @@
                 >{{ link.label }}</RouterLink
             >
         </div>
-        <ProfileButton v-if="!isMobile" :handleClick="goToProfile" />
+        <ProfileButton
+            v-if="!isMobile && currentAvatar"
+            :handleClick="goToProfile"
+            :currentAvatar="currentAvatar"
+        />
 
         <!-- Mobile Hamburger Button -->
         <button
@@ -43,8 +47,12 @@
                     @click="closeMobileMenu"
                     >{{ link.label }}</RouterLink
                 >
-                <button class="mobile-profile-btn" @click="goToProfile">
-                    <FontAwesomeIcon icon="fa-solid fa-user-astronaut" />
+                <button
+                    v-if="currentAvatar"
+                    class="mobile-profile-btn"
+                    @click="goToProfile"
+                >
+                    <FontAwesomeIcon :icon="currentAvatar" />
                     <span>Profile</span>
                 </button>
             </div>
@@ -53,13 +61,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import router from "@/router";
 import LogoButton from "@/components/layout/LogoButton.vue";
 import ProfileButton from "@/components/layout/ProfileButton.vue";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
+import { useUserStore } from "@/stores/user";
+import { AVATAR_ICON_LIST } from "@/constants";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 const navLinks = [
     { path: "/past", label: "past" },
@@ -71,6 +82,18 @@ const route = useRoute();
 
 const isMobileMenuOpen = ref(false);
 const isMobile = storeToRefs(useUIStore()).isMobile;
+const { loggedInUser } = storeToRefs(useUserStore());
+
+const currentAvatar = ref<IconDefinition | null>(null);
+
+watch(
+    () => loggedInUser.value.avatar,
+    (newAvatar) => {
+        currentAvatar.value =
+            AVATAR_ICON_LIST.find((icon) => icon.iconName === newAvatar) ??
+            null;
+    }
+);
 
 const activeLink = computed(() => {
     return route.path;
@@ -92,6 +115,13 @@ const goToProfile = () => {
     router.push("/profile");
     closeMobileMenu();
 };
+
+onMounted(() => {
+    currentAvatar.value =
+        AVATAR_ICON_LIST.find(
+            (icon) => icon.iconName === loggedInUser.value.avatar
+        ) ?? null;
+});
 </script>
 
 <style scoped>

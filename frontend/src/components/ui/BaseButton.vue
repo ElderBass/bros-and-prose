@@ -3,7 +3,6 @@
         v-if="showTooltip"
         :text="title.toLowerCase().trim()"
         :shadow-color="tooltipShadowColor"
-        :disabled="disabled"
         :open-delay="750"
     >
         <template #activator="{ props: tooltipProps }">

@@ -8,14 +8,13 @@
             >
                 <div class="card-header">
                     <h3>{{ cardHeader }}</h3>
-                    <button
+                    <IconButton
                         v-if="hasFinishedBook"
-                        @click="setShowReviewModal(true)"
-                        class="edit-review-button"
                         title="you can't fix stupid, but I suppose you can try"
-                    >
-                        <FontAwesomeIcon :icon="faMarker" />
-                    </button>
+                        :icon="faMarker"
+                        size="medium"
+                        :handleClick="() => setShowReviewModal(true)"
+                    />
                 </div>
                 <LoadingSpinner
                     v-if="loadingMessage.length"

@@ -51,4 +51,46 @@ export const booksService = {
         );
         return futureBooks;
     },
+    getBookByTitle: async (title: string) => {
+        const response = await fetch(
+            `https://openlibrary.org/search.json?title=${title}`
+        );
+        const data = await response.json();
+        return data.docs[0];
+    },
 };
+
+// export const booksService = {
+//     getCurrentBook: async () => {
+//         const response = await fetch(
+//             `https://openlibrary.org/search.json?title=${currentBook}`
+//         );
+//         const data = await response.json();
+//         return data.docs[0];
+//     },
+//     searchByTitle: async (title: string) => {
+//         const response = await fetch(
+//             `https://openlibrary.org/search.json?title=${title}`
+//         );
+//         const data = await response.json();
+//         return data.docs[0];
+//     },
+//     getPastBooks: async () => {
+//         const response = await fetch(
+//             `https://openlibrary.org/search.json?title=${pastBooks.join(",")}`
+//         );
+//         const data = await response.json();
+//         return data.docs;
+//     },
+//     getBookImage: async (coverI: number) => {
+//         const url = await `https://covers.openlibrary.org/b/id/${coverI}-M.jpg`;
+//         return url;
+//     },
+//     getFutureBooks: async () => {
+//         const response = await fetch(
+//             `https://openlibrary.org/search.json?title=${futureBooks.join(",")}`
+//         );
+//         const data = await response.json();
+//         return data.docs;
+//     },
+// };
