@@ -118,6 +118,10 @@ const showTooltip = computed(() => {
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 /* Primary variant - blue to fuschia */
