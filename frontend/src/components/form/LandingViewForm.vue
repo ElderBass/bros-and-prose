@@ -17,7 +17,14 @@
                             placeholder="sexxxy email"
                             type="email"
                             :disabled="false"
-                            prepend-inner-icon="mdi-email"
+                        />
+                        <BaseInput
+                            id="username"
+                            v-model="username"
+                            label="sick username"
+                            placeholder="sick username"
+                            type="text"
+                            :disabled="false"
                         />
                         <div class="spacer" />
                         <BaseInput
@@ -27,7 +34,6 @@
                             type="password"
                             :disabled="false"
                         />
-                        <div class="spacer" />
                         <BaseInput
                             v-model="confirmPassword"
                             label="this better match"
@@ -53,12 +59,12 @@
                     <div class="button-container">
                         <FadeIn>
                             <BaseButton
-                                v-if="!buttonDisabled"
-                                :title="buttonTitle"
+                                v-if="!signupButtonDisabled"
+                                :title="getButtonTitle(signupButtonDisabled)"
                                 type="submit"
                                 variant="outline-secondary"
                                 size="large"
-                                :disabled="buttonDisabled"
+                                :disabled="signupButtonDisabled"
                             >
                                 <span>initiate god's plan</span>
                             </BaseButton>
@@ -81,12 +87,12 @@
                     <div class="button-container">
                         <FadeIn>
                             <BaseButton
-                                v-if="!buttonDisabled"
-                                :title="buttonTitle"
+                                v-if="!loginButtonDisabled"
+                                :title="getButtonTitle(loginButtonDisabled)"
                                 type="submit"
                                 variant="outline-secondary"
                                 size="large"
-                                :disabled="buttonDisabled"
+                                :disabled="loginButtonDisabled"
                             >
                                 <span>resume god's plan</span>
                             </BaseButton>
@@ -105,12 +111,14 @@ import { useAuth } from "@/composables/useAuth";
 import { useUser } from "@/composables/useUser";
 import FadeIn from "../transitions/FadeIn.vue";
 import { getIdFromBroName } from "@/utils";
+import BaseInput from "./BaseInput.vue";
 
 const { signup, login } = useAuth();
 const { getUser } = useUser();
 
 const broName = ref("");
 const email = ref("");
+const username = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const activeForm = ref("");
@@ -125,6 +133,7 @@ watch(broName, async (newVal) => {
             activeForm.value = "login";
         } else {
             email.value = "";
+            username.value = "";
             password.value = "";
             confirmPassword.value = "";
             activeForm.value = "signup";
@@ -138,6 +147,7 @@ const handleSignup = async () => {
         const payload = {
             firstName: bro[0],
             lastName: bro[1],
+            username: username.value.trim(),
             email: email.value.trim().toLowerCase(),
             password: password.value.trim(),
         };
@@ -152,28 +162,24 @@ const isSignup = computed(() => {
     return activeForm.value === "signup";
 });
 
-const buttonDisabled = computed(() => {
-    if (
-        email.value === "" ||
-        password.value === "" ||
-        (confirmPassword.value === "" && isSignup.value) ||
-        broName.value === ""
-    ) {
-        return true;
-    }
-
-    if (password.value !== confirmPassword.value && isSignup.value) {
-        return true;
-    }
-
-    return false;
+const signupButtonDisabled = computed(() => {
+    return (
+        username.value.trim() === "" ||
+        email.value.trim() === "" ||
+        password.value.trim() === "" ||
+        confirmPassword.value.trim() === ""
+    );
 });
 
-const buttonTitle = computed(() => {
-    return buttonDisabled.value
+const loginButtonDisabled = computed(() => {
+    return password.value.trim() === "";
+});
+
+const getButtonTitle = (buttonDisabled: boolean) => {
+    return buttonDisabled
         ? "fill out the form first you dumb fuck"
         : "let's fuck shit up";
-});
+};
 
 const showPasswordError = computed(() => {
     return (
@@ -270,7 +276,7 @@ h3 {
 }
 
 .spacer {
-    height: 0.25rem;
+    height: 0.5rem;
 }
 
 .button-container {
