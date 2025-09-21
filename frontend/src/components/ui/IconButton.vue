@@ -9,7 +9,7 @@
             <button
                 v-bind="{ ...tooltipProps, ...$attrs }"
                 class="icon-button"
-                :class="`size-${size}`"
+                :class="[`size-${size}`, `color-${color}`]"
                 :title="title"
                 @click="handleClick"
             >
@@ -28,11 +28,13 @@ withDefaults(
         icon: IconDefinition;
         size: "xsmall" | "small" | "medium" | "large";
         title: string;
+        color?: "blue" | "fuschia" | "green" | "lavender";
         shadowColor?: "lavender" | "fuschia" | "green" | "blue";
         disabled?: boolean;
         handleClick: () => void;
     }>(),
     {
+        color: "blue",
         shadowColor: "fuschia",
         disabled: false,
     }
@@ -60,6 +62,26 @@ defineOptions({ inheritAttrs: false });
     background-color: rgba(255, 77, 255, 0.1);
     transform: scale(1.1);
     border-color: var(--accent-fuschia);
+    &.color-fuschia {
+        color: var(--accent-fuschia);
+        background-color: rgba(255, 77, 255, 0.1);
+        border-color: var(--accent-fuschia);
+    }
+    &.color-green {
+        color: var(--accent-green);
+        background-color: rgba(77, 255, 77, 0.1);
+        border-color: var(--accent-green);
+    }
+    &.color-lavender {
+        color: var(--accent-lavender);
+        background-color: rgba(77, 77, 255, 0.1);
+        border-color: var(--accent-lavender);
+    }
+    &.color-blue {
+        color: var(--accent-blue);
+        background-color: rgba(77, 77, 255, 0.1);
+        border-color: var(--accent-blue);
+    }
 }
 
 .icon-button:focus {

@@ -74,16 +74,16 @@ withDefaults(
 }
 
 /* Size variants */
-.size-small .card-content {
-    padding: 1rem;
+.size-large .card-content {
+    padding: 2rem;
 }
 
 .size-medium .card-content {
     padding: 1.5rem;
 }
 
-.size-large .card-content {
-    padding: 2rem;
+.size-small .card-content {
+    padding: 1rem;
 }
 
 /* Shadow color variants */

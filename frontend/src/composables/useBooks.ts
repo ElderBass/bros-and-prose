@@ -25,10 +25,22 @@ export const useBooks = () => {
         booksStore.setFutureBooks(books);
     };
 
+    const getBookByTitle = async (title: string) => {
+        const book = await booksService.getBookByTitle(title);
+        return book;
+    };
+
+    const searchBooksByTitle = async (title: string) => {
+        const books = await booksService.searchBooksByTitle(title);
+        return books;
+    };
+
     return {
         getCurrentBook,
         getPastBooks,
         getFutureBooks,
         getAllBooks,
+        getBookByTitle,
+        searchBooksByTitle,
     };
 };
