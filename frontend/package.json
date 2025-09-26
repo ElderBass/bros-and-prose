@@ -13,7 +13,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write \"src/**/*.{vue,ts,css,md}\""
+    "format": "prettier --write \"src/**/*.{vue,ts,css,md}\"",
+    "check": "run-p type-check lint format"
   },
   "dependencies": {
     "@emotion/styled": "^11.14.1",

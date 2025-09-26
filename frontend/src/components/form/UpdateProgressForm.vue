@@ -27,6 +27,7 @@
                 <div class="input-group">
                     <BaseInput
                         v-model="inputValue"
+                        id="progress-input"
                         :label="
                             inputMode === 'pages'
                                 ? 'Current page'

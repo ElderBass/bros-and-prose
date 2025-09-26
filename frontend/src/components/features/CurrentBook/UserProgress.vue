@@ -1,12 +1,28 @@
 <template>
     <div class="user-progress">
         <div class="progress-info">
-            <span class="progress-page-info">
-                page {{ updatedProgress }} / {{ props.totalPages }}
-            </span>
-            <span class="progress-percentage">
-                ({{ userPercentage }}% complete)
-            </span>
+            <ElementSwap>
+                <span
+                    v-if="!updateModeEnabled"
+                    key="display"
+                    class="progress-page-info"
+                >
+                    page {{ updatedProgress }}
+                </span>
+                <BaseInput
+                    v-else
+                    key="input"
+                    v-model="updatedProgress"
+                    id="manual-progress-input"
+                    @update:modelValue="handleProgressChange"
+                    :size="isMobile ? 'small' : 'medium'"
+                    label="current page'"
+                    :placeholder="updatedProgress"
+                    type="number"
+                    style="text-align: right; min-width: 80px; max-width: 120px"
+                />
+            </ElementSwap>
+            <span class="progress-page-info"> / {{ props.totalPages }} </span>
         </div>
         <ProgressSliderInput
             :progress="updatedProgress"
@@ -14,6 +30,9 @@
             @progressChange="handleProgressChange"
             :disabled="!updateModeEnabled"
         />
+        <span class="progress-percentage">
+            {{ userPercentage }}% complete
+        </span>
     </div>
     <div class="progress-actions">
         <BaseButton
@@ -57,6 +76,7 @@ import { useBooksStore } from "@/stores/books";
 import { useUIStore } from "@/stores/ui";
 import { FINISHED_BOOK_PROGRESS } from "@/constants";
 import { convertToPercentage } from "@/utils";
+import ElementSwap from "@/components/transitions/ElementSwap.vue";
 
 const { loggedInUser } = useUserStore();
 const { currentBook } = useBooksStore();
@@ -142,20 +162,36 @@ const userPercentage = computed(() => {
     gap: 1rem;
     font-size: 1.25rem;
     width: 100%;
+    min-height: 40px;
 }
+
 .progress-percentage {
+    font-size: 1.25rem;
     font-weight: 600;
-    color: var(--accent-lavender);
-}
-.progress-page-info {
     color: var(--accent-fuschia);
 }
+
+.progress-page-info {
+    color: var(--accent-blue);
+}
+
 .progress-actions {
     display: flex;
     align-items: center;
     width: 100%;
     justify-content: space-evenly;
     gap: 1rem;
+}
+
+.progress-manual-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.progress-manual-input-info {
+    font-size: 1.25rem;
+    color: var(--accent-lavender);
 }
 
 @media (min-width: 768px) {

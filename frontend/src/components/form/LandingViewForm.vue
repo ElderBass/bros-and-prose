@@ -11,7 +11,7 @@
                     <div class="inputField">
                         <h4 class="inputFieldLabel">yada yada etc. so forth</h4>
                         <BaseInput
-                            id="email"
+                            id="bro-email"
                             v-model="email"
                             label="sexxxy email"
                             placeholder="sexxxy email"
@@ -19,7 +19,7 @@
                             :disabled="false"
                         />
                         <BaseInput
-                            id="username"
+                            id="bro-username"
                             v-model="username"
                             label="sick username"
                             placeholder="sick username"
@@ -28,6 +28,7 @@
                         />
                         <div class="spacer" />
                         <BaseInput
+                            id="bro-password"
                             v-model="password"
                             label="studly password"
                             placeholder="studly password"
@@ -35,6 +36,7 @@
                             :disabled="false"
                         />
                         <BaseInput
+                            id="bro-confirm-password"
                             v-model="confirmPassword"
                             label="this better match"
                             placeholder="this better match..."
@@ -77,6 +79,7 @@
                     <div class="inputField">
                         <h4 class="inputFieldLabel">his broness returns...</h4>
                         <BaseInput
+                            id="bro-password"
                             v-model="password"
                             label="studly password"
                             placeholder="studly password"
