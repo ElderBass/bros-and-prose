@@ -9,6 +9,7 @@
             <div class="search-row">
                 <BaseInput
                     v-model="query"
+                    id="book-search-input"
                     label="search by title"
                     placeholder="type a title..."
                     type="text"

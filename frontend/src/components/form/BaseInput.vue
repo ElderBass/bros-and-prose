@@ -1,6 +1,7 @@
 <template>
     <div class="base-input-container">
         <input
+            :id="id"
             class="base-input"
             :class="`size-${size}`"
             :value="modelValue"
@@ -15,6 +16,7 @@
             :type="inputType"
             :disabled="disabled"
             :prepend-inner-icon="prependInnerIcon"
+            :style="style"
         />
         <button
             type="button"
@@ -40,14 +42,17 @@ const props = withDefaults(
         label: string;
         placeholder: string;
         type: string;
+        id: string;
         disabled?: boolean;
         prependInnerIcon?: string;
         size?: "small" | "medium" | "large";
+        style?: string;
     }>(),
     {
         disabled: false,
         prependInnerIcon: "",
         size: "large",
+        style: "",
     }
 );
 

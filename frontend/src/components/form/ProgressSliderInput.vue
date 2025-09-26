@@ -12,6 +12,7 @@
             height="24"
             track-size="12"
             :class="{ 'slider-disabled': props.disabled }"
+            :hide-details="true"
         />
         <FontAwesomeIcon :icon="faBookBookmark" class="progress-slider-icon" />
     </div>
@@ -35,9 +36,16 @@ const emit = defineEmits<{
 .progress-slider-input {
     width: 100%;
     display: flex;
-    padding: 1rem 0;
-    padding-bottom: 0.25rem;
+    padding: 0;
     gap: 0.5rem;
+    #input-v-1-messages {
+        display: none !important;
+        height: 0 !important;
+    }
+    .v-input__details {
+        display: none !important;
+        height: 0 !important;
+    }
 }
 .progress-slider-icon {
     padding-top: 0.35rem;
