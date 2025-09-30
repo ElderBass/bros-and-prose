@@ -9,7 +9,11 @@
                 <Bookshelf :bookshelf="wantToRead" /> -->
             </div>
         </div>
-        <AddBookFab @click="openAddBookModal" />
+        <FloatingActionButton
+            :icon="faBookMedical"
+            title="add a book"
+            @click="openAddBookModal"
+        />
 
         <AddBookModal
             v-if="addBookModalOpen"
@@ -24,8 +28,9 @@ import { ref } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
 import UserInfoCard from "../features/UserProfile/UserInfoCard.vue";
-import AddBookFab from "../features/UserProfile/AddBookFab.vue";
+import FloatingActionButton from "../ui/FloatingActionButton.vue";
 import AddBookModal from "../modal/AddBookModal.vue";
+import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
 
 const addBookModalOpen = ref(false);
 

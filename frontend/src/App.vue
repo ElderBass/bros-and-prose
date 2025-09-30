@@ -108,6 +108,11 @@ nav a:first-of-type {
     border: 0;
 }
 
+.router-link-wrapper {
+    text-decoration: none;
+    color: inherit;
+}
+
 @media (min-width: 1024px) {
     header {
         display: flex;

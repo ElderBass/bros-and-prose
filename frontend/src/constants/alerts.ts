@@ -53,6 +53,17 @@ export const USERNAME_UPDATED_SUCCESS_ALERT: Alert = {
     dismissable: false,
 };
 
+export const DISCUSSION_COMMENT_ADDED_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "discussion comment added successfully.",
+        "if you thought this insightful, you're delusional.",
+    ],
+    type: "success",
+    duration: 3000,
+    dismissable: false,
+};
+
 // Error Alerts
 export const VALIDATION_ERROR_ALERT: Alert = {
     show: true,

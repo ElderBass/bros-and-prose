@@ -44,6 +44,14 @@ export const booksService = {
         );
         return pastBooks;
     },
+    updateBook: async (bookId: string, book: Book) => {
+        const response = await apiRequest<BookResponse>(
+            "PUT",
+            `/api/books/${bookId}`,
+            book
+        );
+        return response.data;
+    },
     getFutureBooks: async () => {
         const response = await apiRequest<BooksResponse>("GET", "/api/books");
         const futureBooks = response.data.filter((book) =>

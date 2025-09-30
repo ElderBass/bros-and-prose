@@ -38,3 +38,23 @@ export const getBooks = async (_: express.Request, res: express.Response) => {
         });
     }
 };
+
+export const updateBook = async (req: express.Request, res: express.Response) => {
+    const { bookId } = req.params;
+    try {
+        const bookRef = db.ref(`books/${bookId}`);
+        await bookRef.set(req.body);
+        const updatedBook = await bookRef.once("value");
+        res.json({
+            success: true,
+            message: "Book updated successfully",
+            data: updatedBook.val(),
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to update book",
+            error: error,
+        });
+    }
+};

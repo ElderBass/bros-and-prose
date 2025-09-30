@@ -11,6 +11,7 @@
                 class="icon-button"
                 :class="[`size-${size}`, `color-${color}`]"
                 :title="title"
+                :style="style"
                 @click="handleClick"
             >
                 <FontAwesomeIcon :icon="icon" />
@@ -22,6 +23,7 @@
 <script setup lang="ts">
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import type { CSSProperties } from "vue";
 
 withDefaults(
     defineProps<{
@@ -31,12 +33,14 @@ withDefaults(
         color?: "blue" | "fuschia" | "green" | "lavender";
         shadowColor?: "lavender" | "fuschia" | "green" | "blue";
         disabled?: boolean;
+        style?: CSSProperties;
         handleClick: () => void;
     }>(),
     {
         color: "blue",
         shadowColor: "fuschia",
         disabled: false,
+        style: () => ({}),
     }
 );
 defineOptions({ inheritAttrs: false });

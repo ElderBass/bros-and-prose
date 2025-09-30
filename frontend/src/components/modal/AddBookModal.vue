@@ -127,7 +127,6 @@ const mappedResults = computed(
 );
 
 const selectBook = (book: IBookSearchResult) => {
-    console.log("selectBook", book);
     if (isSelected(book)) {
         selectedBooks.value = selectedBooks.value.filter(
             (b) => b.key !== book.key
