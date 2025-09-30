@@ -1,12 +1,20 @@
 <template>
-    <div class="group-consensus">
-        <PageTitle title="broverall consensus..." />
-        <div class="average-rating-container">
-            <p class="average-rating">average score:</p>
-            <span class="average-rating-value">{{ averageRating }}</span>
+    <div class="group-consensus-container">
+        <div v-if="groupConsensus" class="group-consensus">
+            <PageTitle title="broverall consensus..." />
+            <div class="average-rating-container">
+                <p class="average-rating">average score:</p>
+                <span v-if="averageRating" class="average-rating-value">{{
+                    averageRating
+                }}</span>
+                <span v-else class="average-rating-value">nunya</span>
+            </div>
+            <div class="group-consensus-container">
+                <p class="consensus-text">{{ groupConsensus }}</p>
+            </div>
         </div>
-        <div class="group-consensus-container">
-            <p class="consensus-text">{{ groupConsensus }}</p>
+        <div v-else class="no-group-consensus">
+            <p>the bros have not yet reached a consensus</p>
         </div>
     </div>
 </template>
@@ -15,12 +23,16 @@
 import PageTitle from "@/components/ui/PageTitle.vue";
 
 defineProps<{
-    groupConsensus: string;
-    averageRating: string;
+    groupConsensus?: string;
+    averageRating?: string;
 }>();
 </script>
 
 <style scoped>
+.group-consensus-container {
+    margin-top: 2rem;
+}
+
 .group-consensus {
     display: flex;
     flex-direction: column;
@@ -29,6 +41,38 @@ defineProps<{
     border-radius: 1.5rem;
     padding: 1.5rem;
     margin: 0 auto;
+}
+
+.no-group-consensus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    padding: 2rem;
+    margin: 0 auto;
+
+    border: 2px dashed var(--accent-blue);
+    border-radius: 1rem;
+
+    background: linear-gradient(
+        180deg,
+        rgba(0, 191, 255, 0.06),
+        rgba(0, 191, 255, 0.03)
+    );
+
+    box-shadow:
+        0 4px 20px rgba(0, 191, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+    color: var(--main-text);
+}
+
+.no-group-consensus p {
+    margin: 0;
+    font-style: italic;
+    opacity: 0.85;
+    letter-spacing: 0.3px;
 }
 
 .average-rating-container {
@@ -79,6 +123,10 @@ defineProps<{
 @media (max-width: 768px) {
     .group-consensus {
         padding: 1rem;
+    }
+
+    .no-group-consensus {
+        padding: 1.25rem;
     }
 
     .average-rating-value {

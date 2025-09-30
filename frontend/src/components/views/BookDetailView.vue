@@ -1,99 +1,95 @@
 <template>
     <AppLayout>
         <PageTitle title="take a closer look" />
-        <div class="book-detail-container">
-            <BaseCard shadowColor="blue" size="medium">
-                <BookInfo :book="book" />
-            </BaseCard>
-            <BroReviewsCard :book="book" :broReviews="userReviews" />
-        </div>
-        <div class="group-consensus-container">
-            <GroupConsensus
-                v-if="book.groupConsensus"
-                :groupConsensus="book.groupConsensus"
-                :averageRating="aggregateRating"
+        <div v-if="isLoading" class="spinner-container">
+            <LoadingSpinner
+                v-if="isLoading"
+                size="large"
+                message="retrieving the book..."
             />
         </div>
+        <PastBookDetail
+            v-else
+            :book="book"
+            :userReviews="userReviews"
+            :aggregateRating="aggregateRating"
+        />
+        <AddCommentFab @click="openAddCommentModal" />
+        <AddCommentModal
+            v-if="showAddCommentModal"
+            :open="showAddCommentModal"
+            @submit="handleSubmitComment"
+            @close="showAddCommentModal = false"
+        />
     </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
 import AppLayout from "../layout/AppLayout.vue";
-import PageTitle from "@/components/ui/PageTitle.vue";
-import BaseCard from "@/components/ui/BaseCard.vue";
-import BookInfo from "@/components/features/common/BookInfo.vue";
-import BroReviewsCard from "@/components/features/PastBooks/BroReviewsCard.vue";
-import GroupConsensus from "@/components/features/PastBooks/GroupConsensus.vue";
-
-import type { Book, BroReview } from "@/types";
-import { useUserStore } from "@/stores/user";
+import type { Book, BroReview, Comment } from "@/types";
 import { useRoute } from "vue-router";
-import { useBooksStore } from "@/stores/books";
+import { useBooks } from "@/composables/useBooks";
+import { DISCUSSION_COMMENT_ADDED_SUCCESS_ALERT } from "@/constants";
+import { useUIStore } from "@/stores/ui";
+import PastBookDetail from "@/components/features/PastBooks/PastBookDetail.vue";
+import AddCommentFab from "@/components/features/PastBooks/AddCommentFab.vue";
+import AddCommentModal from "@/components/modal/AddCommentModal.vue";
+import { getReviewsAndAverageRating } from "@/utils";
 
-const book = ref<Book>({} as Book);
-const { allUsers } = useUserStore();
-const { pastBooks } = useBooksStore();
-
+const { addDiscussionComment, getPastBook } = useBooks();
+const { showAlert } = useUIStore();
 const route = useRoute();
 
+const book = ref<Book>({} as Book);
 const userReviews = ref<BroReview[]>([]);
 const aggregateRating = ref("");
+const isLoading = ref(true);
+const showAddCommentModal = ref(false);
 
-const emptyReview = {
-    rating: 0,
-    review: "this lazy fuck didn't say shit",
+const openAddCommentModal = () => {
+    showAddCommentModal.value = true;
 };
 
-const loadBookData = () => {
+const loadBookData = async () => {
+    isLoading.value = true;
     const bookId = route.params.bookId as string;
-    book.value = pastBooks.find((book) => book.id === bookId) as Book;
-    userReviews.value = allUsers.map((user) => ({
-        reviewer: user,
-        review: user.reviews[bookId] || emptyReview,
-    }));
-
-    const averageRating =
-        userReviews.value.reduce(
-            (acc, review) => acc + review.review.rating,
-            0
-        ) / userReviews.value.length;
-    aggregateRating.value = averageRating.toFixed(1);
+    book.value = await getPastBook(bookId);
+    const { reviews, averageRating } = getReviewsAndAverageRating(book.value);
+    userReviews.value = reviews;
+    aggregateRating.value = averageRating;
+    isLoading.value = false;
 };
 
-onMounted(() => {
-    loadBookData();
+const handleSubmitComment = async (comment: Comment) => {
+    isLoading.value = true;
+    await addDiscussionComment(book.value, comment);
+    showAddCommentModal.value = false;
+    showAlert(DISCUSSION_COMMENT_ADDED_SUCCESS_ALERT);
+    await loadBookData();
+};
+
+onMounted(async () => {
+    await loadBookData();
 });
 
 watch(
     () => route.params.bookId,
-    (newBookId, oldBookId) => {
+    async (newBookId, oldBookId) => {
         if (newBookId && newBookId !== oldBookId) {
-            loadBookData();
+            await loadBookData();
         }
     }
 );
 </script>
 
 <style scoped>
-.book-detail-container {
+.spinner-container {
     display: flex;
-    padding-top: 2rem;
-    width: 100%;
-    justify-content: space-between;
     align-items: center;
-    gap: 3rem;
-}
-hr {
-    border: 1px solid var(--accent-blue);
-}
-.review-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-.group-consensus-container {
-    margin-top: 2rem;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
 }
 
 @media (max-width: 768px) {

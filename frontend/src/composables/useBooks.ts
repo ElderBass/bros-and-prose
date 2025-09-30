@@ -1,5 +1,6 @@
 import { booksService } from "@/services";
 import { useBooksStore } from "@/stores/books";
+import type { Book, Comment } from "@/types";
 
 export const useBooks = () => {
     const booksStore = useBooksStore();
@@ -13,6 +14,11 @@ export const useBooks = () => {
     const getAllBooks = async () => {
         const books = await booksService.getBooks();
         return books;
+    };
+
+    const getPastBook = async (bookId: string) => {
+        const book = await booksService.getBook(bookId);
+        return book;
     };
 
     const getPastBooks = async () => {
@@ -35,12 +41,37 @@ export const useBooks = () => {
         return books;
     };
 
+    const updateBook = async (bookId: string, book: Book) => {
+        const updatedBook = await booksService.updateBook(bookId, book);
+        return updatedBook;
+    };
+
+    const addDiscussionComment = async (book: Book, comment: Comment) => {
+        let updatedBook = {
+            ...book,
+            discussionComments: {
+                ...book.discussionComments,
+                [comment.id]: comment,
+            },
+        };
+        updatedBook = await booksService.updateBook(book.id, updatedBook);
+        booksStore.setPastBooks(
+            booksStore.pastBooks.map((b) =>
+                b.id === book.id ? updatedBook : b
+            )
+        );
+        return updatedBook;
+    };
+
     return {
         getCurrentBook,
+        getPastBook,
         getPastBooks,
         getFutureBooks,
         getAllBooks,
         getBookByTitle,
         searchBooksByTitle,
+        updateBook,
+        addDiscussionComment,
     };
 };

@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { LoginCredentials, SignupCredentials } from "./auth";
-import type { Review, User } from "@/types";
+import type { Review, User, Book } from "@/types";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -26,9 +26,10 @@ export class ApiError extends Error {
 export const apiRequest = async <T>(
     method: "GET" | "POST" | "PUT" | "DELETE",
     url: string,
-    data?: SignupCredentials | LoginCredentials | User | Review
+    data?: SignupCredentials | LoginCredentials | User | Review | Book
 ): Promise<T> => {
     try {
+        console.log("KERTWANGING INCOMING data in apiRequest", data);
         const response = await apiClient({
             method,
             url,

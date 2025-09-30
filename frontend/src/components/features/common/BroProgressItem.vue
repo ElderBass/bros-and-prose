@@ -85,17 +85,18 @@ const buttonTitle = computed(() => {
 p {
     font-size: 1.25rem;
     font-weight: 500;
-    color: var(--main-text);
+    color: var(--accent-fuschia);
 }
 
 .progress-value {
     font-size: 1.125rem;
     font-weight: 600;
-    color: var(--accent-lavender);
+    color: var(--main-text);
+    text-align: right;
 }
 
 .finished {
-    color: var(--accent-fuschia);
+    color: var(--accent-blue);
 }
 
 .isLoggedInUser {

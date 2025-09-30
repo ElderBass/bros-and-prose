@@ -14,11 +14,13 @@
                 >{{ link.label }}</RouterLink
             >
         </div>
-        <ProfileButton
-            v-if="!isMobile && currentAvatar"
-            :handleClick="goToProfile"
-            :currentAvatar="currentAvatar"
-        />
+        <RouterLink class="router-link-wrapper" to="/profile">
+            <ProfileButton
+                v-if="!isMobile && currentAvatar"
+                :handleClick="goToProfile"
+                :currentAvatar="currentAvatar"
+            />
+        </RouterLink>
 
         <!-- Mobile Hamburger Button -->
         <button

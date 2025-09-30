@@ -1,3 +1,5 @@
+import type { Book, User } from "@/types";
+
 export const FINISHED_BOOK_PROGRESS = 69420;
 
 export const DEFAULT_RATING = 5;
@@ -24,3 +26,17 @@ export const FINISHED = "finished";
 export const FINISHED_MOBILE = "fin";
 export const BRO_NOT_STARTED = "lazy fuck hasn't started";
 export const BRO_NOT_STARTED_MOBILE = "fuckin zero";
+
+export const EMPTY_REVIEW = {
+    id: "",
+    rating: 0,
+    book: {} as Book,
+    reviewComment: "",
+};
+
+export const EMPTY_COMMENT = {
+    id: "",
+    user: {} as User,
+    comment: "",
+    createdAt: "",
+};
