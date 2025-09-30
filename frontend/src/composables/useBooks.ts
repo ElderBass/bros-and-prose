@@ -55,6 +55,11 @@ export const useBooks = () => {
             },
         };
         updatedBook = await booksService.updateBook(book.id, updatedBook);
+        booksStore.setPastBooks(
+            booksStore.pastBooks.map((b) =>
+                b.id === book.id ? updatedBook : b
+            )
+        );
         return updatedBook;
     };
 
