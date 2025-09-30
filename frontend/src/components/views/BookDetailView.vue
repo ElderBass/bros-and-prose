@@ -54,8 +54,9 @@ const openAddCommentModal = () => {
 const loadBookData = async () => {
     isLoading.value = true;
     const bookId = route.params.bookId as string;
-    book.value = await getPastBook(bookId);
-    const { reviews, averageRating } = getReviewsAndAverageRating(book.value);
+    const fetchedBook = await getPastBook(bookId);
+    book.value = fetchedBook;
+    const { reviews, averageRating } = getReviewsAndAverageRating(fetchedBook);
     userReviews.value = reviews;
     aggregateRating.value = averageRating;
     isLoading.value = false;

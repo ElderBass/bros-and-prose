@@ -1,11 +1,17 @@
 <template>
-    <h1>{{ title }}</h1>
+    <h1 :style="style">{{ title }}</h1>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-    title: string;
-}>();
+withDefaults(
+    defineProps<{
+        title: string;
+        style?: string;
+    }>(),
+    {
+        style: "",
+    }
+);
 </script>
 
 <style scoped>

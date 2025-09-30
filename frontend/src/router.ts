@@ -13,7 +13,6 @@ const router = createRouter({
         },
         {
             path: "/past",
-            strict: true,
             component: () => import("@/components/views/PastView.vue"),
         },
         {
@@ -27,6 +26,10 @@ const router = createRouter({
         {
             path: "/profile",
             component: () => import("@/components/views/ProfileView.vue"),
+        },
+        {
+            path: "/:pathMatch(.*)*",
+            component: () => import("@/components/views/FourOhFourView.vue"),
         },
     ],
 });
