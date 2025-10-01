@@ -1,24 +1,24 @@
 import admin from "firebase-admin";
 import dotenv from "dotenv";
-import serviceAccountKey from "../serviceAccountKey.json" with { type: "json" };
 
 dotenv.config();
 
 // Prefer env-provided JSON for deployment; fall back to local file in dev
-let credential: admin.ServiceAccount | undefined;
+let credential: admin.ServiceAccount = {} as admin.ServiceAccount;
 try {
     const fromEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
     if (fromEnv) {
         credential = JSON.parse(fromEnv);
+    } else {
+        console.log("Falling back to local file");
+        credential = require("../serviceAccountKey.json");
     }
 } catch (e) {
     console.warn("Invalid FIREBASE_SERVICE_ACCOUNT env JSON; falling back to file");
 }
 
-const ACCOUNT_KEY = (credential || (serviceAccountKey as admin.ServiceAccount)) as admin.ServiceAccount;
-
 admin.initializeApp({
-    credential: admin.credential.cert(ACCOUNT_KEY),
+    credential: admin.credential.cert(credential),
     databaseURL: "https://bros-and-prose-default-rtdb.firebaseio.com/",
 });
 
