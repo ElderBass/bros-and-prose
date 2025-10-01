@@ -23,6 +23,7 @@ import SignupSuccessCard from "@/components/form/SignupSuccessCard.vue";
 import { useAuth } from "@/composables/useAuth";
 import { useUserStore } from "@/stores/user";
 import FadeIn from "@/components/transitions/FadeIn.vue";
+import { getUserFromStorage } from "@/utils";
 
 const { isLoading } = useAuth();
 
@@ -35,7 +36,7 @@ const showSuccessModal = computed(() => {
 const onSuccessModalClick = () => router.push("/present");
 
 onMounted(() => {
-    if (userStore.loggedInUser.id) {
+    if (userStore.loggedInUser.id || getUserFromStorage().id) {
         router.push("/present");
     }
 });

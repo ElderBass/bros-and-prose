@@ -115,6 +115,7 @@ import { useUser } from "@/composables/useUser";
 import FadeIn from "../transitions/FadeIn.vue";
 import { getIdFromBroName } from "@/utils";
 import BaseInput from "./BaseInput.vue";
+import { useLog } from "@/composables/useLog";
 
 const { signup, login } = useAuth();
 const { getUser } = useUser();
@@ -129,19 +130,26 @@ const activeForm = ref("");
 watch(broName, async (newVal) => {
     if (newVal) {
         activeForm.value = "";
-        const broId = getIdFromBroName(newVal);
-        console.log("broId", broId);
-        const bro = await getUser(broId);
-        console.log("bro in landing view form", bro);
-        if (bro) {
-            email.value = bro.email;
-            activeForm.value = "login";
-        } else {
-            email.value = "";
-            username.value = "";
-            password.value = "";
-            confirmPassword.value = "";
-            activeForm.value = "signup";
+
+        try {
+            const broId = getIdFromBroName(newVal);
+            await useLog().info(`broId in landing view form: ${broId}`);
+            const bro = await getUser(broId);
+            await useLog().info(`bro in landing view form: ${bro}`);
+            if (bro) {
+                email.value = bro.email;
+                activeForm.value = "login";
+            } else {
+                email.value = "";
+                username.value = "";
+                password.value = "";
+                confirmPassword.value = "";
+                activeForm.value = "signup";
+            }
+        } catch (err) {
+            console.error(err);
+            const errorMessage = `Error getting user from bro name: ${err}`;
+            void useLog().error(errorMessage);
         }
     }
 });
