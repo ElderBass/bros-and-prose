@@ -8,12 +8,7 @@
                 :value="modelValue"
                 class="broSelect"
                 id="broNameSelect"
-                @change="
-                    $emit(
-                        'update:modelValue',
-                        ($event.target as HTMLSelectElement).value
-                    )
-                "
+                @change="onChange"
             >
                 <option value="" class="nullOption">select a bro</option>
                 <option value="Joel Braxton">Joel Braxton</option>
@@ -39,13 +34,26 @@
 </template>
 
 <script setup lang="ts">
+import { useLog } from "@/composables/useLog";
+
 defineProps<{
     modelValue: string;
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
     (e: "update:modelValue", value: string): void;
 }>();
+
+const onChange = async (event: Event) => {
+    try {
+        console.log("onChange", event.target);
+        await useLog().info(`onChange in bro select: ${event.target}`);
+        emit("update:modelValue", (event.target as HTMLSelectElement)?.value);
+    } catch (err) {
+        console.error(err);
+        await useLog().error(`Error in onChange in bro select: ${err}`);
+    }
+};
 </script>
 
 <style scoped>
