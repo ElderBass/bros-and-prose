@@ -2,7 +2,10 @@ import axios from "axios";
 import type { LoginCredentials, SignupCredentials } from "./auth";
 import type { Review, User, Book } from "@/types";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:3000";
 
 // Create axios instance
 export const apiClient = axios.create({

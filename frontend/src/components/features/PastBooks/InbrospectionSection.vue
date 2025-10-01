@@ -15,7 +15,7 @@
                         <span class="username">@{{ c.user.username }}</span>
                         <span class="dot">•</span>
                         <span class="timestamp">{{
-                            formatDate(c.createdAt)
+                            formatDateForDevice(c.createdAt)
                         }}</span>
                     </div>
                     <p class="text">{{ c.comment }}</p>
@@ -62,20 +62,30 @@ const iconFor = (iconName: string) => {
     );
 };
 
-const formatDate = (iso: string) => {
-    try {
-        const d = new Date(iso);
-        return d.toLocaleString(undefined, {
-            year: "numeric",
-            month: "short",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    } catch {
-        return iso;
-    }
-};
+// Mobile-aware date formatter: shorter on mobile, fuller on desktop
+const formatDateForDevice = computed(() => {
+    return (iso: string) => {
+        try {
+            const d = new Date(iso);
+            return isMobile.value
+                ? d.toLocaleString(undefined, {
+                      month: "short",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                  })
+                : d.toLocaleString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                  });
+        } catch {
+            return iso;
+        }
+    };
+});
 </script>
 
 <style scoped>

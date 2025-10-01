@@ -21,7 +21,7 @@ onMounted(async () => {
     try {
         initializeScreenSize();
         await getPastBooks();
-        await getUsers(true);
+        await getUsers();
 
         const userFromStorage = getUserFromStorage();
         if (!userFromStorage) {
