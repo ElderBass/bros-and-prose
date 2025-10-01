@@ -28,6 +28,7 @@
 </template>
 
 <script setup lang="ts">
+import { useLog } from "@/composables/useLog";
 import { onMounted, onBeforeUnmount, onErrorCaptured, ref } from "vue";
 import { RouterView, useRouter } from "vue-router";
 
@@ -56,15 +57,27 @@ onErrorCaptured((err) => {
     return false;
 });
 
-const onGlobalError = (event: ErrorEvent) => {
-    hasError.value = true;
-    errorMessage.value = event.message;
+const onGlobalError = async (event: ErrorEvent) => {
+    const log = {
+        message: event.message,
+        level: "error",
+        timestamp: new Date().toISOString(),
+        isError: true,
+    };
+    await useLog().postLog(log);
 };
 
-const onUnhandledRejection = (event: PromiseRejectionEvent) => {
-    hasError.value = true;
-    errorMessage.value =
+const onUnhandledRejection = async (event: PromiseRejectionEvent) => {
+    const message =
         (event.reason && event.reason.message) || "unhandled rejection";
+
+    const log = {
+        message,
+        level: "error",
+        timestamp: new Date().toISOString(),
+        isError: true,
+    };
+    await useLog().postLog(log);
 };
 
 onMounted(() => {

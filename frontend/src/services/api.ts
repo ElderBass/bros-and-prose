@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { LoginCredentials, SignupCredentials } from "./auth";
-import type { Review, User, Book } from "@/types";
+import type { Review, User, Book, Log } from "@/types";
 
 const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL ||
@@ -29,7 +29,13 @@ export class ApiError extends Error {
 export const apiRequest = async <T>(
     method: "GET" | "POST" | "PUT" | "DELETE",
     url: string,
-    data?: SignupCredentials | LoginCredentials | User | Review | Book
+    data?:
+        | SignupCredentials
+        | LoginCredentials
+        | User
+        | Review
+        | Book
+        | { log: Log }
 ): Promise<T> => {
     try {
         const response = await apiClient({
