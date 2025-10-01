@@ -36,7 +36,7 @@ const showSuccessModal = computed(() => {
 const onSuccessModalClick = () => router.push("/present");
 
 onMounted(() => {
-    if (userStore.loggedInUser.id || getUserFromStorage().id) {
+    if (userStore.loggedInUser.id || getUserFromStorage()?.id) {
         router.push("/present");
     }
 });

@@ -35,6 +35,7 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import { useUserStore } from "@/stores/user";
 import { getUserFromStorage } from "@/utils";
 import { useUser } from "@/composables/useUser";
+import { useLog } from "@/composables/useLog";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
@@ -55,12 +56,13 @@ onMounted(async () => {
             const currentBook = await getCurrentBook();
             book.value = currentBook;
         }
-        if (getUserFromStorage().id && !loggedInUser.id) {
+        if (getUserFromStorage()?.id && !loggedInUser.id) {
             const user = await getUser(getUserFromStorage().id);
             setLoggedInUser(user);
         }
     } catch (error) {
         console.error("Error fetching current book", error);
+        await useLog().error(`Error fetching current book: ${error}`);
     } finally {
         isLoading.value = false;
     }
