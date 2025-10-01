@@ -52,7 +52,7 @@ import CurrentBookUserReview from "./UserReview.vue";
 import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useUserStore } from "@/stores/user";
-import { watch, ref, computed } from "vue";
+import { watch, ref, computed, onMounted } from "vue";
 import {
     DEFAULT_REVIEW,
     DEFAULT_RATING,
@@ -102,6 +102,10 @@ watch(
     },
     { deep: true, immediate: true }
 );
+
+onMounted(() => {
+    bookReview.value = loggedInUser?.reviews[props.book?.id] || DEFAULT_REVIEW;
+});
 
 const setShowReviewModal = (show: boolean) => {
     showRateAndReviewModal.value = show;
