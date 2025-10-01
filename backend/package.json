@@ -6,7 +6,7 @@
   "scripts": {
     "login": "firebase login",
     "init": "firebase init",
-    "build": "tsc",
+    "build": "tsc && npm install && dotenv -e .env.production -- node dist/index.js",
     "deploy": "firebase deploy",
     "start:dev": "concurrently \"nodemon --exec 'node --loader ts-node/esm' --ignore 'frontend/*' index.ts\" \"cd ../frontend && npm run dev\"",
     "start": "node dist/index.js",
