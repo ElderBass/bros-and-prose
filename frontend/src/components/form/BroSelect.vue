@@ -8,10 +8,10 @@
                 :value="modelValue"
                 class="broSelect"
                 id="broNameSelect"
-                @input="
+                @change="
                     $emit(
                         'update:modelValue',
-                        ($event.target as HTMLInputElement).value
+                        ($event.target as HTMLSelectElement).value
                     )
                 "
             >

@@ -28,8 +28,8 @@ export const useUser = () => {
         return users;
     };
 
-    const getOtherBros = async (shouldMock: boolean = false) => {
-        const users = await usersService.getUsers(shouldMock);
+    const getOtherBros = async () => {
+        const users = await usersService.getUsers();
         return users.filter((user) => user.id !== loggedInUser.id);
     };
 
