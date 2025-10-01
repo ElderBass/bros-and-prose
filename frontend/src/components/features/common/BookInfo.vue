@@ -1,8 +1,8 @@
 <template>
     <div v-if="book" class="book-info-content">
-        <img :src="book.imageSrc" :alt="book.title" class="cover-image" />
+        <img :src="book?.imageSrc" :alt="book?.title" class="cover-image" />
         <div class="book-info-container" :class="{ 'link-layout': isLink }">
-            <h3 class="book-title">{{ book.title }}</h3>
+            <h3 class="book-title">{{ book?.title }}</h3>
             <div class="book-info-items">
                 <div
                     class="info-item"
@@ -36,20 +36,20 @@ const bookInfoItems = computed(() => {
     const fullList = [
         {
             label: "author",
-            value: props.book?.author,
+            value: props.book?.author || "unknown",
         },
         {
             label: "published",
-            value: props.book?.yearPublished,
+            value: props.book?.yearPublished || "unknown",
         },
         {
             label: "pages",
-            value: props.book?.totalPages,
+            value: props.book?.totalPages || "unknown",
         },
 
         {
             label: "goodreads score",
-            value: props.book?.goodreadsRating,
+            value: props.book?.goodreadsRating || "unknown",
         },
     ];
     return props.isLink ? fullList.slice(0, 1) : fullList;

@@ -10,16 +10,22 @@
             size="medium"
             message="loading bros progress..."
         />
-        <div v-else class="other-bros-progress-container">
+        <div
+            v-else-if="!loading && bros.length"
+            class="other-bros-progress-container"
+        >
             <BroProgressItem
                 v-for="bro in bros"
                 :key="bro.id"
                 :bro-name="bro.username"
                 :bro-avatar="getAvatar(bro.avatar)"
-                :has-finished="hasFinishedBook(bro, book.totalPages)"
-                :progress-string="getProgressString(bro, book.totalPages)"
+                :has-finished="hasFinishedBook(bro, book?.totalPages)"
+                :progress-string="getProgressString(bro, book?.totalPages)"
                 :on-peep-review-click="() => onPeepReviewClick(bro)"
             />
+        </div>
+        <div v-else class="no-bros-container">
+            <p>all your friends are dead</p>
         </div>
     </BaseCard>
     <OtherBroReviewModal
@@ -79,6 +85,31 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+.no-bros-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    border: 2px dashed var(--accent-blue);
+    border-radius: 1rem;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 191, 255, 0.06),
+        rgba(0, 191, 255, 0.03)
+    );
+    box-shadow:
+        0 4px 20px rgba(0, 191, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.no-bros-container p {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--accent-fuschia);
+    font-style: italic;
 }
 
 h3 {

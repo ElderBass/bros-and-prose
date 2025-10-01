@@ -23,14 +23,14 @@
                 />
                 <CurrentUserProgress
                     v-if="!hasFinishedBook && !loadingMessage.length"
-                    :totalPages="book.totalPages"
+                    :totalPages="book?.totalPages"
                     :setShowReviewModal="setShowReviewModal"
                     :handleUpdate="onUpdateProgress"
                 />
                 <CurrentBookUserReview
                     v-if="hasFinishedBook && !loadingMessage.length"
-                    :rating="bookReview.rating"
-                    :comment="bookReview.reviewComment"
+                    :rating="bookReview?.rating"
+                    :comment="bookReview?.reviewComment"
                     :showReviewModal="() => setShowReviewModal(true)"
                 />
             </BaseCard>
