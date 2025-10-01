@@ -51,8 +51,15 @@ const goHome = () => {
 };
 
 onErrorCaptured((err) => {
-    hasError.value = true;
-    errorMessage.value = (err as Error)?.message ?? String(err);
+    const message = (err as Error)?.message ?? String(err);
+
+    const log = {
+        message,
+        level: "error",
+        timestamp: new Date().toISOString(),
+        isError: true,
+    };
+    void useLog().postLog(log);
     // prevent further propagation
     return false;
 });
