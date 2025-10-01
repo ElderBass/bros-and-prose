@@ -12,11 +12,10 @@
     "types": ["node"],
 
     "moduleResolution": "nodenext",
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "noEmit": true,
+    "noEmit": false,
     "noEmitOnError": true,
     // For nodejs:
     "lib": ["esnext"],

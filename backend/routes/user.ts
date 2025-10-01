@@ -1,5 +1,5 @@
 import express from "express";
-import { db } from "../db/index.ts";
+import { db } from "../db/index.js";
 
 export const getUser = async (req: express.Request, res: express.Response) => {
     const { userId } = req.params;

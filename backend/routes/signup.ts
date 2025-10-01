@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import { db } from "../db/index.ts";
-import { login } from "./login.ts";
+import { db } from "../db/index.js";
+import { login } from "./login.js";
 
 export const signup = async (req: express.Request, res: express.Response) => {
     try {

@@ -1,6 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
-import { db } from "../db/index.ts";
+import { db } from "../db/index.js";
 
 export const login = async (req: express.Request, res: express.Response) => {
     try {

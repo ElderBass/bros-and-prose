@@ -1,5 +1,5 @@
 import express from "express";
-import { db } from "../db/index.ts";
+import { db } from "../db/index.js";
 
 export const getBook = async (req: express.Request, res: express.Response) => {
     const { bookId } = req.params;

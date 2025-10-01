@@ -1,8 +1,8 @@
 import express from "express";
-import { signup } from "./signup.ts";
-import { login } from "./login.ts";
-import { getBook, getBooks, updateBook } from "./books.ts";
-import { getUser, getUsers, updateUser } from "./user.ts";
+import { signup } from "./signup.js";
+import { login } from "./login.js";
+import { getBook, getBooks, updateBook } from "./books.js";
+import { getUser, getUsers, updateUser } from "./user.js";
 
 const router = express.Router();
 
