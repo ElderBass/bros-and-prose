@@ -5,7 +5,7 @@ import { db } from "../db/index.js";
 export const login = async (req: express.Request, res: express.Response) => {
     try {
         const { email, password } = req.body;
-
+        console.log("KERTWANGING INCOMING email in login", email);
         if (!email || !password) {
             return res.status(400).json({
                 error: "Email and password are required",
@@ -15,7 +15,7 @@ export const login = async (req: express.Request, res: express.Response) => {
         // Find user by email
         const usersRef = db.ref("users");
         const snapshot = await usersRef.once("value");
-
+        console.log("KERTWANGING OUTGOING snapshot in login", snapshot.val());
         if (!snapshot.exists()) {
             return res.status(401).json({
                 error: "Invalid email or password",
@@ -23,6 +23,7 @@ export const login = async (req: express.Request, res: express.Response) => {
         }
 
         const users = snapshot.val();
+        console.log("KERTWANGING OUTGOING users in login", users);
         const user = Object.values(users).find(
             (u: any) => u.email === email.toLowerCase().trim()
         ) as any;

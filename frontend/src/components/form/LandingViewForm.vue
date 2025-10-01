@@ -130,7 +130,9 @@ watch(broName, async (newVal) => {
     if (newVal) {
         activeForm.value = "";
         const broId = getIdFromBroName(newVal);
+        console.log("broId", broId);
         const bro = await getUser(broId);
+        console.log("bro in landing view form", bro);
         if (bro) {
             email.value = bro.email;
             activeForm.value = "login";

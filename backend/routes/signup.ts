@@ -6,7 +6,7 @@ import { login } from "./login.js";
 export const signup = async (req: express.Request, res: express.Response) => {
     try {
         const { firstName, lastName, email, password } = req.body;
-
+        console.log("KERTWANGING INCOMING firstName, lastName, email in signup", firstName, lastName, email);
         if (!firstName || !lastName || !email || !password) {
             return res.status(400).json({
                 error: "First name, last name, email, and password are required",
@@ -22,7 +22,7 @@ export const signup = async (req: express.Request, res: express.Response) => {
         // Login user if they already exist
         const usersRef = db.ref("users");
         const snapshot = await usersRef.once("value");
-
+        console.log("KERTWANGING OUTGOING snapshot in signup", snapshot.val());
         if (snapshot.exists()) {
             const users = snapshot.val();
             const existingUser = Object.values(users).find((user: any) => user.email === email);
