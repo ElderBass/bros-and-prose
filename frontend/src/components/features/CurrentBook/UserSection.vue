@@ -77,14 +77,8 @@ const hasFinishedBook = ref(
     loggedInUser.currentBookProgress === FINISHED_BOOK_PROGRESS
 );
 const bookReview = ref({
-    rating:
-        (loggedInUser.reviews[props.book?.id] &&
-            loggedInUser.reviews[props.book?.id].rating) ||
-        DEFAULT_RATING,
-    reviewComment:
-        (loggedInUser.reviews[props.book?.id] &&
-            loggedInUser.reviews[props.book?.id].reviewComment) ||
-        "",
+    rating: DEFAULT_RATING,
+    reviewComment: "",
 });
 
 watch(
