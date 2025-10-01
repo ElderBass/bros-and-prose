@@ -7,7 +7,7 @@
                     <p class="subtitle">
                         we faceplanted into an unexpected error.
                     </p>
-                    <p v-if="showDetails && errorMessage" class="details">
+                    <p v-if="errorMessage" class="details">
                         {{ errorMessage }}
                     </p>
                     <div class="actions">
@@ -37,7 +37,6 @@ const router = useRouter();
 const hasError = ref(false);
 const errorMessage = ref("");
 const viewKey = ref(0);
-const showDetails = import.meta.env.DEV;
 
 const reset = () => {
     hasError.value = false;
@@ -52,7 +51,8 @@ const goHome = () => {
 
 onErrorCaptured((err) => {
     const message = (err as Error)?.message ?? String(err);
-
+    hasError.value = true;
+    errorMessage.value = message;
     const log = {
         message,
         level: "error",
