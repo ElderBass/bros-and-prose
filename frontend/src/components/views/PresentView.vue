@@ -12,7 +12,7 @@
                 <CurrentBookInfo :book="book" />
             </template>
             <template v-slot:user-progress>
-                <UserSection :book="book" />
+                <UserSection v-if="loggedInUser.id" :book="book" />
             </template>
             <template v-slot:other-bros-progress>
                 <OtherBrosProgress :book="book" />
@@ -33,12 +33,13 @@ import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import { useUserStore } from "@/stores/user";
-import { useRouter } from "vue-router";
+import { getUserFromStorage } from "@/utils";
+import { useUser } from "@/composables/useUser";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
-const { loggedInUser } = useUserStore();
-const router = useRouter();
+const { loggedInUser, setLoggedInUser } = useUserStore();
+const { getUser } = useUser();
 
 const isLoading = ref(true);
 const book = ref<Book>(storedCurrentBook);
@@ -54,8 +55,9 @@ onMounted(async () => {
             const currentBook = await getCurrentBook();
             book.value = currentBook;
         }
-        if (!loggedInUser.id) {
-            router.push("/");
+        if (getUserFromStorage().id && !loggedInUser.id) {
+            const user = await getUser(getUserFromStorage().id);
+            setLoggedInUser(user);
         }
     } catch (error) {
         console.error("Error fetching current book", error);

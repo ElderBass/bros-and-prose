@@ -1,6 +1,6 @@
 <template>
     <div class="success-card-container">
-        <h1>registration successful</h1>
+        <h1>welcome to the club</h1>
         <BaseCard size="large" shadowColor="blue">
             <h2>real bros read prose</h2>
             <div class="prose-container">

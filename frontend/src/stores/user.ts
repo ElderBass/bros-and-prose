@@ -1,10 +1,14 @@
 import { defineStore } from "pinia";
 import type { User } from "@/types";
-import { setUserInStorage, removeUserFromStorage } from "@/utils";
+import {
+    setUserInStorage,
+    removeUserFromStorage,
+    getUserFromStorage,
+} from "@/utils";
 
 export const useUserStore = defineStore("user", {
     state: () => ({
-        loggedInUser: {} as User,
+        loggedInUser: (getUserFromStorage() || ({} as User)) as User,
         allUsers: [] as User[],
     }),
 
