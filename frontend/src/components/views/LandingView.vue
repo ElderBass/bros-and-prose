@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import router from "@/router";
 import LandingViewForm from "@/components/form/LandingViewForm.vue";
 import SignupSuccessCard from "@/components/form/SignupSuccessCard.vue";
@@ -33,6 +33,12 @@ const showSuccessModal = computed(() => {
 });
 
 const onSuccessModalClick = () => router.push("/present");
+
+onMounted(() => {
+    if (userStore.loggedInUser.id) {
+        router.push("/present");
+    }
+});
 </script>
 
 <style scoped>

@@ -18,7 +18,7 @@
                     @click="onProceedClick"
                 >
                     <div class="button-content">
-                        <span>Proceed With God's Plan</span>
+                        <span>proceed with God's plan</span>
                         <FontAwesomeIcon icon="fa-solid fa-book-bible" />
                     </div>
                 </BaseButton>
