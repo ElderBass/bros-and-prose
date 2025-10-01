@@ -11,6 +11,7 @@ import { useUser } from "./composables/useUser";
 import { useUserStore } from "./stores/user";
 import { useBooks } from "./composables/useBooks";
 import ErrorBoundaryView from "./components/views/ErrorBoundaryView.vue";
+import { useLog } from "./composables/useLog";
 
 const router = useRouter();
 const { cleanup: cleanupUIListeners, initializeScreenSize } = useUIStore();
@@ -19,6 +20,7 @@ const { getUser, getUsers } = useUser();
 
 onMounted(async () => {
     try {
+        await useLog().info("Initializing app");
         initializeScreenSize();
         await getPastBooks();
         await getUsers();
@@ -32,6 +34,7 @@ onMounted(async () => {
         }
     } catch (error) {
         console.error("Error initializing app:", error);
+        await useLog().error(`Error initializing app: ${error}`);
     }
 });
 

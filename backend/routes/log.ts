@@ -13,6 +13,7 @@ const buildLogOutput = (log: Log) => {
 
 export const postLog = async (req: express.Request, res: express.Response) => {
     const { log } = req.body;
+    console.log("KERTWANGING INCOMING log in postLog", log);
 
     if (!log) {
         return res.status(400).json({
