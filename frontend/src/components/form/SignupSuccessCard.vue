@@ -14,7 +14,7 @@
                 <BaseButton
                     title="proceed with God's Plan"
                     variant="outline-secondary"
-                    size="medium"
+                    :size="buttonSize"
                     @click="onProceedClick"
                 >
                     <div class="button-content">
@@ -28,9 +28,19 @@
 </template>
 
 <script setup lang="ts">
+import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+
 defineProps<{
     onProceedClick: () => void;
 }>();
+
+const { isMobile } = storeToRefs(useUIStore());
+
+const buttonSize = computed(() => {
+    return isMobile ? "small" : "medium";
+});
 </script>
 
 <style scoped>
