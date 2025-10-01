@@ -14,6 +14,7 @@ export const getBook = async (req: express.Request, res: express.Response) => {
             data: book.val(),
         });
     } catch (error) {
+        console.log("KERTWANGING ERROR in getBook", error);
         res.status(500).json({
             success: false,
             message: "Failed to get book",
@@ -33,6 +34,7 @@ export const getBooks = async (_: express.Request, res: express.Response) => {
             data: Object.values(books.val()),
         });
     } catch (error) {
+        console.log("KERTWANGING ERROR in getBooks", error);
         res.status(500).json({
             success: false,
             message: "Failed to get books",
@@ -43,6 +45,7 @@ export const getBooks = async (_: express.Request, res: express.Response) => {
 
 export const updateBook = async (req: express.Request, res: express.Response) => {
     const { bookId } = req.params;
+    console.log("KERTWANGING INCOMING bookId in updateBook", bookId);
     try {
         const bookRef = db.ref(`books/${bookId}`);
         await bookRef.set(req.body);
@@ -54,6 +57,7 @@ export const updateBook = async (req: express.Request, res: express.Response) =>
             data: updatedBook.val(),
         });
     } catch (error) {
+        console.log("KERTWANGING ERROR in updateBook", error);
         res.status(500).json({
             success: false,
             message: "Failed to update book",

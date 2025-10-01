@@ -14,6 +14,7 @@ export const getUser = async (req: express.Request, res: express.Response) => {
             data: user.val(),
         });
     } catch (error) {
+        console.log("KERTWANGING ERROR in getUser", error);
         res.status(500).json({
             success: false,
             message: "Failed to get user",
@@ -35,6 +36,7 @@ export const getUsers = async (_: express.Request, res: express.Response) => {
             data: usersArray,
         });
     } catch (error) {
+        console.log("KERTWANGING ERROR in getUsers", error);
         res.status(500).json({
             success: false,
             message: "Failed to get users",
@@ -58,6 +60,7 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
             data: updatedUser,
         });
     } catch (error) {
+        console.log("KERTWANGING ERROR in updateUser", error);
         res.status(500).json({
             success: false,
             message: "Failed to update user",
