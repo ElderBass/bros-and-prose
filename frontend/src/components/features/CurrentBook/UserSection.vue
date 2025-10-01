@@ -89,7 +89,7 @@ watch(
 );
 
 watch(
-    () => loggedInUser.reviews[props.book?.id],
+    () => loggedInUser?.reviews[props.book?.id],
     (newReview) => {
         if (newReview) {
             bookReview.value = {

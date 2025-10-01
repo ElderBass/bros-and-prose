@@ -32,7 +32,6 @@ export const apiRequest = async <T>(
     data?: SignupCredentials | LoginCredentials | User | Review | Book
 ): Promise<T> => {
     try {
-        console.log("KERTWANGING INCOMING data in apiRequest", data);
         const response = await apiClient({
             method,
             url,

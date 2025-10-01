@@ -12,10 +12,10 @@
                 <CurrentBookInfo :book="book" />
             </template>
             <template v-slot:user-progress>
-                <CurrentBookUserSection :book="book" />
+                <UserSection :book="book" />
             </template>
             <template v-slot:other-bros-progress>
-                <CurrentBookOtherBrosProgress :book="book" />
+                <OtherBrosProgress :book="book" />
             </template>
         </CurrentBookLayout>
     </AppLayout>
@@ -26,8 +26,8 @@ import { onMounted, ref, watch } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import CurrentBookLayout from "@/components/layout/CurrentBookLayout.vue";
 import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.vue";
-import CurrentBookUserSection from "@/components/features/CurrentBook/UserSection.vue";
-import CurrentBookOtherBrosProgress from "@/components/features/CurrentBook/OtherBrosProgress.vue";
+import UserSection from "@/components/features/CurrentBook/UserSection.vue";
+import OtherBrosProgress from "@/components/features/CurrentBook/OtherBrosProgress.vue";
 import { useBooks } from "@/composables/useBooks";
 import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
