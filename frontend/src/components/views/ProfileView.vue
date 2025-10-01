@@ -10,6 +10,7 @@
             </div>
         </div>
         <FloatingActionButton
+            v-if="areBookshelvesEnabled"
             :icon="faBookMedical"
             title="add a book"
             @click="openAddBookModal"
@@ -33,6 +34,7 @@ import AddBookModal from "../modal/AddBookModal.vue";
 import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
 
 const addBookModalOpen = ref(false);
+const areBookshelvesEnabled = ref(false);
 
 const openAddBookModal = () => {
     addBookModalOpen.value = true;
