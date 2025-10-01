@@ -1,5 +1,5 @@
 <template>
-    <RouterView />
+    <ErrorBoundaryView />
 </template>
 
 <script setup lang="ts">
@@ -10,7 +10,7 @@ import { useUIStore } from "./stores/ui";
 import { useUser } from "./composables/useUser";
 import { useUserStore } from "./stores/user";
 import { useBooks } from "./composables/useBooks";
-// import ErrorBoundaryView from "./components/views/ErrorBoundaryView.vue";
+import ErrorBoundaryView from "./components/views/ErrorBoundaryView.vue";
 
 const router = useRouter();
 const { cleanup: cleanupUIListeners, initializeScreenSize } = useUIStore();
