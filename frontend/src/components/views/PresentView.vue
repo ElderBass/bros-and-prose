@@ -32,9 +32,13 @@ import { useBooks } from "@/composables/useBooks";
 import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
+import { useUserStore } from "@/stores/user";
+import { useRouter } from "vue-router";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
+const { loggedInUser } = useUserStore();
+const router = useRouter();
 
 const isLoading = ref(true);
 const book = ref<Book>(storedCurrentBook);
@@ -49,6 +53,9 @@ onMounted(async () => {
             isLoading.value = true;
             const currentBook = await getCurrentBook();
             book.value = currentBook;
+        }
+        if (!loggedInUser.id) {
+            router.push("/");
         }
     } catch (error) {
         console.error("Error fetching current book", error);

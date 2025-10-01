@@ -93,8 +93,8 @@ watch(
     (newReview) => {
         if (newReview) {
             bookReview.value = {
-                rating: newReview.rating || DEFAULT_RATING,
-                reviewComment: newReview.reviewComment || "",
+                rating: newReview?.rating || DEFAULT_RATING,
+                reviewComment: newReview?.reviewComment || "",
             };
         } else {
             bookReview.value = DEFAULT_REVIEW;
