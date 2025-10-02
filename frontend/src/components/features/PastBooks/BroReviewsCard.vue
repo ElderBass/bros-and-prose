@@ -9,16 +9,16 @@
         <div class="bro-reviews-container">
             <BroProgressItem
                 v-for="broReview in broReviews"
-                :key="broReview.reviewer.username"
-                :bro-name="broReview.reviewer.username"
-                :bro-avatar="getAvatar(broReview.reviewer.avatar)"
+                :key="broReview.reviewer?.username"
+                :bro-name="broReview.reviewer?.username || 'oofda'"
+                :bro-avatar="getAvatar(broReview.reviewer?.avatar)"
                 :has-finished="true"
                 :progress-string="
                     getRatingReviewString(broReview.review, isMobile)
                 "
                 :on-peep-review-click="() => onPeepReviewClick(broReview)"
                 :is-logged-in-user="
-                    loggedInUserName === broReview.reviewer.username
+                    loggedInUserName === broReview.reviewer?.username
                 "
             />
         </div>
@@ -83,11 +83,11 @@ const setShowUserReviewModal = (show: boolean) => {
 };
 
 const onPeepReviewClick = (broReview: BroReview) => {
-    if (loggedInUserName.value === broReview.reviewer.username) {
+    if (loggedInUserName.value === broReview.reviewer?.username) {
         selectedBroReview.value = broReview.review;
         setShowUserReviewModal(true);
     } else {
-        selectedBroName.value = broReview.reviewer.username;
+        selectedBroName.value = broReview.reviewer?.username;
         selectedBroReview.value = broReview.review;
         setShowOtherBroReviewModal(true);
     }

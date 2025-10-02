@@ -9,6 +9,7 @@ import {
 } from "@/constants";
 import { v4 as uuidv4 } from "uuid";
 import { useUIStore } from "@/stores/ui";
+import { useLog } from "./useLog";
 
 export const useUser = () => {
     const { loggedInUser, setLoggedInUser, setAllUsers } = useUserStore();
@@ -96,6 +97,9 @@ export const useUser = () => {
                 rating: reviewArgs.rating,
                 reviewComment: reviewArgs.reviewComment,
             };
+            await useLog().info(
+                `newReview in addReview: reviewer = ${loggedInUser.username} | review = ${newReview}`
+            );
             const updatedUser = await updateUser(loggedInUser.id, {
                 ...loggedInUser,
                 currentBookProgress: FINISHED_BOOK_PROGRESS,
@@ -108,6 +112,7 @@ export const useUser = () => {
             return updatedUser;
         } catch (error) {
             console.error("error in addReview", error);
+            await useLog().error(`Error in addReview: ${error}`);
             showAlert(
                 QUICK_ERROR([
                     "oof, bud, this error happend: ",

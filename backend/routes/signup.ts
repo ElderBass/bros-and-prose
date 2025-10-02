@@ -5,7 +5,7 @@ import { login } from "./login.js";
 
 export const signup = async (req: express.Request, res: express.Response) => {
     try {
-        const { firstName, lastName, email, password } = req.body;
+        const { firstName, lastName, email, password, username } = req.body;
         console.log("KERTWANGING INCOMING firstName, lastName, email in signup", firstName, lastName, email);
         if (!firstName || !lastName || !email || !password) {
             return res.status(400).json({
@@ -45,8 +45,10 @@ export const signup = async (req: express.Request, res: express.Response) => {
             lastName: lastName.trim(),
             email: email.toLowerCase().trim(),
             password: hashedPassword,
+            username: username.trim(),
             currentBookProgress: 0,
-            reviews: [],
+            reviews: {},
+            avatar: "user-astronaut",
         };
 
         // Save to Firebase

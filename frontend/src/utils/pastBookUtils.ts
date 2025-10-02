@@ -12,7 +12,7 @@ const getUserReviews = (book: Book) => {
     const { allUsers } = useUserStore();
     return allUsers.map((user) => ({
         reviewer: user,
-        review: user.reviews[book.id] || EMPTY_REVIEW,
+        review: (user.reviews && user.reviews[book.id]) || EMPTY_REVIEW,
     }));
 };
 

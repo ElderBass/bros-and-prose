@@ -1,6 +1,6 @@
 <template>
     <div class="group-consensus-container">
-        <div v-if="groupConsensus" class="group-consensus">
+        <div class="group-consensus">
             <PageTitle title="broverall consensus..." />
             <div class="average-rating-container">
                 <p class="average-rating">average score:</p>
@@ -9,12 +9,12 @@
                 }}</span>
                 <span v-else class="average-rating-value">nunya</span>
             </div>
-            <div class="group-consensus-container">
+            <div v-if="groupConsensus" class="group-consensus-container">
                 <p class="consensus-text">{{ groupConsensus }}</p>
             </div>
-        </div>
-        <div v-else class="no-group-consensus">
-            <p>the bros have not yet reached a consensus</p>
+            <div v-else class="no-group-consensus">
+                <p>the bros have not yet reached a consensus</p>
+            </div>
         </div>
     </div>
 </template>
@@ -31,6 +31,7 @@ defineProps<{
 <style scoped>
 .group-consensus-container {
     margin-top: 2rem;
+    width: 100%;
 }
 
 .group-consensus {
@@ -41,6 +42,7 @@ defineProps<{
     border-radius: 1.5rem;
     padding: 1.5rem;
     margin: 0 auto;
+    width: 100%;
 }
 
 .no-group-consensus {

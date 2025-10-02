@@ -12,7 +12,23 @@
                 <CurrentBookInfo :book="book" />
             </template>
             <template v-slot:user-progress>
-                <UserSection v-if="loggedInUser.id" :book="book" />
+                <div class="discussion-container">
+                    <UserSection v-if="loggedInUser.id" :book="book" />
+                    <RouterLink
+                        class="router-link-wrapper"
+                        :to="`/past/${book.id}`"
+                    >
+                        <BaseButton
+                            v-if="book.completed"
+                            title="check what the bros are saying"
+                            variant="outline-tertiary"
+                            :size="isMobile ? 'medium' : 'large'"
+                        >
+                            <FontAwesomeIcon :icon="faComments" />
+                            <span>go to discussion</span>
+                        </BaseButton>
+                    </RouterLink>
+                </div>
             </template>
             <template v-slot:other-bros-progress>
                 <OtherBrosProgress :book="book" />
@@ -36,11 +52,15 @@ import { useUserStore } from "@/stores/user";
 import { getUserFromStorage } from "@/utils";
 import { useUser } from "@/composables/useUser";
 import { useLog } from "@/composables/useLog";
+import { useUIStore } from "@/stores/ui";
+import { faComments } from "@fortawesome/free-solid-svg-icons";
+import { storeToRefs } from "pinia";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
 const { loggedInUser, setLoggedInUser } = useUserStore();
 const { getUser } = useUser();
+const { isMobile } = storeToRefs(useUIStore());
 
 const isLoading = ref(true);
 const book = ref<Book>(storedCurrentBook);
@@ -85,5 +105,14 @@ onMounted(async () => {
     align-items: center;
     width: 100%;
     height: 100%;
+}
+
+.discussion-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    width: 100%;
 }
 </style>
