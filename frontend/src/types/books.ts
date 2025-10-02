@@ -8,6 +8,7 @@ export interface Book {
     goodreadsRating: string;
     yearPublished: number;
     imageSrc: string;
+    completed: boolean;
     groupConsensus?: string;
     discussionComments: {
         [key: string]: Comment;
