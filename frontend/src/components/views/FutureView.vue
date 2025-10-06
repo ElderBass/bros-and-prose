@@ -1,22 +1,15 @@
 <template>
     <AppLayout>
         <PageTitle title="future prose" />
-        <!-- <h3>i simply haven't made it this far...</h3>
-        <p>so...here's an alternate future:</p>
-        <div class="video-container">
-            <iframe
-                width="560"
-                height="315"
-                src="https://www.youtube.com/embed/xvZqHgFz51I?si=dEPQXJQ_qUY3N91y"
-                title="YouTube video player"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerpolicy="strict-origin-when-cross-origin"
-                allowfullscreen
-            ></iframe>
-        </div> -->
+        <div v-if="isAppLoading" class="spinner-container">
+            <LoadingSpinner
+                size="large"
+                message="retrieving the future prose, bros..."
+            />
+        </div>
         <FutureBooksContainer
-            :hasReadWriteAccess="false"
+            v-else
+            :hasReadWriteAccess="userIsFutureBookSelector"
             :currentSelectorUsername="futureBookSelectorUsername"
             :openAddFutureBookModal="openAddFutureBookModal"
         />
@@ -37,29 +30,26 @@ import AppLayout from "@/components/layout/AppLayout.vue";
 import AddFutureBookFab from "@/components/features/FutureBooks/AddFutureBookFab.vue";
 import AddFutureBookModal from "@/components/modal/AddFutureBookModal.vue";
 import FutureBooksContainer from "@/components/features/FutureBooks/FutureBooksContainer.vue";
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
-import { FUTURE_BOOK_SELECTOR } from "@/constants";
+import { useUIStore } from "@/stores/ui";
 
+const { isAppLoading } = storeToRefs(useUIStore());
 const showAddFutureBookModal = ref(false);
-const { loggedInUser, futureBookSelectorUsername } =
+const { futureBookSelectorUsername, userIsFutureBookSelector } =
     storeToRefs(useUserStore());
 
 const openAddFutureBookModal = () => {
     showAddFutureBookModal.value = true;
 };
-
-const userIsFutureBookSelector = computed(() => {
-    return loggedInUser.value && loggedInUser.value.id === FUTURE_BOOK_SELECTOR;
-});
 </script>
 
 <style scoped>
-.video-container {
+.spinner-container {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     width: 100%;
     height: 100%;
 }

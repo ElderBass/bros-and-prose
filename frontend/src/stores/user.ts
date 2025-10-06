@@ -5,6 +5,7 @@ import {
     removeUserFromStorage,
     getUserFromStorage,
 } from "@/utils";
+import { FUTURE_BOOK_SELECTOR } from "@/constants";
 
 export const useUserStore = defineStore("user", {
     state: () => ({
@@ -21,6 +22,8 @@ export const useUserStore = defineStore("user", {
                 ? `${state.loggedInUser.firstName} ${state.loggedInUser.lastName}`
                 : "",
         currentUserReviews: (state) => state.loggedInUser?.reviews || {},
+        userIsFutureBookSelector: (state) =>
+            state.loggedInUser?.id === FUTURE_BOOK_SELECTOR,
     },
 
     actions: {

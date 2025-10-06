@@ -49,7 +49,8 @@ export const useBooks = () => {
             await booksService.searchBooksByTitle(title);
         const booksString = books
             .map(
-                (book) => `title: ${book.title}, author: ${book.author_name[0]}`
+                (book) =>
+                    `title: ${book.title}, author: ${book.author_name ? book.author_name[0] : "unknown"}`
             )
             .join(", ");
         await info(`Received books in searchBooksByTitle: ${booksString}`);

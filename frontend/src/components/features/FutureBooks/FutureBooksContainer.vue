@@ -1,5 +1,11 @@
 <template>
-    <div class="future-books-container">
+    <BaseCard
+        shadowColor="fuschia"
+        :style="{ width: '100%', marginTop: '2rem' }"
+    >
+        <h2 class="future-books-title">
+            <span class="username">@{{ currentSelectorUsername }}'s</span> books
+        </h2>
         <FutureBooksList
             v-if="sortedFutureBooks.length"
             :futureBooks="sortedFutureBooks"
@@ -10,21 +16,19 @@
                 v-if="hasReadWriteAccess"
                 @click="openAddFutureBookModal"
                 size="medium"
-                variant="outline-success"
+                variant="success"
             >
                 <span>add a fucking book, already</span>
                 <FontAwesomeIcon :icon="faBookMedical" />
             </BaseButton>
             <p v-else class="no-future-books-message">
                 holla at your bro
-                <span class="future-book-selector-username"
-                    >@{{ currentSelectorUsername }}</span
-                >
+                <span class="username">@{{ currentSelectorUsername }}</span>
                 and get them to add a fucking book, already
             </p>
         </div>
         <!-- TODO: do I have the "on deck" selector have their own list? -->
-    </div>
+    </BaseCard>
 </template>
 
 <script setup lang="ts">
@@ -56,7 +60,25 @@ const sortedFutureBooks = computed(() => {
     width: 100%;
     padding: 2rem;
     gap: 1rem;
+    border: 2px solid var(--accent-blue);
+    border-radius: 1rem;
+    margin-top: 2rem;
 }
+
+.future-books-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-style: normal;
+    border-bottom: 2px solid var(--accent-blue);
+    width: fit-content;
+}
+
+.username {
+    font-weight: bold;
+    font-style: normal;
+    color: var(--accent-fuschia);
+}
+
 .no-future-books {
     display: flex;
     flex-direction: column;
@@ -97,16 +119,13 @@ const sortedFutureBooks = computed(() => {
     width: 100%;
 }
 
-.future-book-selector-username {
-    font-weight: bold;
-    font-style: normal;
-    color: var(--accent-fuschia);
-}
-
 @media (max-width: 768px) {
     .future-books-container {
         padding: 1rem;
         gap: 0.5rem;
+    }
+    .future-books-title {
+        font-size: 1.25rem;
     }
     .no-future-books {
         width: 100%;

@@ -49,7 +49,7 @@
         @close="closeModal"
         @confirm="handleConfirmAvatar"
     />
-    <UsernameModal
+    <ChangeUsernameModal
         v-if="isUsernameModalOpen"
         :open="isUsernameModalOpen"
         :currentUsername="loggedInUser.username"
@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import AvatarSelectorModal from "@/components/modal/AvatarSelectorModal.vue";
-import UsernameModal from "@/components/modal/UsernameModal.vue";
+import ChangeUsernameModal from "@/components/modal/ChangeUsernameModal.vue";
 import { useUserStore } from "@/stores/user";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";

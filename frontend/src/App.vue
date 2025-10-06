@@ -20,6 +20,7 @@ const { getUser, getUsers, getFutureBookSelector } = useUser();
 
 onMounted(async () => {
     try {
+        useUIStore().setIsAppLoading(true);
         await useLog().info("Initializing app");
         initializeScreenSize();
         await getPastBooks();
@@ -37,6 +38,8 @@ onMounted(async () => {
     } catch (error) {
         console.error("Error initializing app:", error);
         await useLog().error(`Error initializing app: ${error}`);
+    } finally {
+        useUIStore().setIsAppLoading(false);
     }
 });
 
