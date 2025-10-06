@@ -7,6 +7,7 @@ export const useUIStore = defineStore("ui", () => {
     const screenWidth = ref(window.innerWidth);
     const mobileBreakpoint = ref(768);
     const isListenerActive = ref(false);
+    const isAppLoading = ref(false);
 
     const alert = ref(DEFAULT_ALERT);
 
@@ -43,6 +44,10 @@ export const useUIStore = defineStore("ui", () => {
         alert.value = DEFAULT_ALERT;
     };
 
+    const setIsAppLoading = (isLoading: boolean) => {
+        isAppLoading.value = isLoading;
+    };
+
     return {
         alert,
         showAlert,
@@ -51,6 +56,8 @@ export const useUIStore = defineStore("ui", () => {
         mobileBreakpoint,
         isMobile,
         isDesktop,
+        isAppLoading,
+        setIsAppLoading,
         updateScreenWidth,
         initializeScreenSize,
         cleanup,

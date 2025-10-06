@@ -5,7 +5,7 @@
         title="add a future book"
         size="large"
     >
-        <AddFutureBookForm :onSubmit="onSubmit" />
+        <AddFutureBookForm :onSubmit="onSubmit" :closeModal="onClose" />
     </BaseModal>
 </template>
 
@@ -33,6 +33,7 @@ const onClose = () => emit("close");
 
 const onSubmit = async (futureBook: FutureBook) => {
     try {
+        useUIStore().setIsAppLoading(true);
         await addFutureBook(futureBook);
         showAlert(FUTURE_BOOK_ADDED_SUCCESS_ALERT);
     } catch (error) {
@@ -44,6 +45,8 @@ const onSubmit = async (futureBook: FutureBook) => {
                 (error as Error).message,
             ])
         );
+    } finally {
+        useUIStore().setIsAppLoading(false);
     }
 };
 </script>

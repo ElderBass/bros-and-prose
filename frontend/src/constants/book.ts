@@ -43,3 +43,25 @@ export const EMPTY_COMMENT = {
 
 export const FUTURE_BOOK_SELECTOR = "seth_zygarlicke";
 export const ON_DECK_BOOK_SELECTOR = "chris_dub";
+
+export const COMMON_BOOK_TAGS = [
+    "mystery",
+    "thriller",
+    "sci-fi",
+    "fantasy",
+    "dystopian",
+    "cerebral",
+    "historical",
+    "nonfiction",
+    "pop-culture",
+    "political",
+    "classic",
+    "memoir",
+    "biography",
+    "romance",
+    "horror",
+    "humor",
+    "philosophy",
+    "psychology",
+    "tech",
+];

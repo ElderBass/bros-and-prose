@@ -41,14 +41,15 @@ const props = withDefaults(
         modelValue: string;
         label: string;
         placeholder: string;
-        type: string;
         id: string;
+        type?: string;
         disabled?: boolean;
         prependInnerIcon?: string;
         size?: "small" | "medium" | "large";
         style?: string;
     }>(),
     {
+        type: "text",
         disabled: false,
         prependInnerIcon: "",
         size: "large",

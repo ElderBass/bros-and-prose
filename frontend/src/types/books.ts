@@ -61,6 +61,7 @@ export interface FutureBook {
     author: string;
     yearPublished: number;
     imageSrc: string;
-    votes: number;
+    tags: string[];
     description: string;
+    votes: number;
 }
