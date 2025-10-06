@@ -27,7 +27,7 @@ export const REVIEW_SUBMITTED_SUCCESS_ALERT: Alert = {
         "fukkin' sent that shit, my dude.",
     ],
     type: "success",
-    duration: 4000,
+    duration: 5000,
     dismissable: false,
 };
 
@@ -38,7 +38,7 @@ export const PROFILE_UPDATED_SUCCESS_ALERT: Alert = {
         "your face looks better, but your personality still sucks.",
     ],
     type: "success",
-    duration: 3000,
+    duration: 5000,
     dismissable: false,
 };
 
@@ -49,7 +49,7 @@ export const USERNAME_UPDATED_SUCCESS_ALERT: Alert = {
         "this is NOT helping with your street cred, my dude.",
     ],
     type: "success",
-    duration: 3000,
+    duration: 5000,
     dismissable: false,
 };
 
@@ -60,7 +60,18 @@ export const DISCUSSION_COMMENT_ADDED_SUCCESS_ALERT: Alert = {
         "if you thought this insightful, you're delusional.",
     ],
     type: "success",
-    duration: 3000,
+    duration: 5000,
+    dismissable: false,
+};
+
+export const FUTURE_BOOK_ADDED_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "future book added successfully.",
+        "that book looks like it might not suck.",
+    ],
+    type: "success",
+    duration: 5000,
     dismissable: false,
 };
 
@@ -69,7 +80,7 @@ export const VALIDATION_ERROR_ALERT: Alert = {
     show: true,
     messages: ["please check your input and try again, skibidi"],
     type: "error",
-    duration: 4000,
+    duration: 5000,
     dismissable: true,
 };
 

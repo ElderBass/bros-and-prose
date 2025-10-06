@@ -46,7 +46,6 @@ const emit = defineEmits<{
 
 const onChange = async (event: Event) => {
     try {
-        console.log("onChange", event.target);
         await useLog().info(`onChange in bro select: ${event.target}`);
         emit("update:modelValue", (event.target as HTMLSelectElement)?.value);
     } catch (err) {

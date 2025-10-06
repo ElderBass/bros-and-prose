@@ -40,3 +40,6 @@ export const EMPTY_COMMENT = {
     comment: "",
     createdAt: "",
 };
+
+export const FUTURE_BOOK_SELECTOR = "seth_zygarlicke";
+export const ON_DECK_BOOK_SELECTOR = "chris_dub";

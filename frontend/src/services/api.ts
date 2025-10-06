@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { LoginCredentials, SignupCredentials } from "./auth";
-import type { Review, User, Book, Log } from "@/types";
+import type { Review, User, Book, Log, FutureBook } from "@/types";
 
 const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL ||
@@ -36,6 +36,7 @@ export const apiRequest = async <T>(
         | Review
         | Book
         | { log: Log }
+        | FutureBook
 ): Promise<T> => {
     try {
         const response = await apiClient({

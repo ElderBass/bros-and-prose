@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
-import type { Book, BooksState } from "@/types";
+import type { Book, BooksState, FutureBook } from "@/types";
 
 export const useBooksStore = defineStore("books", {
     state: (): BooksState => ({
         currentBook: {} as Book,
-        pastBooks: [],
+        pastBooks: [] as Book[],
         futureBooks: [],
     }),
     actions: {
@@ -14,8 +14,8 @@ export const useBooksStore = defineStore("books", {
         setPastBooks(books: Book[]) {
             this.pastBooks = books;
         },
-        setFutureBooks(books: Book[]) {
-            this.futureBooks = books;
+        setFutureBooks(futureBooks: FutureBook[]) {
+            this.futureBooks = futureBooks;
         },
     },
 });

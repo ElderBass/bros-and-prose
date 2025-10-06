@@ -1,9 +1,11 @@
 import { booksService } from "@/services";
 import { useBooksStore } from "@/stores/books";
-import type { Book, Comment } from "@/types";
+import type { Book, Comment, FutureBook, OpenLibraryBookResult } from "@/types";
+import { useLog } from "./useLog";
 
 export const useBooks = () => {
     const booksStore = useBooksStore();
+    const { info } = useLog();
 
     const getCurrentBook = async () => {
         const book = await booksService.getCurrentBook();
@@ -31,13 +33,26 @@ export const useBooks = () => {
         booksStore.setFutureBooks(books);
     };
 
+    const addFutureBook = async (futureBook: FutureBook) => {
+        const book = await booksService.addFutureBook(futureBook);
+        booksStore.setFutureBooks(book);
+        return book;
+    };
+
     const getBookByTitle = async (title: string) => {
         const book = await booksService.getBookByTitle(title);
         return book;
     };
 
     const searchBooksByTitle = async (title: string) => {
-        const books = await booksService.searchBooksByTitle(title);
+        const books: OpenLibraryBookResult[] =
+            await booksService.searchBooksByTitle(title);
+        const booksString = books
+            .map(
+                (book) => `title: ${book.title}, author: ${book.author_name[0]}`
+            )
+            .join(", ");
+        await info(`Received books in searchBooksByTitle: ${booksString}`);
         return books;
     };
 
@@ -68,6 +83,7 @@ export const useBooks = () => {
         getPastBook,
         getPastBooks,
         getFutureBooks,
+        addFutureBook,
         getAllBooks,
         getBookByTitle,
         searchBooksByTitle,

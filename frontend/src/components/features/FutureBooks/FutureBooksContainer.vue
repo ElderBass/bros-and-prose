@@ -1,0 +1,124 @@
+<template>
+    <div class="future-books-container">
+        <FutureBooksList
+            v-if="sortedFutureBooks.length"
+            :futureBooks="sortedFutureBooks"
+        />
+        <div v-else class="no-future-books">
+            <p class="italics">no future books yet</p>
+            <BaseButton
+                v-if="hasReadWriteAccess"
+                @click="openAddFutureBookModal"
+                size="medium"
+                variant="outline-success"
+            >
+                <span>add a fucking book, already</span>
+                <FontAwesomeIcon :icon="faBookMedical" />
+            </BaseButton>
+            <p v-else class="no-future-books-message">
+                holla at your bro
+                <span class="future-book-selector-username"
+                    >@{{ currentSelectorUsername }}</span
+                >
+                and get them to add a fucking book, already
+            </p>
+        </div>
+        <!-- TODO: do I have the "on deck" selector have their own list? -->
+    </div>
+</template>
+
+<script setup lang="ts">
+import FutureBooksList from "./FutureBooksList.vue";
+import { useBooksStore } from "@/stores/books";
+import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
+
+defineProps<{
+    hasReadWriteAccess: boolean;
+    currentSelectorUsername: string;
+    openAddFutureBookModal: () => void;
+}>();
+
+const { futureBooks } = storeToRefs(useBooksStore());
+
+const sortedFutureBooks = computed(() => {
+    const books = futureBooks.value;
+    return books.sort((a, b) => b.votes - a.votes);
+});
+</script>
+
+<style scoped>
+.future-books-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 2rem;
+    gap: 1rem;
+}
+.no-future-books {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 2rem;
+    margin: 0 auto;
+    border: 2px dashed var(--accent-blue);
+    border-radius: 1rem;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 191, 255, 0.06),
+        rgba(0, 191, 255, 0.03)
+    );
+    box-shadow:
+        0 4px 20px rgba(0, 191, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    color: var(--main-text);
+    width: 60%;
+}
+
+.no-future-books p {
+    margin: 0;
+    opacity: 0.85;
+    width: 100%;
+}
+
+.italics {
+    font-style: italic;
+    font-size: 2rem;
+}
+
+.no-future-books-message {
+    font-size: 1.5rem;
+    font-style: normal;
+    width: 100%;
+}
+
+.future-book-selector-username {
+    font-weight: bold;
+    font-style: normal;
+    color: var(--accent-fuschia);
+}
+
+@media (max-width: 768px) {
+    .future-books-container {
+        padding: 1rem;
+        gap: 0.5rem;
+    }
+    .no-future-books {
+        width: 100%;
+    }
+    .no-future-books {
+        width: 100%;
+    }
+    .italics {
+        font-size: 1.5rem;
+    }
+    .no-future-books-message {
+        font-size: 1.25rem;
+    }
+}
+</style>

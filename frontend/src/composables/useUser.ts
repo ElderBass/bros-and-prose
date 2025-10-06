@@ -3,6 +3,7 @@ import type { Book, SubmitReviewArgs, User } from "@/types";
 import { useUserStore } from "@/stores/user";
 import {
     FINISHED_BOOK_PROGRESS,
+    FUTURE_BOOK_SELECTOR,
     QUICK_ERROR,
     REVIEW_SUBMITTED_SUCCESS_ALERT,
     UPDATE_PROGRESS_SUCCESS_ALERT,
@@ -12,7 +13,12 @@ import { useUIStore } from "@/stores/ui";
 import { useLog } from "./useLog";
 
 export const useUser = () => {
-    const { loggedInUser, setLoggedInUser, setAllUsers } = useUserStore();
+    const {
+        loggedInUser,
+        setLoggedInUser,
+        setFutureBookSelector,
+        setAllUsers,
+    } = useUserStore();
     const { showAlert } = useUIStore();
 
     const getUser = async (userId: string) => {
@@ -27,6 +33,12 @@ export const useUser = () => {
         const users = await usersService.getUsers(shouldMock);
         setAllUsers(users);
         return users;
+    };
+
+    const getFutureBookSelector = async () => {
+        const user = await usersService.getUser(FUTURE_BOOK_SELECTOR);
+        setFutureBookSelector(user);
+        return user;
     };
 
     const getOtherBros = async () => {
@@ -126,6 +138,7 @@ export const useUser = () => {
     return {
         getUser,
         getUsers,
+        getFutureBookSelector,
         getOtherBros,
         updateUser,
         updateUserAvatar,

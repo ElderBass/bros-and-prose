@@ -15,8 +15,8 @@ import { useLog } from "./composables/useLog";
 
 const router = useRouter();
 const { cleanup: cleanupUIListeners, initializeScreenSize } = useUIStore();
-const { getPastBooks } = useBooks();
-const { getUser, getUsers } = useUser();
+const { getPastBooks, getFutureBooks } = useBooks();
+const { getUser, getUsers, getFutureBookSelector } = useUser();
 
 onMounted(async () => {
     try {
@@ -24,6 +24,8 @@ onMounted(async () => {
         initializeScreenSize();
         await getPastBooks();
         await getUsers();
+        await getFutureBooks();
+        await getFutureBookSelector();
 
         const userFromStorage = getUserFromStorage();
         if (!userFromStorage) {

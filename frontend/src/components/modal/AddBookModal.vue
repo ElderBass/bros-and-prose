@@ -68,7 +68,7 @@
 import { computed, ref } from "vue";
 import { useBooks } from "@/composables/useBooks";
 import BookSearchResult from "../features/UserProfile/BookSearchResult.vue";
-import type { IBookSearchResult, BookResult } from "@/types";
+import type { IBookSearchResult, OpenLibraryBookResult } from "@/types";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
 import { faSpinner, faSearch } from "@fortawesome/free-solid-svg-icons";
@@ -87,7 +87,7 @@ const { isMobile } = storeToRefs(useUIStore());
 const { searchBooksByTitle } = useBooks();
 
 const query = ref("");
-const results = ref<BookResult[]>([]);
+const results = ref<OpenLibraryBookResult[]>([]);
 const isSearching = ref(false);
 const selectedBooks = ref<IBookSearchResult[]>([]);
 const queryTrimmed = computed(() => query.value.trim().length > 0);
@@ -103,7 +103,7 @@ const runSearch = async () => {
     }
 };
 
-const imageFor = (doc: BookResult) => {
+const imageFor = (doc: OpenLibraryBookResult) => {
     if (doc.cover_i)
         return `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg`;
     if (doc.isbn?.length)
@@ -113,7 +113,7 @@ const imageFor = (doc: BookResult) => {
 
 const mappedResults = computed(
     () =>
-        results.value.slice(0, 24).map((doc: BookResult) => ({
+        results.value.slice(0, 24).map((doc: OpenLibraryBookResult) => ({
             key:
                 doc.key ??
                 doc.cover_edition_key ??

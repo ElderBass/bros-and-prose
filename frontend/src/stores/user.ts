@@ -10,6 +10,8 @@ export const useUserStore = defineStore("user", {
     state: () => ({
         loggedInUser: (getUserFromStorage() || ({} as User)) as User,
         allUsers: [] as User[],
+        futureBookSelector: {} as User,
+        futureBookSelectorUsername: "",
     }),
 
     getters: {
@@ -35,6 +37,11 @@ export const useUserStore = defineStore("user", {
         setLoggedInUser(userData: User) {
             this.loggedInUser = userData;
             setUserInStorage(userData);
+        },
+
+        setFutureBookSelector(userData: User) {
+            this.futureBookSelector = userData;
+            this.futureBookSelectorUsername = userData.username;
         },
 
         updateUserProgress(progress: number) {
