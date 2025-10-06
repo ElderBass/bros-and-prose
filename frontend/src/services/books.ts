@@ -1,10 +1,9 @@
-import type { Book } from "@/types/books";
+import type { Book, FutureBook } from "@/types/books";
 import { apiRequest } from "./api";
 
 const currentBookId = "starter_villain_scalzi";
 
 const pastBooksIds = ["eleven_twenty_two_sixty_three_king"];
-const futureBooksIds = [] as string[];
 
 export interface BookResponse {
     success: boolean;
@@ -16,6 +15,12 @@ export interface BooksResponse {
     success: boolean;
     message: string;
     data: Book[];
+}
+
+export interface FutureBooksResponse {
+    success: boolean;
+    message: string;
+    data: FutureBook[];
 }
 
 export const booksService = {
@@ -53,11 +58,19 @@ export const booksService = {
         return response.data;
     },
     getFutureBooks: async () => {
-        const response = await apiRequest<BooksResponse>("GET", "/api/books");
-        const futureBooks = response.data.filter((book) =>
-            futureBooksIds.includes(book.id)
+        const response = await apiRequest<FutureBooksResponse>(
+            "GET",
+            "/api/futureBooks"
         );
-        return futureBooks;
+        return response.data;
+    },
+    addFutureBook: async (futureBook: FutureBook) => {
+        const response = await apiRequest<FutureBooksResponse>(
+            "POST",
+            "/api/futureBooks",
+            futureBook
+        );
+        return response.data;
     },
     getBookByTitle: async (title: string) => {
         const response = await fetch(

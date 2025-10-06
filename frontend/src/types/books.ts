@@ -18,10 +18,10 @@ export interface Book {
 export interface BooksState {
     currentBook: Book;
     pastBooks: Book[];
-    futureBooks: Book[];
+    futureBooks: FutureBook[];
 }
 
-export interface BookResult {
+export interface OpenLibraryBookResult {
     author_key: string[];
     author_name: string[];
     cover_edition_key: string;
@@ -53,4 +53,14 @@ export interface Comment {
     user: User;
     comment: string;
     createdAt: string;
+}
+
+export interface FutureBook {
+    id: string;
+    title: string;
+    author: string;
+    yearPublished: number;
+    imageSrc: string;
+    votes: number;
+    description: string;
 }
