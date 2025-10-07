@@ -15,11 +15,11 @@
                 <div class="discussion-container">
                     <UserSection v-if="loggedInUser.id" :book="book" />
                     <RouterLink
+                        v-if="book.completed"
                         class="router-link-wrapper"
                         :to="`/past/${book.id}`"
                     >
                         <BaseButton
-                            v-if="book.completed"
                             title="check what the bros are saying"
                             variant="outline-tertiary"
                             :size="isMobile ? 'medium' : 'large'"

@@ -1,9 +1,7 @@
 import type { Book, FutureBook } from "@/types/books";
 import { apiRequest } from "./api";
 
-const currentBookId = "starter_villain_scalzi";
-
-const pastBooksIds = ["eleven_twenty_two_sixty_three_king"];
+const currentBookId = "mans_search_for_meaning_frankl";
 
 export interface BookResponse {
     success: boolean;
@@ -44,9 +42,7 @@ export const booksService = {
     },
     getPastBooks: async () => {
         const response = await apiRequest<BooksResponse>("GET", "/api/books");
-        const pastBooks = response.data.filter((book) =>
-            pastBooksIds.includes(book.id)
-        );
+        const pastBooks = response.data.filter((book) => book.completed);
         return pastBooks;
     },
     updateBook: async (bookId: string, book: Book) => {

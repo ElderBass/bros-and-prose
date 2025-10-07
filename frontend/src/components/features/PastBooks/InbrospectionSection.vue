@@ -3,7 +3,7 @@
         <PageTitle title="inbrospection..." />
 
         <div v-if="comments.length" class="comments-list">
-            <div v-for="c in orderedComments" :key="c.id" class="comment-item">
+            <div v-for="c in comments" :key="c.id" class="comment-item">
                 <div class="avatar">
                     <AvatarImage
                         :icon="iconFor(c.user.avatar)"
@@ -45,15 +45,19 @@ const props = defineProps<{
 const { isMobile } = storeToRefs(useUIStore());
 
 const comments = computed(() => {
-    return Object.values(props.book?.discussionComments ?? {}) as Comment[];
+    const rawComments = Object.values(
+        props.book?.discussionComments ?? {}
+    ) as Comment[];
+    const filteredComments = rawComments.filter((c) => typeof c === "object");
+    const orderedComments = filteredComments
+        .slice()
+        .sort(
+            (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+        );
+    return orderedComments;
 });
-
-const orderedComments = comments.value
-    .slice()
-    .sort(
-        (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
 
 const iconFor = (iconName: string) => {
     return (
