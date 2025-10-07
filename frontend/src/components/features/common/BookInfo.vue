@@ -1,8 +1,17 @@
 <template>
     <div v-if="book" class="book-info-content">
-        <img :src="book?.imageSrc" :alt="book?.title" class="cover-image" />
+        <img
+            :src="book?.imageSrc"
+            :alt="book?.title"
+            :class="{ 'cover-image': !isLink, 'cover-image-link': isLink }"
+        />
         <div class="book-info-container" :class="{ 'link-layout': isLink }">
-            <h3 class="book-title">{{ book?.title }}</h3>
+            <h3
+                class="book-title"
+                :style="{ fontSize: isLink ? '1.5rem' : '1.75rem' }"
+            >
+                {{ book?.title }}
+            </h3>
             <div class="book-info-items">
                 <div
                     class="info-item"
@@ -10,8 +19,13 @@
                     v-for="item in bookInfoItems"
                     :key="item.label"
                 >
-                    <p>{{ item.label }}</p>
-                    <p class="info-value">{{ item.value }}</p>
+                    <p v-if="!isLink">{{ item.label }}</p>
+                    <p
+                        class="info-value"
+                        :style="{ fontSize: isLink ? '1rem' : '1.5rem' }"
+                    >
+                        {{ item.value }}
+                    </p>
                 </div>
             </div>
         </div>
@@ -66,6 +80,11 @@ const bookInfoItems = computed(() => {
 
 .cover-image {
     max-width: 120px;
+    object-fit: cover;
+}
+
+.cover-image-link {
+    max-width: 80px;
     object-fit: cover;
 }
 

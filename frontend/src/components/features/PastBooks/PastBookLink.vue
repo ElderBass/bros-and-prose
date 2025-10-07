@@ -1,6 +1,14 @@
 <template>
-    <RouterLink class="router-link-wrapper" :to="`/past/${props.book.id}`">
-        <BaseCard shadowColor="fuschia" size="medium" hoverable>
+    <RouterLink
+        class="router-link-wrapper past-book-link"
+        :to="`/past/${props.book.id}`"
+    >
+        <BaseCard
+            shadowColor="fuschia"
+            size="small"
+            hoverable
+            style="max-height: 180px; height: 160px"
+        >
             <BookInfo :book="book" :isLink="true" />
         </BaseCard>
     </RouterLink>
@@ -15,3 +23,9 @@ const props = defineProps<{
     book: Book;
 }>();
 </script>
+
+<style scoped>
+.past-book-link {
+    width: 320px;
+}
+</style>

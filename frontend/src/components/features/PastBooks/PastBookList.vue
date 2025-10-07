@@ -15,6 +15,8 @@ const { pastBooks } = useBooksStore();
 .past-book-list {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     gap: 1rem;
     padding-top: 2rem;
@@ -22,7 +24,13 @@ const { pastBooks } = useBooksStore();
 
 @media (min-width: 768px) {
     .past-book-list {
-        width: 60%;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 2rem;
+        flex-direction: row;
+        width: 75%;
+        padding-top: 4rem;
     }
 }
 </style>
