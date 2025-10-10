@@ -6,6 +6,7 @@ import {
     getUserFromStorage,
 } from "@/utils";
 import { FUTURE_BOOK_SELECTOR } from "@/constants";
+import { useLog } from "@/composables/useLog";
 
 export const useUserStore = defineStore("user", {
     state: () => ({
@@ -38,6 +39,13 @@ export const useUserStore = defineStore("user", {
         },
 
         setLoggedInUser(userData: User) {
+            useLog().info(
+                `Setting logged in user in store: ${userData.username}`
+            );
+            useLog().info(`Setting logged in user in store: ${userData.id}`);
+            useLog().info(
+                `Setting logged in user in store: ${userData.currentBookProgress}`
+            );
             this.loggedInUser = userData;
             setUserInStorage(userData);
         },
