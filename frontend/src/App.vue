@@ -32,6 +32,9 @@ onMounted(async () => {
         if (!userFromStorage) {
             router.push("/");
         } else {
+            useLog().info(
+                `Fetching user from storage in app: ${userFromStorage.id}`
+            );
             const user = await getUser(userFromStorage.id);
             useUserStore().setLoggedInUser(user);
         }
