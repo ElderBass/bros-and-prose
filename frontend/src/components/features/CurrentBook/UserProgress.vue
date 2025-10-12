@@ -163,11 +163,12 @@ const userPercentage = computed(() => {
     font-size: 1.25rem;
     width: 100%;
     min-height: 40px;
+    font-weight: 600;
 }
 
 .progress-percentage {
     font-size: 1.25rem;
-    font-weight: 600;
+    font-weight: 400;
     color: var(--accent-fuschia);
 }
 

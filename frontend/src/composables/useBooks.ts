@@ -35,7 +35,8 @@ export const useBooks = () => {
 
     const addFutureBook = async (futureBook: FutureBook) => {
         const book = await booksService.addFutureBook(futureBook);
-        booksStore.setFutureBooks(book);
+        await info(`Added future book: ${book.title}`);
+        booksStore.setFutureBooks([...booksStore.futureBooks, book]);
         return book;
     };
 

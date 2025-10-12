@@ -12,7 +12,19 @@
                     @click.stop
                 >
                     <div class="modal-header" v-if="title || !hideCloseButton">
-                        <h3 v-if="title" class="modal-title">{{ title }}</h3>
+                        <h3 v-if="title && !headerIcon" class="modal-title">
+                            {{ title }}
+                        </h3>
+                        <div
+                            v-else-if="headerIcon && title"
+                            class="icon-header"
+                            :class="`icon-header-${shadowColor}`"
+                        >
+                            <FontAwesomeIcon :icon="headerIcon" />
+                            <h3 class="modal-title modal-title-icon">
+                                {{ title }}
+                            </h3>
+                        </div>
                         <button
                             v-if="!hideCloseButton"
                             class="modal-close-button"
@@ -38,16 +50,18 @@
 
 <script setup lang="ts">
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 const props = withDefaults(
     defineProps<{
         modelValue: boolean;
         title?: string;
         size?: "small" | "medium" | "large";
-        shadowColor?: "lavender" | "fuschia" | "green" | "blue";
+        shadowColor?: "lavender" | "fuschia" | "green" | "blue" | "red";
         hideCloseButton?: boolean;
         closeOnBackdrop?: boolean;
         closeButtonTitle?: string;
+        headerIcon?: IconDefinition;
     }>(),
     {
         size: "medium",
@@ -132,6 +146,13 @@ const handleBackdropClick = () => {
         0 0 60px var(--accent-blue),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
+
+.modal-container.shadow-red {
+    box-shadow:
+        0 8px 32px var(--accent-red),
+        0 0 60px var(--accent-red),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
 /* Add subtle gradient overlay for depth - matching BaseCard */
 .modal-container::before {
     content: "";
@@ -158,6 +179,33 @@ const handleBackdropClick = () => {
     z-index: 1;
 }
 
+.icon-header {
+    display: flex;
+    align-items: center;
+    font-size: 1.75rem;
+    gap: 0.5rem;
+}
+
+.icon-header-lavender {
+    color: var(--accent-lavender);
+}
+
+.icon-header-fuschia {
+    color: var(--accent-fuschia);
+}
+
+.icon-header-green {
+    color: var(--accent-green);
+}
+
+.icon-header-blue {
+    color: var(--accent-blue);
+}
+
+.icon-header-red {
+    color: var(--accent-red);
+}
+
 .modal-title {
     font-family: "Libre Baskerville", serif;
     font-size: 1.5rem;
@@ -166,6 +214,11 @@ const handleBackdropClick = () => {
     padding-bottom: 0.25rem;
     margin: 0;
     font-weight: 400;
+}
+
+.modal-title-icon {
+    border-bottom: none;
+    color: inherit;
 }
 
 .modal-close-button {
@@ -202,11 +255,14 @@ const handleBackdropClick = () => {
 }
 
 .modal-footer {
-    padding: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin-top: 1.5rem;
     position: relative;
     z-index: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
 }
 
 /* Size variants */

@@ -37,5 +37,12 @@ withDefaults(
     position: fixed;
     bottom: 2rem;
     right: 2rem;
+    z-index: 1000;
+    background-color: var(--background-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 }
 </style>

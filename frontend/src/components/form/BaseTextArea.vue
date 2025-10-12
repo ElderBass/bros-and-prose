@@ -15,6 +15,8 @@
 </template>
 
 <script setup lang="ts">
+import type { CSSProperties } from "vue";
+
 withDefaults(
     defineProps<{
         modelValue: string;
@@ -23,12 +25,12 @@ withDefaults(
         id: string;
         disabled?: boolean;
         rows?: number;
-        style?: string;
+        style?: string | CSSProperties;
     }>(),
     {
         disabled: false,
         rows: 5,
-        style: "",
+        style: undefined,
     }
 );
 

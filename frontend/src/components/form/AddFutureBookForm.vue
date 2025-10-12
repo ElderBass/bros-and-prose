@@ -73,7 +73,7 @@
                         id="future-book-description"
                         label="description"
                         placeholder="give this guy a little blurb for your bros"
-                        style="height: 100%"
+                        :style="{ height: '100%' }"
                     />
                 </div>
                 <div
@@ -93,12 +93,12 @@
                 <p>enter a title and we'll find the rest</p>
             </div>
             <div v-if="showBookDetails && !isLoading" class="form-actions">
-                <BaseButton variant="outline" @click="closeModal">
+                <BaseButton variant="outline-secondary" @click="closeModal">
                     cancel
                 </BaseButton>
                 <BaseButton
                     :disabled="!canSubmit"
-                    variant="outline"
+                    variant="primary"
                     type="submit"
                 >
                     submit
@@ -112,6 +112,8 @@
 import type { FutureBook, OpenLibraryBookResult } from "@/types";
 import { useBooks } from "@/composables/useBooks";
 import { onBeforeUnmount, ref, watch, computed } from "vue";
+import { v4 as uuid } from "uuid";
+import { capitalizeBookTitle } from "@/utils";
 import BookTag from "@/components/ui/BookTag.vue";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -121,7 +123,7 @@ import { useUIStore } from "@/stores/ui";
 
 const { showAlert } = useUIStore();
 
-defineProps<{
+const props = defineProps<{
     onSubmit: (futureBook: FutureBook) => Promise<void>;
     closeModal: () => void;
 }>();
@@ -135,21 +137,23 @@ const yearPublished = ref("");
 const description = ref("");
 const tags = ref<string[]>([]);
 const image = ref("");
-const bookResult = ref<OpenLibraryBookResult | null>(null);
+const bookResult = ref<OpenLibraryBookResult>({} as OpenLibraryBookResult);
+
 const showBookDetails = ref(false);
+// const showConfirmActions = ref(false);
 
 const submit = async () => {
-    // const futureBook = {
-    //     id: uuid(),
-    //     title: title.value,
-    //     author: author.value,
-    //     description: description.value,
-    //     image: image.value,
-    //     yearPublished: yearPublished.value,
-    //     imageSrc: imageSrc.value,
-    //     votes: votes.value,
-    // };
-    // await props.onSubmit(futureBook);
+    const futureBook = {
+        id: uuid(),
+        title: capitalizeBookTitle(bookResult.value.title),
+        author: author.value,
+        description: description.value,
+        yearPublished: parseInt(yearPublished.value),
+        imageSrc: imageSrc.value,
+        tags: tags.value,
+        votes: 0,
+    };
+    await props.onSubmit(futureBook);
 };
 
 const toggleTag = (tag: string) => {
@@ -163,13 +167,13 @@ const toggleTag = (tag: string) => {
 const runSearch = async () => {
     const query = title.value.trim();
     if (!query) {
-        bookResult.value = null;
+        bookResult.value = {} as OpenLibraryBookResult;
         return;
     }
     try {
         isLoading.value = true;
         const books = await searchBooksByTitle(query);
-        bookResult.value = (books && books[0]) || null;
+        bookResult.value = (books && books[0]) || {};
         if (bookResult.value) {
             showBookDetails.value = true;
             author.value = bookResult.value.author_name[0];
@@ -178,7 +182,7 @@ const runSearch = async () => {
             image.value = bookResult.value.cover_i.toString();
         }
     } catch (e) {
-        bookResult.value = null;
+        bookResult.value = {} as OpenLibraryBookResult;
         console.error("error in runSearch for future book form", e);
         await useLog().error(`Error in runSearch for future book form: ${e}`);
         showAlert(
@@ -187,14 +191,13 @@ const runSearch = async () => {
                 (e as Error).message,
             ])
         );
-        // optional: surface an error state here
     } finally {
         isLoading.value = false;
     }
 };
 
 const imageSrc = computed(() => {
-    return `https://covers.openlibrary.org/b/id/${bookResult.value?.cover_i}-M.jpg`;
+    return `https://covers.openlibrary.org/b/id/${bookResult.value.cover_i}-M.jpg`;
 });
 
 const canSubmit = computed(() => {

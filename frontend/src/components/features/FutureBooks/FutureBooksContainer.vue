@@ -1,11 +1,5 @@
 <template>
-    <BaseCard
-        shadowColor="fuschia"
-        :style="{ width: '100%', marginTop: '2rem' }"
-    >
-        <h2 class="future-books-title">
-            <span class="username">@{{ currentSelectorUsername }}'s</span> books
-        </h2>
+    <div class="future-books-container">
         <FutureBooksList
             v-if="sortedFutureBooks.length"
             :futureBooks="sortedFutureBooks"
@@ -27,8 +21,8 @@
                 and get them to add a fucking book, already
             </p>
         </div>
-        <!-- TODO: do I have the "on deck" selector have their own list? -->
-    </BaseCard>
+    </div>
+    <!-- TODO: do I have the "on deck" selector have their own list? -->
 </template>
 
 <script setup lang="ts">
@@ -47,6 +41,7 @@ defineProps<{
 const { futureBooks } = storeToRefs(useBooksStore());
 
 const sortedFutureBooks = computed(() => {
+    console.log("\n KERTWANGING sortedFutureBooks", futureBooks.value, "\n\n");
     const books = futureBooks.value;
     return books.sort((a, b) => b.votes - a.votes);
 });
@@ -57,26 +52,12 @@ const sortedFutureBooks = computed(() => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 100%;
+    height: 100%;
     padding: 2rem;
     gap: 1rem;
-    border: 2px solid var(--accent-blue);
-    border-radius: 1rem;
     margin-top: 2rem;
-}
-
-.future-books-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    font-style: normal;
-    border-bottom: 2px solid var(--accent-blue);
-    width: fit-content;
-}
-
-.username {
-    font-weight: bold;
-    font-style: normal;
-    color: var(--accent-fuschia);
 }
 
 .no-future-books {
@@ -86,7 +67,7 @@ const sortedFutureBooks = computed(() => {
     justify-content: center;
     text-align: center;
     gap: 1rem;
-    padding: 2rem;
+    padding: 4rem;
     margin: 0 auto;
     border: 2px dashed var(--accent-blue);
     border-radius: 1rem;
