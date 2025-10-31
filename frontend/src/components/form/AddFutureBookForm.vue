@@ -1,20 +1,18 @@
 <template>
     <form @submit.prevent="submit">
-        <div class="column">
-            <div class="image-container">
-                <img
-                    v-if="bookResult?.cover_i && !isLoading"
-                    :src="imageSrc"
-                    alt="book cover"
-                />
-                <LoadingSpinner
-                    v-else-if="isLoading"
-                    size="medium"
-                    message="gathering image..."
-                />
-                <div v-else class="placeholder-image">
-                    <FontAwesomeIcon :icon="faBook" />
-                </div>
+        <div class="image-container">
+            <img
+                v-if="bookResult?.cover_i && !isLoading"
+                :src="imageSrc"
+                alt="book cover"
+            />
+            <LoadingSpinner
+                v-else-if="isLoading"
+                size="medium"
+                message="gathering image..."
+            />
+            <div v-else class="placeholder-image">
+                <FontAwesomeIcon :icon="faBook" />
             </div>
         </div>
         <div class="inputs-container">
@@ -26,7 +24,7 @@
                     v-model="title"
                     id="future-book-title"
                     label="title"
-                    size="large"
+                    size="medium"
                     placeholder="title"
                 />
             </div>
@@ -73,7 +71,7 @@
                         id="future-book-description"
                         label="description"
                         placeholder="give this guy a little blurb for your bros"
-                        style="height: 100%"
+                        :style="{ height: '100%' }"
                     />
                 </div>
                 <div
@@ -86,6 +84,7 @@
                         :tag="tag"
                         :selected="tags.includes(tag)"
                         :onClick="() => toggleTag(tag)"
+                        :size="isMobile ? 'small' : 'medium'"
                     />
                 </div>
             </template>
@@ -93,13 +92,20 @@
                 <p>enter a title and we'll find the rest</p>
             </div>
             <div v-if="showBookDetails && !isLoading" class="form-actions">
-                <BaseButton variant="outline" @click="closeModal">
+                <BaseButton
+                    variant="outline-secondary"
+                    size="small"
+                    @click="closeModal"
+                    :style="{ width: isMobile ? '100%' : '50%' }"
+                >
                     cancel
                 </BaseButton>
                 <BaseButton
+                    size="small"
                     :disabled="!canSubmit"
-                    variant="outline"
+                    variant="primary"
                     type="submit"
+                    :style="{ width: isMobile ? '100%' : '50%' }"
                 >
                     submit
                 </BaseButton>
@@ -112,16 +118,20 @@
 import type { FutureBook, OpenLibraryBookResult } from "@/types";
 import { useBooks } from "@/composables/useBooks";
 import { onBeforeUnmount, ref, watch, computed } from "vue";
+import { v4 as uuid } from "uuid";
+import { capitalizeBookTitle } from "@/utils";
 import BookTag from "@/components/ui/BookTag.vue";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useLog } from "@/composables/useLog";
 import { COMMON_BOOK_TAGS, QUICK_ERROR } from "@/constants";
 import { useUIStore } from "@/stores/ui";
+import { storeToRefs } from "pinia";
 
 const { showAlert } = useUIStore();
+const { isMobile } = storeToRefs(useUIStore());
 
-defineProps<{
+const props = defineProps<{
     onSubmit: (futureBook: FutureBook) => Promise<void>;
     closeModal: () => void;
 }>();
@@ -135,21 +145,22 @@ const yearPublished = ref("");
 const description = ref("");
 const tags = ref<string[]>([]);
 const image = ref("");
-const bookResult = ref<OpenLibraryBookResult | null>(null);
+const bookResult = ref<OpenLibraryBookResult>({} as OpenLibraryBookResult);
+
 const showBookDetails = ref(false);
 
 const submit = async () => {
-    // const futureBook = {
-    //     id: uuid(),
-    //     title: title.value,
-    //     author: author.value,
-    //     description: description.value,
-    //     image: image.value,
-    //     yearPublished: yearPublished.value,
-    //     imageSrc: imageSrc.value,
-    //     votes: votes.value,
-    // };
-    // await props.onSubmit(futureBook);
+    const futureBook = {
+        id: uuid(),
+        title: capitalizeBookTitle(bookResult.value.title),
+        author: author.value,
+        description: description.value,
+        yearPublished: parseInt(yearPublished.value),
+        imageSrc: imageSrc.value,
+        tags: tags.value,
+        votes: ["placeholder"] as string[],
+    };
+    await props.onSubmit(futureBook);
 };
 
 const toggleTag = (tag: string) => {
@@ -163,13 +174,13 @@ const toggleTag = (tag: string) => {
 const runSearch = async () => {
     const query = title.value.trim();
     if (!query) {
-        bookResult.value = null;
+        bookResult.value = {} as OpenLibraryBookResult;
         return;
     }
     try {
         isLoading.value = true;
         const books = await searchBooksByTitle(query);
-        bookResult.value = (books && books[0]) || null;
+        bookResult.value = (books && books[0]) || {};
         if (bookResult.value) {
             showBookDetails.value = true;
             author.value = bookResult.value.author_name[0];
@@ -178,7 +189,7 @@ const runSearch = async () => {
             image.value = bookResult.value.cover_i.toString();
         }
     } catch (e) {
-        bookResult.value = null;
+        bookResult.value = {} as OpenLibraryBookResult;
         console.error("error in runSearch for future book form", e);
         await useLog().error(`Error in runSearch for future book form: ${e}`);
         showAlert(
@@ -187,14 +198,13 @@ const runSearch = async () => {
                 (e as Error).message,
             ])
         );
-        // optional: surface an error state here
     } finally {
         isLoading.value = false;
     }
 };
 
 const imageSrc = computed(() => {
-    return `https://covers.openlibrary.org/b/id/${bookResult.value?.cover_i}-M.jpg`;
+    return `https://covers.openlibrary.org/b/id/${bookResult.value.cover_i}-M.jpg`;
 });
 
 const canSubmit = computed(() => {
@@ -232,24 +242,25 @@ form {
     display: flex;
     gap: 1rem;
     width: 100%;
-}
-
-.column {
-    flex: 1 0 33%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    width: 100%;
     min-height: 640px;
 }
 
 .image-container {
+    flex: 1 0 33%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 1rem;
     width: 100%;
+}
+
+/* Ensure cover image scales nicely */
+.image-container img {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    border-radius: 0.75rem;
+    margin: 0 auto;
 }
 
 .tags-container {
@@ -263,7 +274,7 @@ form {
 .inputs-container {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
     width: 100%;
 }
 
@@ -295,6 +306,7 @@ form {
     gap: 1rem;
     width: 100%;
     height: 100%;
+    margin-top: 1rem;
 }
 
 .label {
@@ -362,5 +374,70 @@ form {
     box-shadow:
         0 4px 20px rgba(0, 191, 255, 0.15),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Mobile optimizations */
+@media (max-width: 786px) {
+    form {
+        flex-direction: column; /* stack image and inputs */
+        gap: 0.5rem;
+    }
+
+    .column {
+        min-height: unset;
+        padding: 0.5rem 0;
+        order: 1; /* keep image toward top */
+    }
+
+    .image-container img {
+        max-width: 260px;
+        border-radius: 0.5rem;
+    }
+
+    .placeholder-image {
+        min-height: 240px;
+        font-size: 1.5rem;
+    }
+
+    .inputs-container {
+        gap: 0.75rem;
+    }
+
+    .form-row {
+        flex-direction: column; /* author and year on separate lines */
+        gap: 0.75rem;
+    }
+
+    .form-actions {
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    .tags-container {
+        max-height: 160px;
+        overflow-y: auto;
+        padding-right: 0.25rem; /* room for scrollbar */
+    }
+
+    .title-label {
+        font-size: 1.25rem;
+    }
+
+    .label {
+        font-size: 1.1rem;
+    }
+
+    .no-book-details {
+        min-height: 220px;
+        font-size: 1.125rem;
+        padding: 1rem;
+    }
+
+    /* Tame textarea height from BaseTextArea component */
+    .form-container :deep(textarea) {
+        min-height: 140px;
+        max-height: 220px;
+    }
 }
 </style>

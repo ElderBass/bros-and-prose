@@ -51,6 +51,8 @@ export const COMMON_BOOK_TAGS = [
     "fantasy",
     "dystopian",
     "cerebral",
+    "satire",
+    "noir",
     "historical",
     "nonfiction",
     "pop-culture",

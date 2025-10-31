@@ -1,7 +1,11 @@
 <template>
     <div
         class="book-tag"
-        :class="[`book-tag-${color}`, { selected, clickable: !!onClick }]"
+        :class="[
+            `book-tag-${color}`,
+            `size-${size}`,
+            { selected, clickable: !!onClick },
+        ]"
         :selected="selected"
         @click="onClick"
     >
@@ -16,10 +20,12 @@ withDefaults(
         selected: boolean;
         color?: "blue" | "fuschia" | "green" | "lavender";
         onClick?: () => void;
+        size?: "small" | "medium" | "large";
     }>(),
     {
         selected: false,
         color: "blue",
+        size: "medium",
     }
 );
 </script>
@@ -28,7 +34,22 @@ withDefaults(
 .book-tag {
     background-color: inherit;
     padding: 0.25rem 0.5rem;
-    border-radius: 1rem;
+    border-radius: 9999px;
+}
+
+.book-tag.size-small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+.book-tag.size-medium {
+    padding: 0.35rem 0.75rem;
+    font-size: 1rem;
+}
+
+.book-tag.size-large {
+    padding: 1rem 2rem;
+    font-size: 1.25rem;
 }
 
 .book-tag.clickable:hover {

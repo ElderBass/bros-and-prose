@@ -35,8 +35,40 @@ export const useBooks = () => {
 
     const addFutureBook = async (futureBook: FutureBook) => {
         const book = await booksService.addFutureBook(futureBook);
-        booksStore.setFutureBooks(book);
+        await info(`Added future book: ${book.title}`);
+        booksStore.setFutureBooks([...booksStore.futureBooks, book]);
         return book;
+    };
+
+    const updateFutureBook = async (bookId: string, futureBook: FutureBook) => {
+        const book = await booksService.updateFutureBook(bookId, futureBook);
+        await info(`Updated future book: ${book.title}`);
+        booksStore.setFutureBooks(
+            booksStore.futureBooks.map((b) => (b.id === bookId ? book : b))
+        );
+        return book;
+    };
+
+    const voteForFutureBook = async (bookId: string, userId: string) => {
+        const book = booksStore.futureBooks.find((b) => b.id === bookId);
+        if (!book) {
+            await useLog().error(`Future book not found: ${bookId}`);
+            return;
+        }
+        const hasVoted = book.votes.includes(userId);
+        const updatedBook = await booksService.updateFutureBook(bookId, {
+            ...book,
+            votes: hasVoted
+                ? book.votes.filter((v) => v !== userId)
+                : [...book.votes, userId],
+        });
+        await info(`Voted for future book: ${book.title}`);
+        booksStore.setFutureBooks(
+            booksStore.futureBooks.map((b) =>
+                b.id === bookId ? updatedBook : b
+            )
+        );
+        return updatedBook;
     };
 
     const getBookByTitle = async (title: string) => {
@@ -85,6 +117,8 @@ export const useBooks = () => {
         getPastBooks,
         getFutureBooks,
         addFutureBook,
+        updateFutureBook,
+        voteForFutureBook,
         getAllBooks,
         getBookByTitle,
         searchBooksByTitle,
