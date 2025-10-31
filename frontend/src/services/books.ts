@@ -21,7 +21,7 @@ export interface FutureBooksResponse {
     data: FutureBook[];
 }
 
-export interface AddFutureBookResponse {
+export interface FutureBookResponse {
     success: boolean;
     message: string;
     data: FutureBook;
@@ -67,9 +67,17 @@ export const booksService = {
         return response.data;
     },
     addFutureBook: async (futureBook: FutureBook) => {
-        const response = await apiRequest<AddFutureBookResponse>(
+        const response = await apiRequest<FutureBookResponse>(
             "POST",
             "/api/futureBooks",
+            futureBook
+        );
+        return response.data;
+    },
+    updateFutureBook: async (bookId: string, futureBook: FutureBook) => {
+        const response = await apiRequest<FutureBookResponse>(
+            "PUT",
+            `/api/futureBooks/${bookId}`,
             futureBook
         );
         return response.data;

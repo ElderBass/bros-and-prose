@@ -40,10 +40,11 @@ const listLayout = computed(() => {
 }
 
 .future-books-list-column {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
     width: 100%;
     gap: 1rem;
+    height: 100%;
 }
 
 .future-books-list-item-placeholder {
@@ -73,6 +74,11 @@ const listLayout = computed(() => {
 @media (max-width: 1024px) {
     .future-books-list-row {
         grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 768px) {
+    .future-books-list-item-placeholder {
+        font-size: 1.25rem;
     }
 }
 </style>

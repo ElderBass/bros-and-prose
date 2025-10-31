@@ -41,9 +41,8 @@ defineProps<{
 const { futureBooks } = storeToRefs(useBooksStore());
 
 const sortedFutureBooks = computed(() => {
-    console.log("\n KERTWANGING sortedFutureBooks", futureBooks.value, "\n\n");
     const books = futureBooks.value;
-    return books.sort((a, b) => b.votes - a.votes);
+    return books.sort((a, b) => b.votes?.length - a.votes?.length);
 });
 </script>
 
@@ -102,7 +101,7 @@ const sortedFutureBooks = computed(() => {
 
 @media (max-width: 768px) {
     .future-books-container {
-        padding: 1rem;
+        padding: 0rem;
         gap: 0.5rem;
     }
     .future-books-title {

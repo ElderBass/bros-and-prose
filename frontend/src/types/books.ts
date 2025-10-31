@@ -63,5 +63,5 @@ export interface FutureBook {
     imageSrc: string;
     tags: string[];
     description: string;
-    votes: number;
+    votes: string[];
 }

@@ -119,6 +119,32 @@ export const addFutureBook = async (req: express.Request, res: express.Response)
     }
 };
 
+export const updateFutureBook = async (req: express.Request, res: express.Response) => {
+    const { bookId } = req.params;
+    console.log("UPDATE FUTURE BOOK bookId in updateFutureBook", bookId);
+    try {
+        const futureBookRef = db.ref(`books/futureBooks/${bookId}`);
+        await futureBookRef.set(req.body);
+        const updatedFutureBook = await futureBookRef.once("value");
+        console.log(
+            "UPDATE FUTURE BOOK kertwanged in updateFutureBook",
+            updatedFutureBook.val()
+        );
+        res.json({
+            success: true,
+            message: "Future book updated successfully",
+            data: updatedFutureBook.val(),
+        });
+    } catch (error) {
+        console.log("UPDATE FUTURE BOOK ERROR in updateFutureBook", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to update future book",
+            error: error,
+        });
+    }
+};
+
 export const deleteFutureBook = async (req: express.Request, res: express.Response) => {
     const { bookId } = req.params;
     console.log("DELETE FUTURE BOOK bookId in deleteFutureBook", bookId);

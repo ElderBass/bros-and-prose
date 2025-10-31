@@ -8,6 +8,7 @@ import {
     getBooks,
     getFutureBooks,
     updateBook,
+    updateFutureBook,
 } from "./books.js";
 import { getUser, getUsers, updateUser } from "./user.js";
 import { postLog } from "./log.js";
@@ -21,6 +22,7 @@ router.get("/books", getBooks);
 router.put("/books/:bookId", updateBook);
 router.get("/futureBooks", getFutureBooks);
 router.post("/futureBooks", addFutureBook);
+router.put("/futureBooks/:bookId", updateFutureBook);
 router.delete("/futureBooks/:bookId", deleteFutureBook);
 router.get("/users/:userId", getUser);
 router.get("/users", getUsers);

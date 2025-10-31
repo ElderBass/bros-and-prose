@@ -75,6 +75,22 @@ export const FUTURE_BOOK_ADDED_SUCCESS_ALERT: Alert = {
     dismissable: false,
 };
 
+export const futureBookVotedSuccessAlert = (hasVoted: boolean): Alert => {
+    const message1 = hasVoted
+        ? "vote removed successfully."
+        : "vote cast successfully.";
+    const message2 = hasVoted
+        ? "on second thought, fuck that book."
+        : "lfgo that book looks tight.";
+    return {
+        show: true,
+        messages: [message1, message2],
+        type: "success",
+        duration: 5000,
+        dismissable: false,
+    };
+};
+
 // Error Alerts
 export const VALIDATION_ERROR_ALERT: Alert = {
     show: true,
