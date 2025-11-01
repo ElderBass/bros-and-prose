@@ -1,9 +1,6 @@
 <template>
     <div class="future-books-container">
-        <FutureBooksList
-            v-if="sortedFutureBooks.length"
-            :futureBooks="sortedFutureBooks"
-        />
+        <FutureBooksList v-if="futureBooks.length" :futureBooks="futureBooks" />
         <div v-else class="no-future-books">
             <p class="italics">no future books yet</p>
             <BaseButton
@@ -28,7 +25,6 @@
 <script setup lang="ts">
 import FutureBooksList from "./FutureBooksList.vue";
 import { useBooksStore } from "@/stores/books";
-import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
 
@@ -39,11 +35,6 @@ defineProps<{
 }>();
 
 const { futureBooks } = storeToRefs(useBooksStore());
-
-const sortedFutureBooks = computed(() => {
-    const books = futureBooks.value;
-    return books.sort((a, b) => b.votes?.length - a.votes?.length);
-});
 </script>
 
 <style scoped>

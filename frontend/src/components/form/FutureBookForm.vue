@@ -1,11 +1,7 @@
 <template>
     <form @submit.prevent="submit">
         <div class="image-container">
-            <img
-                v-if="bookResult?.cover_i && !isLoading"
-                :src="imageSrc"
-                alt="book cover"
-            />
+            <img v-if="image && !isLoading" :src="image" alt="book cover" />
             <LoadingSpinner
                 v-else-if="isLoading"
                 size="medium"
@@ -26,6 +22,7 @@
                     label="title"
                     size="medium"
                     placeholder="title"
+                    :disabled="isEdit"
                 />
             </div>
             <div v-if="isLoading" class="spinner-container">
@@ -47,6 +44,7 @@
                             label="author"
                             size="medium"
                             placeholder="author"
+                            :disabled="isEdit"
                         />
                     </div>
                     <div class="form-container">
@@ -59,6 +57,7 @@
                             label="year published"
                             placeholder="year published"
                             size="medium"
+                            :disabled="isEdit"
                         />
                     </div>
                 </div>
@@ -95,6 +94,7 @@
                 <BaseButton
                     variant="outline-secondary"
                     size="small"
+                    title="good call because this bro looks hella lame, my dude."
                     @click="closeModal"
                     :style="{ width: isMobile ? '100%' : '50%' }"
                 >
@@ -105,6 +105,7 @@
                     :disabled="!canSubmit"
                     variant="primary"
                     type="submit"
+                    title="I hope the bros don't shit on this too much, bro..."
                     :style="{ width: isMobile ? '100%' : '50%' }"
                 >
                     submit
@@ -115,52 +116,64 @@
 </template>
 
 <script setup lang="ts">
+import { onBeforeUnmount, ref, watch, computed, onMounted } from "vue";
 import type { FutureBook, OpenLibraryBookResult } from "@/types";
-import { useBooks } from "@/composables/useBooks";
-import { onBeforeUnmount, ref, watch, computed } from "vue";
+import { COMMON_BOOK_TAGS, QUICK_ERROR } from "@/constants";
 import { v4 as uuid } from "uuid";
 import { capitalizeBookTitle } from "@/utils";
 import BookTag from "@/components/ui/BookTag.vue";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useLog } from "@/composables/useLog";
-import { COMMON_BOOK_TAGS, QUICK_ERROR } from "@/constants";
+import { useBooks } from "@/composables/useBooks";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
+import { useBooksStore } from "@/stores/books";
 
 const { showAlert } = useUIStore();
 const { isMobile } = storeToRefs(useUIStore());
+const { futureBookModal } = storeToRefs(useBooksStore());
+const futureBook = futureBookModal.value.futureBook;
 
 const props = defineProps<{
-    onSubmit: (futureBook: FutureBook) => Promise<void>;
+    onSubmit: (futureBook: FutureBook, isEdit: boolean) => Promise<void>;
     closeModal: () => void;
 }>();
 
 const { searchBooksByTitle } = useBooks();
 
 const isLoading = ref(false);
-const title = ref("");
-const author = ref("");
-const yearPublished = ref("");
-const description = ref("");
-const tags = ref<string[]>([]);
-const image = ref("");
+const isEdit = ref(!!futureBook?.id);
+const showBookDetails = ref(!!futureBook);
+
+const title = ref(futureBook?.title || "");
+const author = ref(futureBook?.author || "");
+const yearPublished = ref(futureBook?.yearPublished.toString() || "");
+const description = ref(futureBook?.description || "");
+const tags = ref<string[]>(futureBook?.tags || []);
+const image = ref(futureBook?.imageSrc || "");
 const bookResult = ref<OpenLibraryBookResult>({} as OpenLibraryBookResult);
 
-const showBookDetails = ref(false);
-
 const submit = async () => {
-    const futureBook = {
-        id: uuid(),
-        title: capitalizeBookTitle(bookResult.value.title),
-        author: author.value,
-        description: description.value,
-        yearPublished: parseInt(yearPublished.value),
-        imageSrc: imageSrc.value,
-        tags: tags.value,
-        votes: ["placeholder"] as string[],
-    };
-    await props.onSubmit(futureBook);
+    let futureBookToSubmit: FutureBook;
+    if (isEdit.value) {
+        futureBookToSubmit = {
+            ...futureBook,
+            description: description.value,
+            tags: tags.value,
+        };
+    } else {
+        futureBookToSubmit = {
+            id: uuid(),
+            title: capitalizeBookTitle(bookResult.value.title),
+            author: author.value,
+            description: description.value,
+            yearPublished: parseInt(yearPublished.value),
+            imageSrc: imageSrc.value,
+            tags: tags.value,
+            votes: ["placeholder"] as string[],
+        };
+    }
+    await props.onSubmit(futureBookToSubmit, isEdit.value);
 };
 
 const toggleTag = (tag: string) => {
@@ -234,6 +247,19 @@ watch(
 
 onBeforeUnmount(() => {
     if (searchTimer) window.clearTimeout(searchTimer);
+});
+
+onMounted(() => {
+    if (futureBook.id) {
+        showBookDetails.value = true;
+        isEdit.value = true;
+        title.value = futureBook.title;
+        author.value = futureBook.author;
+        yearPublished.value = futureBook.yearPublished.toString();
+        description.value = futureBook.description;
+        tags.value = futureBook.tags;
+        image.value = futureBook.imageSrc;
+    }
 });
 </script>
 

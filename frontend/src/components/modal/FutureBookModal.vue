@@ -10,14 +10,13 @@
             size="large"
             message="adding the future book..."
         />
-        <AddFutureBookForm v-else :onSubmit="onSubmit" :closeModal="onClose" />
+        <FutureBookForm v-else :onSubmit="onSubmit" :closeModal="onClose" />
     </BaseModal>
 </template>
 
 <script setup lang="ts">
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
-import AddFutureBookForm from "@/components/form/AddFutureBookForm.vue";
-
+import FutureBookForm from "@/components/form/FutureBookForm.vue";
 import type { FutureBook } from "@/types";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
@@ -30,7 +29,7 @@ const emit = defineEmits<{
 
 defineProps<{
     open: boolean;
-    onSubmit: (futureBook: FutureBook) => Promise<void>;
+    onSubmit: (futureBook: FutureBook, isEdit: boolean) => Promise<void>;
 }>();
 
 const onClose = () => emit("close");

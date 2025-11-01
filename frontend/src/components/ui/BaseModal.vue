@@ -255,7 +255,6 @@ const handleBackdropClick = () => {
 }
 
 .modal-footer {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin-top: 1.5rem;
     position: relative;
     z-index: 1;

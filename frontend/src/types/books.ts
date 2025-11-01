@@ -15,10 +15,23 @@ export interface Book {
     };
 }
 
+export type FutureBookResultModalType = "success" | "error";
+
+export interface FutureBookModal {
+    show: boolean;
+    futureBook: FutureBook;
+}
+export interface FutureBookResultModal {
+    show: boolean;
+    type: FutureBookResultModalType;
+    message: string[];
+}
 export interface BooksState {
     currentBook: Book;
     pastBooks: Book[];
     futureBooks: FutureBook[];
+    futureBookModal: FutureBookModal;
+    futureBookResultModal: FutureBookResultModal;
 }
 
 export interface OpenLibraryBookResult {
