@@ -30,7 +30,7 @@ withDefaults(
         icon: IconDefinition;
         size: "xsmall" | "small" | "medium" | "large";
         title: string;
-        color?: "blue" | "fuschia" | "green" | "lavender";
+        color?: "blue" | "fuschia" | "green" | "lavender" | "red";
         shadowColor?: "lavender" | "fuschia" | "green" | "blue";
         disabled?: boolean;
         style?: CSSProperties;
@@ -61,6 +61,12 @@ defineOptions({ inheritAttrs: false });
     height: 3rem;
 }
 
+.icon-button.color-red {
+    color: var(--accent-red);
+    background-color: rgba(255, 77, 77, 0.1);
+    border-color: var(--accent-red);
+}
+
 .icon-button:hover {
     color: var(--accent-fuschia);
     background-color: rgba(255, 77, 255, 0.1);
@@ -85,6 +91,11 @@ defineOptions({ inheritAttrs: false });
         color: var(--accent-blue);
         background-color: rgba(77, 77, 255, 0.1);
         border-color: var(--accent-blue);
+    }
+    &.color-red {
+        color: #cc0000; /* darker than #ff0000 */
+        background-color: rgba(204, 0, 0, 0.18);
+        border-color: #cc0000;
     }
 }
 

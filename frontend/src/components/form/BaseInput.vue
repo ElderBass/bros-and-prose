@@ -99,6 +99,23 @@ const inputType = computed(() => {
     }
 }
 
+/* Disabled state */
+.base-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-style: dashed; /* subtle cue it's inactive */
+}
+
+.base-input:disabled::placeholder {
+    opacity: 0.4;
+}
+
+/* Keep disabled style on focus */
+.base-input:disabled:focus {
+    outline: none;
+    border-style: dashed;
+}
+
 /* Size variants */
 .base-input.size-small {
     height: 2.5rem;
@@ -155,6 +172,13 @@ const inputType = computed(() => {
     fill: var(--accent-blue);
     width: 1.5rem;
     height: 1.5rem;
+}
+
+/* If input is disabled, visually disable the toggle and block clicks */
+.base-input:disabled + .password-toggle {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 /* Size-specific password toggle icons */
