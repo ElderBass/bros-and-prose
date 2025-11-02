@@ -5,7 +5,7 @@
             <div class="footer">
                 <VoteCount :voteCount="book.votes.length - 1 || 0" />
                 <VoteActions
-                    v-if="!userIsFutureBookSelector"
+                    v-if="!userIsFutureBookSelector || isGuestUser()"
                     :voteCount="book.votes.length - 1 || 0"
                     :userHasVoted="userHasVoted"
                     :handleVote="handleVote"
@@ -41,6 +41,7 @@ import { useBooks } from "@/composables/useBooks";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "@/composables/useLog";
 import { useBooksStore } from "@/stores/books";
+import { isGuestUser } from "@/utils";
 
 const props = defineProps<{
     book: FutureBook;

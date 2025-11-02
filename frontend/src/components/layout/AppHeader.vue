@@ -16,7 +16,7 @@
         </div>
         <RouterLink class="router-link-wrapper" to="/profile">
             <ProfileButton
-                v-if="!isMobile && currentAvatar"
+                v-if="!isMobile && currentAvatar && !isGuest"
                 :handleClick="goToProfile"
                 :currentAvatar="currentAvatar"
             />
@@ -50,7 +50,7 @@
                     >{{ link.label }}</RouterLink
                 >
                 <button
-                    v-if="currentAvatar"
+                    v-if="currentAvatar && !isGuest"
                     class="mobile-profile-btn"
                     type="button"
                     @click="goToProfile"
@@ -74,6 +74,7 @@ import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user";
 import { AVATAR_ICON_LIST } from "@/constants";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import { isGuestUser } from "@/utils";
 
 const navLinks = [
     { path: "/past", label: "past" },
@@ -88,6 +89,10 @@ const isMobile = storeToRefs(useUIStore()).isMobile;
 const { loggedInUser } = storeToRefs(useUserStore());
 
 const currentAvatar = ref<IconDefinition | null>(null);
+
+const isGuest = computed(() => {
+    return isGuestUser() || loggedInUser.value.id === "guest";
+});
 
 watch(
     () => loggedInUser.value.avatar,

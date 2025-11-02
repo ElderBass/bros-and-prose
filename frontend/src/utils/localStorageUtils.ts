@@ -1,6 +1,7 @@
 import type { User } from "@/types";
 
 export const storage_key = "superCoolBroData";
+export const guest_storage_key = "guest";
 
 export const setUserInStorage = (user: User) => {
     localStorage.setItem(storage_key, JSON.stringify(user));
@@ -13,4 +14,12 @@ export const getUserFromStorage = () => {
 
 export const removeUserFromStorage = () => {
     localStorage.removeItem(storage_key);
+};
+
+export const setGuestUser = () => {
+    localStorage.setItem(guest_storage_key, "true");
+};
+
+export const isGuestUser = () => {
+    return localStorage.getItem(guest_storage_key) === "true";
 };

@@ -26,7 +26,6 @@ import FadeIn from "@/components/transitions/FadeIn.vue";
 import { getUserFromStorage } from "@/utils";
 
 const { isLoading } = useAuth();
-
 const userStore = useUserStore();
 
 const showSuccessModal = computed(() => {
@@ -45,6 +44,7 @@ onMounted(() => {
 <style scoped>
 #landing {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100vw;

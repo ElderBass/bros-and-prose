@@ -104,18 +104,30 @@
                 </div>
             </transition>
         </div>
+        <BaseButton
+            v-if="!broName"
+            title="continue as guest"
+            variant="tertiary"
+            size="large"
+            @click="onGuestClick"
+        >
+            <span>continue as guest</span>
+            <FontAwesomeIcon :icon="faUserAstronaut" />
+        </BaseButton>
     </form>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
+import router from "@/router";
 import BroSelect from "@/components/form/BroSelect.vue";
 import { useAuth } from "@/composables/useAuth";
 import { useUser } from "@/composables/useUser";
 import FadeIn from "../transitions/FadeIn.vue";
-import { getIdFromBroName } from "@/utils";
+import { getIdFromBroName, setGuestUser } from "@/utils";
 import BaseInput from "./BaseInput.vue";
 import { useLog } from "@/composables/useLog";
+import { faUserAstronaut } from "@fortawesome/free-solid-svg-icons";
 
 const { signup, login } = useAuth();
 const { getUser } = useUser();
@@ -126,6 +138,11 @@ const username = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const activeForm = ref("");
+
+const onGuestClick = () => {
+    setGuestUser();
+    router.push("/present");
+};
 
 watch(broName, async (newVal) => {
     if (newVal) {
