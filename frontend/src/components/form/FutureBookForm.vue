@@ -132,7 +132,6 @@ import { useBooksStore } from "@/stores/books";
 const { showAlert } = useUIStore();
 const { isMobile } = storeToRefs(useUIStore());
 const { futureBookModal } = storeToRefs(useBooksStore());
-const futureBook = futureBookModal.value.futureBook;
 
 const props = defineProps<{
     onSubmit: (futureBook: FutureBook, isEdit: boolean) => Promise<void>;
@@ -142,22 +141,22 @@ const props = defineProps<{
 const { searchBooksByTitle } = useBooks();
 
 const isLoading = ref(false);
-const isEdit = ref(!!futureBook?.id);
-const showBookDetails = ref(!!futureBook);
+const isEdit = ref(false);
+const showBookDetails = ref(false);
 
-const title = ref(futureBook?.title || "");
-const author = ref(futureBook?.author || "");
-const yearPublished = ref(futureBook?.yearPublished.toString() || "");
-const description = ref(futureBook?.description || "");
-const tags = ref<string[]>(futureBook?.tags || []);
-const image = ref(futureBook?.imageSrc || "");
+const title = ref("");
+const author = ref("");
+const yearPublished = ref("");
+const description = ref("");
+const tags = ref<string[]>([]);
+const image = ref("");
 const bookResult = ref<OpenLibraryBookResult>({} as OpenLibraryBookResult);
 
 const submit = async () => {
     let futureBookToSubmit: FutureBook;
     if (isEdit.value) {
         futureBookToSubmit = {
-            ...futureBook,
+            ...(futureBookModal.value?.futureBook || ({} as FutureBook)),
             description: description.value,
             tags: tags.value,
         };
@@ -168,7 +167,7 @@ const submit = async () => {
             author: author.value,
             description: description.value,
             yearPublished: parseInt(yearPublished.value),
-            imageSrc: imageSrc.value,
+            imageSrc: image.value,
             tags: tags.value,
             votes: ["placeholder"] as string[],
         };
@@ -186,7 +185,7 @@ const toggleTag = (tag: string) => {
 
 const runSearch = async () => {
     const query = title.value.trim();
-    if (!query) {
+    if (!query || isEdit.value) {
         bookResult.value = {} as OpenLibraryBookResult;
         return;
     }
@@ -199,7 +198,7 @@ const runSearch = async () => {
             author.value = bookResult.value.author_name[0];
             yearPublished.value =
                 bookResult.value.first_publish_year.toString();
-            image.value = bookResult.value.cover_i.toString();
+            image.value = `https://covers.openlibrary.org/b/id/${bookResult.value.cover_i}-M.jpg`;
         }
     } catch (e) {
         bookResult.value = {} as OpenLibraryBookResult;
@@ -215,10 +214,6 @@ const runSearch = async () => {
         isLoading.value = false;
     }
 };
-
-const imageSrc = computed(() => {
-    return `https://covers.openlibrary.org/b/id/${bookResult.value.cover_i}-M.jpg`;
-});
 
 const canSubmit = computed(() => {
     return (
@@ -250,15 +245,16 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
-    if (futureBook.id) {
+    if (futureBookModal.value?.futureBook?.id) {
         showBookDetails.value = true;
         isEdit.value = true;
-        title.value = futureBook.title;
-        author.value = futureBook.author;
-        yearPublished.value = futureBook.yearPublished.toString();
-        description.value = futureBook.description;
-        tags.value = futureBook.tags;
-        image.value = futureBook.imageSrc;
+        title.value = futureBookModal.value.futureBook.title;
+        author.value = futureBookModal.value.futureBook.author;
+        yearPublished.value =
+            futureBookModal.value.futureBook.yearPublished.toString();
+        description.value = futureBookModal.value.futureBook.description;
+        tags.value = futureBookModal.value.futureBook.tags;
+        image.value = futureBookModal.value.futureBook.imageSrc;
     }
 });
 </script>
@@ -427,6 +423,8 @@ form {
 
     .inputs-container {
         gap: 0.75rem;
+        flex: 1 0 auto;
+        justify-content: space-between;
     }
 
     .form-row {

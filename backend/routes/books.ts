@@ -151,9 +151,12 @@ export const deleteFutureBook = async (req: express.Request, res: express.Respon
     try {
         const futureBookRef = db.ref(`books/futureBooks/${bookId}`);
         await futureBookRef.remove();
+        const futureBooks = await db.ref("books/futureBooks").once("value");
+        console.log("DELETE FUTURE BOOK updated future books after deletion: ", futureBooks.val());
         res.json({
             success: true,
             message: "Future book deleted successfully",
+            data: futureBooks.val(),
         });
     } catch (error) {
         console.log("DELETE FUTURE BOOK ERROR in deleteFutureBook", error);

@@ -7,6 +7,7 @@
             size="large"
             :style="style"
             :handleClick="() => $emit('click')"
+            :disabled="disabled"
         />
     </div>
 </template>
@@ -23,11 +24,13 @@ withDefaults(
         size?: "xsmall" | "small" | "medium" | "large";
         color?: "blue" | "fuschia" | "green" | "lavender";
         style?: CSSProperties;
+        disabled?: boolean;
     }>(),
     {
         size: "large",
         color: "green",
         style: () => ({}),
+        disabled: false,
     }
 );
 </script>

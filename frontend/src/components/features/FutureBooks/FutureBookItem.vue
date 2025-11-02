@@ -18,20 +18,28 @@
             </div>
         </div>
     </BaseCard>
+    <DeleteFutureBookModal
+        v-if="deleteFutureBookModalOpen"
+        :open="deleteFutureBookModalOpen"
+        :bookTitle="book.title"
+        :bookId="book.id"
+        @close="deleteFutureBookModalOpen = false"
+    />
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import type { FutureBook } from "@/types";
-import { useUserStore } from "@/stores/user";
-import { useBooks } from "@/composables/useBooks";
-import { useUIStore } from "@/stores/ui";
-import { useLog } from "@/composables/useLog";
 import { QUICK_ERROR, futureBookVotedSuccessAlert } from "@/constants";
 import VoteCount from "./VoteCount.vue";
 import VoteActions from "./VoteActions.vue";
 import EditActions from "./EditActions.vue";
 import FutureBookItemInfo from "./FutureBookItemInfo.vue";
+import DeleteFutureBookModal from "@/components/modal/DeleteFutureBookModal.vue";
+import type { FutureBook } from "@/types";
+import { useUserStore } from "@/stores/user";
+import { useBooks } from "@/composables/useBooks";
+import { useUIStore } from "@/stores/ui";
+import { useLog } from "@/composables/useLog";
 import { useBooksStore } from "@/stores/books";
 
 const props = defineProps<{
@@ -42,12 +50,14 @@ const { userIsFutureBookSelector, loggedInUser } = useUserStore();
 const { showAlert, setIsAppLoading } = useUIStore();
 const { setFutureBookModal } = useBooksStore();
 
+const deleteFutureBookModalOpen = ref(false);
+
 const handleEdit = () =>
     setFutureBookModal({
         show: true,
         futureBook: props.book,
     });
-const handleDelete = () => console.log("delete");
+const handleDelete = () => (deleteFutureBookModalOpen.value = true);
 
 const userHasVoted = ref(props.book.votes.includes(loggedInUser.id));
 
