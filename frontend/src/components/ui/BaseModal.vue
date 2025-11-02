@@ -120,6 +120,7 @@ const handleBackdropClick = () => {
 }
 
 .modal-container.shadow-lavender {
+    border: 2px solid var(--accent-lavender);
     box-shadow:
         0 8px 32px var(--accent-lavender),
         0 0 60px var(--accent-lavender),
@@ -127,6 +128,7 @@ const handleBackdropClick = () => {
 }
 
 .modal-container.shadow-fuschia {
+    border: 2px solid var(--accent-fuschia);
     box-shadow:
         0 8px 32px var(--accent-fuschia),
         0 0 60px var(--accent-fuschia),
@@ -134,6 +136,7 @@ const handleBackdropClick = () => {
 }
 
 .modal-container.shadow-green {
+    border: 2px solid var(--accent-green);
     box-shadow:
         0 8px 32px var(--accent-green),
         0 0 60px var(--accent-green),
@@ -141,6 +144,7 @@ const handleBackdropClick = () => {
 }
 
 .modal-container.shadow-blue {
+    border: 2px solid var(--accent-blue);
     box-shadow:
         0 8px 32px var(--accent-blue),
         0 0 60px var(--accent-blue),
@@ -148,6 +152,7 @@ const handleBackdropClick = () => {
 }
 
 .modal-container.shadow-red {
+    border: 2px solid var(--accent-red);
     box-shadow:
         0 8px 32px var(--accent-red),
         0 0 60px var(--accent-red),

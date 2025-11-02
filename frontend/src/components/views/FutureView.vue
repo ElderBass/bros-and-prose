@@ -17,13 +17,14 @@
             :openAddFutureBookModal="openAddFutureBookModal"
         />
         <AddFutureBookFab
-            v-if="userIsFutureBookSelector"
+            v-if="userIsFutureBookSelector && !fabDisabled"
             @click="openAddFutureBookModal"
+            :disabled="fabDisabled"
         />
         <FutureBookModal
             v-if="futureBookModal.show"
             :open="futureBookModal.show"
-            :onSubmit="onSubmit"
+            :onSubmit="onSubmitFutureBook"
             @close="clearFutureBookModal"
         />
         <SuccessModal
@@ -65,6 +66,7 @@ const { addFutureBook, updateFutureBook } = useBooks();
 const { isAppLoading } = storeToRefs(useUIStore());
 const { futureBookSelectorUsername, userIsFutureBookSelector } =
     storeToRefs(useUserStore());
+const { futureBooks } = storeToRefs(useBooksStore());
 
 const { futureBookModal, futureBookResultModal } = storeToRefs(useBooksStore());
 const {
@@ -80,7 +82,7 @@ const openAddFutureBookModal = () =>
         futureBook: {} as FutureBook,
     });
 
-const onSubmit = async (futureBook: FutureBook, isEdit: boolean) => {
+const onSubmitFutureBook = async (futureBook: FutureBook, isEdit: boolean) => {
     try {
         useUIStore().setIsAppLoading(true);
         if (isEdit) {
@@ -124,6 +126,10 @@ const shouldRenderErrorModal = computed(
         futureBookResultModal.value.show &&
         futureBookResultModal.value.type === "error"
 );
+const fabDisabled = computed(() => {
+    console.log("futureBooks.value.length", futureBooks.value.length);
+    return futureBooks.value.length >= 3;
+});
 </script>
 
 <style scoped>

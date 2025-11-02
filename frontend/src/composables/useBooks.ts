@@ -81,6 +81,12 @@ export const useBooks = () => {
         await updateFutureBook(bookId, { ...book, votes });
     };
 
+    const deleteFutureBook = async (bookId: string) => {
+        const updatedFutureBooks = await booksService.deleteFutureBook(bookId);
+        await info(`Deleted future book: ${bookId}`);
+        booksStore.setFutureBooks(updatedFutureBooks);
+    };
+
     const getBookByTitle = async (title: string) => {
         const book = await booksService.getBookByTitle(title);
         return book;
@@ -129,6 +135,7 @@ export const useBooks = () => {
         addFutureBook,
         updateFutureBook,
         voteForFutureBook,
+        deleteFutureBook,
         getAllBooks,
         getBookByTitle,
         searchBooksByTitle,

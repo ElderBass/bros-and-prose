@@ -82,6 +82,13 @@ export const booksService = {
         );
         return response.data;
     },
+    deleteFutureBook: async (bookId: string) => {
+        const response = await apiRequest<FutureBooksResponse>(
+            "DELETE",
+            `/api/futureBooks/${bookId}`
+        );
+        return response.data;
+    },
     getBookByTitle: async (title: string) => {
         const response = await fetch(
             `https://openlibrary.org/search.json?title=${title}`

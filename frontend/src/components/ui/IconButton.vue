@@ -12,6 +12,7 @@
                 :class="[`size-${size}`, `color-${color}`]"
                 :title="title"
                 :style="style"
+                :disabled="disabled"
                 @click="handleClick"
             >
                 <FontAwesomeIcon :icon="icon" />
@@ -97,6 +98,11 @@ defineOptions({ inheritAttrs: false });
         background-color: rgba(204, 0, 0, 0.18);
         border-color: #cc0000;
     }
+}
+
+.icon-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .icon-button:focus {
