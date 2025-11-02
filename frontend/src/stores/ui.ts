@@ -46,11 +46,6 @@ export const useUIStore = defineStore("ui", () => {
 
     const setIsAppLoading = (isLoading: boolean) => {
         isAppLoading.value = isLoading;
-        if (!isLoading) {
-            setTimeout(() => {
-                isAppLoading.value = isLoading;
-            }, 5000);
-        }
     };
 
     return {
