@@ -14,7 +14,7 @@
             :userReviews="userReviews"
             :aggregateRating="aggregateRating"
         />
-        <AddCommentFab @click="openAddCommentModal" />
+        <AddCommentFab v-if="!isGuestUser()" @click="openAddCommentModal" />
         <AddCommentModal
             v-if="showAddCommentModal"
             :open="showAddCommentModal"
@@ -36,6 +36,7 @@ import PastBookDetail from "@/components/features/PastBooks/PastBookDetail.vue";
 import AddCommentFab from "@/components/features/PastBooks/AddCommentFab.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import { getReviewsAndAverageRating } from "@/utils";
+import { isGuestUser } from "@/utils";
 
 const { addDiscussionComment, getPastBook } = useBooks();
 const { showAlert } = useUIStore();

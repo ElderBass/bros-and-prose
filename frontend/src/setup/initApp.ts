@@ -3,7 +3,7 @@ import router from "@/router";
 import { useUIStore } from "@/stores/ui";
 import { useBooks } from "@/composables/useBooks";
 import { useUser } from "@/composables/useUser";
-import { getUserFromStorage } from "@/utils";
+import { getUserFromStorage, isGuestUser } from "@/utils";
 
 export const initApp = async () => {
     try {
@@ -17,7 +17,7 @@ export const initApp = async () => {
 
         const userFromStorage = getUserFromStorage();
         console.log("KERTWANGING userFromStorage", userFromStorage);
-        if (!userFromStorage) {
+        if (!userFromStorage && !isGuestUser()) {
             router.push("/");
         } else {
             useLog().info(

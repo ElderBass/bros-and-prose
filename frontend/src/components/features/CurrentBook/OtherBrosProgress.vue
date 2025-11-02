@@ -4,7 +4,7 @@
         shadow-color="green"
         size="medium"
     >
-        <h3>where your bros at?</h3>
+        <h3>where the bros at?</h3>
         <LoadingSpinner
             v-if="loading"
             size="medium"
