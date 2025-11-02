@@ -17,7 +17,6 @@
 </template>
 
 <script setup lang="ts">
-import BaseButton from "@/components/ui/BaseButton.vue";
 import { faBookSkull, faBookMedical } from "@fortawesome/free-solid-svg-icons";
 
 defineProps<{

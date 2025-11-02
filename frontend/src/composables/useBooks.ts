@@ -2,6 +2,7 @@ import { booksService } from "@/services";
 import { useBooksStore } from "@/stores/books";
 import type { Book, Comment, FutureBook, OpenLibraryBookResult } from "@/types";
 import { useLog } from "./useLog";
+import { getUsersFutureBookVoteId } from "@/utils";
 
 export const useBooks = () => {
     const booksStore = useBooksStore();
@@ -51,24 +52,33 @@ export const useBooks = () => {
 
     const voteForFutureBook = async (bookId: string, userId: string) => {
         const book = booksStore.futureBooks.find((b) => b.id === bookId);
+        const voteId = getUsersFutureBookVoteId(userId);
         if (!book) {
             await useLog().error(`Future book not found: ${bookId}`);
             return;
         }
-        const hasVoted = book.votes.includes(userId);
-        const updatedBook = await booksService.updateFutureBook(bookId, {
+        const hasVotedForCurrentBook = voteId === bookId;
+        if (!hasVotedForCurrentBook) {
+            await removeVoteForFutureBook(voteId, userId);
+        }
+        const updatedVotes = hasVotedForCurrentBook
+            ? book.votes.filter((v) => v !== userId)
+            : [...book.votes, userId];
+        const updatedBook = await updateFutureBook(bookId, {
             ...book,
-            votes: hasVoted
-                ? book.votes.filter((v) => v !== userId)
-                : [...book.votes, userId],
+            votes: updatedVotes,
         });
-        await info(`Voted for future book: ${book.title}`);
-        booksStore.setFutureBooks(
-            booksStore.futureBooks.map((b) =>
-                b.id === bookId ? updatedBook : b
-            )
-        );
         return updatedBook;
+    };
+
+    const removeVoteForFutureBook = async (bookId: string, userId: string) => {
+        const book = booksStore.futureBooks.find((b) => b.id === bookId);
+        if (!book) {
+            await useLog().error(`Future book not found: ${bookId}`);
+            return;
+        }
+        const votes = book.votes.filter((v) => v !== userId);
+        await updateFutureBook(bookId, { ...book, votes });
     };
 
     const getBookByTitle = async (title: string) => {
