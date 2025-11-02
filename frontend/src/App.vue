@@ -3,51 +3,79 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue";
-import { useRouter } from "vue-router";
-import { getUserFromStorage } from "./utils";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useUIStore } from "./stores/ui";
-import { useUser } from "./composables/useUser";
-import { useUserStore } from "./stores/user";
-import { useBooks } from "./composables/useBooks";
 import ErrorBoundaryView from "./components/views/ErrorBoundaryView.vue";
+import { initApp } from "./setup";
 import { useLog } from "./composables/useLog";
 
-const router = useRouter();
-const { cleanup: cleanupUIListeners, initializeScreenSize } = useUIStore();
-const { getPastBooks, getFutureBooks } = useBooks();
-const { getUser, getUsers, getFutureBookSelector } = useUser();
+const lastInitAt = ref(0);
+const INIT_STALE_MS = 5 * 60 * 1000; // re-init if last run was >5 minutes ago
+let inFlight = false;
+let reinitTimeout: number | undefined;
+
+async function reinitIfNeeded(reason: string) {
+    if (inFlight) return;
+    const now = Date.now();
+    const isStale = now - lastInitAt.value > INIT_STALE_MS;
+    if (!isStale) return;
+
+    inFlight = true;
+    try {
+        await useLog().info(`Re-initializing app (reason: ${reason})`);
+        await initApp();
+        lastInitAt.value = Date.now();
+        await useLog().info(`Re-init complete (reason: ${reason})`);
+    } finally {
+        inFlight = false;
+    }
+}
+
+function scheduleReinit(reason: string) {
+    if (reinitTimeout) {
+        clearTimeout(reinitTimeout);
+    }
+    reinitTimeout = window.setTimeout(() => {
+        void reinitIfNeeded(reason);
+    }, 150);
+}
+
+function onVisibilityChange() {
+    if (document.visibilityState === "visible") {
+        scheduleReinit("visibilitychange");
+    }
+}
+
+function onFocus() {
+    scheduleReinit("focus");
+}
+
+function onPageShow() {
+    // Fires when returning from bfcache too; treat like a resume
+    scheduleReinit("pageshow");
+}
+
+function onOnline() {
+    scheduleReinit("online");
+}
 
 onMounted(async () => {
-    try {
-        useUIStore().setIsAppLoading(true);
-        await useLog().info("Initializing app");
-        initializeScreenSize();
-        await getPastBooks();
-        await getUsers();
-        await getFutureBooks();
-        await getFutureBookSelector();
+    await initApp();
+    lastInitAt.value = Date.now();
 
-        const userFromStorage = getUserFromStorage();
-        if (!userFromStorage) {
-            router.push("/");
-        } else {
-            useLog().info(
-                `Fetching user from storage in app: ${userFromStorage.id}`
-            );
-            const user = await getUser(userFromStorage.id);
-            useUserStore().setLoggedInUser(user);
-        }
-    } catch (error) {
-        console.error("Error initializing app:", error);
-        await useLog().error(`Error initializing app: ${error}`);
-    } finally {
-        useUIStore().setIsAppLoading(false);
-    }
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("pageshow", onPageShow);
+    window.addEventListener("online", onOnline);
 });
 
 onUnmounted(() => {
-    cleanupUIListeners();
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+    window.removeEventListener("focus", onFocus);
+    window.removeEventListener("pageshow", onPageShow);
+    window.removeEventListener("online", onOnline);
+
+    useUIStore().cleanup();
 });
 </script>
 

@@ -1,25 +1,30 @@
 <template>
     <div class="error-boundary">
         <div v-if="hasError" class="fallback">
-            <BaseCard shadow-color="lavender" size="medium">
-                <div class="fallback-content">
-                    <h2 class="title">something broke, bro</h2>
-                    <p class="subtitle">
-                        we faceplanted into an unexpected error.
-                    </p>
-                    <p v-if="errorMessage" class="details">
-                        {{ errorMessage }}
-                    </p>
-                    <div class="actions">
-                        <BaseButton variant="outline" @click="reset"
-                            >try again</BaseButton
-                        >
-                        <BaseButton variant="outline-secondary" @click="goHome"
-                            >take me home</BaseButton
-                        >
+            <AppHeader />
+            <main class="error-content">
+                <BaseCard shadow-color="lavender" size="medium">
+                    <div class="fallback-content">
+                        <h2 class="title">something broke, bro</h2>
+                        <p class="subtitle">
+                            we faceplanted into an unexpected error.
+                        </p>
+                        <p v-if="errorMessage" class="details">
+                            {{ errorMessage }}
+                        </p>
+                        <div class="actions">
+                            <BaseButton variant="outline" @click="reset"
+                                >try again</BaseButton
+                            >
+                            <BaseButton
+                                variant="outline-secondary"
+                                @click="goHome"
+                                >take me home</BaseButton
+                            >
+                        </div>
                     </div>
-                </div>
-            </BaseCard>
+                </BaseCard>
+            </main>
         </div>
         <div v-else class="content">
             <RouterView :key="viewKey" />
@@ -31,6 +36,7 @@
 import { useLog } from "@/composables/useLog";
 import { onMounted, onBeforeUnmount, onErrorCaptured, ref } from "vue";
 import { RouterView, useRouter } from "vue-router";
+import AppHeader from "../layout/AppHeader.vue";
 
 const router = useRouter();
 
@@ -110,11 +116,19 @@ onBeforeUnmount(() => {
 }
 
 .fallback {
+    width: 100%;
     display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.error-content {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: calc(100vh - 4rem);
+    height: 100%;
     padding: 1rem;
 }
 

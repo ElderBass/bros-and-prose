@@ -40,11 +40,7 @@ export const useUserStore = defineStore("user", {
 
         setLoggedInUser(userData: User) {
             useLog().info(
-                `Setting logged in user in store: ${userData.username}`
-            );
-            useLog().info(`Setting logged in user in store: ${userData.id}`);
-            useLog().info(
-                `Setting logged in user in store: ${userData.currentBookProgress}`
+                `Setting logged in user in store: username = ${userData.username} id = ${userData.id} currentBookProgress = ${userData.currentBookProgress}`
             );
             this.loggedInUser = userData;
             setUserInStorage(userData);
