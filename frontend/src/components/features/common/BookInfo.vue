@@ -6,10 +6,7 @@
             :class="{ 'cover-image': !isLink, 'cover-image-link': isLink }"
         />
         <div class="book-info-container" :class="{ 'link-layout': isLink }">
-            <h3
-                class="book-title"
-                :style="{ fontSize: isLink ? '1.5rem' : '1.75rem' }"
-            >
+            <h3 class="book-title" :class="{ 'link-book-title': isLink }">
                 {{ book?.title }}
             </h3>
             <div class="book-info-items">
@@ -22,7 +19,7 @@
                     <p v-if="!isLink">{{ item.label }}</p>
                     <p
                         class="info-value"
-                        :style="{ fontSize: isLink ? '1rem' : '1.5rem' }"
+                        :class="{ 'link-info-value': isLink }"
                     >
                         {{ item.value }}
                     </p>
@@ -104,6 +101,10 @@ const bookInfoItems = computed(() => {
     text-align: right;
 }
 
+.link-book-title {
+    font-size: 1.5rem;
+}
+
 .book-info-items {
     display: flex;
     flex-direction: column;
@@ -137,6 +138,10 @@ p {
     font-size: 1rem;
     font-weight: 600;
     color: var(--accent-blue);
+}
+
+.link-info-value {
+    font-size: 1rem;
 }
 
 @media (min-width: 768px) {
