@@ -13,17 +13,7 @@ export const usePalaver = () => {
 
     const getPalaverEntries = async () => {
         const response = await palaverService.list();
-        console.log(
-            "\n KERTWANGING GET PALAVER ENTRIES response in getPalaverEntries",
-            response,
-            "\n\n"
-        );
         if (response.success) {
-            console.log(
-                "\n KERTWANGING GET PALAVER ENTRIES response.data in getPalaverEntries",
-                response.data,
-                "\n\n"
-            );
             palaverStore.setEntries(response.data);
         }
         return response.data;
