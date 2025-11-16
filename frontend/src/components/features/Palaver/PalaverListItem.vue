@@ -116,11 +116,6 @@ const formatDateForDevice = computed(() => {
     return (iso: string) => {
         try {
             const d = new Date(iso);
-            console.log(
-                "\n\nKERTWANGING mobile.value = ",
-                mobile.value,
-                "\n\n"
-            );
             return mobile.value === true
                 ? d.toLocaleString(undefined, {
                       month: "2-digit",

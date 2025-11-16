@@ -18,9 +18,7 @@ import type { Recommendation } from "@/types/palaver";
 import { useDisplay } from "vuetify";
 import BookTag from "@/components/ui/BookTag.vue";
 
-const props = defineProps<{ recommendation: Recommendation }>();
-
-console.log("\n\nKERTWANGING recommendation = ", props.recommendation, "\n\n");
+defineProps<{ recommendation: Recommendation }>();
 
 const { mobile } = useDisplay();
 </script>

@@ -160,7 +160,6 @@ const onTagClick = (tag: string) => {
 const submit = async () => {
     try {
         props.setLoading(true);
-        console.log("\n\nKERTWANGING tags = ", tags.value, "\n\n");
         const entry = buildPalaverEntry({
             type: type.value,
             text: text.value.trim(),
@@ -169,7 +168,6 @@ const submit = async () => {
             recAuthor: recAuthor.value.trim(),
             tags: tags.value,
         });
-        console.log("\n\nKERTWANGING entry = ", entry, "\n\n");
         await createPalaverEntry(entry);
         openSuccessModal(type.value, "create");
         text.value = "";
