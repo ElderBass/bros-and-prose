@@ -11,10 +11,4 @@
 import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
 </script>
 
-<style scoped>
-.add-comment-fab-container {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-}
-</style>
+<style scoped></style>

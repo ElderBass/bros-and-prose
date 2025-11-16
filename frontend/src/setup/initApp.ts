@@ -17,14 +17,20 @@ export const initApp = async () => {
 
         const userFromStorage = getUserFromStorage();
         console.log("KERTWANGING userFromStorage", userFromStorage);
-        if (!userFromStorage && !isGuestUser()) {
-            router.push("/");
-        } else {
+        if (userFromStorage) {
             useLog().info(
                 `Fetching user from storage in app: ${userFromStorage.id}`
             );
             const user = await useUser().getUser(userFromStorage.id);
             console.log("KERTWANGING user in initApp", user);
+        } else if (isGuestUser()) {
+            useLog().info("Guest user found, redirecting to present page...");
+            router.push("/present");
+        } else {
+            useLog().info(
+                "No user found in storage, redirecting to landing page..."
+            );
+            router.push("/");
         }
     } catch (error) {
         console.error("Error initializing app:", error);

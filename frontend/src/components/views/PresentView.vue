@@ -34,6 +34,15 @@
                 <OtherBrosProgress :book="book" />
             </template>
         </CurrentBookLayout>
+        <PalaverItemModal
+            v-if="showPalaverItemModal"
+            :open="showPalaverItemModal"
+            :onClose="closePalaverItemModal"
+        />
+        <PalaverFab
+            v-if="!isGuestUser() && IS_PALAVER_ENABLED"
+            @click="openPalaverItemModal"
+        />
     </AppLayout>
 </template>
 
@@ -44,17 +53,20 @@ import CurrentBookLayout from "@/components/layout/CurrentBookLayout.vue";
 import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.vue";
 import UserSection from "@/components/features/CurrentBook/UserSection.vue";
 import OtherBrosProgress from "@/components/features/CurrentBook/OtherBrosProgress.vue";
+import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
+import PalaverItemModal from "@/components/modal/PalaverItemModal.vue";
+import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
 import { useBooks } from "@/composables/useBooks";
 import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
-import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import { useUserStore } from "@/stores/user";
-import { getUserFromStorage } from "@/utils";
+import { getUserFromStorage, isGuestUser } from "@/utils";
 import { useUser } from "@/composables/useUser";
 import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { storeToRefs } from "pinia";
+import { IS_PALAVER_ENABLED } from "@/constants";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
@@ -64,6 +76,16 @@ const { isMobile } = storeToRefs(useUIStore());
 
 const isLoading = ref(true);
 const book = ref<Book>(storedCurrentBook);
+
+const showPalaverItemModal = ref(false);
+
+const openPalaverItemModal = () => {
+    showPalaverItemModal.value = true;
+};
+
+const closePalaverItemModal = () => {
+    showPalaverItemModal.value = false;
+};
 
 watch(storedCurrentBook, (newBook) => {
     book.value = newBook;

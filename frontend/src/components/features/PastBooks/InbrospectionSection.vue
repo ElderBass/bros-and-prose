@@ -3,24 +3,11 @@
         <PageTitle title="inbrospection..." />
 
         <div v-if="comments.length" class="comments-list">
-            <div v-for="c in comments" :key="c.id" class="comment-item">
-                <div class="avatar">
-                    <AvatarImage
-                        :icon="iconFor(c.user.avatar)"
-                        :size="isMobile ? 'small' : 'medium'"
-                    />
-                </div>
-                <div class="content">
-                    <div class="meta">
-                        <span class="username">@{{ c.user.username }}</span>
-                        <span class="dot">•</span>
-                        <span class="timestamp">{{
-                            formatDateForDevice(c.createdAt)
-                        }}</span>
-                    </div>
-                    <p class="text">{{ c.comment }}</p>
-                </div>
-            </div>
+            <CommentItem
+                v-for="comment in comments"
+                :key="comment.id"
+                :comment="comment"
+            />
         </div>
 
         <div v-else class="no-comments">
@@ -32,17 +19,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
-import AvatarImage from "@/components/ui/AvatarImage.vue";
 import type { Book, Comment } from "@/types";
-import { AVATAR_ICON_LIST } from "@/constants";
-import { storeToRefs } from "pinia";
-import { useUIStore } from "@/stores/ui";
+import CommentItem from "../common/CommentItem.vue";
 
 const props = defineProps<{
     book: Book;
 }>();
-
-const { isMobile } = storeToRefs(useUIStore());
 
 const comments = computed(() => {
     const rawComments = Object.values(
@@ -57,38 +39,6 @@ const comments = computed(() => {
                 new Date(a.createdAt).getTime()
         );
     return orderedComments;
-});
-
-const iconFor = (iconName: string) => {
-    return (
-        AVATAR_ICON_LIST.find((i) => i.iconName === iconName) ??
-        AVATAR_ICON_LIST.find((i) => i.iconName === "user-astronaut")!
-    );
-};
-
-// Mobile-aware date formatter: shorter on mobile, fuller on desktop
-const formatDateForDevice = computed(() => {
-    return (iso: string) => {
-        try {
-            const d = new Date(iso);
-            return isMobile.value
-                ? d.toLocaleString(undefined, {
-                      month: "short",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                  })
-                : d.toLocaleString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                  });
-        } catch {
-            return iso;
-        }
-    };
 });
 </script>
 

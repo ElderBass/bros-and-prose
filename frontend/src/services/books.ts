@@ -1,7 +1,7 @@
 import type { Book, FutureBook } from "@/types/books";
 import { apiRequest } from "./api";
 
-const currentBookId = "mans_search_for_meaning_frankl";
+export const currentBookId = "mans_search_for_meaning_frankl";
 
 export interface BookResponse {
     success: boolean;

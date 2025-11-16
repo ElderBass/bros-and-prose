@@ -5,7 +5,17 @@
         <!-- Desktop Navigation -->
         <div v-if="!isMobile" class="nav-links desktop-nav">
             <RouterLink
-                v-for="link in navLinks"
+                v-for="link in bookLinks"
+                :key="link.path"
+                :class="{
+                    'router-link-active': activeLink.includes(link.label),
+                }"
+                :to="link.path"
+                >{{ link.label }}</RouterLink
+            >
+            <div class="link-separator">|</div>
+            <RouterLink
+                v-for="link in otherLinks"
                 :key="link.path"
                 :class="{
                     'router-link-active': activeLink.includes(link.label),
@@ -22,7 +32,6 @@
             />
         </RouterLink>
 
-        <!-- Mobile Hamburger Button -->
         <button
             v-if="isMobile"
             class="hamburger mobile-nav"
@@ -42,7 +51,7 @@
         >
             <div class="mobile-nav-links">
                 <RouterLink
-                    v-for="link in navLinks"
+                    v-for="link in mobileLinks"
                     :key="link.path"
                     :class="{ 'router-link-active': activeLink === link.path }"
                     :to="link.path"
@@ -76,11 +85,16 @@ import { AVATAR_ICON_LIST } from "@/constants";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { isGuestUser } from "@/utils";
 
-const navLinks = [
+const bookLinks = [
     { path: "/past", label: "past" },
     { path: "/present", label: "present" },
     { path: "/future", label: "future" },
 ];
+const otherLinks = [
+    { path: "/palaver", label: "palaver" },
+    { path: "/profile", label: "profile" },
+];
+const mobileLinks = [...bookLinks, { path: "/palaver", label: "palaver" }];
 
 const route = useRoute();
 
