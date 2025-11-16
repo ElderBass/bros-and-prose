@@ -32,6 +32,14 @@ export const useBooksStore = defineStore("books", {
             message: [],
         },
     }),
+    getters: {
+        getPastBooks: (state) => state.pastBooks,
+        getCurrentBook: (state) => state.currentBook,
+        getNonFutureBooks: (state) => [state.currentBook, ...state.pastBooks],
+        getFutureBooks: (state) => state.futureBooks,
+        getFutureBookModal: (state) => state.futureBookModal,
+        getFutureBookResultModal: (state) => state.futureBookResultModal,
+    },
     actions: {
         setCurrentBook(book: Book) {
             this.currentBook = book;

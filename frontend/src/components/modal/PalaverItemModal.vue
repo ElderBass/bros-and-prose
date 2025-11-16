@@ -4,7 +4,6 @@
         @close="onClose"
         title="say sumpin'"
         size="medium"
-        :style="{ minHeight: '600px' }"
     >
         <div v-if="loading" class="loading-content">
             <LoadingSpinnerContainer

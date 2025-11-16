@@ -13,7 +13,7 @@
 
             <p class="stock-text">{{ messages.stock }}</p>
 
-            <BookSelect v-if="type === 'discussion_note'" v-model="bookId" />
+            <BookSelect v-if="type === 'discussion_note'" v-model="bookInfo" />
             <BookRecommendationFormFields
                 v-if="type === 'recommendation'"
                 :tags="tags"
@@ -95,7 +95,10 @@ const { closeModal, openErrorModal, openSuccessModal } = usePalaverStore();
 
 const type = ref<PalaverType>("discussion_note");
 const text = ref("");
-const bookId = ref("");
+const bookInfo = ref({
+    title: "",
+    id: "",
+});
 const recTitle = ref("");
 const recAuthor = ref("");
 const tags = ref<string[]>([]);
@@ -138,10 +141,11 @@ const submitDisabled = computed(() => {
         type.value === "recommendation" &&
         (!recTitle.value.trim() ||
             !recAuthor.value.trim() ||
-            !tags.value.length)
-    )
+            !tags.value.length ||
+            tags.value.length === 0)
+    ) {
         return true;
-
+    }
     return false;
 });
 
@@ -159,7 +163,7 @@ const submit = async () => {
         const entry = buildPalaverEntry({
             type: type.value,
             text: text.value.trim(),
-            bookId: bookId.value,
+            bookInfo: bookInfo.value,
             recTitle: recTitle.value.trim(),
             recAuthor: recAuthor.value.trim(),
             tags: tags.value,
@@ -170,7 +174,10 @@ const submit = async () => {
         recTitle.value = "";
         recAuthor.value = "";
         tags.value = [];
-        bookId.value = "";
+        bookInfo.value = {
+            title: "",
+            id: "",
+        };
     } catch (error) {
         console.error("Error submitting palaver entry:", error);
         await useLog().error(`Error submitting palaver entry: ${error}`);
@@ -187,6 +194,7 @@ const submit = async () => {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding-top: 0.75rem;
     gap: 1rem;
 }
 .content {
@@ -214,6 +222,12 @@ const submit = async () => {
 }
 
 @media (max-width: 768px) {
+    .composer {
+        padding-top: 0.5rem;
+    }
+    .content {
+        gap: 0.75rem;
+    }
     .actions {
         width: 100%;
         gap: 0.5rem;

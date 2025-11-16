@@ -12,7 +12,11 @@
         </div>
         <template #footer>
             <div class="button-container">
-                <BaseButton variant="outline-success" @click="onClose">
+                <BaseButton
+                    variant="outline-success"
+                    :size="mobile ? 'small' : 'medium'"
+                    @click="onClose"
+                >
                     hell yeah
                 </BaseButton>
             </div>
@@ -22,6 +26,9 @@
 
 <script setup lang="ts">
 import { faHandPeace } from "@fortawesome/free-solid-svg-icons";
+import { useDisplay } from "vuetify";
+
+const { mobile } = useDisplay();
 
 defineProps<{
     open: boolean;
@@ -48,7 +55,16 @@ const onClose = () => {
 
 p {
     text-align: center;
-    font-size: 1.55rem;
+    font-size: 1.5rem;
     color: var(--main-text);
+}
+
+@media (max-width: 768px) {
+    .success-modal-content {
+        padding: 1rem;
+    }
+    p {
+        font-size: 1.25rem;
+    }
 }
 </style>

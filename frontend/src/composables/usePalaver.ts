@@ -26,10 +26,12 @@ export const usePalaver = () => {
             palaverStore.prepend(response.data);
             if (entry.type === "discussion_note") {
                 let book: Book;
-                if (entry.bookId === currentBookId) {
+                if (entry.bookInfo?.id === currentBookId) {
                     book = await useBooks().getCurrentBook();
                 } else {
-                    book = await useBooks().getPastBook(entry.bookId as string);
+                    book = await useBooks().getPastBook(
+                        entry.bookInfo?.id as string
+                    );
                 }
                 if (book) {
                     await useLog().info(

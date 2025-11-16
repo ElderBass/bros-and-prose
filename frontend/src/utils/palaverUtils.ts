@@ -10,14 +10,17 @@ import { useUserStore } from "@/stores/user";
 export const buildPalaverEntry = ({
     type,
     text,
-    bookId,
+    bookInfo,
     recTitle,
     recAuthor,
     tags,
 }: {
     type: PalaverType;
     text: string;
-    bookId: string;
+    bookInfo: {
+        title: string;
+        id: string;
+    };
     recTitle: string;
     recAuthor: string;
     tags: string[];
@@ -28,7 +31,7 @@ export const buildPalaverEntry = ({
         text: text.trim(),
         createdAt: new Date().toISOString(),
         userInfo: getUserInfo(useUserStore().loggedInUser),
-        bookId: type === "discussion_note" ? bookId : undefined,
+        bookInfo: type === "discussion_note" ? bookInfo : undefined,
         recommendation:
             type === "recommendation"
                 ? {
