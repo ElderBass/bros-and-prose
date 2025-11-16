@@ -8,7 +8,7 @@ export const getPalaverEntries = async (_: express.Request, res: express.Respons
         res.json({
             success: true,
             message: "Palaver entries fetched successfully",
-            data: entries.val(),
+            data: Array.from(Object.values(entries.val())),
         });
     } catch (error) {
         console.log("GET PALAVER ENTRIES ERROR in getPalaverEntries", error);

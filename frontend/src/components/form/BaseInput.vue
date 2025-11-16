@@ -77,6 +77,7 @@ const inputType = computed(() => {
 <style scoped>
 .base-input-container {
     position: relative;
+    width: 100%;
 }
 
 .base-input {

@@ -3,6 +3,7 @@
         :variant="selected ? 'secondary' : 'outline-secondary'"
         :size="mobile ? 'xsmall' : 'small'"
         @click="emit('click', config.type)"
+        :title="config.title"
         >{{ config.label }}</BaseButton
     >
 </template>
@@ -10,15 +11,12 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
 import { useDisplay } from "vuetify";
-import type { PalaverType } from "@/types/palaver";
+import type { ItemTypeButtonProp, PalaverType } from "@/types/palaver";
 
 const { mobile } = useDisplay();
 
 defineProps<{
-    config: {
-        type: PalaverType;
-        label: string;
-    };
+    config: ItemTypeButtonProp;
     selected: boolean;
 }>();
 

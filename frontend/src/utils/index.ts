@@ -1,4 +1,6 @@
 export * from "./bookProgressUtils";
+export * from "./palaverUtils";
+export * from "./capitalizeAuthorName";
 export * from "./capitalizeBookTitle";
 export * from "./convertToPercentage";
 export * from "./getAvatar";

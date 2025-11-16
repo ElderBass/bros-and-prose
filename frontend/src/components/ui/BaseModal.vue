@@ -255,6 +255,7 @@ const handleBackdropClick = () => {
 
 .modal-content {
     flex: 1;
+    display: flex;
     /* Allow native selects to render dropdowns correctly on iOS within modals */
     overflow: visible;
     position: relative;
@@ -275,16 +276,19 @@ const handleBackdropClick = () => {
 .modal-container.size-small {
     width: 100%;
     max-width: 400px;
+    min-height: 300px;
 }
 
 .modal-container.size-medium {
     width: 100%;
     max-width: 600px;
+    min-height: 500px;
 }
 
 .modal-container.size-large {
     width: 100%;
     max-width: 900px;
+    min-height: 700px;
 }
 
 /* Modal transitions */

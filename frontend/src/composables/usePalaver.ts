@@ -5,6 +5,7 @@ import { useBooks } from "./useBooks";
 import { currentBookId } from "@/services/books";
 import { getUserInfo } from "@/utils";
 import { useUserStore } from "@/stores/user";
+import { useLog } from "./useLog";
 
 export const usePalaver = () => {
     const palaverStore = usePalaverStore();
@@ -19,6 +20,7 @@ export const usePalaver = () => {
     };
 
     const createPalaverEntry = async (entry: PalaverEntry) => {
+        await useLog().info(`Creating palaver entry: ${JSON.stringify(entry)}`);
         const response = await palaverService.create(entry);
         if (response.success) {
             palaverStore.prepend(response.data);
@@ -30,7 +32,10 @@ export const usePalaver = () => {
                     book = await useBooks().getPastBook(entry.bookId as string);
                 }
                 if (book) {
-                    useBooks().addDiscussionComment(book, {
+                    await useLog().info(
+                        `Adding discussion comment to book: ${book.title}`
+                    );
+                    await useBooks().addDiscussionComment(book, {
                         id: entry.id,
                         createdAt: entry.createdAt,
                         comment: entry.text,

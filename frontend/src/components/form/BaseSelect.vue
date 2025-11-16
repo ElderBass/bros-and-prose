@@ -121,19 +121,19 @@ const onChange = (event: Event) => {
 /* Size variants */
 .base-select.size-small {
     height: 2.5rem;
-    padding: 0.25rem 1.5rem 0.25rem 0.25rem;
+    padding: 0.5rem 1.5rem 0.5rem 0.75rem;
     font-size: 1rem;
 }
 
 .base-select.size-medium {
     height: 3rem;
-    padding: 0.5rem 2rem 0.5rem 0.5rem;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
     font-size: 1.25rem;
 }
 
 .base-select.size-large {
     height: 4rem;
-    padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
     font-size: 1.5rem;
 }
 </style>

@@ -1,1 +1,1 @@
-export const IS_PALAVER_ENABLED = false;
+export const IS_PALAVER_ENABLED = true;
