@@ -1,33 +1,34 @@
 <template>
     <div class="composer">
-        <div class="type-selector">
-            <ItemTypeButton
-                v-for="buttonConfig in itemTypeButtons"
-                :key="buttonConfig.type"
-                :config="buttonConfig"
-                :selected="type === buttonConfig.type"
-                @click="type = buttonConfig.type"
+        <div class="content">
+            <div class="type-selector">
+                <ItemTypeButton
+                    v-for="buttonConfig in itemTypeButtons"
+                    :key="buttonConfig.type"
+                    :config="buttonConfig"
+                    :selected="type === buttonConfig.type"
+                    @click="type = buttonConfig.type"
+                />
+            </div>
+
+            <p class="stock-text">{{ messages.stock }}</p>
+
+            <BookSelect v-if="type === 'discussion_note'" v-model="bookId" />
+            <BookRecommendationFormFields
+                v-if="type === 'recommendation'"
+                :tags="tags"
+                :onTagClick="onTagClick"
+                @update:recTitle="recTitle = $event"
+                @update:recAuthor="recAuthor = $event"
+            />
+
+            <BaseTextArea
+                v-model="text"
+                id="palaver-item-text-input"
+                :label="messages.placeholder"
+                :placeholder="messages.placeholder"
             />
         </div>
-
-        <p class="stock-text">{{ messages.stock }}</p>
-
-        <BookSelect v-if="type === 'discussion_note'" v-model="bookId" />
-        <BookRecommendationFormFields
-            v-if="type === 'recommendation'"
-            :recTitle="recTitle"
-            :recAuthor="recAuthor"
-            :tags="tags"
-            :onTagClick="onTagClick"
-        />
-
-        <BaseTextArea
-            v-model="text"
-            id="palaver-item-text-input"
-            :label="messages.placeholder"
-            :placeholder="messages.placeholder"
-        />
-
         <div class="actions">
             <BaseButton
                 variant="outline"
@@ -52,20 +53,52 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { v4 as uuidv4 } from "uuid";
+import { useDisplay } from "vuetify";
 import ItemTypeButton from "./ItemTypeButton.vue";
 import BookSelect from "@/components/form/BookSelect.vue";
 import BookRecommendationFormFields from "./BookRecommendationFormFields.vue";
 import { useUserStore } from "@/stores/user";
 import { usePalaver } from "@/composables";
 import type { ItemTypeButtonProp, PalaverEntry, PalaverType } from "@/types";
-import { getUserInfo } from "@/utils";
-import { useDisplay } from "vuetify";
+import {
+    capitalizeAuthorName,
+    capitalizeBookTitle,
+    getUserInfo,
+} from "@/utils";
+import { useLog } from "@/composables";
+import { usePalaverStore } from "@/stores/palaver";
+
+const props = defineProps<{
+    setLoading: (loading: boolean) => void;
+}>();
+
+const itemTypeButtons: ItemTypeButtonProp[] = [
+    {
+        type: "discussion_note",
+        label: "comment",
+        title: "comment on a book",
+    },
+    {
+        type: "recommendation",
+        label: "recommend",
+        title: "recommend a book",
+    },
+    {
+        type: "suggestion",
+        label: "suggest",
+        title: "suggest an idea for the app",
+    },
+    {
+        type: "misc",
+        label: "misc",
+        title: "speak into the void",
+    },
+];
 
 const { mobile } = useDisplay();
-
-defineProps<{
-    closeModal: () => void;
-}>();
+const userStore = useUserStore();
+const { createPalaverEntry } = usePalaver();
+const { closeModal, openErrorModal, openSuccessModal } = usePalaverStore();
 
 const type = ref<PalaverType>("discussion_note");
 const text = ref("");
@@ -74,73 +107,23 @@ const recTitle = ref("");
 const recAuthor = ref("");
 const tags = ref<string[]>([]);
 
-const userStore = useUserStore();
-const { createPalaverEntry } = usePalaver();
-
-const itemTypeButtons: ItemTypeButtonProp[] = [
-    {
-        type: "discussion_note",
-        label: "book comment",
-    },
-    {
-        type: "recommendation",
-        label: "book rec",
-    },
-    {
-        type: "misc",
-        label: "misc shit",
-    },
-];
-
-const onTagClick = (tag: string) => {
-    if (tags.value.includes(tag)) {
-        tags.value = tags.value.filter((t) => t !== tag);
-    } else {
-        tags.value.push(tag);
-    }
-};
-const submitDisabled = computed(() => {
-    if (text.value.trim().length < 3) return true;
-    if (
-        type.value === "recommendation" &&
-        (!recTitle.value.trim() || !recAuthor.value.trim())
-    )
-        return true;
-    return false;
-});
-
-const submit = async () => {
-    const entry: PalaverEntry = {
-        id: uuidv4(),
-        type: type.value,
-        text: text.value.trim(),
-        createdAt: new Date().toISOString(),
-        userInfo: getUserInfo(userStore.loggedInUser),
-        recommendation:
-            type.value === "recommendation"
-                ? {
-                      title: recTitle.value.trim(),
-                      author: recAuthor.value.trim(),
-                  }
-                : undefined,
-    };
-    await createPalaverEntry(entry);
-    text.value = "";
-    recTitle.value = "";
-    recAuthor.value = "";
-};
-
 const messages = computed(() => {
     switch (type.value) {
         case "discussion_note":
             return {
-                stock: "just keep it PG, fuckboy",
+                stock: "comment on a book",
                 placeholder: "dish out the tea, my dude",
             };
         case "recommendation":
             return {
-                stock: "recommend a book ferda boys",
-                placeholder: "paint the boys a lascivious picture...",
+                stock: "get the boys (e)rect",
+                placeholder: "paint'em a lascivious picture...",
+            };
+        case "suggestion":
+            return {
+                stock: "suggest an idea for the app",
+                placeholder:
+                    "don't hold back; that pussy ElderBass can handle it",
             };
         case "misc":
             return {
@@ -155,13 +138,76 @@ const messages = computed(() => {
             };
     }
 });
+
+const submitDisabled = computed(() => {
+    if (text.value.trim().length < 3) return true;
+    if (
+        type.value === "recommendation" &&
+        (!recTitle.value.trim() ||
+            !recAuthor.value.trim() ||
+            !tags.value.length)
+    )
+        return true;
+
+    return false;
+});
+
+const onTagClick = (tag: string) => {
+    if (tags.value.includes(tag)) {
+        tags.value = tags.value.filter((t) => t !== tag);
+    } else {
+        tags.value.push(tag);
+    }
+};
+
+const submit = async () => {
+    try {
+        props.setLoading(true);
+        const entry: PalaverEntry = {
+            id: uuidv4(),
+            type: type.value,
+            text: text.value.trim(),
+            createdAt: new Date().toISOString(),
+            userInfo: getUserInfo(userStore.loggedInUser),
+            bookId: type.value === "discussion_note" ? bookId.value : undefined,
+            recommendation:
+                type.value === "recommendation"
+                    ? {
+                          title: capitalizeBookTitle(recTitle.value.trim()),
+                          author: capitalizeAuthorName(recAuthor.value.trim()),
+                      }
+                    : undefined,
+        };
+        await createPalaverEntry(entry);
+        openSuccessModal(type.value, "create");
+        text.value = "";
+        recTitle.value = "";
+        recAuthor.value = "";
+        tags.value = [];
+        bookId.value = "";
+    } catch (error) {
+        console.error("Error submitting palaver entry:", error);
+        await useLog().error(`Error submitting palaver entry: ${error}`);
+        openErrorModal((error as Error).message, "create");
+    } finally {
+        props.setLoading(false);
+    }
+};
 </script>
 
 <style scoped>
 .composer {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    justify-content: space-between;
+    gap: 1rem;
+}
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 .type-selector {
     display: flex;

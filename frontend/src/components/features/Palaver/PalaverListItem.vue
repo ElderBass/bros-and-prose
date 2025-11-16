@@ -64,6 +64,8 @@ const stockMessage = computed(() => {
             return `${username} has something to say about the current book`;
         case "progress_note":
             return `${username} updated their progress on the current book`;
+        case "suggestion":
+            return `${username} has a suggestion for the app`;
         case "recommendation":
             return props.entry.recommendation?.title
                 ? `${username} recommended the book ${props.entry.recommendation.title}`
@@ -106,6 +108,8 @@ const themeClass = computed(() => {
             return "theme-lavender";
         case "progress_note":
             return "theme-fuschia";
+        case "suggestion":
+            return "theme-blue";
         case "recommendation":
             return "theme-green";
         case "misc":

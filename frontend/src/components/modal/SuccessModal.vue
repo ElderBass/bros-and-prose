@@ -3,7 +3,7 @@
         :modelValue="open"
         @close="onClose"
         title="huge fucking W"
-        size="large"
+        size="small"
         shadowColor="green"
         :headerIcon="faHandPeace"
     >
@@ -43,7 +43,7 @@ const onClose = () => {
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    padding: 4rem;
+    padding: 2rem;
 }
 
 p {

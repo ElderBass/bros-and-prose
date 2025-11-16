@@ -3,7 +3,7 @@
         :modelValue="open"
         @close="onClose"
         title="sucks to suck"
-        size="large"
+        size="small"
         shadowColor="red"
         :headerIcon="faHandMiddleFinger"
     >
