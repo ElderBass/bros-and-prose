@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <PageTitle title="palaver" />
+        <PageTitle title="palaver feed" />
         <div class="container">
             <div v-if="isGuestUser()" class="readonly-banner">
                 you’re in read-only mode, bro — log in to stir the pot

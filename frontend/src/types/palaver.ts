@@ -13,17 +13,21 @@ export interface ItemTypeButtonProp {
     title: string;
 }
 
+export interface Recommendation {
+    title: string;
+    author: string;
+    tags: string[];
+}
+
 export interface PalaverEntry {
     id: string;
     type: PalaverType;
     text: string;
     createdAt: string;
     userInfo: UserInfo;
-    bookId?: string;
-    recommendation?: {
+    bookInfo?: {
         title: string;
-        author: string;
-        tags?: string[];
-        link?: string;
+        id: string;
     };
+    recommendation?: Recommendation;
 }

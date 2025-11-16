@@ -1,5 +1,5 @@
 <template>
-    <div class="palaver-item" :class="themeClass">
+    <div class="palaver-item" :style="{ '--theme-color': themeColor }">
         <div class="avatar">
             <AvatarImage
                 :icon="iconFor(entry.userInfo.avatar)"
@@ -8,28 +8,50 @@
         </div>
         <div class="content">
             <div class="meta">
-                <span class="username">@{{ entry.userInfo.username }}</span>
+                <span class="type-label">{{ typeLabel }}</span>
                 <span class="dot">•</span>
                 <span class="timestamp">{{
                     formatDateForDevice(entry.createdAt)
                 }}</span>
-                <span class="type-badge">{{ typeLabel }}</span>
             </div>
-            <p class="stock-text">{{ stockMessage }}</p>
+            <p class="stock-text">
+                <span class="username">@{{ entry.userInfo.username }}</span>
+                {{ stockMessage }}
+                <span v-if="entry.type === 'discussion_note'">
+                    <span class="book-title">{{
+                        entry.bookInfo?.title.toUpperCase()
+                    }}</span>
+                </span>
+                <span v-if="entry.type === 'recommendation'">
+                    <span class="book-title">{{
+                        entry.recommendation?.title.toUpperCase()
+                    }}</span>
+                    by
+                    <span class="book-author">{{
+                        entry.recommendation?.author
+                    }}</span>
+                </span>
+            </p>
+            <transition name="fade">
+                <div v-if="showDetails" class="details">
+                    <BookRecommendationDetails
+                        v-if="entry.recommendation"
+                        :recommendation="entry.recommendation"
+                    />
+                    <p class="text">{{ entry.text }}</p>
+                </div>
+            </transition>
             <div class="toggle">
                 <BaseButton
                     size="xsmall"
                     :variant="
-                        showText ? 'outline-secondary' : 'outline-success'
+                        showDetails ? 'outline-secondary' : 'outline-success'
                     "
-                    @click="showText = !showText"
+                    @click="showDetails = !showDetails"
                 >
-                    {{ showText ? "hide details" : "show details" }}
+                    {{ showDetails ? "hide details" : "show details" }}
                 </BaseButton>
             </div>
-            <transition name="fade">
-                <p v-if="showText" class="text">{{ entry.text }}</p>
-            </transition>
         </div>
     </div>
     <!-- Recommendation-specific CTA could be added here later -->
@@ -41,11 +63,11 @@ import { useDisplay } from "vuetify";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import { AVATAR_ICON_LIST } from "@/constants";
-import BaseButton from "@/components/ui/BaseButton.vue";
+import BookRecommendationDetails from "./BookRecommendationDetails.vue";
 
 const props = defineProps<{ entry: PalaverEntry }>();
 const { mobile } = useDisplay();
-const showText = ref(false);
+const showDetails = ref(false);
 
 const iconFor = (iconName: string) => {
     return (
@@ -54,25 +76,38 @@ const iconFor = (iconName: string) => {
     );
 };
 
-const typeLabel = computed(() => props.entry.type.replace("_", " "));
+const typeLabel = computed(() => {
+    switch (props.entry.type) {
+        case "discussion_note":
+            return "Book Comment";
+        case "progress_note":
+            return "Progress Update";
+        case "suggestion":
+            return "App Suggestion";
+        case "recommendation":
+            return "Book Rec";
+        case "misc":
+        default:
+            return "Some Bullshit";
+    }
+});
 
 const stockMessage = computed(() => {
-    const username = props.entry.userInfo.username;
     const type = props.entry.type as PalaverType;
     switch (type) {
         case "discussion_note":
-            return `${username} has something to say about the current book`;
+            return " has something to say about ";
         case "progress_note":
-            return `${username} updated their progress on the current book`;
+            return " updated their progress on the current book";
         case "suggestion":
-            return `${username} has a suggestion for the app`;
+            return " has a suggestion for the app";
         case "recommendation":
             return props.entry.recommendation?.title
-                ? `${username} recommended the book ${props.entry.recommendation.title}`
-                : `${username} made a recommendation`;
+                ? " recommended the book "
+                : " made a recommendation";
         case "misc":
         default:
-            return `${username} has thoughts...`;
+            return " has thoughts...";
     }
 });
 
@@ -81,12 +116,16 @@ const formatDateForDevice = computed(() => {
     return (iso: string) => {
         try {
             const d = new Date(iso);
-            return mobile.value
+            console.log(
+                "\n\nKERTWANGING mobile.value = ",
+                mobile.value,
+                "\n\n"
+            );
+            return mobile.value === true
                 ? d.toLocaleString(undefined, {
-                      month: "short",
+                      month: "2-digit",
                       day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
+                      year: "2-digit",
                   })
                 : d.toLocaleString(undefined, {
                       year: "numeric",
@@ -101,20 +140,19 @@ const formatDateForDevice = computed(() => {
     };
 });
 
-// Theme mapping by type
-const themeClass = computed(() => {
+const themeColor = computed(() => {
     switch (props.entry.type) {
         case "discussion_note":
-            return "theme-lavender";
+            return "var(--accent-lavender)";
         case "progress_note":
-            return "theme-fuschia";
-        case "suggestion":
-            return "theme-blue";
+            return "var(--accent-fuschia)";
         case "recommendation":
-            return "theme-green";
+            return "var(--accent-green)";
+        case "suggestion":
+            return "var(--accent-red)";
         case "misc":
         default:
-            return "theme-blue";
+            return "var(--accent-blue)";
     }
 });
 </script>
@@ -124,15 +162,17 @@ const themeClass = computed(() => {
     display: flex;
     gap: 1rem;
     padding: 1rem;
-    border: 2px solid var(--accent-lavender); /* default; themed below */
+    font-size: 1.25rem;
+    width: 60%;
+    border: 2px solid var(--theme-color); /* themed via CSS var */
     border-radius: 1rem;
     background: linear-gradient(
         180deg,
-        rgba(0, 191, 255, 0.06),
-        rgba(0, 191, 255, 0.03)
+        color-mix(in srgb, var(--theme-color) 12%, transparent),
+        color-mix(in srgb, var(--theme-color) 6%, transparent)
     );
     box-shadow:
-        0 4px 20px rgba(0, 191, 255, 0.08),
+        0 4px 20px color-mix(in srgb, var(--theme-color) 25%, transparent),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
@@ -144,12 +184,13 @@ const themeClass = computed(() => {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.5rem;
 }
 
 .meta {
     display: flex;
     align-items: center;
+    padding-top: 0.5rem;
     gap: 0.5rem;
     color: var(--main-text);
     opacity: 0.85;
@@ -169,13 +210,10 @@ const themeClass = computed(() => {
     font-size: 0.9rem;
 }
 
-.type-badge {
-    margin-left: auto;
-    padding: 0.1rem 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.75rem;
-    border: 1px solid var(--accent-blue);
-    opacity: 0.9;
+.type-label {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--theme-color);
 }
 
 .stock-text {
@@ -184,60 +222,32 @@ const themeClass = computed(() => {
     opacity: 0.95;
 }
 
+.book-title {
+    font-weight: 600;
+    color: var(--accent-blue);
+}
+
+.book-author {
+    color: var(--accent-fuschia);
+}
+
 .toggle {
     display: flex;
     justify-content: flex-end;
 }
 
 .text {
+    font-size: 1.125rem;
     margin: 0;
     line-height: 1.6;
-}
-
-/* Theme overrides for gradient + shadow (+ border for consistency) */
-.theme-lavender {
-    border-color: var(--accent-lavender);
-    background: linear-gradient(
-        180deg,
-        rgba(179, 136, 255, 0.06),
-        rgba(179, 136, 255, 0.03)
-    );
-    box-shadow:
-        0 4px 20px rgba(179, 136, 255, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-.theme-fuschia {
-    border-color: var(--accent-fuschia);
-    background: linear-gradient(
-        180deg,
-        rgba(255, 77, 255, 0.06),
-        rgba(255, 77, 255, 0.03)
-    );
-    box-shadow:
-        0 4px 20px rgba(255, 77, 255, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-.theme-green {
-    border-color: var(--accent-green);
-    background: linear-gradient(
-        180deg,
-        rgba(57, 255, 20, 0.06),
-        rgba(57, 255, 20, 0.03)
-    );
-    box-shadow:
-        0 4px 20px rgba(57, 255, 20, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
-}
-.theme-blue {
-    border-color: var(--accent-blue);
-    background: linear-gradient(
-        180deg,
-        rgba(0, 191, 255, 0.06),
-        rgba(0, 191, 255, 0.03)
-    );
-    box-shadow:
-        0 4px 20px rgba(0, 191, 255, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    padding: 0.5rem;
+    padding-left: 0.75rem;
+    margin-right: 1rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border-left: 1px solid var(--accent-blue);
+    border-top: 1px solid var(--accent-blue);
+    border-top-left-radius: 0.5rem;
 }
 
 .fade-enter-active,
@@ -251,7 +261,24 @@ const themeClass = computed(() => {
 
 @media (max-width: 768px) {
     .palaver-item {
+        font-size: 1rem;
         padding: 0.75rem;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    .username {
+        font-size: 1rem;
+    }
+    .meta {
+        padding-top: 0.25rem;
+        line-height: 1.2;
+    }
+    .type-label {
+        font-size: 1rem;
+    }
+    .text {
+        font-size: 1rem;
+        padding: 0.5rem;
     }
 }
 </style>

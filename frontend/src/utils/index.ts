@@ -4,6 +4,7 @@ export * from "./capitalizeAuthorName";
 export * from "./capitalizeBookTitle";
 export * from "./convertToPercentage";
 export * from "./getAvatar";
+export * from "./getBookByIdFromStore";
 export * from "./getUserInfo";
 export * from "./getIdFromBroName";
 export * from "./futureBookUtils";

@@ -260,9 +260,9 @@ const showTooltip = computed(() => {
 
 /* Size variants */
 .base-button[size="xsmall"] {
-    padding: 0.25rem 0.5rem;
-    font-size: 1rem;
-    min-height: 1.5rem;
+    padding: 0.15rem 0.4rem;
+    font-size: 0.85rem;
+    min-height: 1.25rem;
 }
 
 .base-button[size="small"] {

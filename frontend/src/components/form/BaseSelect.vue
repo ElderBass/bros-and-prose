@@ -15,7 +15,7 @@
         >
             <option
                 v-for="option in renderedOptions"
-                :key="option.value"
+                :key="option.label"
                 :value="option.value"
             >
                 {{ option.label }}

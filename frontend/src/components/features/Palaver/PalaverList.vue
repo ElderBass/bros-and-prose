@@ -22,7 +22,9 @@ const { filtered: entries } = storeToRefs(usePalaverStore());
 .list {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0.75rem;
+    width: 100%;
 }
 .empty {
     text-align: center;
