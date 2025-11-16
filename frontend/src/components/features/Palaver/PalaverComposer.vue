@@ -52,19 +52,13 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { v4 as uuidv4 } from "uuid";
 import { useDisplay } from "vuetify";
 import ItemTypeButton from "./ItemTypeButton.vue";
 import BookSelect from "@/components/form/BookSelect.vue";
 import BookRecommendationFormFields from "./BookRecommendationFormFields.vue";
-import { useUserStore } from "@/stores/user";
 import { usePalaver } from "@/composables";
-import type { ItemTypeButtonProp, PalaverEntry, PalaverType } from "@/types";
-import {
-    capitalizeAuthorName,
-    capitalizeBookTitle,
-    getUserInfo,
-} from "@/utils";
+import type { ItemTypeButtonProp, PalaverType } from "@/types";
+import { buildPalaverEntry } from "@/utils";
 import { useLog } from "@/composables";
 import { usePalaverStore } from "@/stores/palaver";
 
@@ -96,7 +90,6 @@ const itemTypeButtons: ItemTypeButtonProp[] = [
 ];
 
 const { mobile } = useDisplay();
-const userStore = useUserStore();
 const { createPalaverEntry } = usePalaver();
 const { closeModal, openErrorModal, openSuccessModal } = usePalaverStore();
 
@@ -163,21 +156,14 @@ const onTagClick = (tag: string) => {
 const submit = async () => {
     try {
         props.setLoading(true);
-        const entry: PalaverEntry = {
-            id: uuidv4(),
+        const entry = buildPalaverEntry({
             type: type.value,
             text: text.value.trim(),
-            createdAt: new Date().toISOString(),
-            userInfo: getUserInfo(userStore.loggedInUser),
-            bookId: type.value === "discussion_note" ? bookId.value : undefined,
-            recommendation:
-                type.value === "recommendation"
-                    ? {
-                          title: capitalizeBookTitle(recTitle.value.trim()),
-                          author: capitalizeAuthorName(recAuthor.value.trim()),
-                      }
-                    : undefined,
-        };
+            bookId: bookId.value,
+            recTitle: recTitle.value.trim(),
+            recAuthor: recAuthor.value.trim(),
+            tags: tags.value,
+        });
         await createPalaverEntry(entry);
         openSuccessModal(type.value, "create");
         text.value = "";

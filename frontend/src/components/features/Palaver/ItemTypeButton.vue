@@ -15,11 +15,11 @@ import type { ItemTypeButtonProp, PalaverType } from "@/types/palaver";
 
 const { mobile } = useDisplay();
 
-const props = defineProps<{
+defineProps<{
     config: ItemTypeButtonProp;
     selected: boolean;
 }>();
-console.log("\n KERRTWANGING ITEM TYPE BUTTON CONFIG:", props.config, "\n\n");
+
 const emit = defineEmits<{
     (e: "click", type: PalaverType): void;
 }>();
