@@ -7,3 +7,4 @@ export * from "./getIdFromBroName";
 export * from "./futureBookUtils";
 export * from "./localStorageUtils";
 export * from "./pastBookUtils";
+export * from "./getHeaderLinks";
