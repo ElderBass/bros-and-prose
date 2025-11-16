@@ -18,6 +18,13 @@ export interface User {
     };
 }
 
+export interface UserInfo {
+    id: string;
+    username: string;
+    email: string;
+    avatar: string;
+}
+
 export interface UserResponse {
     success: boolean;
     message: string;

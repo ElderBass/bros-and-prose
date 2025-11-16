@@ -1,4 +1,4 @@
-import type { User } from "./user";
+import type { UserInfo } from "./user";
 
 export interface Book {
     id: string;
@@ -63,7 +63,7 @@ export interface IBookSearchResult {
 
 export interface Comment {
     id: string;
-    user: User;
+    user: UserInfo;
     comment: string;
     createdAt: string;
 }

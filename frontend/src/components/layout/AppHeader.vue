@@ -5,7 +5,17 @@
         <!-- Desktop Navigation -->
         <div v-if="!isMobile" class="nav-links desktop-nav">
             <RouterLink
-                v-for="link in navLinks"
+                v-for="link in getMainLinks()"
+                :key="link.path"
+                :class="{
+                    'router-link-active': activeLink.includes(link.label),
+                }"
+                :to="link.path"
+                >{{ link.label }}</RouterLink
+            >
+            <div class="link-separator">|</div>
+            <RouterLink
+                v-for="link in getOtherLinks()"
                 :key="link.path"
                 :class="{
                     'router-link-active': activeLink.includes(link.label),
@@ -22,7 +32,6 @@
             />
         </RouterLink>
 
-        <!-- Mobile Hamburger Button -->
         <button
             v-if="isMobile"
             class="hamburger mobile-nav"
@@ -42,7 +51,7 @@
         >
             <div class="mobile-nav-links">
                 <RouterLink
-                    v-for="link in navLinks"
+                    v-for="link in getMobileLinks()"
                     :key="link.path"
                     :class="{ 'router-link-active': activeLink === link.path }"
                     :to="link.path"
@@ -74,13 +83,12 @@ import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user";
 import { AVATAR_ICON_LIST } from "@/constants";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { isGuestUser } from "@/utils";
-
-const navLinks = [
-    { path: "/past", label: "past" },
-    { path: "/present", label: "present" },
-    { path: "/future", label: "future" },
-];
+import {
+    isGuestUser,
+    getMainLinks,
+    getOtherLinks,
+    getMobileLinks,
+} from "@/utils";
 
 const route = useRoute();
 

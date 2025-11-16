@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { IS_PALAVER_ENABLED } from "./constants/palaver";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -28,7 +29,19 @@ const router = createRouter({
             component: () => import("@/components/views/ProfileView.vue"),
         },
         {
+            path: "/palaver",
+            beforeEnter: (to, from, next) => {
+                if (IS_PALAVER_ENABLED) {
+                    next();
+                } else {
+                    next({ name: "four-oh-four" });
+                }
+            },
+            component: () => import("@/components/views/PalaverView.vue"),
+        },
+        {
             path: "/:pathMatch(.*)*",
+            name: "four-oh-four",
             component: () => import("@/components/views/FourOhFourView.vue"),
         },
     ],
