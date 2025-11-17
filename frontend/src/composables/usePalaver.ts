@@ -3,7 +3,7 @@ import { usePalaverStore } from "@/stores/palaver";
 import type { Book, PalaverEntry } from "@/types";
 import { useBooks } from "./useBooks";
 import { currentBookId } from "@/services/books";
-import { getUserInfo } from "@/utils";
+import { checkForUnreadEntries, getUserInfo } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { useLog } from "./useLog";
 
@@ -11,10 +11,18 @@ export const usePalaver = () => {
     const palaverStore = usePalaverStore();
     const { loggedInUser } = useUserStore();
 
-    const getPalaverEntries = async () => {
+    const getPalaverEntries = async (isInit = false) => {
         const response = await palaverService.list();
         if (response.success) {
-            palaverStore.setEntries(response.data);
+            const sortedEntries = [...response.data].sort(
+                (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+            );
+            palaverStore.setEntries(sortedEntries);
+            if (isInit) {
+                checkForUnreadEntries(sortedEntries);
+            }
         }
         return response.data;
     };

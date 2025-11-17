@@ -11,8 +11,9 @@
                     'router-link-active': activeLink.includes(link.label),
                 }"
                 :to="link.path"
-                >{{ link.label }}</RouterLink
             >
+                {{ link.label }}
+            </RouterLink>
             <div class="link-separator">|</div>
             <RouterLink
                 v-for="link in getOtherLinks()"
@@ -21,8 +22,12 @@
                     'router-link-active': activeLink.includes(link.label),
                 }"
                 :to="link.path"
-                >{{ link.label }}</RouterLink
             >
+                {{ link.label }}
+                <NotificationDot
+                    v-if="link.path === '/palaver' && hasUnreadEntries"
+                />
+            </RouterLink>
         </div>
         <RouterLink class="router-link-wrapper" to="/profile">
             <ProfileButton
@@ -56,8 +61,12 @@
                     :class="{ 'router-link-active': activeLink === link.path }"
                     :to="link.path"
                     @click="closeMobileMenu"
-                    >{{ link.label }}</RouterLink
                 >
+                    {{ link.label }}
+                    <NotificationDot
+                        v-if="link.path === '/palaver' && hasUnreadEntries"
+                    />
+                </RouterLink>
                 <button
                     v-if="currentAvatar && !isGuest"
                     class="mobile-profile-btn"
@@ -78,6 +87,7 @@ import { RouterLink, useRoute } from "vue-router";
 import router from "@/router";
 import LogoButton from "@/components/layout/LogoButton.vue";
 import ProfileButton from "@/components/layout/ProfileButton.vue";
+import NotificationDot from "../ui/NotificationDot.vue";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user";
@@ -89,12 +99,14 @@ import {
     getOtherLinks,
     getMobileLinks,
 } from "@/utils";
+import { usePalaverStore } from "@/stores/palaver";
 
 const route = useRoute();
 
 const isMobileMenuOpen = ref(false);
 const isMobile = storeToRefs(useUIStore()).isMobile;
 const { loggedInUser } = storeToRefs(useUserStore());
+const { hasUnreadEntries } = storeToRefs(usePalaverStore());
 
 const currentAvatar = ref<IconDefinition | null>(null);
 
@@ -166,6 +178,7 @@ header {
 .nav-links a {
     color: var(--main-text);
     text-decoration: none;
+    position: relative; /* anchor for notif dot */
 }
 
 .nav-links a:hover {
@@ -248,6 +261,7 @@ header {
     text-decoration: none;
     font-size: 2rem;
     transition: color 0.3s ease;
+    position: relative; /* anchor for notif dot */
 }
 
 .mobile-nav-links a:hover,

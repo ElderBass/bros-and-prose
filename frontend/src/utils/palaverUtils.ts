@@ -4,8 +4,11 @@ import {
     getUserInfo,
     capitalizeAuthorName,
     capitalizeBookTitle,
+    getLastUnreadPalaverEntry,
+    setLastUnreadPalaverEntry,
 } from "@/utils";
 import { useUserStore } from "@/stores/user";
+import { usePalaverStore } from "@/stores/palaver";
 
 export const buildPalaverEntry = ({
     type,
@@ -42,4 +45,21 @@ export const buildPalaverEntry = ({
                 : undefined,
     };
     return entry;
+};
+
+export const checkForUnreadEntries = (entries: PalaverEntry[]) => {
+    const lastUnreadEntry = getLastUnreadPalaverEntry();
+
+    if (!lastUnreadEntry) {
+        setLastUnreadPalaverEntry(entries[0].id);
+        usePalaverStore().setHasUnreadEntries(true);
+        return;
+    }
+
+    if (entries[0].id === lastUnreadEntry) {
+        return;
+    }
+
+    setLastUnreadPalaverEntry(entries[0].id);
+    usePalaverStore().setHasUnreadEntries(true);
 };
