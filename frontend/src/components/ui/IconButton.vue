@@ -36,12 +36,14 @@ withDefaults(
         disabled?: boolean;
         style?: CSSProperties;
         handleClick: () => void;
+        openDelay?: number;
     }>(),
     {
         color: "blue",
         shadowColor: "fuschia",
         disabled: false,
         style: () => ({}),
+        openDelay: 750,
     }
 );
 defineOptions({ inheritAttrs: false });

@@ -48,10 +48,12 @@ import { IS_PALAVER_ENABLED } from "@/constants/palaver";
 import { usePalaverStore } from "@/stores/palaver";
 import { usePalaver } from "@/composables/usePalaver";
 
-const { itemModalOpen, successModalOpen, errorModalOpen, modal } =
-    storeToRefs(usePalaverStore());
+const palaver = usePalaverStore();
 
-const { openItemModal, closeModal } = usePalaverStore();
+const { itemModalOpen, successModalOpen, errorModalOpen, modal } =
+    storeToRefs(palaver);
+
+const { openItemModal, closeModal } = palaver;
 
 const openPalaverItemModal = () => openItemModal("create");
 
