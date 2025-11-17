@@ -2,11 +2,12 @@
     <AppLayout>
         <PageTitle title="palaver feed" />
         <div class="container">
-            <div v-if="isGuestUser()" class="readonly-banner">
-                you’re in read-only mode, bro — log in to stir the pot
-            </div>
-
-            <PalaverList />
+            <LoadingSpinnerContainer
+                v-if="loading"
+                size="large"
+                message="retrieving the latest bros buzz..."
+            />
+            <PalaverList v-else />
         </div>
         <PalaverFab
             v-if="!isGuestUser() && IS_PALAVER_ENABLED"
@@ -33,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
@@ -43,22 +44,32 @@ import PalaverItemSuccessModal from "@/components/modal/PalaverItemSuccessModal.
 import PalaverItemErrorModal from "@/components/modal/PalaverItemErrorModal.vue";
 import PalaverList from "@/components/features/Palaver/PalaverList.vue";
 import type { PalaverSuccessModal, PalaverErrorModal } from "@/stores/palaver";
-import { isGuestUser } from "@/utils";
+import { isGuestUser, setLastUnreadPalaverEntry } from "@/utils";
 import { IS_PALAVER_ENABLED } from "@/constants/palaver";
 import { usePalaverStore } from "@/stores/palaver";
 import { usePalaver } from "@/composables/usePalaver";
+import LoadingSpinnerContainer from "../ui/LoadingSpinnerContainer.vue";
 
 const palaver = usePalaverStore();
 
 const { itemModalOpen, successModalOpen, errorModalOpen, modal } =
     storeToRefs(palaver);
+const loading = ref(false);
 
-const { openItemModal, closeModal } = palaver;
+const setLoading = (isLoading: boolean) => {
+    loading.value = isLoading;
+};
+
+const { openItemModal, closeModal, setHasUnreadEntries } = palaver;
 
 const openPalaverItemModal = () => openItemModal("create");
 
 onMounted(async () => {
-    await usePalaver().getPalaverEntries();
+    setLoading(true);
+    const entries = await usePalaver().getPalaverEntries();
+    setHasUnreadEntries(false);
+    setLastUnreadPalaverEntry(entries[0].id);
+    setLoading(false);
 });
 </script>
 

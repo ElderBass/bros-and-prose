@@ -4,6 +4,7 @@ import { useUIStore } from "@/stores/ui";
 import { useBooks } from "@/composables/useBooks";
 import { useUser } from "@/composables/useUser";
 import { getUserFromStorage, isGuestUser } from "@/utils";
+import { usePalaver } from "@/composables/usePalaver";
 
 export const initApp = async () => {
     try {
@@ -15,6 +16,7 @@ export const initApp = async () => {
         await useUser().getUsers();
         await useBooks().getFutureBooks();
         await useUser().getFutureBookSelector();
+        await usePalaver().getPalaverEntries();
 
         const userFromStorage = getUserFromStorage();
         console.log("KERTWANGING userFromStorage", userFromStorage);

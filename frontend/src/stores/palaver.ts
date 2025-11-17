@@ -28,6 +28,7 @@ export interface PalaverState {
     filter: PalaverFilter;
     hasMore: boolean;
     modal: null | (PalaverModal & { open: boolean });
+    hasUnreadEntries: boolean;
 }
 
 export const usePalaverStore = defineStore("palaver", {
@@ -36,6 +37,7 @@ export const usePalaverStore = defineStore("palaver", {
         filter: "all" as PalaverFilter,
         hasMore: true,
         modal: null as null | (PalaverModal & { open: boolean }),
+        hasUnreadEntries: false,
     }),
     getters: {
         filtered(state) {
@@ -54,6 +56,9 @@ export const usePalaverStore = defineStore("palaver", {
             this.entries = list.sort((a, b) =>
                 b.createdAt.localeCompare(a.createdAt)
             );
+        },
+        setHasUnreadEntries(hasUnread: boolean) {
+            this.hasUnreadEntries = hasUnread;
         },
         prepend(entry: PalaverEntry) {
             this.entries = [entry, ...this.entries];
