@@ -3,7 +3,7 @@
         :modelValue="open"
         @close="onClose"
         title="you sure bro?"
-        size="large"
+        size="medium"
         shadowColor="red"
         :headerIcon="faSurprise"
     >
@@ -92,10 +92,11 @@ const handleDelete = async () => {
 .content {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
+    width: 100%;
     gap: 1rem;
-    padding: 4rem;
+    padding: 1rem;
 }
 
 p {
