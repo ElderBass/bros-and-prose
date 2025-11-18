@@ -1,7 +1,7 @@
 <template>
     <BaseModal
-        :modelValue="open"
-        @close="onClose"
+        :modelValue="!!itemModalOpen"
+        @close="closeModal"
         title="say sumpin'"
         size="medium"
     >
@@ -19,11 +19,13 @@
 import { ref } from "vue";
 import { useDisplay } from "vuetify";
 import PalaverComposer from "../features/Palaver/PalaverComposer.vue";
+import { storeToRefs } from "pinia";
+import { usePalaverStore } from "@/stores/palaver";
 
-defineProps<{
-    open: boolean;
-    onClose: () => void;
-}>();
+const palaver = usePalaverStore();
+const { itemModalOpen } = storeToRefs(palaver);
+
+const { closeModal } = palaver;
 
 const { mobile } = useDisplay();
 

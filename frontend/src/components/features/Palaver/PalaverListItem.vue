@@ -96,14 +96,14 @@ const stockMessage = computed(() => {
     const type = props.entry.type as PalaverType;
     switch (type) {
         case "discussion_note":
-            return " has something to say about ";
+            return " said some shit about ";
         case "progress_note":
-            return " updated their progress on the current book";
+            return " made progress on the current book";
         case "suggestion":
-            return " has a suggestion for the app";
+            return " suggested an idea for the app";
         case "recommendation":
             return props.entry.recommendation?.title
-                ? " recommended the book "
+                ? " recommended "
                 : " made a recommendation";
         case "misc":
         default:

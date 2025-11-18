@@ -34,11 +34,7 @@
                 <OtherBrosProgress :book="book" />
             </template>
         </CurrentBookLayout>
-        <PalaverItemModal
-            v-if="itemModalOpen"
-            :open="itemModalOpen"
-            :onClose="closeModal"
-        />
+        <PalaverModals />
         <PalaverFab
             v-if="!isGuestUser() && IS_PALAVER_ENABLED"
             @click="openItemModal('create')"
@@ -53,8 +49,8 @@ import CurrentBookLayout from "@/components/layout/CurrentBookLayout.vue";
 import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.vue";
 import UserSection from "@/components/features/CurrentBook/UserSection.vue";
 import OtherBrosProgress from "@/components/features/CurrentBook/OtherBrosProgress.vue";
-import PalaverItemModal from "@/components/modal/PalaverItemModal.vue";
 import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
+import PalaverModals from "@/components/modal/PalaverModals.vue";
 import { useBooks } from "@/composables/useBooks";
 import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
@@ -72,9 +68,8 @@ const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
 const { loggedInUser, setLoggedInUser } = useUserStore();
 const { getUser } = useUser();
-const { openItemModal, closeModal } = usePalaverStore();
+const { openItemModal } = usePalaverStore();
 
-const { itemModalOpen } = storeToRefs(usePalaverStore());
 const { isMobile } = storeToRefs(useUIStore());
 
 const isLoading = ref(true);

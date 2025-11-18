@@ -52,10 +52,8 @@ export const usePalaverStore = defineStore("palaver", {
         setFilter(f: PalaverFilter) {
             this.filter = f;
         },
-        setEntries(list: PalaverEntry[]) {
-            this.entries = list.sort((a, b) =>
-                b.createdAt.localeCompare(a.createdAt)
-            );
+        setEntries(entries: PalaverEntry[]) {
+            this.entries = entries;
         },
         setHasUnreadEntries(hasUnread: boolean) {
             this.hasUnreadEntries = hasUnread;
