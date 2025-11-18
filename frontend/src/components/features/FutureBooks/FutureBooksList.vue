@@ -5,6 +5,7 @@
                 v-if="futureBooks[i]"
                 :key="futureBooks[i].id"
                 :book="futureBooks[i]"
+                :isMostVoted="futureBooks[i].id === mostVotedFutureBookId"
             />
             <div v-else :key="i" class="future-books-list-item-placeholder">
                 <p>nothing to see here</p>
@@ -22,6 +23,7 @@ import { useUIStore } from "@/stores/ui";
 
 defineProps<{
     futureBooks: FutureBook[];
+    mostVotedFutureBookId: string;
 }>();
 
 const { isMobile } = storeToRefs(useUIStore());
@@ -35,7 +37,7 @@ const listLayout = computed(() => {
 .future-books-list-row {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
     width: 100%;
 }
 
@@ -43,7 +45,7 @@ const listLayout = computed(() => {
     display: grid;
     grid-template-rows: 1fr 1fr 1fr;
     width: 100%;
-    gap: 1rem;
+    gap: 1.5rem;
     height: 100%;
 }
 

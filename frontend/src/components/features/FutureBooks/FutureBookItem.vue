@@ -1,5 +1,5 @@
 <template>
-    <BaseCard shadow-color="lavender" size="medium">
+    <BaseCard :shadow-color="isMostVoted ? 'green' : 'lavender'" size="medium">
         <div class="future-book-item">
             <FutureBookItemInfo :book="book" />
             <div class="footer">
@@ -45,6 +45,7 @@ import { isGuestUser } from "@/utils";
 
 const props = defineProps<{
     book: FutureBook;
+    isMostVoted: boolean;
 }>();
 
 const { userIsFutureBookSelector, loggedInUser } = useUserStore();

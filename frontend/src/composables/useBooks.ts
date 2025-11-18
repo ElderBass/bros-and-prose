@@ -4,7 +4,7 @@ import { booksService } from "@/services";
 import { useBooksStore } from "@/stores/books";
 import type { Book, Comment, FutureBook, OpenLibraryBookResult } from "@/types";
 import { useLog } from "./useLog";
-import { getUsersFutureBookVoteId } from "@/utils";
+import { getMostVotedFutureBookId, getUsersFutureBookVoteId } from "@/utils";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -61,6 +61,7 @@ export const useBooks = () => {
 
     const getFutureBooks = async (isInit = false) => {
         const books = await booksService.getFutureBooks();
+        console.log("KERTWANGING books in getFutureBooks", books);
         booksStore.setFutureBooks(books);
         if (isInit) {
             subscribeToFutureBooks();
@@ -78,9 +79,12 @@ export const useBooks = () => {
     const updateFutureBook = async (bookId: string, futureBook: FutureBook) => {
         const book = await booksService.updateFutureBook(bookId, futureBook);
         await info(`Updated future book: ${book.title}`);
-        booksStore.setFutureBooks(
-            booksStore.futureBooks.map((b) => (b.id === bookId ? book : b))
+        const updatedBooks = booksStore.futureBooks.map((b) =>
+            b.id === bookId ? book : b
         );
+        booksStore.setFutureBooks(updatedBooks);
+        const mostVotedFutureBookId = getMostVotedFutureBookId(updatedBooks);
+        booksStore.setMostVotedFutureBookId(mostVotedFutureBookId);
         return book;
     };
 
