@@ -65,6 +65,8 @@ export const useBooks = () => {
         booksStore.setFutureBooks(books);
         if (isInit) {
             subscribeToFutureBooks();
+            const mostVotedFutureBookId = getMostVotedFutureBookId(books);
+            booksStore.setMostVotedFutureBookId(mostVotedFutureBookId);
         }
         return books;
     };
