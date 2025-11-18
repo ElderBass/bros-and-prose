@@ -1,5 +1,5 @@
 <template>
-    <div class="fab-container">
+    <div class="fab-container" :class="{ fixed: !draggable }">
         <IconButton
             color="green"
             :icon="icon"
@@ -8,6 +8,7 @@
             :style="style"
             :handleClick="() => $emit('click')"
             :disabled="disabled"
+            :openDelay="3000"
         />
     </div>
 </template>
@@ -25,27 +26,31 @@ withDefaults(
         color?: "blue" | "fuschia" | "green" | "lavender";
         style?: CSSProperties;
         disabled?: boolean;
+        draggable?: boolean;
     }>(),
     {
         size: "large",
         color: "green",
         style: () => ({}),
         disabled: false,
+        draggable: false,
     }
 );
 </script>
 
 <style scoped>
 .fab-container {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 1000;
+    z-index: 100;
     background-color: var(--background-color);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+}
+.fixed {
+    position: fixed;
+    bottom: 0;
+    right: 0;
 }
 </style>

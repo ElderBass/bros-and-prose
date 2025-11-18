@@ -22,6 +22,7 @@ export const useBooksStore = defineStore("books", {
         currentBook: {} as Book,
         pastBooks: [] as Book[],
         futureBooks: [],
+        mostVotedFutureBookId: "",
         futureBookModal: {
             show: false,
             futureBook: {} as FutureBook,
@@ -32,6 +33,14 @@ export const useBooksStore = defineStore("books", {
             message: [],
         },
     }),
+    getters: {
+        getPastBooks: (state) => state.pastBooks,
+        getCurrentBook: (state) => state.currentBook,
+        getNonFutureBooks: (state) => [state.currentBook, ...state.pastBooks],
+        getFutureBooks: (state) => state.futureBooks,
+        getFutureBookModal: (state) => state.futureBookModal,
+        getFutureBookResultModal: (state) => state.futureBookResultModal,
+    },
     actions: {
         setCurrentBook(book: Book) {
             this.currentBook = book;
@@ -41,6 +50,9 @@ export const useBooksStore = defineStore("books", {
         },
         setFutureBooks(futureBooks: FutureBook[]) {
             this.futureBooks = futureBooks;
+        },
+        setMostVotedFutureBookId(id: string) {
+            this.mostVotedFutureBookId = id;
         },
         setFutureBookModal(modal: FutureBookModal) {
             this.futureBookModal = modal;

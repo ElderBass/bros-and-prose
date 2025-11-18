@@ -112,7 +112,8 @@ const handleBackdropClick = () => {
     border-radius: 1rem;
     backdrop-filter: blur(10px);
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     max-height: 90vh;
     max-width: 90vw;
     display: flex;
@@ -254,7 +255,9 @@ const handleBackdropClick = () => {
 
 .modal-content {
     flex: 1;
-    overflow-y: auto;
+    display: flex;
+    /* Allow native selects to render dropdowns correctly on iOS within modals */
+    overflow: visible;
     position: relative;
     z-index: 1;
 }
@@ -273,16 +276,19 @@ const handleBackdropClick = () => {
 .modal-container.size-small {
     width: 100%;
     max-width: 400px;
+    min-height: 300px;
 }
 
 .modal-container.size-medium {
     width: 100%;
     max-width: 600px;
+    min-height: 500px;
 }
 
 .modal-container.size-large {
     width: 100%;
     max-width: 900px;
+    min-height: 700px;
 }
 
 /* Modal transitions */

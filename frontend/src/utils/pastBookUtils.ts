@@ -17,8 +17,14 @@ const getUserReviews = (book: Book) => {
 };
 
 const getAverageRating = (userReviews: BroReview[]) => {
+    let numberOfReviews = 0;
     return (
-        userReviews.reduce((acc, review) => acc + review.review.rating, 0) /
-        userReviews.length
+        userReviews.reduce((acc, review) => {
+            if (review.review.rating !== 0) {
+                numberOfReviews++;
+                return acc + review.review.rating;
+            }
+            return acc;
+        }, 0) / numberOfReviews
     ).toFixed(1);
 };

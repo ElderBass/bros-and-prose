@@ -4,8 +4,12 @@
             <img class="cover" :src="book.imageSrc" :alt="book.title" />
             <div class="info">
                 <h3 class="title">{{ book.title }}</h3>
-                <p class="author">{{ book.author }}</p>
-                <p class="meta">{{ book.yearPublished }}</p>
+                <div class="author-and-meta">
+                    <p class="author">{{ book.author }}</p>
+                    <span class="separator">|</span>
+                    <p class="meta">{{ book.yearPublished }}</p>
+                </div>
+
                 <a :href="goodreadsUrl" target="_blank" class="goodreads-link">
                     peep goodreads
                     <FontAwesomeIcon :icon="faGlasses" />
@@ -71,19 +75,35 @@ const goodreadsUrl = computed(() => {
     flex-direction: column;
     gap: 0.25rem;
     font-size: 1.25rem;
+    text-align: right;
 }
 
 .title {
     margin: 0;
-    color: var(--accent-fuschia);
+    font-size: 1.5rem;
     font-style: italic;
-    font-family: "Libre Baskerville", serif;
+    color: var(--accent-fuschia);
+    font-family: "Courier New", serif;
+    text-align: right;
 }
 
 .author,
 .meta {
     margin: 0;
     opacity: 0.85;
+}
+
+.author-and-meta {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.separator {
+    color: var(--accent-blue);
+    font-size: 1.25rem;
+    font-weight: 600;
 }
 
 .goodreads-link {
@@ -102,6 +122,8 @@ const goodreadsUrl = computed(() => {
 
 .tags {
     display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
     flex-wrap: wrap;
     gap: 0.25rem;
 }
@@ -127,8 +149,16 @@ const goodreadsUrl = computed(() => {
         min-width: 64px;
     }
 
-    .info {
+    .separator {
         font-size: 1rem;
+    }
+
+    .title {
+        font-size: 1.25rem;
+    }
+
+    .info {
+        font-size: 0.9rem;
     }
 
     .goodreads-link {
@@ -137,8 +167,8 @@ const goodreadsUrl = computed(() => {
 
     .tags {
         transform: scale(0.9);
-        transform-origin: top left;
         gap: 0.125rem;
+        margin-right: -0.5rem;
     }
 
     .description {

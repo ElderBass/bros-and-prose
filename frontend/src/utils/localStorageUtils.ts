@@ -2,6 +2,7 @@ import type { User } from "@/types";
 
 export const storage_key = "superCoolBroData";
 export const guest_storage_key = "guest";
+export const last_unread_palaver_entry_key = "lastUnreadPalaverEntry";
 
 export const setUserInStorage = (user: User) => {
     localStorage.setItem(storage_key, JSON.stringify(user));
@@ -22,4 +23,16 @@ export const setGuestUser = () => {
 
 export const isGuestUser = () => {
     return localStorage.getItem(guest_storage_key) === "true";
+};
+
+export const getLastUnreadPalaverEntry = () => {
+    const lastUnreadEntry = localStorage.getItem(last_unread_palaver_entry_key);
+    return lastUnreadEntry ? JSON.parse(lastUnreadEntry) : null;
+};
+
+export const setLastUnreadPalaverEntry = (entryId: string, date: string) => {
+    localStorage.setItem(
+        last_unread_palaver_entry_key,
+        JSON.stringify({ entryId, date })
+    );
 };

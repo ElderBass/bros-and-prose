@@ -34,6 +34,11 @@
                 <OtherBrosProgress :book="book" />
             </template>
         </CurrentBookLayout>
+        <PalaverModals />
+        <PalaverFab
+            v-if="!isGuestUser() && IS_PALAVER_ENABLED"
+            @click="openItemModal('create')"
+        />
     </AppLayout>
 </template>
 
@@ -44,22 +49,27 @@ import CurrentBookLayout from "@/components/layout/CurrentBookLayout.vue";
 import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.vue";
 import UserSection from "@/components/features/CurrentBook/UserSection.vue";
 import OtherBrosProgress from "@/components/features/CurrentBook/OtherBrosProgress.vue";
+import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
+import PalaverModals from "@/components/modal/PalaverModals.vue";
 import { useBooks } from "@/composables/useBooks";
 import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
-import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import { useUserStore } from "@/stores/user";
-import { getUserFromStorage } from "@/utils";
+import { usePalaverStore } from "@/stores/palaver";
+import { getUserFromStorage, isGuestUser } from "@/utils";
 import { useUser } from "@/composables/useUser";
 import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { storeToRefs } from "pinia";
+import { IS_PALAVER_ENABLED } from "@/constants";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
 const { loggedInUser, setLoggedInUser } = useUserStore();
 const { getUser } = useUser();
+const { openItemModal } = usePalaverStore();
+
 const { isMobile } = storeToRefs(useUIStore());
 
 const isLoading = ref(true);
