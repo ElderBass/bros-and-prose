@@ -57,7 +57,7 @@ export const checkForUnreadEntries = (entries: PalaverEntry[]) => {
     }
 
     if (
-        entries[0].id === entryId &&
+        entries[0].id === entryId ||
         new Date(entries[0].createdAt).getTime() < new Date(date).getTime()
     ) {
         return;

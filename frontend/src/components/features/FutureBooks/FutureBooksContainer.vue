@@ -1,6 +1,10 @@
 <template>
     <div class="future-books-container">
-        <FutureBooksList v-if="futureBooks.length" :futureBooks="futureBooks" />
+        <FutureBooksList
+            v-if="futureBooks.length"
+            :futureBooks="futureBooks"
+            :mostVotedFutureBookId="mostVotedFutureBookId"
+        />
         <div v-else class="no-future-books">
             <p class="italics">no future books yet</p>
             <BaseButton
@@ -34,7 +38,7 @@ defineProps<{
     openAddFutureBookModal: () => void;
 }>();
 
-const { futureBooks } = storeToRefs(useBooksStore());
+const { futureBooks, mostVotedFutureBookId } = storeToRefs(useBooksStore());
 </script>
 
 <style scoped>

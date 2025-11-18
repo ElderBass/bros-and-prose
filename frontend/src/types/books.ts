@@ -27,6 +27,7 @@ export interface FutureBookResultModal {
     message: string[];
 }
 export interface BooksState {
+    mostVotedFutureBookId: string;
     currentBook: Book;
     pastBooks: Book[];
     futureBooks: FutureBook[];
