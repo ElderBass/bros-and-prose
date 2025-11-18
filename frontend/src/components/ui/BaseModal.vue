@@ -255,7 +255,6 @@ const handleBackdropClick = () => {
 
 .modal-content {
     flex: 1;
-    width: 100%;
     display: flex;
     /* Allow native selects to render dropdowns correctly on iOS within modals */
     overflow: visible;

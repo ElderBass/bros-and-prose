@@ -200,7 +200,7 @@ const runSearch = async () => {
         isLoading.value = true;
         const books = await searchBooksByTitle(query);
         bookResult.value = (books && books[0]) || {};
-        console.log("KERTWANGING bookResult", bookResult.value);
+
         if (bookResult.value.title && bookResult.value.author_name[0]) {
             showBookDetails.value = true;
             author.value = bookResult.value.author_name[0];
