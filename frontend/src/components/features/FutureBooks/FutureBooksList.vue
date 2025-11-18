@@ -21,10 +21,15 @@ import type { FutureBook } from "@/types";
 import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui";
 
-defineProps<{
+const props = defineProps<{
     futureBooks: FutureBook[];
     mostVotedFutureBookId: string;
 }>();
+
+console.log(
+    "KERTWANGING mostVotedFutureBookId in FutureBooksList",
+    props.mostVotedFutureBookId
+);
 
 const { isMobile } = storeToRefs(useUIStore());
 
