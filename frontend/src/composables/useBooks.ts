@@ -83,6 +83,7 @@ export const useBooks = () => {
 
     const deleteFutureBook = async (bookId: string) => {
         const updatedFutureBooks = await booksService.deleteFutureBook(bookId);
+        console.log("KERTWANGING updatedFutureBooks", updatedFutureBooks);
         await info(`Deleted future book: ${bookId}`);
         booksStore.setFutureBooks(updatedFutureBooks);
     };

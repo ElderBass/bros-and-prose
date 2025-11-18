@@ -13,9 +13,15 @@
         </div>
         <div class="inputs-container">
             <div class="form-container">
-                <label for="future-book-title" class="title-label"
+                <label
+                    v-if="!noBookFound"
+                    for="future-book-title"
+                    class="title-label"
                     >gimme the title</label
                 >
+                <label v-else for="future-book-title" class="title-label">
+                    shitty API didn't find it; do it yourself
+                </label>
                 <BaseInput
                     v-model="title"
                     id="future-book-title"
@@ -143,6 +149,7 @@ const { searchBooksByTitle } = useBooks();
 const isLoading = ref(false);
 const isEdit = ref(false);
 const showBookDetails = ref(false);
+const noBookFound = ref(false);
 
 const title = ref("");
 const author = ref("");
@@ -193,12 +200,16 @@ const runSearch = async () => {
         isLoading.value = true;
         const books = await searchBooksByTitle(query);
         bookResult.value = (books && books[0]) || {};
-        if (bookResult.value) {
+        console.log("KERTWANGING bookResult", bookResult.value);
+        if (bookResult.value.title && bookResult.value.author_name[0]) {
             showBookDetails.value = true;
             author.value = bookResult.value.author_name[0];
             yearPublished.value =
                 bookResult.value.first_publish_year.toString();
             image.value = `https://covers.openlibrary.org/b/id/${bookResult.value.cover_i}-M.jpg`;
+        } else {
+            noBookFound.value = true;
+            showBookDetails.value = true;
         }
     } catch (e) {
         bookResult.value = {} as OpenLibraryBookResult;
@@ -206,7 +217,7 @@ const runSearch = async () => {
         await useLog().error(`Error in runSearch for future book form: ${e}`);
         showAlert(
             QUICK_ERROR([
-                "oof, bud, this error happend: ",
+                "oof, bud, this error happened: ",
                 (e as Error).message,
             ])
         );
@@ -324,7 +335,7 @@ form {
 .form-actions {
     display: flex;
     justify-content: flex-end;
-    align-items: flex-end;
+    align-items: center;
     gap: 1rem;
     width: 100%;
     height: 100%;
