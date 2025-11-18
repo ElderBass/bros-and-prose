@@ -1,3 +1,5 @@
+import { ref, onValue, off, type DataSnapshot } from "firebase/database";
+import { getFirebase } from "@/setup/firebaseClient";
 import { palaverService } from "@/services";
 import { usePalaverStore } from "@/stores/palaver";
 import type { Book, PalaverEntry } from "@/types";
@@ -7,6 +9,43 @@ import { checkForUnreadEntries, getUserInfo } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { useLog } from "./useLog";
 
+let unsubscribe: (() => void) | null = null;
+
+const sortEntries = (entries: PalaverEntry[]) => {
+    return [...entries].sort(
+        (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+};
+
+export function subscribeToPalaver() {
+    if (unsubscribe) return; // already listening
+    const { db } = getFirebase();
+    const palaverRef = ref(db, "palaver");
+
+    const handler = (snapshot: DataSnapshot) => {
+        const value = snapshot.val() ?? {};
+        const list = Object.values(value).filter(
+            (item: unknown) => (item as PalaverEntry).id
+        );
+        const sortedEntries = sortEntries(list as PalaverEntry[]);
+        usePalaverStore().setEntries(sortedEntries);
+        checkForUnreadEntries(sortedEntries);
+    };
+
+    onValue(palaverRef, handler, (error) => {
+        console.error("KERTWANGING error in subscribeToPalaver", error);
+    });
+    unsubscribe = () => off(palaverRef, "value", handler);
+}
+
+export function unsubscribeFromPalaver() {
+    if (unsubscribe) {
+        unsubscribe();
+        unsubscribe = null;
+    }
+}
+
 export const usePalaver = () => {
     const palaverStore = usePalaverStore();
     const { loggedInUser } = useUserStore();
@@ -14,17 +53,15 @@ export const usePalaver = () => {
     const getPalaverEntries = async (isInit = false) => {
         const response = await palaverService.list();
         if (response.success) {
-            const sortedEntries = [...response.data].sort(
-                (a, b) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime()
-            );
+            const sortedEntries = sortEntries(response.data);
             palaverStore.setEntries(sortedEntries);
             if (isInit) {
+                subscribeToPalaver();
                 checkForUnreadEntries(sortedEntries);
             }
+            return sortedEntries;
         }
-        return response.data;
+        return [];
     };
 
     const createPalaverEntry = async (entry: PalaverEntry) => {

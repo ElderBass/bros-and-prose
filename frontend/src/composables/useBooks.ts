@@ -1,8 +1,38 @@
+import { ref, onValue, off, type DataSnapshot } from "firebase/database";
+import { getFirebase } from "@/setup/firebaseClient";
 import { booksService } from "@/services";
 import { useBooksStore } from "@/stores/books";
 import type { Book, Comment, FutureBook, OpenLibraryBookResult } from "@/types";
 import { useLog } from "./useLog";
 import { getUsersFutureBookVoteId } from "@/utils";
+
+let unsubscribe: (() => void) | null = null;
+
+export function subscribeToFutureBooks() {
+    if (unsubscribe) return; // already listening
+    const { db } = getFirebase();
+    const futureBooksRef = ref(db, "books/futureBooks");
+
+    const handler = (snapshot: DataSnapshot) => {
+        const value = snapshot.val() ?? {};
+        const list = Object.values(value).filter(
+            (book: unknown) => (book as Book).id
+        );
+        useBooksStore().setFutureBooks(list as FutureBook[]);
+    };
+
+    onValue(futureBooksRef, handler, (error) => {
+        console.error("KERTWANGING error in subscribeToFutureBooks", error);
+    });
+    unsubscribe = () => off(futureBooksRef, "value", handler);
+}
+
+export function unsubscribeFromFutureBooks() {
+    if (unsubscribe) {
+        unsubscribe();
+        unsubscribe = null;
+    }
+}
 
 export const useBooks = () => {
     const booksStore = useBooksStore();
@@ -29,9 +59,13 @@ export const useBooks = () => {
         booksStore.setPastBooks(books);
     };
 
-    const getFutureBooks = async () => {
+    const getFutureBooks = async (isInit = false) => {
         const books = await booksService.getFutureBooks();
         booksStore.setFutureBooks(books);
+        if (isInit) {
+            subscribeToFutureBooks();
+        }
+        return books;
     };
 
     const addFutureBook = async (futureBook: FutureBook) => {

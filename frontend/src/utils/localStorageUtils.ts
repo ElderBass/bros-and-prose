@@ -26,9 +26,13 @@ export const isGuestUser = () => {
 };
 
 export const getLastUnreadPalaverEntry = () => {
-    return localStorage.getItem(last_unread_palaver_entry_key);
+    const lastUnreadEntry = localStorage.getItem(last_unread_palaver_entry_key);
+    return lastUnreadEntry ? JSON.parse(lastUnreadEntry) : null;
 };
 
-export const setLastUnreadPalaverEntry = (entryId: string) => {
-    localStorage.setItem(last_unread_palaver_entry_key, entryId);
+export const setLastUnreadPalaverEntry = (entryId: string, date: string) => {
+    localStorage.setItem(
+        last_unread_palaver_entry_key,
+        JSON.stringify({ entryId, date })
+    );
 };

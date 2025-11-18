@@ -14,12 +14,11 @@ export const initApp = async () => {
         await useBooks().getCurrentBook();
         await useBooks().getPastBooks();
         await useUser().getUsers();
-        await useBooks().getFutureBooks();
+        await useBooks().getFutureBooks(true);
         await useUser().getFutureBookSelector();
-        await usePalaver().getPalaverEntries();
+        await usePalaver().getPalaverEntries(true);
 
         const userFromStorage = getUserFromStorage();
-        console.log("KERTWANGING userFromStorage", userFromStorage);
         if (userFromStorage) {
             useLog().info(
                 `Fetching user from storage in app: ${userFromStorage.id}`

@@ -48,18 +48,21 @@ export const buildPalaverEntry = ({
 };
 
 export const checkForUnreadEntries = (entries: PalaverEntry[]) => {
-    const lastUnreadEntry = getLastUnreadPalaverEntry();
+    const { entryId, date } = getLastUnreadPalaverEntry();
 
-    if (!lastUnreadEntry) {
-        setLastUnreadPalaverEntry(entries[0].id);
+    if (!entryId) {
+        setLastUnreadPalaverEntry(entries[0].id, entries[0].createdAt);
         usePalaverStore().setHasUnreadEntries(true);
         return;
     }
 
-    if (entries[0].id === lastUnreadEntry) {
+    if (
+        entries[0].id === entryId &&
+        new Date(entries[0].createdAt).getTime() < new Date(date).getTime()
+    ) {
         return;
     }
 
-    setLastUnreadPalaverEntry(entries[0].id);
+    setLastUnreadPalaverEntry(entries[0].id, entries[0].createdAt);
     usePalaverStore().setHasUnreadEntries(true);
 };

@@ -13,37 +13,17 @@
             v-if="!isGuestUser() && IS_PALAVER_ENABLED"
             @click="openPalaverItemModal"
         />
-        <PalaverItemModal
-            v-if="itemModalOpen"
-            :open="itemModalOpen"
-            :onClose="closeModal"
-        />
-        <PalaverItemSuccessModal
-            v-if="successModalOpen"
-            :open="successModalOpen"
-            :onClose="closeModal"
-            :modal="modal as PalaverSuccessModal"
-        />
-        <PalaverItemErrorModal
-            v-if="errorModalOpen"
-            :open="errorModalOpen"
-            :onClose="closeModal"
-            :modal="modal as PalaverErrorModal"
-        />
+        <PalaverModals />
     </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
 import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
-import PalaverItemModal from "@/components/modal/PalaverItemModal.vue";
-import PalaverItemSuccessModal from "@/components/modal/PalaverItemSuccessModal.vue";
-import PalaverItemErrorModal from "@/components/modal/PalaverItemErrorModal.vue";
+import PalaverModals from "@/components/modal/PalaverModals.vue";
 import PalaverList from "@/components/features/Palaver/PalaverList.vue";
-import type { PalaverSuccessModal, PalaverErrorModal } from "@/stores/palaver";
 import { isGuestUser, setLastUnreadPalaverEntry } from "@/utils";
 import { IS_PALAVER_ENABLED } from "@/constants/palaver";
 import { usePalaverStore } from "@/stores/palaver";
@@ -52,23 +32,23 @@ import LoadingSpinnerContainer from "../ui/LoadingSpinnerContainer.vue";
 
 const palaver = usePalaverStore();
 
-const { itemModalOpen, successModalOpen, errorModalOpen, modal } =
-    storeToRefs(palaver);
 const loading = ref(false);
 
 const setLoading = (isLoading: boolean) => {
     loading.value = isLoading;
 };
 
-const { openItemModal, closeModal, setHasUnreadEntries } = palaver;
+const { openItemModal, setHasUnreadEntries } = palaver;
 
 const openPalaverItemModal = () => openItemModal("create");
 
 onMounted(async () => {
     setLoading(true);
     const entries = await usePalaver().getPalaverEntries();
+    if (entries.length > 0) {
+        setLastUnreadPalaverEntry(entries[0].id, entries[0].createdAt);
+    }
     setHasUnreadEntries(false);
-    setLastUnreadPalaverEntry(entries[0].id);
     setLoading(false);
 });
 </script>
