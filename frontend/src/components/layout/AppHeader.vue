@@ -35,6 +35,9 @@
                 :handleClick="goToProfile"
                 :currentAvatar="currentAvatar"
             />
+            <RouterLink v-if="isGuest" class="login-link" to="/">
+                login
+            </RouterLink>
         </RouterLink>
 
         <button
@@ -76,6 +79,9 @@
                     <FontAwesomeIcon :icon="currentAvatar" />
                     <span>Profile</span>
                 </button>
+                <RouterLink v-if="isGuest" class="login-link" to="/">
+                    login
+                </RouterLink>
             </div>
         </div>
     </header>
@@ -187,6 +193,17 @@ header {
 
 .nav-links a.router-link-active {
     border-bottom: 2px solid var(--accent-blue);
+}
+
+.login-link {
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.login-link:hover {
+    color: var(--accent-lavender);
 }
 
 /* Mobile Navigation */

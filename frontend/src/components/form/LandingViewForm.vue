@@ -140,7 +140,7 @@ const confirmPassword = ref("");
 const activeForm = ref("");
 
 const onGuestClick = () => {
-    setGuestUser();
+    setGuestUser(true);
     router.push("/present");
 };
 

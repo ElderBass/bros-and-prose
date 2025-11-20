@@ -17,8 +17,8 @@ export const removeUserFromStorage = () => {
     localStorage.removeItem(storage_key);
 };
 
-export const setGuestUser = () => {
-    localStorage.setItem(guest_storage_key, "true");
+export const setGuestUser = (isGuest: boolean) => {
+    localStorage.setItem(guest_storage_key, isGuest ? "true" : "false");
 };
 
 export const isGuestUser = () => {

@@ -156,7 +156,7 @@ export const deleteFutureBook = async (req: express.Request, res: express.Respon
         res.json({
             success: true,
             message: "Future book deleted successfully",
-            data: futureBooks.val(),
+            data: Object.values(futureBooks.val()).filter((book: any) => book.id),
         });
     } catch (error) {
         console.log("DELETE FUTURE BOOK ERROR in deleteFutureBook", error);
