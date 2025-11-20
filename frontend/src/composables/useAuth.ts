@@ -7,6 +7,7 @@ import {
     ApiError,
 } from "@/services";
 import { useUserStore } from "@/stores/user";
+import { setGuestUser } from "@/utils";
 
 export const useAuth = () => {
     const userStore = useUserStore();
@@ -28,6 +29,7 @@ export const useAuth = () => {
 
             if (response.success) {
                 userStore.loginUser(response.user);
+                setGuestUser(false);
                 router.push("/present");
                 return response;
             }

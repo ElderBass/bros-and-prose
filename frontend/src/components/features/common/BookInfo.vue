@@ -94,7 +94,7 @@ const bookInfoItems = computed(() => {
 
 .book-title {
     width: 100%;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-style: italic;
     color: var(--accent-fuschia);
     font-family: "Courier New", serif;
@@ -154,11 +154,17 @@ p {
     .book-title {
         font-size: 2.25rem;
     }
+    .link-book-title {
+        font-size: 1.5rem;
+    }
     p {
         font-size: 1.5rem;
     }
     .info-value {
         font-size: 1.5rem;
+    }
+    .link-info-value {
+        font-size: 1.25rem;
     }
 }
 </style>
