@@ -8,7 +8,7 @@ import {
     setLastUnreadPalaverEntry,
 } from "@/utils";
 import { useUserStore } from "@/stores/user";
-import { usePalaverStore } from "@/stores/palaver";
+import { usePalaverStore, type PalaverFilter } from "@/stores/palaver";
 
 export const buildPalaverEntry = ({
     type,
@@ -65,4 +65,22 @@ export const checkForUnreadEntries = (entries: PalaverEntry[]) => {
 
     setLastUnreadPalaverEntry(entries[0].id, entries[0].createdAt);
     usePalaverStore().setHasUnreadEntries(true);
+};
+
+export const filterPalaverEntries = (
+    entries: PalaverEntry[],
+    filters: PalaverFilter[],
+    filteredBro: string
+) => {
+    console.log("KERTWANGING filtering entries", entries, filters, filteredBro);
+    if (filters.length === 0 && filteredBro === "") return entries;
+    if (filters.length === 0)
+        return entries.filter((e) => e.userInfo.id === filteredBro);
+    if (filteredBro === "")
+        return entries.filter((e) => filters.includes(e.type as PalaverFilter));
+    return entries.filter(
+        (e) =>
+            filters.includes(e.type as PalaverFilter) &&
+            e.userInfo.id === filteredBro
+    );
 };
