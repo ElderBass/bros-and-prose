@@ -7,7 +7,7 @@
             shadowColor="fuschia"
             size="small"
             hoverable
-            style="max-height: 180px; height: 160px"
+            style="max-height: 200px; height: 180px"
         >
             <BookInfo :book="book" :isLink="true" />
         </BaseCard>

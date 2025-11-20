@@ -61,7 +61,6 @@ export const useBooks = () => {
 
     const getFutureBooks = async (isInit = false) => {
         const books = await booksService.getFutureBooks();
-        console.log("KERTWANGING books in getFutureBooks", books);
         booksStore.setFutureBooks(books);
         if (isInit) {
             subscribeToFutureBooks();
