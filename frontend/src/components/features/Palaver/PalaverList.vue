@@ -1,12 +1,10 @@
-<!-- src/components/features/Palaver/PalaverList.vue -->
 <template>
     <div class="list">
+        <ListFilters />
         <div v-if="!entries.length" class="empty">
-            <p class="italics">
-                no hot takes yet — be the hero we don’t deserve
-            </p>
+            <p class="italics">you filtered that shit into oblivion</p>
         </div>
-        <PalaverListItem v-for="e in entries" :key="e.id" :entry="e" />
+        <PalaverListItem v-else v-for="e in entries" :key="e.id" :entry="e" />
     </div>
 </template>
 
@@ -14,6 +12,7 @@
 import { storeToRefs } from "pinia";
 import { usePalaverStore } from "@/stores/palaver";
 import PalaverListItem from "./PalaverListItem.vue";
+import ListFilters from "./ListFilters.vue";
 
 const { filtered: entries } = storeToRefs(usePalaverStore());
 </script>
@@ -28,6 +27,7 @@ const { filtered: entries } = storeToRefs(usePalaverStore());
 }
 .empty {
     text-align: center;
+    margin-top: 2rem;
     padding: 2rem;
     border: 2px dashed var(--accent-blue);
     border-radius: 1rem;

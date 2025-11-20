@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
+import { filterPalaverEntries } from "@/utils/palaverUtils";
 
-export type PalaverFilter = "all" | PalaverType;
+export type PalaverFilter = PalaverType;
 export type PalaverAction = "create" | "update" | "delete";
 export type PalaverModalKind = "item" | "success" | "error";
 export interface PalaverSuccessModal {
@@ -25,7 +26,8 @@ export type PalaverModal =
 
 export interface PalaverState {
     entries: PalaverEntry[];
-    filter: PalaverFilter;
+    filters: PalaverFilter[];
+    filteredBro: string;
     hasMore: boolean;
     modal: null | (PalaverModal & { open: boolean });
     hasUnreadEntries: boolean;
@@ -34,23 +36,40 @@ export interface PalaverState {
 export const usePalaverStore = defineStore("palaver", {
     state: () => ({
         entries: [] as PalaverEntry[],
-        filter: "all" as PalaverFilter,
+        filters: [] as PalaverFilter[],
+        filteredBro: "",
         hasMore: true,
         modal: null as null | (PalaverModal & { open: boolean }),
         hasUnreadEntries: false,
     }),
     getters: {
         filtered(state) {
-            if (state.filter === "all") return state.entries;
-            return state.entries.filter((e) => e.type === state.filter);
+            if (state.filters.length === 0 && state.filteredBro === "") {
+                return state.entries;
+            }
+            return filterPalaverEntries(
+                state.entries,
+                state.filters,
+                state.filteredBro
+            );
         },
         itemModalOpen: (s) => s.modal?.open && s.modal.kind === "item",
         successModalOpen: (s) => s.modal?.open && s.modal.kind === "success",
         errorModalOpen: (s) => s.modal?.open && s.modal.kind === "error",
     },
     actions: {
-        setFilter(f: PalaverFilter) {
-            this.filter = f;
+        addFilter(filter: PalaverFilter) {
+            this.filters.push(filter);
+        },
+        removeFilter(filter: PalaverFilter) {
+            this.filters = this.filters.filter((f) => f !== filter);
+        },
+        clearFilters() {
+            this.filters = [];
+            this.filteredBro = "";
+        },
+        setFilteredBro(bro: string) {
+            this.filteredBro = bro;
         },
         setEntries(entries: PalaverEntry[]) {
             this.entries = entries;
