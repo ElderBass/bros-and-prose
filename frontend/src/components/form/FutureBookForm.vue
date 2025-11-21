@@ -335,7 +335,7 @@ form {
 .form-actions {
     display: flex;
     justify-content: flex-end;
-    align-items: center;
+    align-items: flex-end;
     gap: 1rem;
     width: 100%;
     height: 100%;

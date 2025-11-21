@@ -59,22 +59,12 @@ export const useBooks = () => {
         booksStore.setPastBooks(books);
     };
 
-    const getFutureBooks = async (isInit = false) => {
-        const books = await booksService.getFutureBooks();
-        booksStore.setFutureBooks(books);
-        if (isInit) {
-            subscribeToFutureBooks();
-            const mostVotedFutureBookId = getMostVotedFutureBookId(books);
-            booksStore.setMostVotedFutureBookId(mostVotedFutureBookId);
-        }
-        return books;
-    };
-
     const addFutureBook = async (futureBook: FutureBook) => {
-        const book = await booksService.addFutureBook(futureBook);
-        await info(`Added future book: ${book.title}`);
-        booksStore.setFutureBooks([...booksStore.futureBooks, book]);
-        return book;
+        const updatedBooks = await booksService.addFutureBook(futureBook);
+        console.log("KERTWANGING updatedBooks in addFutureBook", updatedBooks);
+        await info(`Added future book: ${futureBook.title}`);
+        booksStore.setFutureBooks(updatedBooks);
+        return updatedBooks;
     };
 
     const updateFutureBook = async (bookId: string, futureBook: FutureBook) => {
@@ -170,7 +160,6 @@ export const useBooks = () => {
         getCurrentBook,
         getPastBook,
         getPastBooks,
-        getFutureBooks,
         addFutureBook,
         updateFutureBook,
         voteForFutureBook,

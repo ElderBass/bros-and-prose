@@ -79,3 +79,13 @@ export interface FutureBook {
     description: string;
     votes: string[];
 }
+
+export interface ArchivedBooksEntry {
+    selectorId: string;
+    archivedBooks: FutureBook[];
+    archivedAt: string;
+}
+
+export interface FutureBookSelectorRequest {
+    selectorId: string;
+}

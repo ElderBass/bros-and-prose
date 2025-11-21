@@ -67,7 +67,7 @@ export const booksService = {
         return response.data;
     },
     addFutureBook: async (futureBook: FutureBook) => {
-        const response = await apiRequest<FutureBookResponse>(
+        const response = await apiRequest<FutureBooksResponse>(
             "POST",
             "/api/futureBooks",
             futureBook

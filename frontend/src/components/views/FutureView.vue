@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <h1 class="future-books-title">
-            <span class="username">@{{ futureBookSelectorUsername }}'s</span>
+            <span class="username">@{{ futureBookSelector.username }}'s</span>
             books
         </h1>
         <div v-if="isAppLoading" class="spinner-container">
@@ -13,8 +13,9 @@
         <FutureBooksContainer
             v-else
             :hasReadWriteAccess="userIsFutureBookSelector"
-            :currentSelectorUsername="futureBookSelectorUsername"
+            :currentSelectorUsername="futureBookSelector.username"
             :openAddFutureBookModal="openAddFutureBookModal"
+            :futureBooks="currentSelections"
         />
         <AddFutureBookFab
             v-if="userIsFutureBookSelector && !fabDisabled"
@@ -61,12 +62,13 @@ import { useLog } from "@/composables/useLog";
 import { useBooks } from "@/composables/useBooks";
 import type { FutureBook } from "@/types";
 import { useBooksStore } from "@/stores/books";
+import { useFutureBooksStore } from "@/stores/futureBooks";
 
 const { addFutureBook, updateFutureBook } = useBooks();
 const { isAppLoading } = storeToRefs(useUIStore());
-const { futureBookSelectorUsername, userIsFutureBookSelector } =
+const { futureBookSelector, userIsFutureBookSelector } =
     storeToRefs(useUserStore());
-const { futureBooks } = storeToRefs(useBooksStore());
+const { currentSelections } = storeToRefs(useFutureBooksStore());
 
 const { futureBookModal, futureBookResultModal } = storeToRefs(useBooksStore());
 const {
@@ -127,8 +129,8 @@ const shouldRenderErrorModal = computed(
         futureBookResultModal.value.type === "error"
 );
 const fabDisabled = computed(() => {
-    console.log("futureBooks.value.length", futureBooks.value.length);
-    return futureBooks.value.length >= 3;
+    console.log("current future books.length", currentSelections.value.length);
+    return currentSelections.value.length >= 3;
 });
 </script>
 

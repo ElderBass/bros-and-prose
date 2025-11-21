@@ -1,15 +1,17 @@
 import express from "express";
 import { signup } from "./signup.js";
 import { login } from "./login.js";
+import { getBook, getBooks, updateBook } from "./books.js";
 import {
+    getCurrentFutureBooks,
+    getArchivedFutureBooks,
+    getCurrentSelector,
+    setFutureBookSelector,
     addFutureBook,
-    deleteFutureBook,
-    getBook,
-    getBooks,
-    getFutureBooks,
-    updateBook,
     updateFutureBook,
-} from "./books.js";
+    deleteFutureBook,
+    archiveFutureBooks,
+} from "./futureBooks.js";
 import { getUser, getUsers, updateUser } from "./user.js";
 import { postLog } from "./log.js";
 import {
@@ -31,10 +33,14 @@ router.get("/books", getBooks);
 router.put("/books/:bookId", updateBook);
 
 // FUTURE BOOKS ROUTES
-router.get("/futureBooks", getFutureBooks);
-router.post("/futureBooks", addFutureBook);
-router.put("/futureBooks/:bookId", updateFutureBook);
-router.delete("/futureBooks/:bookId", deleteFutureBook);
+router.post("/futureBooks/current", addFutureBook);
+router.put("/futureBooks/current/:bookId", updateFutureBook);
+router.delete("/futureBooks/current/:bookId", deleteFutureBook);
+router.get("/futureBooks/current", getCurrentFutureBooks);
+router.get("/futureBooks/archived", getArchivedFutureBooks);
+router.get("/futureBooks/currentSelector", getCurrentSelector);
+router.post("/futureBooks/setSelector", setFutureBookSelector);
+router.post("/futureBooks/archive", archiveFutureBooks);
 
 // USER ROUTES
 router.get("/users/:userId", getUser);
