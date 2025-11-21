@@ -1,10 +1,6 @@
 <template>
     <div class="future-books-container">
-        <FutureBooksList
-            v-if="futureBooks.length"
-            :futureBooks="futureBooks"
-            :mostVotedFutureBookId="mostVotedFutureBookId"
-        />
+        <FutureBooksList v-if="futureBooks.length" :futureBooks="futureBooks" />
         <div v-else class="no-future-books">
             <p class="italics">no future books yet</p>
             <BaseButton
@@ -27,18 +23,16 @@
 </template>
 
 <script setup lang="ts">
+import type { FutureBook } from "@/types";
 import FutureBooksList from "./FutureBooksList.vue";
-import { useBooksStore } from "@/stores/books";
-import { storeToRefs } from "pinia";
 import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
 
 defineProps<{
     hasReadWriteAccess: boolean;
     currentSelectorUsername: string;
+    futureBooks: FutureBook[];
     openAddFutureBookModal: () => void;
 }>();
-
-const { futureBooks, mostVotedFutureBookId } = storeToRefs(useBooksStore());
 </script>
 
 <style scoped>

@@ -2,6 +2,7 @@ import { useLog } from "@/composables/useLog";
 import router from "@/router";
 import { useUIStore } from "@/stores/ui";
 import { useBooks } from "@/composables/useBooks";
+import { useFutureBooks } from "@/composables/useFutureBooks";
 import { useUser } from "@/composables/useUser";
 import { getUserFromStorage, isGuestUser } from "@/utils";
 import { usePalaver } from "@/composables/usePalaver";
@@ -14,8 +15,8 @@ export const initApp = async () => {
         await useBooks().getCurrentBook();
         await useBooks().getPastBooks();
         await useUser().getUsers();
-        await useBooks().getFutureBooks(true);
         await useUser().getFutureBookSelector();
+        await useFutureBooks().getCurrentSelections(true);
         await usePalaver().getPalaverEntries(true);
 
         const userFromStorage = getUserFromStorage();
