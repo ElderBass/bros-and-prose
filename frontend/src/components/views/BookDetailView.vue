@@ -37,6 +37,7 @@ import AddCommentFab from "@/components/features/PastBooks/AddCommentFab.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import { getReviewsAndAverageRating } from "@/utils";
 import { isGuestUser } from "@/utils";
+import { useBooksStore } from "@/stores/books";
 
 const { addDiscussionComment, getPastBook } = useBooks();
 const { showAlert } = useUIStore();
@@ -55,9 +56,16 @@ const openAddCommentModal = () => {
 const loadBookData = async () => {
     isLoading.value = true;
     const bookId = route.params.bookId as string;
-    const fetchedBook = await getPastBook(bookId);
+    let fetchedBook = useBooksStore().getPastBooks.find(
+        (book: Book) => book.id === bookId
+    ) as Book;
+    if (!fetchedBook) {
+        fetchedBook = await getPastBook(bookId);
+    }
+
     book.value = fetchedBook;
-    const { reviews, averageRating } = getReviewsAndAverageRating(fetchedBook);
+    const { reviews, averageRating } =
+        await getReviewsAndAverageRating(fetchedBook);
     userReviews.value = reviews;
     aggregateRating.value = averageRating;
     isLoading.value = false;

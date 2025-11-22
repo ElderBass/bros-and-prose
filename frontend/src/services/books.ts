@@ -16,37 +16,50 @@ export interface BooksResponse {
 }
 
 export const booksService = {
-    getBook: async (bookId: string) => {
-        const response = await apiRequest<BookResponse>(
-            "GET",
-            `/api/books/${bookId}`
-        );
-        return response.data;
-    },
-    getBooks: async () => {
-        const response = await apiRequest<BooksResponse>("GET", "/api/books");
+    updateBook: async (book: Book, isCurrentBook = false) => {
+        const url = isCurrentBook
+            ? "/api/books/currentBook"
+            : `/api/books/pastBooks/${book.id}`;
+        const response = await apiRequest<BookResponse>("PUT", url, book);
         return response.data;
     },
     getCurrentBook: async () => {
         const response = await apiRequest<BookResponse>(
             "GET",
-            `/api/books/${currentBookId}`
+            "/api/books/currentBook"
         );
         return response.data;
     },
-    getPastBooks: async () => {
-        const response = await apiRequest<BooksResponse>("GET", "/api/books");
-        const pastBooks = response.data.filter((book) => book.completed);
-        return pastBooks;
-    },
-    updateBook: async (bookId: string, book: Book) => {
+    updateCurrentBook: async (book: Book) => {
         const response = await apiRequest<BookResponse>(
             "PUT",
-            `/api/books/${bookId}`,
+            "/api/books/currentBook",
             book
         );
         return response.data;
     },
+    getPastBooks: async () => {
+        const response = await apiRequest<BooksResponse>(
+            "GET",
+            "/api/books/pastBooks"
+        );
+        console.log("GET PAST BOOKS response in getPastBooks", response.data);
+        const pastBooks: Book[] = response.data.sort(
+            (a, b) =>
+                new Date(a.dateCompleted || "").getTime() -
+                new Date(b.dateCompleted || "").getTime()
+        );
+        return pastBooks;
+    },
+
+    getPastBook: async (bookId: string) => {
+        const response = await apiRequest<BookResponse>(
+            "GET",
+            `/api/books/pastBooks/${bookId}`
+        );
+        return response.data;
+    },
+    // OPENLIBRARY ROUTES
     getBookByTitle: async (title: string) => {
         const response = await fetch(
             `https://openlibrary.org/search.json?title=${title}`

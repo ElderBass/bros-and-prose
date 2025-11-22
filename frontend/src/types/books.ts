@@ -10,6 +10,7 @@ export interface Book {
     imageSrc: string;
     completed: boolean;
     groupConsensus?: string;
+    dateCompleted?: string;
     discussionComments: {
         [key: string]: Comment;
     };

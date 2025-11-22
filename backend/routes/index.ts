@@ -1,7 +1,13 @@
 import express from "express";
 import { signup } from "./signup.js";
 import { login } from "./login.js";
-import { getBook, getBooks, updateBook } from "./books.js";
+import {
+    getCurrentBook,
+    updateCurrentBook,
+    getPastBooks,
+    getPastBook,
+    updatePastBook,
+} from "./books.js";
 import {
     getCurrentFutureBooks,
     getArchivedFutureBooks,
@@ -27,10 +33,16 @@ const router = express.Router();
 router.post("/signup", signup);
 router.post("/login", login);
 
-// BOOKS ROUTES
-router.get("/books/:bookId", getBook);
-router.get("/books", getBooks);
-router.put("/books/:bookId", updateBook);
+// V1BOOKS ROUTES
+// router.get("/books/:bookId", getBook);
+// router.get("/books", getBooks);
+// router.put("/books/:bookId", updateBook);
+// V2 ROUTES
+router.get("/books/currentBook", getCurrentBook);
+router.put("/books/currentBook", updateCurrentBook);
+router.get("/books/pastBooks", getPastBooks);
+router.get("/books/pastBooks/:bookId", getPastBook);
+router.put("/books/pastBooks/:bookId", updatePastBook);
 
 // FUTURE BOOKS ROUTES
 router.post("/futureBooks/current", addCurrentSelection);

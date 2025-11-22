@@ -14,12 +14,16 @@ export const useBooks = () => {
     };
 
     const getAllBooks = async () => {
-        const books = await booksService.getBooks();
+        const currentBook = await booksService.getCurrentBook();
+        const pastBooks = await booksService.getPastBooks();
+        const books = [currentBook, ...pastBooks];
+        booksStore.setCurrentBook(currentBook);
+        booksStore.setPastBooks(pastBooks);
         return books;
     };
 
     const getPastBook = async (bookId: string) => {
-        const book = await booksService.getBook(bookId);
+        const book = await booksService.getPastBook(bookId);
         return book;
     };
 
@@ -46,12 +50,15 @@ export const useBooks = () => {
         return books;
     };
 
-    const updateBook = async (bookId: string, book: Book) => {
-        const updatedBook = await booksService.updateBook(bookId, book);
+    const updateBook = async (book: Book) => {
+        const isCurrentBook = book.id === booksStore.currentBook.id;
+        const updatedBook = await booksService.updateBook(book, isCurrentBook);
+        updateBookStore(updatedBook, isCurrentBook);
         return updatedBook;
     };
 
     const addDiscussionComment = async (book: Book, comment: Comment) => {
+        const isCurrentBook = book.id === booksStore.currentBook.id;
         let updatedBook = {
             ...book,
             discussionComments: {
@@ -59,13 +66,21 @@ export const useBooks = () => {
                 [comment.id]: comment,
             },
         };
-        updatedBook = await booksService.updateBook(book.id, updatedBook);
-        booksStore.setPastBooks(
-            booksStore.pastBooks.map((b) =>
-                b.id === book.id ? updatedBook : b
-            )
-        );
+        updatedBook = await booksService.updateBook(updatedBook, isCurrentBook);
+        updateBookStore(updatedBook, isCurrentBook);
         return updatedBook;
+    };
+
+    const updateBookStore = (updatedBook: Book, isCurrentBook: boolean) => {
+        if (isCurrentBook) {
+            booksStore.setCurrentBook(updatedBook);
+        } else {
+            booksStore.setPastBooks(
+                booksStore.pastBooks.map((b) =>
+                    b.id === updatedBook.id ? updatedBook : b
+                )
+            );
+        }
     };
 
     return {
