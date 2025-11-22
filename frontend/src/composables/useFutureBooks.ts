@@ -4,8 +4,13 @@ import { futureBooksService } from "@/services/futureBooks";
 import { useFutureBooksStore } from "@/stores/futureBooks";
 import type { ArchivedBooksEntry, FutureBook } from "@/types/books";
 import { useLog } from "./useLog";
-import { getMostVotedFutureBookId, getUsersFutureBookVoteId } from "@/utils";
+import {
+    buildArchiveEntry,
+    getMostVotedFutureBookId,
+    getUsersFutureBookVoteId,
+} from "@/utils";
 import { usersService } from "@/services/users";
+import { ON_DECK_BOOK_SELECTOR } from "@/constants";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -41,11 +46,23 @@ export const useFutureBooks = () => {
 
     const getCurrentSelections = async (isInit = false) => {
         const selections = await futureBooksService.getCurrentSelections();
-        futureBooksStore.setCurrentSelections(selections);
+        const hasSelections = selections[0]?.id;
+        if (hasSelections) {
+            futureBooksStore.setCurrentSelections(selections);
+        } else {
+            futureBooksStore.clearCurrentSelections();
+        }
         if (isInit) {
             subscribeToFutureBooks();
-            const mostVotedFutureBookId = getMostVotedFutureBookId(selections);
-            futureBooksStore.setMostVotedFutureBookId(mostVotedFutureBookId);
+            if (hasSelections) {
+                const mostVotedFutureBookId =
+                    getMostVotedFutureBookId(selections);
+                futureBooksStore.setMostVotedFutureBookId(
+                    mostVotedFutureBookId
+                );
+            } else {
+                futureBooksStore.setMostVotedFutureBookId("");
+            }
         }
         return selections;
     };
@@ -122,10 +139,21 @@ export const useFutureBooks = () => {
         return selections;
     };
 
-    const archiveSelections = async (archiveEntry: ArchivedBooksEntry) => {
+    const archiveSelections = async () => {
+        const currentSelections = futureBooksStore.currentSelections;
+        const currentSelectorId = futureBooksStore.currentSelector.id;
+        const archiveEntry: ArchivedBooksEntry = buildArchiveEntry(
+            currentSelections,
+            currentSelectorId
+        );
         const updatedSelections =
             await futureBooksService.archiveSelections(archiveEntry);
         futureBooksStore.setArchivedSelections(updatedSelections);
+        futureBooksStore.clearCurrentSelections();
+        await info(
+            `Archived future book selections: ${archiveEntry.archivedBooks.length}`
+        );
+        await setCurrentSelector(ON_DECK_BOOK_SELECTOR);
         return updatedSelections;
     };
 

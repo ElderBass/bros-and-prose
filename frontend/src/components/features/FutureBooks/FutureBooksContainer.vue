@@ -1,5 +1,13 @@
 <template>
     <div class="future-books-container">
+        <BaseButton
+            v-if="hasAdminPrivileges() && ARCHIVE_ENABLED"
+            @click="onArchiveClick"
+            size="medium"
+            variant="primary"
+        >
+            archive selections
+        </BaseButton>
         <FutureBooksList v-if="futureBooks.length" :futureBooks="futureBooks" />
         <div v-else class="no-future-books">
             <p class="italics">no future books yet</p>
@@ -26,6 +34,10 @@
 import type { FutureBook } from "@/types";
 import FutureBooksList from "./FutureBooksList.vue";
 import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
+import { hasAdminPrivileges } from "@/utils/hasAdminPrivileges";
+import { useFutureBooks } from "@/composables/useFutureBooks";
+import { useUIStore } from "@/stores/ui";
+import { ARCHIVE_ENABLED } from "@/constants";
 
 defineProps<{
     hasReadWriteAccess: boolean;
@@ -33,6 +45,17 @@ defineProps<{
     futureBooks: FutureBook[];
     openAddFutureBookModal: () => void;
 }>();
+
+const onArchiveClick = async () => {
+    try {
+        useUIStore().setIsAppLoading(true);
+        await useFutureBooks().archiveSelections();
+        useUIStore().setIsAppLoading(false);
+    } catch (error) {
+        console.error("KERTWANGING error in onArchiveClick", error);
+        useUIStore().setIsAppLoading(false);
+    }
+};
 </script>
 
 <style scoped>

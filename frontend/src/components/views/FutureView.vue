@@ -2,7 +2,7 @@
     <AppLayout>
         <h1 class="future-books-title">
             <span class="username">@{{ futureBookSelector.username }}'s</span>
-            books
+            selections
         </h1>
         <div v-if="isAppLoading" class="spinner-container">
             <LoadingSpinner

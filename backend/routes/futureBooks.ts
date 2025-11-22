@@ -163,10 +163,20 @@ export const deleteCurrentSelection = async (req: express.Request, res: express.
 
 export const archiveFutureBooks = async (req: express.Request, res: express.Response) => {
     try {
-        const { archivedBooksEntry } = req.body;
-        const futureBooksRef = db.ref("books/futureBooks/archived");
-        await futureBooksRef.push(archivedBooksEntry);
-        const archivedBooks = await futureBooksRef.once("value");
+        const archivedBooksEntry = req.body;
+        console.log(
+            "ARCHIVE FUTURE BOOKS archivedBooksEntry in archiveFutureBooks",
+            archivedBooksEntry
+        );
+        const archivedBooksRef = db.ref("books/futureBooks/archived");
+        await archivedBooksRef.push(archivedBooksEntry);
+        const archivedBooks = await archivedBooksRef.once("value");
+        console.log(
+            "ARCHIVE FUTURE BOOKS archivedBooks in archiveFutureBooks",
+            archivedBooks.val()
+        );
+        const currentSelectionsRef = db.ref("books/futureBooks/current");
+        await currentSelectionsRef.set({});
         res.json({
             success: true,
             message: "Future books archived successfully",

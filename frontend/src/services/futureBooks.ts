@@ -85,7 +85,7 @@ export const futureBooksService = {
     archiveSelections: async (archiveEntry: ArchivedBooksEntry) => {
         const response = await apiRequest<ArchivedBooksResponse>(
             "POST",
-            "/api/futureBooks/archive",
+            "/api/futureBooks/archived",
             archiveEntry
         );
         return response.data;

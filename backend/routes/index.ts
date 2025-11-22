@@ -38,9 +38,9 @@ router.put("/futureBooks/current/:bookId", updateCurrentSelection);
 router.delete("/futureBooks/current/:bookId", deleteCurrentSelection);
 router.get("/futureBooks/current", getCurrentFutureBooks);
 router.get("/futureBooks/archived", getArchivedFutureBooks);
+router.post("/futureBooks/archived", archiveFutureBooks);
 router.get("/futureBooks/currentSelector", getCurrentSelector);
 router.post("/futureBooks/setSelector", setFutureBookSelector);
-router.post("/futureBooks/archive", archiveFutureBooks);
 
 // USER ROUTES
 router.get("/users/:userId", getUser);
