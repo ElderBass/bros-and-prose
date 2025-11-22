@@ -41,13 +41,13 @@
 import { faSurprise } from "@fortawesome/free-solid-svg-icons";
 import { useFutureBooks } from "@/composables/useFutureBooks";
 import { useLog } from "@/composables/useLog";
-import { useBooksStore } from "@/stores/books";
 import { useUIStore } from "@/stores/ui";
 import { useDisplay } from "vuetify";
+import { useFutureBooksStore } from "@/stores/futureBooks";
 
 const { mobile } = useDisplay();
 const { deleteCurrentSelection } = useFutureBooks();
-const { setFutureBookResultModal } = useBooksStore();
+const { openResultModal } = useFutureBooksStore();
 
 const props = defineProps<{
     open: boolean;
@@ -65,17 +65,17 @@ const handleDelete = async () => {
     try {
         useUIStore().setIsAppLoading(true);
         await deleteCurrentSelection(props.bookId);
-        setFutureBookResultModal({
-            show: true,
-            type: "success",
+        openResultModal({
+            action: "delete",
+            status: "success",
             message: [props.bookTitle.toUpperCase(), "deleted successfully."],
         });
         onClose();
     } catch (error) {
         onClose();
-        setFutureBookResultModal({
-            show: true,
-            type: "error",
+        openResultModal({
+            action: "delete",
+            status: "error",
             message: [
                 `Error when deleting future book ${props.bookTitle.toUpperCase()}:`,
                 error as string,

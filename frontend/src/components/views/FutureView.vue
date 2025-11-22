@@ -14,35 +14,35 @@
             v-else
             :hasReadWriteAccess="userIsFutureBookSelector"
             :currentSelectorUsername="futureBookSelector.username"
-            :openAddFutureBookModal="openAddFutureBookModal"
+            :openAddFutureBookModal="openFormModal"
             :futureBooks="currentSelections"
         />
         <AddFutureBookFab
             v-if="userIsFutureBookSelector && !fabDisabled"
-            @click="openAddFutureBookModal"
+            @click="openFormModal"
             :disabled="fabDisabled"
         />
         <FutureBookModal
-            v-if="futureBookModal.show"
-            :open="futureBookModal.show"
+            v-if="formModal"
+            :open="!!formModal"
             :onSubmit="onSubmitFutureBook"
-            @close="clearFutureBookModal"
+            @close="closeModal"
         />
         <SuccessModal
             v-if="shouldRenderSuccessModal"
             :open="shouldRenderSuccessModal"
-            @close="clearFutureBookResultModal"
+            @close="closeModal"
         >
-            <p class="book-title">{{ futureBookResultModal.message[0] }}</p>
-            <p>{{ futureBookResultModal.message[1] }}</p>
+            <p class="book-title">{{ resultModal?.message[0] }}</p>
+            <p>{{ resultModal?.message[1] }}</p>
         </SuccessModal>
         <ErrorModal
             v-if="shouldRenderErrorModal"
             :open="shouldRenderErrorModal"
-            @close="clearFutureBookResultModal"
+            @close="closeModal"
         >
-            <p class="book-title">{{ futureBookResultModal.message[0] }}</p>
-            <p>{{ futureBookResultModal.message[1] }}</p>
+            <p class="book-title">{{ resultModal?.message[0] }}</p>
+            <p>{{ resultModal?.message[1] }}</p>
         </ErrorModal>
     </AppLayout>
 </template>
@@ -60,7 +60,6 @@ import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "@/composables/useLog";
 import type { FutureBook } from "@/types";
-import { useBooksStore } from "@/stores/books";
 import { useFutureBooksStore } from "@/stores/futureBooks";
 import { useFutureBooks } from "@/composables/useFutureBooks";
 
@@ -68,21 +67,23 @@ const { addCurrentSelection, updateCurrentSelection } = useFutureBooks();
 const { isAppLoading } = storeToRefs(useUIStore());
 const { futureBookSelector, userIsFutureBookSelector } =
     storeToRefs(useUserStore());
-const { currentSelections } = storeToRefs(useFutureBooksStore());
+const futureBooksStore = useFutureBooksStore();
+const { currentSelections, modal } = storeToRefs(futureBooksStore);
+const { openFormModal, openResultModal, closeModal } = futureBooksStore;
 
-const { futureBookModal, futureBookResultModal } = storeToRefs(useBooksStore());
-const {
-    setFutureBookModal,
-    setFutureBookResultModal,
-    clearFutureBookModal,
-    clearFutureBookResultModal,
-} = useBooksStore();
+const formModal = computed(() => {
+    if (modal.value?.kind === "form" && modal.value.open) {
+        return modal.value;
+    }
+    return null;
+});
 
-const openAddFutureBookModal = () =>
-    setFutureBookModal({
-        show: true,
-        futureBook: {} as FutureBook,
-    });
+const resultModal = computed(() => {
+    if (modal.value?.kind === "result" && modal.value.open) {
+        return modal.value;
+    }
+    return null;
+});
 
 const onSubmitFutureBook = async (futureBook: FutureBook, isEdit: boolean) => {
     try {
@@ -92,25 +93,25 @@ const onSubmitFutureBook = async (futureBook: FutureBook, isEdit: boolean) => {
         } else {
             await addCurrentSelection(futureBook);
         }
-        clearFutureBookModal();
+        closeModal();
         const message = isEdit
             ? "updated successfully ferda boys."
             : "added successfully as a future book.";
-        setFutureBookResultModal({
-            show: true,
-            type: "success",
+        openResultModal({
+            action: isEdit ? "update" : "create",
+            status: "success",
             message: [futureBook.title.toUpperCase(), message],
         });
     } catch (error) {
         console.error("error in onSubmit", error);
         await useLog().error(`Error in onSubmit: ${error}`);
-        clearFutureBookModal();
+        closeModal();
         const message = isEdit
             ? "error updating future book"
             : "error adding future book";
-        setFutureBookResultModal({
-            show: true,
-            type: "error",
+        openResultModal({
+            action: isEdit ? "update" : "create",
+            status: "error",
             message: [`${message} ${futureBook.title}:`, error as string],
         });
     } finally {
@@ -119,14 +120,10 @@ const onSubmitFutureBook = async (futureBook: FutureBook, isEdit: boolean) => {
 };
 
 const shouldRenderSuccessModal = computed(
-    () =>
-        futureBookResultModal.value.show &&
-        futureBookResultModal.value.type === "success"
+    () => resultModal.value?.status === "success"
 );
 const shouldRenderErrorModal = computed(
-    () =>
-        futureBookResultModal.value.show &&
-        futureBookResultModal.value.type === "error"
+    () => resultModal.value?.status === "error"
 );
 const fabDisabled = computed(() => {
     console.log("current future books.length", currentSelections.value.length);

@@ -2,17 +2,49 @@ import { defineStore } from "pinia";
 import type { ArchivedBooksEntry, FutureBook } from "@/types/books";
 import type { User } from "@/types";
 
+export type FutureBookAction = "create" | "update" | "delete";
+export type FutureBookModalStatus = "success" | "error";
+
+export interface FutureBookFormModal {
+    kind: "form";
+    action: FutureBookAction;
+    futureBook: FutureBook | null;
+}
+
+export interface FutureBookResultModal {
+    kind: "result";
+    action: FutureBookAction;
+    status: FutureBookModalStatus;
+    message: string[];
+}
+
+export type FutureBookModal = FutureBookFormModal | FutureBookResultModal;
+
 export const useFutureBooksStore = defineStore("futureBooks", {
     state: () => ({
         currentSelections: [] as FutureBook[],
         archivedSelections: [] as ArchivedBooksEntry[],
         currentSelector: {} as User,
         mostVotedFutureBookId: "",
+        modal: null as null | (FutureBookModal & { open: boolean }),
     }),
     getters: {
         getCurrentSelections: (state) => state.currentSelections,
         getArchivedSelections: (state) => state.archivedSelections,
         getCurrentSelector: (state) => state.currentSelector,
+        modalOpen: (state) => !!state.modal?.open,
+        formModal: (state) =>
+            state.modal?.kind === "form" && state.modal.open
+                ? state.modal
+                : null,
+        resultModal: (state) =>
+            state.modal?.kind === "result" && state.modal.open
+                ? state.modal
+                : null,
+        formModalOpen: (state) =>
+            !!(state.modal?.open && state.modal.kind === "form"),
+        resultModalOpen: (state) =>
+            !!(state.modal?.open && state.modal.kind === "result"),
     },
     actions: {
         setCurrentSelections(selections: FutureBook[]) {
@@ -42,6 +74,30 @@ export const useFutureBooksStore = defineStore("futureBooks", {
         },
         setMostVotedFutureBookId(id: string) {
             this.mostVotedFutureBookId = id;
+        },
+        openFormModal(futureBook?: FutureBook, action?: FutureBookAction) {
+            this.modal = {
+                open: true,
+                kind: "form",
+                action: action || (futureBook ? "update" : "create"),
+                futureBook: futureBook ?? null,
+            };
+        },
+        openResultModal(payload: {
+            action: FutureBookAction;
+            status: FutureBookModalStatus;
+            message: string[];
+        }) {
+            this.modal = {
+                open: true,
+                kind: "result",
+                action: payload.action,
+                status: payload.status,
+                message: payload.message,
+            };
+        },
+        closeModal() {
+            this.modal = null;
         },
     },
 });

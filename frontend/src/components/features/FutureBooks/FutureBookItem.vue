@@ -40,7 +40,7 @@ import { useUserStore } from "@/stores/user";
 import { useFutureBooks } from "@/composables/useFutureBooks";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "@/composables/useLog";
-import { useBooksStore } from "@/stores/books";
+import { useFutureBooksStore } from "@/stores/futureBooks";
 import { isGuestUser } from "@/utils";
 
 const props = defineProps<{
@@ -50,15 +50,11 @@ const props = defineProps<{
 
 const { userIsFutureBookSelector, loggedInUser } = useUserStore();
 const { showAlert, setIsAppLoading } = useUIStore();
-const { setFutureBookModal } = useBooksStore();
+const { openFormModal } = useFutureBooksStore();
 
 const deleteFutureBookModalOpen = ref(false);
 
-const handleEdit = () =>
-    setFutureBookModal({
-        show: true,
-        futureBook: props.book,
-    });
+const handleEdit = () => openFormModal(props.book, "update");
 const handleDelete = () => (deleteFutureBookModalOpen.value = true);
 
 const userHasVoted = ref(props.book.votes.includes(loggedInUser.id));
