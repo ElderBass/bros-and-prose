@@ -10,7 +10,7 @@ export const useBooksStore = defineStore("books", {
     getters: {
         getPastBooks: (state) => state.pastBooks,
         getCurrentBook: (state) => state.currentBook,
-        getNonFutureBooks: (state) => [state.currentBook, ...state.pastBooks],
+        getAllBooks: (state) => [state.currentBook, ...state.pastBooks],
     },
     actions: {
         setCurrentBook(book: Book) {

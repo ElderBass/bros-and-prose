@@ -107,8 +107,10 @@ const onClose = () => emit("close");
 
 <style scoped>
 .add-comment-form {
+    flex: 1 0 auto;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 1rem;
     padding: 0.5rem;
 }

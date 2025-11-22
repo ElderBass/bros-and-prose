@@ -5,11 +5,11 @@ export const getCurrentBook = async (_: express.Request, res: express.Response) 
     try {
         const currentBookRef = db.ref("books/currentBook");
         const currentBook = await currentBookRef.once("value");
-        console.log("GET CURRENT BOOK currentBook in getCurrentBook", Object.values(currentBook.val())[0]);
+        console.log("GET CURRENT BOOK currentBook in getCurrentBook", currentBook.val());
         res.json({
             success: true,
             message: "Current book fetched successfully",
-            data: Object.values(currentBook.val())[0],
+            data: currentBook.val(),
         });
     } catch (error) {
         console.log("GET CURRENT BOOK ERROR in getCurrentBook", error);
@@ -46,17 +46,40 @@ export const getPastBooks = async (_: express.Request, res: express.Response) =>
     try {
         const pastBooksRef = db.ref("books/pastBooks");
         const pastBooks = await pastBooksRef.once("value");
-        console.log("GET PAST BOOKS pastBooks in getPastBooks", pastBooks.val());
+        const pastBooksArray = Object.values(pastBooks.val());
+        console.log("GET PAST BOOKS pastBooks in getPastBooks", pastBooksArray);
         res.json({
             success: true,
             message: "Past books fetched successfully",
-            data: pastBooks.val(),
+            data: pastBooksArray,
         });
     } catch (error) {
         console.log("GET PAST BOOKS ERROR in getPastBooks", error);
         res.status(500).json({
             success: false,
             message: "Failed to get past books",
+            error: error,
+        });
+    }
+};
+
+export const getPastBook = async (req: express.Request, res: express.Response) => {
+    const { bookId } = req.params;
+    console.log("GET PAST BOOK bookId in getPastBook", bookId);
+    try {
+        const pastBookRef = db.ref(`books/pastBooks/${bookId}`);
+        const pastBook = await pastBookRef.once("value");
+        console.log("GET PAST BOOK pastBook in getPastBook", pastBook.val());
+        res.json({
+            success: true,
+            message: "Past book fetched successfully",
+            data: pastBook.val(),
+        });
+    } catch (error) {
+        console.log("GET PAST BOOK ERROR in getPastBook", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to get past book",
             error: error,
         });
     }

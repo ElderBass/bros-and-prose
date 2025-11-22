@@ -12,8 +12,7 @@ export const initApp = async () => {
         useUIStore().setIsAppLoading(true);
         await useLog().info("Initializing app");
         useUIStore().initializeScreenSize();
-        await useBooks().getCurrentBook();
-        await useBooks().getPastBooks();
+        await useBooks().getAllBooks(true);
         await useUser().getUsers();
         await useUser().getFutureBookSelector();
         await useFutureBooks().getCurrentSelections(true);
