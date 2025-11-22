@@ -9,6 +9,7 @@ export const mockUsers: User[] = [
         currentBookProgress: 69420,
         avatar: "robot",
         username: "fuckBoy21",
+        role: "user",
         reviews: {
             starter_villain_scalzi: {
                 id: "nunya-bidness",
@@ -40,6 +41,7 @@ export const mockUsers: User[] = [
         currentBookProgress: 70,
         avatar: "dragon",
         username: "kenny_McG",
+        role: "user",
         reviews: {
             eleven_twenty_two_sixty_three_king: {
                 id: "ken-man",
@@ -61,6 +63,7 @@ export const mockUsers: User[] = [
         currentBookProgress: 262,
         avatar: "beer-mug-empty",
         username: "chrisDubStep",
+        role: "user",
         reviews: {
             starter_villain_scalzi: {
                 id: "nunya-bidness",
@@ -92,6 +95,7 @@ export const mockUsers: User[] = [
         currentBookProgress: 0,
         avatar: "gamepad",
         username: "mo$keeto_byte",
+        role: "user",
         reviews: {
             eleven_twenty_two_sixty_three_king: {
                 id: "judd-review",
@@ -113,6 +117,7 @@ export const mockUsers: User[] = [
         currentBookProgress: 69420,
         avatar: "user-ninja",
         username: "ElderBass",
+        role: "admin",
         reviews: {
             starter_villain_scalzi: {
                 id: "nunya-bidness",

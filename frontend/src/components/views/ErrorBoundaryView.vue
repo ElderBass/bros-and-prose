@@ -61,10 +61,12 @@ onErrorCaptured((err) => {
     errorMessage.value = message;
     const log = {
         message,
+        stack: (err as Error)?.stack,
         level: "error",
         timestamp: new Date().toISOString(),
         isError: true,
     };
+    console.log("KERTWANGING log in onErrorCaptured", log);
     void useLog().postLog(log);
     // prevent further propagation
     return false;
@@ -73,10 +75,12 @@ onErrorCaptured((err) => {
 const onGlobalError = async (event: ErrorEvent) => {
     const log = {
         message: event.message,
+        stack: event.error.stack,
         level: "error",
         timestamp: new Date().toISOString(),
         isError: true,
     };
+    console.log("KERTWANGING log in onGlobalError", log);
     await useLog().postLog(log);
 };
 
@@ -129,7 +133,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 100%;
     height: 100%;
-    padding: 1rem;
+    padding: 4rem;
 }
 
 .fallback-content {

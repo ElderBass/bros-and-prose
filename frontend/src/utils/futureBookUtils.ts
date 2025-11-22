@@ -1,5 +1,5 @@
 import { useFutureBooksStore } from "@/stores/futureBooks";
-import type { FutureBook } from "@/types";
+import type { FutureBook, ArchivedBooksEntry } from "@/types";
 
 export const getUsersFutureBookVoteId = (userId: string) => {
     const futureBooksStore = useFutureBooksStore();
@@ -17,4 +17,15 @@ export const getMostVotedFutureBookId = (futureBooks: FutureBook[]) => {
     return futureBooks.reduce((max, book) =>
         book.votes.length > max.votes.length ? book : max
     ).id;
+};
+
+export const buildArchiveEntry = (
+    futureBooks: FutureBook[],
+    selectorId: string
+): ArchivedBooksEntry => {
+    return {
+        selectorId,
+        archivedBooks: futureBooks,
+        archivedAt: new Date().toISOString(),
+    };
 };
