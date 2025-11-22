@@ -111,6 +111,11 @@ const onArchiveClick = async () => {
     width: 100%;
 }
 
+.username {
+    font-weight: 600;
+    color: var(--accent-fuschia);
+}
+
 @media (max-width: 768px) {
     .future-books-container {
         padding: 0rem;
