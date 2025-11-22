@@ -30,7 +30,7 @@ export const booksService = {
     getCurrentBook: async () => {
         const response = await apiRequest<BookResponse>(
             "GET",
-            `/api/books/${currentBookId}`
+            "/api/books/currentBook"
         );
         return response.data;
     },

@@ -1,7 +1,15 @@
 import express from "express";
 import { signup } from "./signup.js";
 import { login } from "./login.js";
-import { getBook, getBooks, updateBook } from "./books.js";
+import {
+    getBook,
+    getBooks,
+    getCurrentBook,
+    getPastBooks,
+    updateCurrentBook,
+    updateBook,
+    updatePastBook,
+} from "./books.js";
 import {
     getCurrentFutureBooks,
     getArchivedFutureBooks,
@@ -31,6 +39,11 @@ router.post("/login", login);
 router.get("/books/:bookId", getBook);
 router.get("/books", getBooks);
 router.put("/books/:bookId", updateBook);
+// V2 ROUTES
+router.get("/books/currentBook", getCurrentBook);
+router.put("/books/currentBook", updateCurrentBook);
+router.get("/books/pastBooks", getPastBooks);
+router.put("/books/pastBooks/:bookId", updatePastBook);
 
 // FUTURE BOOKS ROUTES
 router.post("/futureBooks/current", addCurrentSelection);
