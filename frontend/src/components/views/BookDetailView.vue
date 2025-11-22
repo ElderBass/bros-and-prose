@@ -64,7 +64,8 @@ const loadBookData = async () => {
     }
 
     book.value = fetchedBook;
-    const { reviews, averageRating } = getReviewsAndAverageRating(fetchedBook);
+    const { reviews, averageRating } =
+        await getReviewsAndAverageRating(fetchedBook);
     userReviews.value = reviews;
     aggregateRating.value = averageRating;
     isLoading.value = false;
