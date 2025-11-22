@@ -39,14 +39,14 @@
 
 <script setup lang="ts">
 import { faSurprise } from "@fortawesome/free-solid-svg-icons";
-import { useBooks } from "@/composables/useBooks";
+import { useFutureBooks } from "@/composables/useFutureBooks";
 import { useLog } from "@/composables/useLog";
 import { useBooksStore } from "@/stores/books";
 import { useUIStore } from "@/stores/ui";
 import { useDisplay } from "vuetify";
 
 const { mobile } = useDisplay();
-const { deleteFutureBook } = useBooks();
+const { deleteCurrentSelection } = useFutureBooks();
 const { setFutureBookResultModal } = useBooksStore();
 
 const props = defineProps<{
@@ -64,7 +64,7 @@ const onClose = () => emit("close");
 const handleDelete = async () => {
     try {
         useUIStore().setIsAppLoading(true);
-        await deleteFutureBook(props.bookId);
+        await deleteCurrentSelection(props.bookId);
         setFutureBookResultModal({
             show: true,
             type: "success",

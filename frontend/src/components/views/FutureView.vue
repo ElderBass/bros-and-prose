@@ -59,12 +59,12 @@ import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "@/composables/useLog";
-import { useBooks } from "@/composables/useBooks";
 import type { FutureBook } from "@/types";
 import { useBooksStore } from "@/stores/books";
 import { useFutureBooksStore } from "@/stores/futureBooks";
+import { useFutureBooks } from "@/composables/useFutureBooks";
 
-const { addFutureBook, updateFutureBook } = useBooks();
+const { addCurrentSelection, updateCurrentSelection } = useFutureBooks();
 const { isAppLoading } = storeToRefs(useUIStore());
 const { futureBookSelector, userIsFutureBookSelector } =
     storeToRefs(useUserStore());
@@ -88,9 +88,9 @@ const onSubmitFutureBook = async (futureBook: FutureBook, isEdit: boolean) => {
     try {
         useUIStore().setIsAppLoading(true);
         if (isEdit) {
-            await updateFutureBook(futureBook.id, futureBook);
+            await updateCurrentSelection(futureBook);
         } else {
-            await addFutureBook(futureBook);
+            await addCurrentSelection(futureBook);
         }
         clearFutureBookModal();
         const message = isEdit

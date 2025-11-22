@@ -61,7 +61,7 @@ export const futureBooksService = {
         return response.data;
     },
     updateCurrentSelection: async (selection: FutureBook) => {
-        const response = await apiRequest<FutureBooksResponse>(
+        const response = await apiRequest<FutureBookResponse>(
             "PUT",
             `/api/futureBooks/current/${selection.id}`,
             selection

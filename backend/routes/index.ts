@@ -7,9 +7,9 @@ import {
     getArchivedFutureBooks,
     getCurrentSelector,
     setFutureBookSelector,
-    addFutureBook,
-    updateFutureBook,
-    deleteFutureBook,
+    addCurrentSelection,
+    updateCurrentSelection,
+    deleteCurrentSelection,
     archiveFutureBooks,
 } from "./futureBooks.js";
 import { getUser, getUsers, updateUser } from "./user.js";
@@ -33,9 +33,9 @@ router.get("/books", getBooks);
 router.put("/books/:bookId", updateBook);
 
 // FUTURE BOOKS ROUTES
-router.post("/futureBooks/current", addFutureBook);
-router.put("/futureBooks/current/:bookId", updateFutureBook);
-router.delete("/futureBooks/current/:bookId", deleteFutureBook);
+router.post("/futureBooks/current", addCurrentSelection);
+router.put("/futureBooks/current/:bookId", updateCurrentSelection);
+router.delete("/futureBooks/current/:bookId", deleteCurrentSelection);
 router.get("/futureBooks/current", getCurrentFutureBooks);
 router.get("/futureBooks/archived", getArchivedFutureBooks);
 router.get("/futureBooks/currentSelector", getCurrentSelector);
