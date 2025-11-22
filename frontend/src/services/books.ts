@@ -51,7 +51,7 @@ export const booksService = {
         );
         return pastBooks;
     },
-    // https://bros-and-prose-default-rtdb.firebaseio.com/books/pastBooks/mans_search_for_meaning_frankl
+
     getPastBook: async (bookId: string) => {
         const response = await apiRequest<BookResponse>(
             "GET",

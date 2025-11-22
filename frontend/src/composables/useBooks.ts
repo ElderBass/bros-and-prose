@@ -13,10 +13,7 @@ export const useBooks = () => {
         return book;
     };
 
-    const getAllBooks = async (isInit = false) => {
-        if (isInit) {
-            console.log("KERTWANGING getAllBooks isInit");
-        }
+    const getAllBooks = async () => {
         const currentBook = await booksService.getCurrentBook();
         const pastBooks = await booksService.getPastBooks();
         const books = [currentBook, ...pastBooks];
