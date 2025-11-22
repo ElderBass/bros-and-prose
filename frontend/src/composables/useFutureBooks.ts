@@ -58,15 +58,19 @@ export const useFutureBooks = () => {
     };
 
     const updateCurrentSelection = async (selection: FutureBook) => {
-        const updatedSelections =
+        const updatedSelection =
             await futureBooksService.updateCurrentSelection(selection);
-        await info(`Updated future book: ${selection.title}`);
+        await info(`Updated future book selection: ${selection.title}`);
 
+        const updatedSelections = futureBooksStore.currentSelections.map((b) =>
+            b.id === selection.id ? updatedSelection : b
+        );
         futureBooksStore.setCurrentSelections(updatedSelections);
+
         const mostVotedFutureBookId =
             getMostVotedFutureBookId(updatedSelections);
         futureBooksStore.setMostVotedFutureBookId(mostVotedFutureBookId);
-        return updatedSelections;
+        return updatedSelection;
     };
 
     const deleteCurrentSelection = async (selectionId: string) => {

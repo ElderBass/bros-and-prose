@@ -1,38 +1,7 @@
-import { ref, onValue, off, type DataSnapshot } from "firebase/database";
-import { getFirebase } from "@/setup/firebaseClient";
 import { booksService } from "@/services";
 import { useBooksStore } from "@/stores/books";
-import type { Book, Comment, FutureBook, OpenLibraryBookResult } from "@/types";
+import type { Book, Comment, OpenLibraryBookResult } from "@/types";
 import { useLog } from "./useLog";
-import { getMostVotedFutureBookId, getUsersFutureBookVoteId } from "@/utils";
-
-let unsubscribe: (() => void) | null = null;
-
-export function subscribeToFutureBooks() {
-    if (unsubscribe) return; // already listening
-    const { db } = getFirebase();
-    const futureBooksRef = ref(db, "books/futureBooks");
-
-    const handler = (snapshot: DataSnapshot) => {
-        const value = snapshot.val() ?? {};
-        const list = Object.values(value).filter(
-            (book: unknown) => (book as Book).id
-        );
-        useBooksStore().setFutureBooks(list as FutureBook[]);
-    };
-
-    onValue(futureBooksRef, handler, (error) => {
-        console.error("KERTWANGING error in subscribeToFutureBooks", error);
-    });
-    unsubscribe = () => off(futureBooksRef, "value", handler);
-}
-
-export function unsubscribeFromFutureBooks() {
-    if (unsubscribe) {
-        unsubscribe();
-        unsubscribe = null;
-    }
-}
 
 export const useBooks = () => {
     const booksStore = useBooksStore();
@@ -57,63 +26,6 @@ export const useBooks = () => {
     const getPastBooks = async () => {
         const books = await booksService.getPastBooks();
         booksStore.setPastBooks(books);
-    };
-
-    const addFutureBook = async (futureBook: FutureBook) => {
-        const updatedBooks = await booksService.addFutureBook(futureBook);
-        console.log("KERTWANGING updatedBooks in addFutureBook", updatedBooks);
-        await info(`Added future book: ${futureBook.title}`);
-        booksStore.setFutureBooks(updatedBooks);
-        return updatedBooks;
-    };
-
-    const updateFutureBook = async (bookId: string, futureBook: FutureBook) => {
-        const book = await booksService.updateFutureBook(bookId, futureBook);
-        await info(`Updated future book: ${book.title}`);
-        const updatedBooks = booksStore.futureBooks.map((b) =>
-            b.id === bookId ? book : b
-        );
-        booksStore.setFutureBooks(updatedBooks);
-        const mostVotedFutureBookId = getMostVotedFutureBookId(updatedBooks);
-        booksStore.setMostVotedFutureBookId(mostVotedFutureBookId);
-        return book;
-    };
-
-    const voteForFutureBook = async (bookId: string, userId: string) => {
-        const book = booksStore.futureBooks.find((b) => b.id === bookId);
-        const voteId = getUsersFutureBookVoteId(userId);
-        if (!book) {
-            await useLog().error(`Future book not found: ${bookId}`);
-            return;
-        }
-        const hasVotedForCurrentBook = voteId === bookId;
-        if (!hasVotedForCurrentBook) {
-            await removeVoteForFutureBook(voteId, userId);
-        }
-        const updatedVotes = hasVotedForCurrentBook
-            ? book.votes.filter((v) => v !== userId)
-            : [...book.votes, userId];
-        const updatedBook = await updateFutureBook(bookId, {
-            ...book,
-            votes: updatedVotes,
-        });
-        return updatedBook;
-    };
-
-    const removeVoteForFutureBook = async (bookId: string, userId: string) => {
-        const book = booksStore.futureBooks.find((b) => b.id === bookId);
-        if (!book) {
-            await useLog().error(`Future book not found: ${bookId}`);
-            return;
-        }
-        const votes = book.votes.filter((v) => v !== userId);
-        await updateFutureBook(bookId, { ...book, votes });
-    };
-
-    const deleteFutureBook = async (bookId: string) => {
-        const updatedFutureBooks = await booksService.deleteFutureBook(bookId);
-        await info(`Deleted future book: ${bookId}`);
-        booksStore.setFutureBooks(updatedFutureBooks);
     };
 
     const getBookByTitle = async (title: string) => {
@@ -160,10 +72,6 @@ export const useBooks = () => {
         getCurrentBook,
         getPastBook,
         getPastBooks,
-        addFutureBook,
-        updateFutureBook,
-        voteForFutureBook,
-        deleteFutureBook,
         getAllBooks,
         getBookByTitle,
         searchBooksByTitle,

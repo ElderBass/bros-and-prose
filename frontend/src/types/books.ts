@@ -30,7 +30,6 @@ export interface BooksState {
     mostVotedFutureBookId: string;
     currentBook: Book;
     pastBooks: Book[];
-    futureBooks: FutureBook[];
     futureBookModal: FutureBookModal;
     futureBookResultModal: FutureBookResultModal;
 }

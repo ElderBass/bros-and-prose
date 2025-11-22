@@ -1,4 +1,4 @@
-import type { Book, FutureBook } from "@/types/books";
+import type { Book } from "@/types/books";
 import { apiRequest } from "./api";
 
 export const currentBookId = "mans_search_for_meaning_frankl";
@@ -13,18 +13,6 @@ export interface BooksResponse {
     success: boolean;
     message: string;
     data: Book[];
-}
-
-export interface FutureBooksResponse {
-    success: boolean;
-    message: string;
-    data: FutureBook[];
-}
-
-export interface FutureBookResponse {
-    success: boolean;
-    message: string;
-    data: FutureBook;
 }
 
 export const booksService = {
@@ -56,36 +44,6 @@ export const booksService = {
             "PUT",
             `/api/books/${bookId}`,
             book
-        );
-        return response.data;
-    },
-    getFutureBooks: async () => {
-        const response = await apiRequest<FutureBooksResponse>(
-            "GET",
-            "/api/futureBooks"
-        );
-        return response.data;
-    },
-    addFutureBook: async (futureBook: FutureBook) => {
-        const response = await apiRequest<FutureBooksResponse>(
-            "POST",
-            "/api/futureBooks",
-            futureBook
-        );
-        return response.data;
-    },
-    updateFutureBook: async (bookId: string, futureBook: FutureBook) => {
-        const response = await apiRequest<FutureBookResponse>(
-            "PUT",
-            `/api/futureBooks/${bookId}`,
-            futureBook
-        );
-        return response.data;
-    },
-    deleteFutureBook: async (bookId: string) => {
-        const response = await apiRequest<FutureBooksResponse>(
-            "DELETE",
-            `/api/futureBooks/${bookId}`
         );
         return response.data;
     },

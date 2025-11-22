@@ -37,7 +37,7 @@ import FutureBookItemInfo from "./FutureBookItemInfo.vue";
 import DeleteFutureBookModal from "@/components/modal/DeleteFutureBookModal.vue";
 import type { FutureBook } from "@/types";
 import { useUserStore } from "@/stores/user";
-import { useBooks } from "@/composables/useBooks";
+import { useFutureBooks } from "@/composables/useFutureBooks";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "@/composables/useLog";
 import { useBooksStore } from "@/stores/books";
@@ -66,7 +66,10 @@ const userHasVoted = ref(props.book.votes.includes(loggedInUser.id));
 const handleVote = async () => {
     try {
         setIsAppLoading(true);
-        await useBooks().voteForFutureBook(props.book.id, loggedInUser.id);
+        await useFutureBooks().voteForFutureBook(
+            props.book.id,
+            loggedInUser.id
+        );
     } catch (error) {
         await useLog().error(`Error voting for future book: ${error}`);
         showAlert(QUICK_ERROR(["voter fraud!", error as string]));
@@ -77,7 +80,6 @@ const handleVote = async () => {
 };
 
 watch(props.book.votes, (newVotes) => {
-    console.log("\n KERTWANGING newVotes", newVotes, "\n\n");
     userHasVoted.value = newVotes.includes(loggedInUser.id);
 });
 </script>

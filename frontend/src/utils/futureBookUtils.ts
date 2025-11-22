@@ -1,10 +1,11 @@
-import { useBooksStore } from "@/stores/books";
+import { useFutureBooksStore } from "@/stores/futureBooks";
 import type { FutureBook } from "@/types";
 
 export const getUsersFutureBookVoteId = (userId: string) => {
-    const booksStore = useBooksStore();
+    const futureBooksStore = useFutureBooksStore();
     return (
-        booksStore.futureBooks.find((b) => b.votes.includes(userId))?.id || ""
+        futureBooksStore.currentSelections.find((b) => b.votes.includes(userId))
+            ?.id || ""
     );
 };
 
