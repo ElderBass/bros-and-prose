@@ -16,6 +16,7 @@ export interface BooksResponse {
 }
 
 export const booksService = {
+    // FIREBASE ROUTES
     updateBook: async (book: Book, isCurrentBook = false) => {
         const url = isCurrentBook
             ? "/api/books/currentBook"
