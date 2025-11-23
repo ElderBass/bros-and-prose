@@ -2,7 +2,7 @@
     <BaseModal
         :modelValue="open"
         @close="onClose"
-        title="add a comment"
+        :title="modalTitle"
         size="medium"
     >
         <form class="add-comment-form" @submit.prevent="submit">
@@ -13,7 +13,7 @@
                     v-model="localComment"
                     class="comment-textarea"
                     :rows="isMobile ? 5 : 6"
-                    placeholder="drop your wisdom..."
+                    :placeholder="textareaPlaceholder"
                 ></textarea>
                 <div class="meta-row">
                     <p class="hint" v-if="validationMessage">
@@ -31,15 +31,15 @@
                     @click="onClose"
                     :size="isMobile ? 'small' : 'medium'"
                     :style="{ width: '100%' }"
-                    >cancel</BaseButton
+                    >{{ primaryButtonLabel }}</BaseButton
                 >
                 <BaseButton
                     variant="outline"
                     type="submit"
-                    :disabled="!canSubmit"
+                    :disabled="!canSubmitComment"
                     :size="isMobile ? 'small' : 'medium'"
                     :style="{ width: '100%' }"
-                    >submit</BaseButton
+                    >{{ secondaryButtonLabel }}</BaseButton
                 >
             </div>
         </form>
@@ -50,20 +50,24 @@
 import { computed, ref, watch } from "vue";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
-import { v4 as uuid } from "uuid";
-import type { User, Comment } from "@/types";
-import { useUserStore } from "@/stores/user";
+import type { Comment } from "@/types";
+import { buildComment } from "@/utils/pastBookUtils";
 
 const emit = defineEmits<{
     (e: "close"): void;
     (e: "submit", value: Comment): void;
 }>();
 
-const props = defineProps<{
-    open: boolean;
-}>();
+const props = withDefaults(
+    defineProps<{
+        open: boolean;
+        isProgressUpdate?: boolean;
+    }>(),
+    {
+        isProgressUpdate: false,
+    }
+);
 
-const { loggedInUser } = storeToRefs(useUserStore());
 const { isMobile } = storeToRefs(useUIStore());
 
 const localComment = ref("");
@@ -76,30 +80,43 @@ watch(
     }
 );
 
-const isValid = computed(() => {
-    const text = localComment.value.trim();
-    return text.length >= 3 && text.length <= maxLength;
-});
+const modalTitle = computed(() =>
+    props.isProgressUpdate ? "hit'em with a supdate" : "add a comment"
+);
+
+const textareaPlaceholder = computed(() =>
+    props.isProgressUpdate
+        ? "(comment optional, but sexy)"
+        : "regale us with erudite insight"
+);
 
 const validationMessage = computed(() => {
     const text = localComment.value.trim();
-    if (text.length === 0) return "comment is required";
-    if (text.length < 3) return "minimum 3 characters";
+    if (text.length === 0 && !props.isProgressUpdate)
+        return "comment is required";
+    if (text.length < 3 && !props.isProgressUpdate)
+        return "minimum 3 characters";
     if (text.length > maxLength) return `maximum ${maxLength} characters`;
     return "";
 });
 
-const canSubmit = computed(() => isValid.value);
+const canSubmitComment = computed(() => {
+    const text = localComment.value.trim();
+    return text.length >= 3 && text.length <= maxLength;
+});
+
+const primaryButtonLabel = computed(() =>
+    props.isProgressUpdate ? "naw I'm good" : "cancel"
+);
+
+const secondaryButtonLabel = computed(() =>
+    props.isProgressUpdate ? "send it" : "submit"
+);
 
 const submit = () => {
-    if (!canSubmit.value) return;
+    if (!canSubmitComment.value) return;
     const payload = localComment.value.trim() as string;
-    const fullComment = {
-        id: uuid(),
-        user: loggedInUser.value as User,
-        comment: payload,
-        createdAt: new Date().toISOString(),
-    };
+    const fullComment = buildComment(payload);
     emit("submit", fullComment);
 };
 const onClose = () => emit("close");
