@@ -20,6 +20,7 @@
                     :placeholder="updatedProgress"
                     type="number"
                     style="text-align: right; min-width: 80px; max-width: 120px"
+                    containerStyle="width: auto"
                 />
             </ElementSwap>
             <span class="progress-page-info"> / {{ props.totalPages }} </span>

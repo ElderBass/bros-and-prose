@@ -5,7 +5,6 @@ import {
     FINISHED_BOOK_PROGRESS,
     QUICK_ERROR,
     REVIEW_SUBMITTED_SUCCESS_ALERT,
-    UPDATE_PROGRESS_SUCCESS_ALERT,
 } from "@/constants";
 import { v4 as uuidv4 } from "uuid";
 import { useUIStore } from "@/stores/ui";
@@ -64,8 +63,6 @@ export const useUser = () => {
             if (userId === loggedInUser.id) {
                 setLoggedInUser(updatedUser);
             }
-
-            showAlert(UPDATE_PROGRESS_SUCCESS_ALERT);
             return updatedUser;
         } catch (error) {
             console.error("error in updateUserProgress", error);

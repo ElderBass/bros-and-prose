@@ -44,12 +44,20 @@
         :onReviewSubmit="onReviewSubmit"
         :onClose="() => setShowReviewModal(false)"
     />
+    <AddCommentModal
+        v-if="showAddCommentModal"
+        :open="showAddCommentModal"
+        :isProgressUpdate="true"
+        @submit="onAddComment"
+        @close="showAddCommentModal = false"
+    />
 </template>
 
 <script setup lang="ts">
 import CurrentUserProgress from "./UserProgress.vue";
 import CurrentBookUserReview from "./UserReview.vue";
 import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
+import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useUserStore } from "@/stores/user";
 import { watch, ref, computed, onMounted } from "vue";
@@ -57,11 +65,13 @@ import {
     DEFAULT_REVIEW,
     DEFAULT_RATING,
     FINISHED_BOOK_PROGRESS,
+    UPDATE_PROGRESS_SUCCESS_ALERT,
 } from "@/constants";
-import type { Book, SubmitReviewArgs } from "@/types";
+import type { Book, Comment, SubmitReviewArgs } from "@/types";
 import { useUser } from "@/composables/useUser";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
+import { useBooks } from "@/composables/useBooks";
 
 const props = defineProps<{
     book: Book;
@@ -69,10 +79,15 @@ const props = defineProps<{
 
 const { loggedInUser } = useUserStore();
 const { addReview, updateUserProgress } = useUser();
-const { isMobile } = storeToRefs(useUIStore());
+const { addDiscussionComment } = useBooks();
+
+const uiStore = useUIStore();
+const { showAlert } = uiStore;
+const { isMobile } = storeToRefs(uiStore);
 
 const loadingMessage = ref("");
 const showRateAndReviewModal = ref(false);
+const showAddCommentModal = ref(false);
 const hasFinishedBook = ref(
     loggedInUser.currentBookProgress === FINISHED_BOOK_PROGRESS
 );
@@ -111,6 +126,10 @@ const setShowReviewModal = (show: boolean) => {
     showRateAndReviewModal.value = show;
 };
 
+const setShowAddCommentModal = (show: boolean) => {
+    showAddCommentModal.value = show;
+};
+
 const onReviewSubmit = async ({ rating, reviewComment }: SubmitReviewArgs) => {
     setShowReviewModal(false);
     loadingMessage.value = "submitting your shitty review...";
@@ -137,7 +156,17 @@ const onUpdateProgress = async (updatedProgress: number) => {
 
     if (updatedProgress === props.book.totalPages) {
         setShowReviewModal(true);
+    } else {
+        setShowAddCommentModal(true);
     }
+};
+
+const onAddComment = async (comment: Comment) => {
+    setShowAddCommentModal(false);
+    loadingMessage.value = "adding your comment...";
+    await addDiscussionComment(props.book, comment, true);
+    loadingMessage.value = "";
+    showAlert(UPDATE_PROGRESS_SUCCESS_ALERT);
 };
 
 const cardHeader = computed(() => {

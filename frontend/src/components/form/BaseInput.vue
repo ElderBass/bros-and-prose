@@ -1,5 +1,5 @@
 <template>
-    <div class="base-input-container">
+    <div class="base-input-container" :style="containerStyle">
         <input
             :id="id"
             class="base-input"
@@ -47,6 +47,7 @@ const props = withDefaults(
         prependInnerIcon?: string;
         size?: "small" | "medium" | "large";
         style?: string;
+        containerStyle?: string;
     }>(),
     {
         type: "text",
@@ -54,6 +55,7 @@ const props = withDefaults(
         prependInnerIcon: "",
         size: "large",
         style: "",
+        containerStyle: "",
     }
 );
 
@@ -77,7 +79,6 @@ const inputType = computed(() => {
 <style scoped>
 .base-input-container {
     position: relative;
-    width: 100%;
 }
 
 .base-input {
@@ -88,6 +89,7 @@ const inputType = computed(() => {
     border-radius: 0.5rem;
     font-family: "Crimson Text", serif;
     font-weight: 400;
+    width: 100%;
 
     &::placeholder {
         color: var(--main-text);
