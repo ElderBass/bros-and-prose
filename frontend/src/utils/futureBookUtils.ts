@@ -14,9 +14,16 @@ export const userHasVotedForBook = (bookId: string, userId: string) => {
 };
 
 export const getMostVotedFutureBookId = (futureBooks: FutureBook[]) => {
-    return futureBooks.reduce((max, book) =>
+    return sanitizeFutureBookVotes(futureBooks).reduce((max, book) =>
         book.votes.length > max.votes.length ? book : max
     ).id;
+};
+
+export const sanitizeFutureBookVotes = (futureBooks: FutureBook[]) => {
+    return futureBooks.map((book) => ({
+        ...book,
+        votes: book.votes.filter((vote) => vote !== "placeholder"),
+    }));
 };
 
 export const buildArchiveEntry = (

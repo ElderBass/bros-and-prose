@@ -8,6 +8,7 @@ import {
     buildArchiveEntry,
     getMostVotedFutureBookId,
     getUsersFutureBookVoteId,
+    sanitizeFutureBookVotes,
 } from "@/utils";
 import { usersService } from "@/services/users";
 import { ON_DECK_BOOK_SELECTOR } from "@/constants";
@@ -135,7 +136,11 @@ export const useFutureBooks = () => {
 
     const getArchivedSelections = async () => {
         const selections = await futureBooksService.getArchivedSelections();
-        futureBooksStore.setArchivedSelections(selections);
+        const sanitizedSelections = selections.map((selection) => ({
+            ...selection,
+            archivedBooks: sanitizeFutureBookVotes(selection.archivedBooks),
+        }));
+        futureBooksStore.setArchivedSelections(sanitizedSelections);
         return selections;
     };
 

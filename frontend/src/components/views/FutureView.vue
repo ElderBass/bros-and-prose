@@ -14,9 +14,10 @@
             v-else
             :hasReadWriteAccess="userIsFutureBookSelector"
             :currentSelectorUsername="futureBookSelector.username"
-            :openAddFutureBookModal="openFormModal"
+            :openFormModal="openFormModal"
             :futureBooks="currentSelections"
         />
+        <ArchivesContainer :archives="archivedSelections" />
         <AddFutureBookFab
             v-if="userIsFutureBookSelector && !fabDisabled"
             @click="openFormModal"
@@ -54,7 +55,8 @@ import FutureBookModal from "@/components/modal/FutureBookModal.vue";
 import SuccessModal from "@/components/modal/SuccessModal.vue";
 import ErrorModal from "@/components/modal/ErrorModal.vue";
 import FutureBooksContainer from "@/components/features/FutureBooks/FutureBooksContainer.vue";
-import { computed } from "vue";
+import ArchivesContainer from "@/components/features/FutureBooks/ArchivesContainer.vue";
+import { computed, onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui";
@@ -63,12 +65,14 @@ import type { FutureBook } from "@/types";
 import { useFutureBooksStore } from "@/stores/futureBooks";
 import { useFutureBooks } from "@/composables/useFutureBooks";
 
-const { addCurrentSelection, updateCurrentSelection } = useFutureBooks();
+const { addCurrentSelection, updateCurrentSelection, getArchivedSelections } =
+    useFutureBooks();
 const { isAppLoading } = storeToRefs(useUIStore());
 const { futureBookSelector, userIsFutureBookSelector } =
     storeToRefs(useUserStore());
 const futureBooksStore = useFutureBooksStore();
-const { currentSelections, modal } = storeToRefs(futureBooksStore);
+const { currentSelections, archivedSelections, modal } =
+    storeToRefs(futureBooksStore);
 const { openFormModal, openResultModal, closeModal } = futureBooksStore;
 
 const formModal = computed(() => {
@@ -83,6 +87,10 @@ const resultModal = computed(() => {
         return modal.value;
     }
     return null;
+});
+
+onMounted(() => {
+    void getArchivedSelections();
 });
 
 const onSubmitFutureBook = async (futureBook: FutureBook, isEdit: boolean) => {
