@@ -44,7 +44,6 @@
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
-import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import { usePalaver } from "@/composables/usePalaver";
 import { usePalaverStore, type ConfirmDeleteModal } from "@/stores/palaver";
 

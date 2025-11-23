@@ -1,24 +1,34 @@
 <template>
     <BaseSelect
-        :modelValue="modelValue.id"
+        :modelValue="props.modelValue.id"
         :options="options"
         id="palaver-item-book-select"
         label="choose a book"
         :showLabel="false"
         nullOption="choose a book"
         :size="mobile ? 'small' : 'large'"
+        :disabled="props.disabled"
         @update:modelValue="onUpdate"
     />
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed, onMounted, watch } from "vue";
 import { useDisplay } from "vuetify";
 import { useBooksStore } from "@/stores/books";
 import { storeToRefs } from "pinia";
 import { getBookByIdFromStore } from "@/utils";
 
-defineProps<{ modelValue: { title: string; id: string } }>();
+const props = withDefaults(
+    defineProps<{
+        modelValue: { title: string; id: string };
+        disabled?: boolean;
+    }>(),
+    {
+        disabled: false,
+    }
+);
+
 const emit = defineEmits<{
     (e: "update:modelValue", value: { title: string; id: string }): void;
 }>();
@@ -51,11 +61,25 @@ const onUpdate = (value: string) => {
 };
 
 onMounted(() => {
-    emit("update:modelValue", {
-        title: currentBook.value.title,
-        id: currentBook.value.id,
-    });
+    if (!props.modelValue?.id) {
+        emit("update:modelValue", {
+            title: currentBook.value.title,
+            id: currentBook.value.id,
+        });
+    }
 });
+
+watch(
+    () => props.modelValue.id,
+    (id) => {
+        if (!id && !props.disabled) {
+            emit("update:modelValue", {
+                title: currentBook.value.title,
+                id: currentBook.value.id,
+            });
+        }
+    }
+);
 </script>
 
 <style scoped>

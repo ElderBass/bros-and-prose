@@ -45,6 +45,7 @@ const onClose = () => {
 
 <style scoped>
 .success-modal-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -42,7 +42,7 @@ const buttonSize = computed(() => {
     return mobile.value ? "xsmall" : "small";
 });
 
-const handleEdit = async () => {
+const handleEdit = () => {
     openItemModal("update", props.entry);
 };
 
