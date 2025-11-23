@@ -30,4 +30,8 @@ export interface PalaverEntry {
         id: string;
     };
     recommendation?: Recommendation;
+    likes?: string[];
+    dislikes?: string[];
 }
+
+export type ReactionType = "like" | "dislike";

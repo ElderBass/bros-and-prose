@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
 import { usePalaverStore } from "@/stores/palaver";
-import PalaverListItem from "./PalaverListItem.vue";
+import PalaverListItem from "@/components/features/Palaver/PalaverListItem/index.vue";
 import ListFilters from "./ListFilters.vue";
 
 const { filtered: entries } = storeToRefs(usePalaverStore());
