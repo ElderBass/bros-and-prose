@@ -45,7 +45,6 @@ const loadingMessage = computed(() => {
 });
 
 const entry = computed(() => {
-    console.log("modal.value", modal.value);
     return (modal.value as PalaverItemModal)?.entry || ({} as PalaverEntry);
 });
 
