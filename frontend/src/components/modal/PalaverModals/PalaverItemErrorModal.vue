@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import ErrorModal from "./ErrorModal.vue";
+import ErrorModal from "@/components/modal/ErrorModal.vue";
 import type { PalaverErrorModal } from "@/stores/palaver";
 import { storeToRefs } from "pinia";
 import { usePalaverStore } from "@/stores/palaver";

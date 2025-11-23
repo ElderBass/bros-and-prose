@@ -23,11 +23,15 @@ import DeleteButton from "@/components/ui/DeleteButton.vue";
 import ListItemLikeActions from "@/components/features/Palaver/PalaverListItem/ListItemLikeActions.vue";
 import { useUserStore } from "@/stores/user";
 import { useDisplay } from "vuetify";
+import { usePalaverStore } from "@/stores/palaver";
 
-const { mobile } = useDisplay();
 const props = defineProps<{ entry: PalaverEntry }>();
 
+const { mobile } = useDisplay();
 const userStore = useUserStore();
+const palaver = usePalaverStore();
+const { openConfirmDeleteModal, openItemModal } = palaver;
+
 const { loggedInUser } = storeToRefs(userStore);
 
 const showEditActions = computed(() => {
@@ -38,12 +42,12 @@ const buttonSize = computed(() => {
     return mobile.value ? "xsmall" : "small";
 });
 
-const handleEdit = () => {
-    console.log("edit");
+const handleEdit = async () => {
+    openItemModal("update", props.entry);
 };
 
 const handleDelete = () => {
-    console.log("delete");
+    openConfirmDeleteModal(props.entry);
 };
 </script>
 

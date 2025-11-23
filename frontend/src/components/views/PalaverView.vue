@@ -22,7 +22,7 @@ import { onMounted, ref } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
 import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
-import PalaverModals from "@/components/modal/PalaverModals.vue";
+import PalaverModals from "@/components/modal/PalaverModals/index.vue";
 import PalaverList from "@/components/features/Palaver/PalaverList.vue";
 import { isGuestUser, setLastUnreadPalaverEntry } from "@/utils";
 import { IS_PALAVER_ENABLED } from "@/constants/palaver";

@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="palaver-item" :style="{ '--theme-color': themeColor }">
         <div class="avatar">
@@ -16,7 +15,7 @@
                         formatDateForDevice(entry.createdAt)
                     }}</span>
                 </div>
-                <ListItemActions :entry="entry" />
+                <ListItemActions v-if="!isGuestUser()" :entry="entry" />
             </div>
 
             <p class="stock-text">
@@ -64,7 +63,9 @@ import ListItemActions from "@/components/features/Palaver/PalaverListItem/ListI
 import ListItemDetails from "@/components/features/Palaver/PalaverListItem/ListItemDetails.vue";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
 import { AVATAR_ICON_LIST } from "@/constants";
+import { isGuestUser } from "@/utils";
 
+defineOptions({ name: "PalaverListItem" });
 const props = defineProps<{ entry: PalaverEntry }>();
 
 const { mobile } = useDisplay();

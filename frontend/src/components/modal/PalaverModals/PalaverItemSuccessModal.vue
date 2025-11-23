@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import SuccessModal from "./SuccessModal.vue";
+import SuccessModal from "@/components/modal/SuccessModal.vue";
 import { storeToRefs } from "pinia";
 import type { PalaverSuccessModal } from "@/stores/palaver";
 import { usePalaverStore } from "@/stores/palaver";

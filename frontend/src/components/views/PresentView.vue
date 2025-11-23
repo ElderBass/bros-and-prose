@@ -50,7 +50,7 @@ import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.v
 import UserSection from "@/components/features/CurrentBook/UserSection.vue";
 import OtherBrosProgress from "@/components/features/CurrentBook/OtherBrosProgress.vue";
 import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
-import PalaverModals from "@/components/modal/PalaverModals.vue";
+import PalaverModals from "@/components/modal/PalaverModals/index.vue";
 import { useBooks } from "@/composables/useBooks";
 import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
