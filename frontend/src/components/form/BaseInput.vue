@@ -79,6 +79,7 @@ const inputType = computed(() => {
 <style scoped>
 .base-input-container {
     position: relative;
+    width: 100%;
 }
 
 .base-input {
@@ -89,7 +90,6 @@ const inputType = computed(() => {
     border-radius: 0.5rem;
     font-family: "Crimson Text", serif;
     font-weight: 400;
-    width: 100%;
 
     &::placeholder {
         color: var(--main-text);
