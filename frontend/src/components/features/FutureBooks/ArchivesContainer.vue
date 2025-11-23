@@ -51,6 +51,7 @@ import ArchiveBookCard from "./ArchiveBookCard.vue";
 import { getUserFromId } from "@/utils/getUserFromId";
 import ExpandArchiveIcon from "./ExpandArchiveIcon.vue";
 import CollapseArchiveIcon from "./CollapseArchiveIcon.vue";
+import { getMostVotedFutureBookId } from "@/utils";
 
 const props = defineProps<{
     archives: ArchivedBooksEntry[];
@@ -87,9 +88,7 @@ const selectorLabel = (selectorId: string) => {
 
 const topBookId = (entry: ArchivedBooksEntry) => {
     if (!entry.archivedBooks.length) return "";
-    return entry.archivedBooks
-        .slice()
-        .sort((a, b) => (b.votes.length || 0) - (a.votes.length || 0))[0].id;
+    return getMostVotedFutureBookId(entry.archivedBooks);
 };
 
 const formatDate = (iso: string) => {

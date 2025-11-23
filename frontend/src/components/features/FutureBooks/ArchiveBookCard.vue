@@ -53,7 +53,7 @@ const props = defineProps<{
 const voteLabel = computed(() =>
     props.book.votes.length === 1
         ? "1 vote"
-        : `${Math.max(props.book.votes.length - 1, 0)} votes`
+        : `${props.book.votes.length} votes`
 );
 const iconProps = computed(() => {
     if (props.isHighlighted) {
