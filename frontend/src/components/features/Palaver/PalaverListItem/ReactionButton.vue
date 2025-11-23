@@ -1,7 +1,7 @@
 <template>
     <div class="button-wrapper">
         <IconButton
-            :icon="type === 'like' ? faThumbsUp : faThumbsDown"
+            :icon="icon"
             :size="buttonSize"
             :title="title"
             :handleClick="onClick"
@@ -41,6 +41,10 @@ const reactionCount = computed(() => {
     return props.reactions.length;
 });
 
+const icon = computed(() => {
+    return props.type === "like" ? faThumbsUp : faThumbsDown;
+});
+
 const title = computed(() => {
     if (props.type === "like") {
         return userHasReacted.value
@@ -61,3 +65,9 @@ const buttonSize = computed(() => {
     return mobile.value ? "xsmall" : "small";
 });
 </script>
+
+<style scoped>
+.button-wrapper {
+    position: relative;
+}
+</style>

@@ -31,16 +31,10 @@ defineProps<{
 
 .count-badge--green {
     color: var(--accent-green);
-    /* box-shadow:
-        0 0 8px rgba(57, 255, 20, 0.5),
-        inset 0 0 4px rgba(57, 255, 20, 0.3); */
 }
 
 .count-badge--red {
     color: var(--accent-red);
-    /* box-shadow:
-        0 0 8px rgba(255, 0, 0, 0.5),
-        inset 0 0 4px rgba(255, 0, 0, 0.3); */
 }
 
 @media (max-width: 768px) {
