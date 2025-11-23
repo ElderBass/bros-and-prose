@@ -1,7 +1,7 @@
 <template>
     <IconButton
         :icon="faMarker"
-        :size="mobile ? 'small' : 'medium'"
+        :size="computedButtonSize"
         :title="title"
         :handleClick="handleEdit"
         color="fuschia"
@@ -12,11 +12,17 @@
 import IconButton from "@/components/ui/IconButton.vue";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useDisplay } from "vuetify";
+import { computed } from "vue";
 
 const { mobile } = useDisplay();
 
-defineProps<{
+const props = defineProps<{
     title: string;
     handleEdit: () => void;
+    buttonSize?: "xsmall" | "small" | "medium" | "large";
 }>();
+
+const computedButtonSize = computed(() => {
+    return props.buttonSize || (mobile ? "small" : "medium");
+});
 </script>

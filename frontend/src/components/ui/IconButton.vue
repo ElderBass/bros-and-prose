@@ -66,7 +66,7 @@ defineOptions({ inheritAttrs: false });
 
 .icon-button.color-red {
     color: var(--accent-red);
-    background-color: rgba(255, 77, 77, 0.1);
+    background-color: rgba(255, 0, 0, 0.18);
     border-color: var(--accent-red);
 }
 

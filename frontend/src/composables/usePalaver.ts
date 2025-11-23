@@ -116,10 +116,52 @@ export const usePalaver = () => {
         return response.data;
     };
 
+    const updatePalaverEntryLikesDislikes = async (
+        entry: PalaverEntry,
+        action: "like" | "dislike"
+    ) => {
+        const loggedInUsername = useUserStore().loggedInUser?.username;
+
+        if (action === "like") {
+            if (entry.likes?.includes(loggedInUsername)) {
+                return;
+            }
+            entry.likes = [...(entry.likes || []), loggedInUsername];
+            entry.dislikes = entry.dislikes?.filter(
+                (d) => d !== loggedInUsername
+            );
+        } else {
+            if (entry.dislikes?.includes(loggedInUsername)) {
+                return;
+            }
+            entry.dislikes = [...(entry.dislikes || []), loggedInUsername];
+            entry.likes = entry.likes?.filter((l) => l !== loggedInUsername);
+        }
+        return await updatePalaverEntry(entry);
+    };
+
+    const likePalaverEntry = async (entry: PalaverEntry) => {
+        const updateEntry = await updatePalaverEntryLikesDislikes(
+            entry,
+            "like"
+        );
+        return updateEntry;
+    };
+
+    const dislikePalaverEntry = async (entry: PalaverEntry) => {
+        const updateEntry = await updatePalaverEntryLikesDislikes(
+            entry,
+            "dislike"
+        );
+        return updateEntry;
+    };
+
     return {
         getPalaverEntries,
         createPalaverEntry,
         updatePalaverEntry,
         deletePalaverEntry,
+        likePalaverEntry,
+        dislikePalaverEntry,
     };
 };
