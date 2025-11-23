@@ -4,7 +4,8 @@ import { filterPalaverEntries } from "@/utils/palaverUtils";
 
 export type PalaverFilter = PalaverType;
 export type PalaverAction = "create" | "update" | "delete";
-export type PalaverModalKind = "item" | "success" | "error";
+export type PalaverModalKind = "item" | "confirm-delete" | "success" | "error";
+
 export interface PalaverSuccessModal {
     kind: "success";
     itemType: PalaverType;
@@ -18,11 +19,18 @@ export interface PalaverErrorModal {
 export interface PalaverItemModal {
     kind: "item";
     action: PalaverAction;
+    entry: PalaverEntry;
 }
+export interface ConfirmDeleteModal {
+    kind: "confirm-delete";
+    entry: PalaverEntry;
+}
+
 export type PalaverModal =
     | PalaverSuccessModal
     | PalaverErrorModal
-    | PalaverItemModal;
+    | PalaverItemModal
+    | ConfirmDeleteModal;
 
 export interface PalaverState {
     entries: PalaverEntry[];
@@ -56,6 +64,8 @@ export const usePalaverStore = defineStore("palaver", {
         itemModalOpen: (s) => s.modal?.open && s.modal.kind === "item",
         successModalOpen: (s) => s.modal?.open && s.modal.kind === "success",
         errorModalOpen: (s) => s.modal?.open && s.modal.kind === "error",
+        confirmDeleteModalOpen: (s) =>
+            s.modal?.open && s.modal.kind === "confirm-delete",
     },
     actions: {
         addFilter(filter: PalaverFilter) {
@@ -80,8 +90,15 @@ export const usePalaverStore = defineStore("palaver", {
         prepend(entry: PalaverEntry) {
             this.entries = [entry, ...this.entries];
         },
-        openItemModal(action: PalaverAction) {
-            this.modal = { open: true, kind: "item", action };
+        openItemModal(action: PalaverAction, entry = {} as PalaverEntry) {
+            this.modal = { open: true, kind: "item", action, entry };
+        },
+        openConfirmDeleteModal(entry: PalaverEntry) {
+            this.modal = {
+                open: true,
+                kind: "confirm-delete",
+                entry,
+            };
         },
         openSuccessModal(itemType: PalaverType, action: PalaverAction) {
             this.modal = {

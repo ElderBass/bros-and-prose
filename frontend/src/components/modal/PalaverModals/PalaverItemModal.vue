@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useDisplay } from "vuetify";
-import PalaverComposer from "../features/Palaver/PalaverComposer.vue";
+import PalaverComposer from "@/components/features/Palaver/PalaverComposer.vue";
 import { storeToRefs } from "pinia";
 import { usePalaverStore } from "@/stores/palaver";
 
