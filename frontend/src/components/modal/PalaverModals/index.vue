@@ -1,15 +1,7 @@
 <template>
-    <PalaverItemModal
-        v-if="itemModalOpen"
-        :open="itemModalOpen"
-        :onClose="closeModal"
-    />
+    <PalaverItemModal v-if="itemModalOpen" />
     <PalaverItemSuccessModal v-if="successModalOpen" />
-    <PalaverItemErrorModal
-        v-if="errorModalOpen"
-        :open="errorModalOpen"
-        :onClose="closeModal"
-    />
+    <PalaverItemErrorModal v-if="errorModalOpen" />
     <ConfirmDeleteModal v-if="confirmDeleteModalOpen" />
 </template>
 
@@ -24,7 +16,6 @@ import { usePalaverStore } from "@/stores/palaver";
 defineOptions({ name: "PalaverModals" });
 
 const palaver = usePalaverStore();
-const { closeModal } = palaver;
 
 const {
     itemModalOpen,

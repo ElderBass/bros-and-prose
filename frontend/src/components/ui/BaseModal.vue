@@ -340,7 +340,6 @@ const handleBackdropClick = () => {
     }
 
     .modal-footer {
-        padding: 1rem;
         margin-top: 1rem;
     }
 
