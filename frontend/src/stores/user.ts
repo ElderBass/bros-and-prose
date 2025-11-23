@@ -5,7 +5,6 @@ import {
     removeUserFromStorage,
     getUserFromStorage,
 } from "@/utils";
-import { FUTURE_BOOK_SELECTOR } from "@/constants";
 import { useLog } from "@/composables/useLog";
 
 export const useUserStore = defineStore("user", {
@@ -13,7 +12,6 @@ export const useUserStore = defineStore("user", {
         loggedInUser: (getUserFromStorage() || ({} as User)) as User,
         allUsers: [] as User[],
         futureBookSelector: {} as User,
-        futureBookSelectorUsername: "",
     }),
 
     getters: {
@@ -24,7 +22,7 @@ export const useUserStore = defineStore("user", {
                 : "",
         currentUserReviews: (state) => state.loggedInUser?.reviews || {},
         userIsFutureBookSelector: (state) =>
-            state.loggedInUser?.id === FUTURE_BOOK_SELECTOR,
+            state.loggedInUser?.id === state.futureBookSelector.id,
     },
 
     actions: {
@@ -46,11 +44,6 @@ export const useUserStore = defineStore("user", {
             setUserInStorage(userData);
         },
 
-        setFutureBookSelector(userData: User) {
-            this.futureBookSelector = userData;
-            this.futureBookSelectorUsername = userData.username;
-        },
-
         updateUserProgress(progress: number) {
             if (this.loggedInUser) {
                 this.loggedInUser.currentBookProgress = progress;
@@ -59,6 +52,10 @@ export const useUserStore = defineStore("user", {
 
         setAllUsers(users: User[]) {
             this.allUsers = users;
+        },
+
+        setFutureBookSelector(selector: User) {
+            this.futureBookSelector = selector;
         },
     },
 });

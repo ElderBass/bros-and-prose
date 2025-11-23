@@ -3,22 +3,22 @@ import type { Book, SubmitReviewArgs, User } from "@/types";
 import { useUserStore } from "@/stores/user";
 import {
     FINISHED_BOOK_PROGRESS,
-    FUTURE_BOOK_SELECTOR,
     QUICK_ERROR,
     REVIEW_SUBMITTED_SUCCESS_ALERT,
-    UPDATE_PROGRESS_SUCCESS_ALERT,
 } from "@/constants";
 import { v4 as uuidv4 } from "uuid";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "./useLog";
+import { useFutureBooks } from "./useFutureBooks";
 
 export const useUser = () => {
     const {
         loggedInUser,
         setLoggedInUser,
-        setFutureBookSelector,
         setAllUsers,
+        setFutureBookSelector,
     } = useUserStore();
+
     const { showAlert } = useUIStore();
 
     const getUser = async (userId: string) => {
@@ -36,9 +36,9 @@ export const useUser = () => {
     };
 
     const getFutureBookSelector = async () => {
-        const user = await usersService.getUser(FUTURE_BOOK_SELECTOR);
-        setFutureBookSelector(user);
-        return user;
+        const selector = await useFutureBooks().getCurrentSelector();
+        setFutureBookSelector(selector);
+        return selector;
     };
 
     const getOtherBros = async () => {
@@ -63,8 +63,6 @@ export const useUser = () => {
             if (userId === loggedInUser.id) {
                 setLoggedInUser(updatedUser);
             }
-
-            showAlert(UPDATE_PROGRESS_SUCCESS_ALERT);
             return updatedUser;
         } catch (error) {
             console.error("error in updateUserProgress", error);

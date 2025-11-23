@@ -133,11 +133,18 @@ import { useLog } from "@/composables/useLog";
 import { useBooks } from "@/composables/useBooks";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
-import { useBooksStore } from "@/stores/books";
+import { useFutureBooksStore } from "@/stores/futureBooks";
 
 const { showAlert } = useUIStore();
 const { isMobile } = storeToRefs(useUIStore());
-const { futureBookModal } = storeToRefs(useBooksStore());
+const { modal } = storeToRefs(useFutureBooksStore());
+
+const formModal = computed(() => {
+    if (modal.value?.kind === "form" && modal.value.open) {
+        return modal.value;
+    }
+    return null;
+});
 
 const props = defineProps<{
     onSubmit: (futureBook: FutureBook, isEdit: boolean) => Promise<void>;
@@ -161,9 +168,9 @@ const bookResult = ref<OpenLibraryBookResult>({} as OpenLibraryBookResult);
 
 const submit = async () => {
     let futureBookToSubmit: FutureBook;
-    if (isEdit.value) {
+    if (isEdit.value && formModal.value?.futureBook) {
         futureBookToSubmit = {
-            ...(futureBookModal.value?.futureBook || ({} as FutureBook)),
+            ...formModal.value.futureBook,
             description: description.value,
             tags: tags.value,
         };
@@ -256,16 +263,16 @@ onBeforeUnmount(() => {
 });
 
 onMounted(() => {
-    if (futureBookModal.value?.futureBook?.id) {
+    if (formModal.value?.futureBook?.id) {
         showBookDetails.value = true;
         isEdit.value = true;
-        title.value = futureBookModal.value.futureBook.title;
-        author.value = futureBookModal.value.futureBook.author;
+        title.value = formModal.value.futureBook.title;
+        author.value = formModal.value.futureBook.author;
         yearPublished.value =
-            futureBookModal.value.futureBook.yearPublished.toString();
-        description.value = futureBookModal.value.futureBook.description;
-        tags.value = futureBookModal.value.futureBook.tags;
-        image.value = futureBookModal.value.futureBook.imageSrc;
+            formModal.value.futureBook.yearPublished.toString();
+        description.value = formModal.value.futureBook.description;
+        tags.value = formModal.value.futureBook.tags;
+        image.value = formModal.value.futureBook.imageSrc;
     }
 });
 </script>
@@ -335,10 +342,9 @@ form {
 .form-actions {
     display: flex;
     justify-content: flex-end;
-    align-items: center;
+    align-items: flex-end;
     gap: 1rem;
     width: 100%;
-    height: 100%;
     margin-top: 1rem;
 }
 

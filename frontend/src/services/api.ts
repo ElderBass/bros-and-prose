@@ -7,6 +7,8 @@ import type {
     Log,
     FutureBook,
     PalaverEntry,
+    ArchivedBooksEntry,
+    FutureBookSelectorRequest,
 } from "@/types";
 
 const API_BASE_URL =
@@ -45,6 +47,8 @@ export const apiRequest = async <T>(
         | { log: Log }
         | FutureBook
         | PalaverEntry
+        | ArchivedBooksEntry
+        | FutureBookSelectorRequest
 ): Promise<T> => {
     try {
         const response = await apiClient({

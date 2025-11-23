@@ -2,14 +2,22 @@ import express from "express";
 import { signup } from "./signup.js";
 import { login } from "./login.js";
 import {
-    addFutureBook,
-    deleteFutureBook,
-    getBook,
-    getBooks,
-    getFutureBooks,
-    updateBook,
-    updateFutureBook,
+    getCurrentBook,
+    updateCurrentBook,
+    getPastBooks,
+    getPastBook,
+    updatePastBook,
 } from "./books.js";
+import {
+    getCurrentFutureBooks,
+    getArchivedFutureBooks,
+    getCurrentSelector,
+    setFutureBookSelector,
+    addCurrentSelection,
+    updateCurrentSelection,
+    deleteCurrentSelection,
+    archiveFutureBooks,
+} from "./futureBooks.js";
 import { getUser, getUsers, updateUser } from "./user.js";
 import { postLog } from "./log.js";
 import {
@@ -25,16 +33,26 @@ const router = express.Router();
 router.post("/signup", signup);
 router.post("/login", login);
 
-// BOOKS ROUTES
-router.get("/books/:bookId", getBook);
-router.get("/books", getBooks);
-router.put("/books/:bookId", updateBook);
+// V1BOOKS ROUTES
+// router.get("/books/:bookId", getBook);
+// router.get("/books", getBooks);
+// router.put("/books/:bookId", updateBook);
+// V2 ROUTES
+router.get("/books/currentBook", getCurrentBook);
+router.put("/books/currentBook", updateCurrentBook);
+router.get("/books/pastBooks", getPastBooks);
+router.get("/books/pastBooks/:bookId", getPastBook);
+router.put("/books/pastBooks/:bookId", updatePastBook);
 
 // FUTURE BOOKS ROUTES
-router.get("/futureBooks", getFutureBooks);
-router.post("/futureBooks", addFutureBook);
-router.put("/futureBooks/:bookId", updateFutureBook);
-router.delete("/futureBooks/:bookId", deleteFutureBook);
+router.post("/futureBooks/current", addCurrentSelection);
+router.put("/futureBooks/current/:bookId", updateCurrentSelection);
+router.delete("/futureBooks/current/:bookId", deleteCurrentSelection);
+router.get("/futureBooks/current", getCurrentFutureBooks);
+router.get("/futureBooks/archived", getArchivedFutureBooks);
+router.post("/futureBooks/archived", archiveFutureBooks);
+router.get("/futureBooks/currentSelector", getCurrentSelector);
+router.post("/futureBooks/setSelector", setFutureBookSelector);
 
 // USER ROUTES
 router.get("/users/:userId", getUser);

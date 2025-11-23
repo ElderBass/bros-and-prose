@@ -1,15 +1,19 @@
 <template>
     <div class="future-books-container">
-        <FutureBooksList
-            v-if="futureBooks.length"
-            :futureBooks="futureBooks"
-            :mostVotedFutureBookId="mostVotedFutureBookId"
-        />
+        <BaseButton
+            v-if="hasAdminPrivileges() && ARCHIVE_ENABLED"
+            @click="onArchiveClick"
+            size="medium"
+            variant="primary"
+        >
+            archive selections
+        </BaseButton>
+        <FutureBooksList v-if="futureBooks.length" :futureBooks="futureBooks" />
         <div v-else class="no-future-books">
             <p class="italics">no future books yet</p>
             <BaseButton
                 v-if="hasReadWriteAccess"
-                @click="openAddFutureBookModal"
+                @click="openFormModal"
                 size="medium"
                 variant="success"
             >
@@ -27,18 +31,31 @@
 </template>
 
 <script setup lang="ts">
+import type { FutureBook } from "@/types";
 import FutureBooksList from "./FutureBooksList.vue";
-import { useBooksStore } from "@/stores/books";
-import { storeToRefs } from "pinia";
 import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
+import { hasAdminPrivileges } from "@/utils/hasAdminPrivileges";
+import { useFutureBooks } from "@/composables/useFutureBooks";
+import { useUIStore } from "@/stores/ui";
+import { ARCHIVE_ENABLED } from "@/constants";
 
 defineProps<{
     hasReadWriteAccess: boolean;
     currentSelectorUsername: string;
-    openAddFutureBookModal: () => void;
+    futureBooks: FutureBook[];
+    openFormModal: () => void;
 }>();
 
-const { futureBooks, mostVotedFutureBookId } = storeToRefs(useBooksStore());
+const onArchiveClick = async () => {
+    try {
+        useUIStore().setIsAppLoading(true);
+        await useFutureBooks().archiveSelections();
+        useUIStore().setIsAppLoading(false);
+    } catch (error) {
+        console.error("KERTWANGING error in onArchiveClick", error);
+        useUIStore().setIsAppLoading(false);
+    }
+};
 </script>
 
 <style scoped>
@@ -92,6 +109,11 @@ const { futureBooks, mostVotedFutureBookId } = storeToRefs(useBooksStore());
     font-size: 1.5rem;
     font-style: normal;
     width: 100%;
+}
+
+.username {
+    font-weight: 600;
+    color: var(--accent-fuschia);
 }
 
 @media (max-width: 768px) {

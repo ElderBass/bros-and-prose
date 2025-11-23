@@ -41,8 +41,9 @@ export const EMPTY_COMMENT = {
     createdAt: "",
 };
 
-export const FUTURE_BOOK_SELECTOR = "seth_zygarlicke";
 export const ON_DECK_BOOK_SELECTOR = "chris_dub";
+
+export const ARCHIVE_ENABLED = false;
 
 export const COMMON_BOOK_TAGS = [
     "mystery",

@@ -10,29 +10,16 @@ export interface Book {
     imageSrc: string;
     completed: boolean;
     groupConsensus?: string;
+    dateCompleted?: string;
     discussionComments: {
         [key: string]: Comment;
     };
 }
 
-export type FutureBookResultModalType = "success" | "error";
-
-export interface FutureBookModal {
-    show: boolean;
-    futureBook: FutureBook;
-}
-export interface FutureBookResultModal {
-    show: boolean;
-    type: FutureBookResultModalType;
-    message: string[];
-}
 export interface BooksState {
     mostVotedFutureBookId: string;
     currentBook: Book;
     pastBooks: Book[];
-    futureBooks: FutureBook[];
-    futureBookModal: FutureBookModal;
-    futureBookResultModal: FutureBookResultModal;
 }
 
 export interface OpenLibraryBookResult {
@@ -78,4 +65,14 @@ export interface FutureBook {
     tags: string[];
     description: string;
     votes: string[];
+}
+
+export interface ArchivedBooksEntry {
+    selectorId: string;
+    archivedBooks: FutureBook[];
+    archivedAt: string;
+}
+
+export interface FutureBookSelectorRequest {
+    selectorId: string;
 }

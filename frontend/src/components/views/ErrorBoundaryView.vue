@@ -13,11 +13,15 @@
                             {{ errorMessage }}
                         </p>
                         <div class="actions">
-                            <BaseButton variant="outline" @click="reset"
+                            <BaseButton
+                                variant="outline"
+                                :size="mobile ? 'small' : 'medium'"
+                                @click="reset"
                                 >try again</BaseButton
                             >
                             <BaseButton
                                 variant="outline-secondary"
+                                :size="mobile ? 'small' : 'medium'"
                                 @click="goHome"
                                 >take me home</BaseButton
                             >
@@ -37,6 +41,9 @@ import { useLog } from "@/composables/useLog";
 import { onMounted, onBeforeUnmount, onErrorCaptured, ref } from "vue";
 import { RouterView, useRouter } from "vue-router";
 import AppHeader from "../layout/AppHeader.vue";
+import { useDisplay } from "vuetify";
+
+const { mobile } = useDisplay();
 
 const router = useRouter();
 
@@ -61,10 +68,12 @@ onErrorCaptured((err) => {
     errorMessage.value = message;
     const log = {
         message,
+        stack: (err as Error)?.stack,
         level: "error",
         timestamp: new Date().toISOString(),
         isError: true,
     };
+    console.log("KERTWANGING log in onErrorCaptured", log);
     void useLog().postLog(log);
     // prevent further propagation
     return false;
@@ -73,10 +82,12 @@ onErrorCaptured((err) => {
 const onGlobalError = async (event: ErrorEvent) => {
     const log = {
         message: event.message,
+        stack: event.error.stack,
         level: "error",
         timestamp: new Date().toISOString(),
         isError: true,
     };
+    console.log("KERTWANGING log in onGlobalError", log);
     await useLog().postLog(log);
 };
 
@@ -129,7 +140,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 100%;
     height: 100%;
-    padding: 1rem;
+    padding: 8rem;
 }
 
 .fallback-content {
@@ -160,5 +171,11 @@ onBeforeUnmount(() => {
     display: flex;
     gap: 0.75rem;
     margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .error-content {
+        padding: 4rem 1rem;
+    }
 }
 </style>

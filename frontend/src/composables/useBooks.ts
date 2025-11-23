@@ -1,38 +1,9 @@
-import { ref, onValue, off, type DataSnapshot } from "firebase/database";
-import { getFirebase } from "@/setup/firebaseClient";
 import { booksService } from "@/services";
 import { useBooksStore } from "@/stores/books";
-import type { Book, Comment, FutureBook, OpenLibraryBookResult } from "@/types";
+import type { Book, Comment, OpenLibraryBookResult } from "@/types";
 import { useLog } from "./useLog";
-import { getMostVotedFutureBookId, getUsersFutureBookVoteId } from "@/utils";
-
-let unsubscribe: (() => void) | null = null;
-
-export function subscribeToFutureBooks() {
-    if (unsubscribe) return; // already listening
-    const { db } = getFirebase();
-    const futureBooksRef = ref(db, "books/futureBooks");
-
-    const handler = (snapshot: DataSnapshot) => {
-        const value = snapshot.val() ?? {};
-        const list = Object.values(value).filter(
-            (book: unknown) => (book as Book).id
-        );
-        useBooksStore().setFutureBooks(list as FutureBook[]);
-    };
-
-    onValue(futureBooksRef, handler, (error) => {
-        console.error("KERTWANGING error in subscribeToFutureBooks", error);
-    });
-    unsubscribe = () => off(futureBooksRef, "value", handler);
-}
-
-export function unsubscribeFromFutureBooks() {
-    if (unsubscribe) {
-        unsubscribe();
-        unsubscribe = null;
-    }
-}
+import { usePalaver } from "./usePalaver";
+import { buildPalaverEntry } from "@/utils";
 
 export const useBooks = () => {
     const booksStore = useBooksStore();
@@ -45,85 +16,22 @@ export const useBooks = () => {
     };
 
     const getAllBooks = async () => {
-        const books = await booksService.getBooks();
+        const currentBook = await booksService.getCurrentBook();
+        const pastBooks = await booksService.getPastBooks();
+        const books = [currentBook, ...pastBooks];
+        booksStore.setCurrentBook(currentBook);
+        booksStore.setPastBooks(pastBooks);
         return books;
     };
 
     const getPastBook = async (bookId: string) => {
-        const book = await booksService.getBook(bookId);
+        const book = await booksService.getPastBook(bookId);
         return book;
     };
 
     const getPastBooks = async () => {
         const books = await booksService.getPastBooks();
         booksStore.setPastBooks(books);
-    };
-
-    const getFutureBooks = async (isInit = false) => {
-        const books = await booksService.getFutureBooks();
-        booksStore.setFutureBooks(books);
-        if (isInit) {
-            subscribeToFutureBooks();
-            const mostVotedFutureBookId = getMostVotedFutureBookId(books);
-            booksStore.setMostVotedFutureBookId(mostVotedFutureBookId);
-        }
-        return books;
-    };
-
-    const addFutureBook = async (futureBook: FutureBook) => {
-        const book = await booksService.addFutureBook(futureBook);
-        await info(`Added future book: ${book.title}`);
-        booksStore.setFutureBooks([...booksStore.futureBooks, book]);
-        return book;
-    };
-
-    const updateFutureBook = async (bookId: string, futureBook: FutureBook) => {
-        const book = await booksService.updateFutureBook(bookId, futureBook);
-        await info(`Updated future book: ${book.title}`);
-        const updatedBooks = booksStore.futureBooks.map((b) =>
-            b.id === bookId ? book : b
-        );
-        booksStore.setFutureBooks(updatedBooks);
-        const mostVotedFutureBookId = getMostVotedFutureBookId(updatedBooks);
-        booksStore.setMostVotedFutureBookId(mostVotedFutureBookId);
-        return book;
-    };
-
-    const voteForFutureBook = async (bookId: string, userId: string) => {
-        const book = booksStore.futureBooks.find((b) => b.id === bookId);
-        const voteId = getUsersFutureBookVoteId(userId);
-        if (!book) {
-            await useLog().error(`Future book not found: ${bookId}`);
-            return;
-        }
-        const hasVotedForCurrentBook = voteId === bookId;
-        if (!hasVotedForCurrentBook) {
-            await removeVoteForFutureBook(voteId, userId);
-        }
-        const updatedVotes = hasVotedForCurrentBook
-            ? book.votes.filter((v) => v !== userId)
-            : [...book.votes, userId];
-        const updatedBook = await updateFutureBook(bookId, {
-            ...book,
-            votes: updatedVotes,
-        });
-        return updatedBook;
-    };
-
-    const removeVoteForFutureBook = async (bookId: string, userId: string) => {
-        const book = booksStore.futureBooks.find((b) => b.id === bookId);
-        if (!book) {
-            await useLog().error(`Future book not found: ${bookId}`);
-            return;
-        }
-        const votes = book.votes.filter((v) => v !== userId);
-        await updateFutureBook(bookId, { ...book, votes });
-    };
-
-    const deleteFutureBook = async (bookId: string) => {
-        const updatedFutureBooks = await booksService.deleteFutureBook(bookId);
-        await info(`Deleted future book: ${bookId}`);
-        booksStore.setFutureBooks(updatedFutureBooks);
     };
 
     const getBookByTitle = async (title: string) => {
@@ -144,12 +52,19 @@ export const useBooks = () => {
         return books;
     };
 
-    const updateBook = async (bookId: string, book: Book) => {
-        const updatedBook = await booksService.updateBook(bookId, book);
+    const updateBook = async (book: Book) => {
+        const isCurrentBook = book.id === booksStore.currentBook.id;
+        const updatedBook = await booksService.updateBook(book, isCurrentBook);
+        updateBookStore(updatedBook, isCurrentBook);
         return updatedBook;
     };
 
-    const addDiscussionComment = async (book: Book, comment: Comment) => {
+    const addDiscussionComment = async (
+        book: Book,
+        comment: Comment,
+        isProgressUpdate = false
+    ) => {
+        const isCurrentBook = book.id === booksStore.currentBook.id;
         let updatedBook = {
             ...book,
             discussionComments: {
@@ -157,24 +72,40 @@ export const useBooks = () => {
                 [comment.id]: comment,
             },
         };
-        updatedBook = await booksService.updateBook(book.id, updatedBook);
-        booksStore.setPastBooks(
-            booksStore.pastBooks.map((b) =>
-                b.id === book.id ? updatedBook : b
-            )
-        );
+        updatedBook = await booksService.updateBook(updatedBook, isCurrentBook);
+        updateBookStore(updatedBook, isCurrentBook);
+
+        const palaverEntry = buildPalaverEntry({
+            type: isProgressUpdate ? "progress_note" : "discussion_note",
+            text: comment.comment,
+            bookInfo: {
+                title: book.title,
+                id: book.id,
+            },
+            recTitle: "",
+            recAuthor: "",
+            tags: [],
+        });
+        await usePalaver().createPalaverEntry(palaverEntry);
         return updatedBook;
+    };
+
+    const updateBookStore = (updatedBook: Book, isCurrentBook: boolean) => {
+        if (isCurrentBook) {
+            booksStore.setCurrentBook(updatedBook);
+        } else {
+            booksStore.setPastBooks(
+                booksStore.pastBooks.map((b) =>
+                    b.id === updatedBook.id ? updatedBook : b
+                )
+            );
+        }
     };
 
     return {
         getCurrentBook,
         getPastBook,
         getPastBooks,
-        getFutureBooks,
-        addFutureBook,
-        updateFutureBook,
-        voteForFutureBook,
-        deleteFutureBook,
         getAllBooks,
         getBookByTitle,
         searchBooksByTitle,

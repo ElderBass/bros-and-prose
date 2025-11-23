@@ -1,6 +1,113 @@
 import express from "express";
 import { db } from "../db/index.js";
 
+export const getCurrentBook = async (_: express.Request, res: express.Response) => {
+    try {
+        const currentBookRef = db.ref("books/currentBook");
+        const currentBook = await currentBookRef.once("value");
+        console.log("GET CURRENT BOOK currentBook in getCurrentBook", currentBook.val());
+        res.json({
+            success: true,
+            message: "Current book fetched successfully",
+            data: currentBook.val(),
+        });
+    } catch (error) {
+        console.log("GET CURRENT BOOK ERROR in getCurrentBook", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to get current book",
+            error: error,
+        });
+    }
+};
+
+export const updateCurrentBook = async (req: express.Request, res: express.Response) => {
+    try {
+        const currentBookRef = db.ref("books/currentBook");
+        await currentBookRef.set(req.body);
+        const updatedBook = await currentBookRef.once("value");
+        console.log("UPDATE CURRENT BOOK updatedBook in updateCurrentBook", updatedBook.val());
+        res.json({
+            success: true,
+            message: "Current book updated successfully",
+            data: updatedBook.val(),
+        });
+    } catch (error) {
+        console.log("UPDATE CURRENT BOOK ERROR in updateCurrentBook", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to update current book",
+            error: error,
+        });
+    }
+};
+
+export const getPastBooks = async (_: express.Request, res: express.Response) => {
+    try {
+        const pastBooksRef = db.ref("books/pastBooks");
+        const pastBooks = await pastBooksRef.once("value");
+        const pastBooksArray = Object.values(pastBooks.val());
+        console.log("GET PAST BOOKS pastBooks in getPastBooks", pastBooksArray);
+        res.json({
+            success: true,
+            message: "Past books fetched successfully",
+            data: pastBooksArray,
+        });
+    } catch (error) {
+        console.log("GET PAST BOOKS ERROR in getPastBooks", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to get past books",
+            error: error,
+        });
+    }
+};
+
+export const getPastBook = async (req: express.Request, res: express.Response) => {
+    const { bookId } = req.params;
+    console.log("GET PAST BOOK bookId in getPastBook", bookId);
+    try {
+        const pastBookRef = db.ref(`books/pastBooks/${bookId}`);
+        const pastBook = await pastBookRef.once("value");
+        console.log("GET PAST BOOK pastBook in getPastBook", pastBook.val());
+        res.json({
+            success: true,
+            message: "Past book fetched successfully",
+            data: pastBook.val(),
+        });
+    } catch (error) {
+        console.log("GET PAST BOOK ERROR in getPastBook", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to get past book",
+            error: error,
+        });
+    }
+};
+
+export const updatePastBook = async (req: express.Request, res: express.Response) => {
+    const { bookId } = req.params;
+    console.log("UPDATE PAST BOOK bookId in updatePastBook", bookId);
+    try {
+        const pastBookRef = db.ref(`books/pastBooks/${bookId}`);
+        await pastBookRef.set(req.body);
+        const updatedBook = await pastBookRef.once("value");
+        console.log("UPDATE PAST BOOK updatedBook in updatePastBook", updatedBook.val());
+        res.json({
+            success: true,
+            message: "Past book updated successfully",
+            data: updatedBook.val(),
+        });
+    } catch (error) {
+        console.log("UPDATE PAST BOOK ERROR in updatePastBook", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to update past book",
+            error: error,
+        });
+    }
+};
+
 export const getBook = async (req: express.Request, res: express.Response) => {
     const { bookId } = req.params;
     console.log("GET BOOK bookId in getBook", bookId);
@@ -61,108 +168,6 @@ export const updateBook = async (req: express.Request, res: express.Response) =>
         res.status(500).json({
             success: false,
             message: "Failed to update book",
-            error: error,
-        });
-    }
-};
-
-export const getFutureBooks = async (_: express.Request, res: express.Response) => {
-    try {
-        console.log("Calling GET FUTURE BOOKS route");
-        const futureBooksRef = db.ref("books/futureBooks");
-        const futureBooks = await futureBooksRef.once("value");
-        console.log("GET FUTURE BOOKS futureBooks in getFutureBooks", futureBooks.val());
-        if (futureBooks.val()) {
-            if (Object.keys(futureBooks.val()).length > 1 && futureBooks.val().isEmpty) {
-                res.json({
-                    success: true,
-                    message: "Future books fetched successfully",
-                    data: Object.values(futureBooks.val()).filter((book: any) => book.id),
-                });
-            } else {
-                res.status(200).json({
-                    success: true,
-                    message: "No future books found",
-                    data: [],
-                });
-            }
-        }
-    } catch (error) {
-        console.log("GET FUTURE BOOKS ERROR in getFutureBooks", error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to get future books",
-            error: error,
-        });
-    }
-};
-
-export const addFutureBook = async (req: express.Request, res: express.Response) => {
-    try {
-        console.log("ADD FUTURE BOOK futureBook in addFutureBook", req.body);
-        const futureBookRef = db.ref("books/futureBooks");
-        await futureBookRef.child(req.body.id).set(req.body);
-        const addedFutureBook = await futureBookRef.once("value");
-        console.log("ADD FUTURE BOOK addedFutureBook in addFutureBook", addedFutureBook.val());
-        res.json({
-            success: true,
-            message: "Future book added successfully",
-            data: addedFutureBook.val()[req.body.id],
-        });
-    } catch (error) {
-        console.log("ADD FUTURE BOOK ERROR in addFutureBook", error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to add future book",
-            error: error,
-        });
-    }
-};
-
-export const updateFutureBook = async (req: express.Request, res: express.Response) => {
-    const { bookId } = req.params;
-    console.log("UPDATE FUTURE BOOK bookId in updateFutureBook", bookId);
-    try {
-        const futureBookRef = db.ref(`books/futureBooks/${bookId}`);
-        await futureBookRef.set(req.body);
-        const updatedFutureBook = await futureBookRef.once("value");
-        console.log(
-            "UPDATE FUTURE BOOK kertwanged in updateFutureBook",
-            updatedFutureBook.val()
-        );
-        res.json({
-            success: true,
-            message: "Future book updated successfully",
-            data: updatedFutureBook.val(),
-        });
-    } catch (error) {
-        console.log("UPDATE FUTURE BOOK ERROR in updateFutureBook", error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to update future book",
-            error: error,
-        });
-    }
-};
-
-export const deleteFutureBook = async (req: express.Request, res: express.Response) => {
-    const { bookId } = req.params;
-    console.log("DELETE FUTURE BOOK bookId in deleteFutureBook", bookId);
-    try {
-        const futureBookRef = db.ref(`books/futureBooks/${bookId}`);
-        await futureBookRef.remove();
-        const futureBooks = await db.ref("books/futureBooks").once("value");
-        console.log("DELETE FUTURE BOOK updated future books after deletion: ", futureBooks.val());
-        res.json({
-            success: true,
-            message: "Future book deleted successfully",
-            data: Object.values(futureBooks.val()).filter((book: any) => book.id),
-        });
-    } catch (error) {
-        console.log("DELETE FUTURE BOOK ERROR in deleteFutureBook", error);
-        res.status(500).json({
-            success: false,
-            message: "Failed to delete future book",
             error: error,
         });
     }

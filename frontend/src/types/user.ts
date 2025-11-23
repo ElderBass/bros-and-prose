@@ -16,6 +16,7 @@ export interface User {
     reviews: {
         [key: string]: Review;
     };
+    role: "admin" | "user";
 }
 
 export interface UserInfo {

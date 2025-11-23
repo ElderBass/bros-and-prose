@@ -20,13 +20,14 @@ import FutureBookItem from "./FutureBookItem.vue";
 import type { FutureBook } from "@/types";
 import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui";
+import { useFutureBooksStore } from "@/stores/futureBooks";
 
 defineProps<{
     futureBooks: FutureBook[];
-    mostVotedFutureBookId: string;
 }>();
 
 const { isMobile } = storeToRefs(useUIStore());
+const { mostVotedFutureBookId } = storeToRefs(useFutureBooksStore());
 
 const listLayout = computed(() => {
     return isMobile.value ? "column" : "row";
