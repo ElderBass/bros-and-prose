@@ -91,21 +91,21 @@ withDefaults(
 /* Shadow color variants */
 .shadow-blue {
     box-shadow:
-        0 4px 20px var(--accent-blue),
-        0 0 40px var(--accent-blue),
+        0 4px 10px var(--accent-blue),
+        0 0 20px var(--accent-blue),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .shadow-lavender {
     box-shadow:
-        0 4px 20px var(--accent-lavender),
-        0 0 40px var(--accent-lavender),
+        0 4px 10px var(--accent-lavender),
+        0 0 20px var(--accent-lavender),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .shadow-green {
     box-shadow:
-        0 4px 20px var(--accent-green),
+        0 4px 10px var(--accent-green),
         0 0 20px var(--accent-green),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
@@ -116,8 +116,8 @@ withDefaults(
         0 0 40px rgba(255, 77, 255, 0.08),
         inset 0 1px 0 rgba(255, 255, 255, 0.1); */
     box-shadow:
-        0 4px 20px var(--accent-fuschia),
-        0 0 40px var(--accent-fuschia),
+        0 4px 10px var(--accent-fuschia),
+        0 0 20px var(--accent-fuschia),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 

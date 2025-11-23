@@ -13,7 +13,7 @@
             <p class="italics">no future books yet</p>
             <BaseButton
                 v-if="hasReadWriteAccess"
-                @click="openAddFutureBookModal"
+                @click="openFormModal"
                 size="medium"
                 variant="success"
             >
@@ -43,7 +43,7 @@ defineProps<{
     hasReadWriteAccess: boolean;
     currentSelectorUsername: string;
     futureBooks: FutureBook[];
-    openAddFutureBookModal: () => void;
+    openFormModal: () => void;
 }>();
 
 const onArchiveClick = async () => {
