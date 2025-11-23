@@ -4,7 +4,7 @@ import { filterPalaverEntries } from "@/utils/palaverUtils";
 
 export type PalaverFilter = PalaverType;
 export type PalaverAction = "create" | "update" | "delete";
-export type PalaverModalKind = "item" | "success" | "error" | "confirm-delete";
+export type PalaverModalKind = "item" | "confirm-delete" | "success" | "error";
 
 export interface PalaverSuccessModal {
     kind: "success";
@@ -16,21 +16,21 @@ export interface PalaverErrorModal {
     action: PalaverAction;
     errorMessage: string;
 }
-export interface PalaverAddItemModal {
+export interface PalaverItemModal {
     kind: "item";
     action: PalaverAction;
     entry: PalaverEntry;
 }
-export interface PalaverActionModal {
-    kind: "edit" | "confirm-delete";
+export interface ConfirmDeleteModal {
+    kind: "confirm-delete";
     entry: PalaverEntry;
 }
 
 export type PalaverModal =
     | PalaverSuccessModal
     | PalaverErrorModal
-    | PalaverAddItemModal
-    | PalaverActionModal;
+    | PalaverItemModal
+    | ConfirmDeleteModal;
 
 export interface PalaverState {
     entries: PalaverEntry[];

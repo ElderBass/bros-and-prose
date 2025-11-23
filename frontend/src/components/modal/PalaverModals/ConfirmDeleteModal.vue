@@ -2,7 +2,7 @@
     <BaseModal
         :modelValue="!!confirmDeleteModalOpen"
         @close="closeModal"
-        title="confirm delete item"
+        title="you sure bro?"
         size="small"
         shadowColor="red"
     >
@@ -46,7 +46,7 @@ import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import { usePalaver } from "@/composables/usePalaver";
-import { usePalaverStore, type PalaverActionModal } from "@/stores/palaver";
+import { usePalaverStore, type ConfirmDeleteModal } from "@/stores/palaver";
 
 const { mobile } = useDisplay();
 const { deletePalaverEntry } = usePalaver();
@@ -60,7 +60,7 @@ const loading = ref(false);
 const handleDelete = async () => {
     try {
         loading.value = true;
-        const { entry } = modal.value as PalaverActionModal;
+        const { entry } = modal.value as ConfirmDeleteModal;
         await deletePalaverEntry(entry.id);
         openSuccessModal(entry.type, "delete");
     } catch (error) {
