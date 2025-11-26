@@ -24,7 +24,7 @@ export const addPalaverEntry = async (req: express.Request, res: express.Respons
     console.log("ADD PALAVER ENTRIES entry in addPalaverEntry", req.body);
     try {
         const entriesRef = await db.ref("palaver").push(req.body);
-        const updatedEntries = await entriesRef.once("value");
+        const updatedEntries = await entriesRef.child(req.body.id).once("value");
         console.log("ADD PALAVER ENTRIES updatedEntries in addPalaverEntry", updatedEntries.val());
         res.json({
             success: true,

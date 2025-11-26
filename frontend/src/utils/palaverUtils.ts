@@ -76,7 +76,6 @@ export const filterPalaverEntries = (
     filters: PalaverFilter[],
     filteredBro: string
 ) => {
-    console.log("KERTWANGING filtering entries", entries, filters, filteredBro);
     if (filters.length === 0 && filteredBro === "") return entries;
     if (filters.length === 0)
         return entries.filter((e) => e.userInfo.id === filteredBro);

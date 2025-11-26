@@ -37,7 +37,11 @@
                 </span>
             </p>
             <transition name="fade">
-                <ListItemDetails v-if="showDetails" :entry="entry" />
+                <ListItemDetails
+                    v-if="showDetails"
+                    :entry="entry"
+                    :variant="themeVariant"
+                />
             </transition>
             <div class="toggle">
                 <BaseButton
@@ -138,17 +142,33 @@ const formatDateForDevice = computed(() => {
     };
 });
 
-const themeColor = computed(() => {
+const themeVariant = computed(() => {
     switch (props.entry.type) {
         case "discussion_note":
-            return "var(--accent-lavender)";
+            return "lavender";
         case "progress_note":
-            return "var(--accent-fuschia)";
+            return "fuschia";
         case "recommendation":
-            return "var(--accent-green)";
+            return "green";
         case "suggestion":
-            return "var(--accent-red)";
+            return "red";
         case "misc":
+        default:
+            return "blue";
+    }
+});
+
+const themeColor = computed(() => {
+    switch (themeVariant.value) {
+        case "lavender":
+            return "var(--accent-lavender)";
+        case "fuschia":
+            return "var(--accent-fuschia)";
+        case "green":
+            return "var(--accent-green)";
+        case "red":
+            return "var(--accent-red)";
+        case "blue":
         default:
             return "var(--accent-blue)";
     }

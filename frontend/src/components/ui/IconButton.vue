@@ -70,16 +70,23 @@ defineOptions({ inheritAttrs: false });
     border-color: var(--accent-red);
 }
 
+.icon-button.color-fuschia {
+    color: var(--accent-fuschia);
+    background-color: rgba(255, 77, 255, 0.15);
+    border-color: var(--accent-fuschia);
+}
+
+.icon-button.color-green {
+    color: var(--accent-green);
+    background-color: rgba(77, 255, 77, 0.12);
+    border-color: var(--accent-green);
+}
+
 .icon-button:hover {
     color: var(--accent-fuschia);
     background-color: rgba(255, 77, 255, 0.1);
     transform: scale(1.1);
     border-color: var(--accent-fuschia);
-    &.color-fuschia {
-        color: var(--accent-fuschia);
-        background-color: rgba(255, 77, 255, 0.1);
-        border-color: var(--accent-fuschia);
-    }
     &.color-green {
         color: var(--accent-green);
         background-color: rgba(77, 255, 77, 0.1);

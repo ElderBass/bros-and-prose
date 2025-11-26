@@ -14,8 +14,8 @@ defineProps<{
 <style scoped>
 .count-badge {
     position: absolute;
-    top: -0.7rem;
-    right: -0.7rem;
+    top: -0.6rem;
+    right: -0.6rem;
     min-width: 1.05rem;
     height: 1.05rem;
     border-radius: 999px;
@@ -37,10 +37,12 @@ defineProps<{
     color: var(--accent-red);
 }
 
+.count-badge--blue {
+    color: var(--accent-blue);
+}
+
 @media (max-width: 768px) {
     .count-badge {
-        top: -0.5rem;
-        right: -0.5rem;
         min-width: 0.95rem;
         height: 0.95rem;
         font-size: 0.65rem;

@@ -11,7 +11,7 @@
             :buttonSize="buttonSize"
         />
     </div>
-    <ListItemLikeActions v-else :entry="entry" />
+    <ReactionActions v-else :entry="entry" />
 </template>
 
 <script setup lang="ts">
@@ -20,7 +20,7 @@ import { storeToRefs } from "pinia";
 import type { PalaverEntry } from "@/types";
 import EditButton from "@/components/ui/EditButton.vue";
 import DeleteButton from "@/components/ui/DeleteButton.vue";
-import ListItemLikeActions from "@/components/features/Palaver/PalaverListItem/ListItemLikeActions.vue";
+import ReactionActions from "@/components/features/Palaver/PalaverListItem/ReactionActions.vue";
 import { useUserStore } from "@/stores/user";
 import { useDisplay } from "vuetify";
 import { usePalaverStore } from "@/stores/palaver";
