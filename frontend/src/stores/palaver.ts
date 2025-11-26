@@ -82,7 +82,17 @@ export const usePalaverStore = defineStore("palaver", {
             this.filteredBro = bro;
         },
         setEntries(entries: PalaverEntry[]) {
-            this.entries = entries;
+            const updatedEntries = entries.map((entry) => {
+                return {
+                    ...entry,
+                    comments: Object.values(entry.comments || {}).sort(
+                        (a, b) =>
+                            new Date(b.createdAt).getTime() -
+                            new Date(a.createdAt).getTime()
+                    ),
+                };
+            });
+            this.entries = updatedEntries;
         },
         setHasUnreadEntries(hasUnread: boolean) {
             this.hasUnreadEntries = hasUnread;

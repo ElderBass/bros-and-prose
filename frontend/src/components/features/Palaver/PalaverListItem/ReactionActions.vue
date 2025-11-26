@@ -1,5 +1,5 @@
 <template>
-    <div class="list-item-like-actions">
+    <div class="reaction-actions">
         <ReactionButton
             v-for="reaction in REACTION_TYPES"
             :key="reaction"
@@ -7,11 +7,13 @@
             :reactions="getReactions(reaction)"
             :onClick="() => handleReaction(reaction)"
         />
+        <CommentButton :entry="entry" />
     </div>
 </template>
 
 <script setup lang="ts">
 import ReactionButton from "./ReactionButton.vue";
+import CommentButton from "./CommentButton.vue";
 import { usePalaver } from "@/composables/usePalaver";
 import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
@@ -66,17 +68,19 @@ const getReactions = (reaction: ReactionType): string[] => {
 </script>
 
 <style scoped>
-.list-item-like-actions {
+.reaction-actions {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.75rem;
-    padding-right: 0.5rem;
+    padding-right: 0.75rem;
+    margin-right: -0.5rem;
 }
 
 @media (max-width: 768px) {
-    .list-item-like-actions {
+    .reaction-actions {
         gap: 0.5rem;
-        padding-right: 0.25rem;
+        padding-right: 0.5rem;
     }
 }
 </style>

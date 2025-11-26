@@ -2,7 +2,7 @@ import { ref, onValue, off, type DataSnapshot } from "firebase/database";
 import { getFirebase } from "@/setup/firebaseClient";
 import { palaverService } from "@/services";
 import { usePalaverStore } from "@/stores/palaver";
-import type { Book, PalaverEntry } from "@/types";
+import type { Book, Comment, PalaverEntry } from "@/types";
 import { useBooks } from "./useBooks";
 import { currentBookId } from "@/services/books";
 import { checkForUnreadEntries, getUserInfo } from "@/utils";
@@ -156,6 +156,14 @@ export const usePalaver = () => {
         return updateEntry;
     };
 
+    const addComment = async (entry: PalaverEntry, comment: Comment) => {
+        const response = await palaverService.update({
+            ...entry,
+            comments: [...(entry.comments || []), comment],
+        });
+        return response;
+    };
+
     return {
         getPalaverEntries,
         createPalaverEntry,
@@ -163,5 +171,6 @@ export const usePalaver = () => {
         deletePalaverEntry,
         likePalaverEntry,
         dislikePalaverEntry,
+        addComment,
     };
 };

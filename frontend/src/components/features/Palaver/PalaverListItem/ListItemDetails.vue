@@ -9,6 +9,7 @@
             :likes="entry.likes || []"
             :dislikes="entry.dislikes || []"
         />
+        <CommentsSection :entry="entry" :variant="variant" />
     </div>
 </template>
 
@@ -16,8 +17,17 @@
 import type { PalaverEntry } from "@/types";
 import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
 import ReactionDetails from "@/components/features/Palaver/PalaverListItem/ReactionDetails.vue";
+import CommentsSection from "@/components/features/Palaver/PalaverListItem/CommentsSection.vue";
 
-defineProps<{ entry: PalaverEntry }>();
+withDefaults(
+    defineProps<{
+        entry: PalaverEntry;
+        variant?: "lavender" | "fuschia" | "blue" | "green" | "red";
+    }>(),
+    {
+        variant: "lavender",
+    }
+);
 </script>
 
 <style scoped>
