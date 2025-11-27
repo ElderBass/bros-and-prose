@@ -7,13 +7,18 @@
                     :key="buttonConfig.type"
                     :config="buttonConfig"
                     :selected="type === buttonConfig.type"
-                    @click="type = buttonConfig.type"
+                    :disabled="isEditMode"
+                    @click="handleTypeSelect(buttonConfig.type)"
                 />
             </div>
 
             <p class="stock-text">{{ messages.stock }}</p>
 
-            <BookSelect v-if="type === 'discussion_note'" v-model="bookInfo" />
+            <BookSelect
+                v-if="shouldShowBookSelect"
+                v-model="bookInfo"
+                :disabled="isEditMode"
+            />
             <BookRecommendationFormFields
                 v-if="type === 'recommendation'"
                 :tags="tags"
@@ -44,25 +49,27 @@
                 :style="{ width: mobile ? '100%' : 'auto' }"
                 @click="submit"
             >
-                send it
+                {{ isEditMode ? "update" : "send it" }}
             </BaseButton>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useDisplay } from "vuetify";
 import ItemTypeButton from "./ItemTypeButton.vue";
 import BookSelect from "@/components/form/BookSelect.vue";
 import BookRecommendationFormFields from "./BookRecommendationFormFields.vue";
 import { usePalaver } from "@/composables";
-import type { ItemTypeButtonProp, PalaverType } from "@/types";
+import type { ItemTypeButtonProp, PalaverType, PalaverEntry } from "@/types";
 import { buildPalaverEntry } from "@/utils";
 import { useLog } from "@/composables";
 import { usePalaverStore } from "@/stores/palaver";
+import { useUserStore } from "@/stores/user";
 
 const props = defineProps<{
+    entry: PalaverEntry;
     setLoading: (loading: boolean) => void;
 }>();
 
@@ -90,7 +97,7 @@ const itemTypeButtons: ItemTypeButtonProp[] = [
 ];
 
 const { mobile } = useDisplay();
-const { createPalaverEntry } = usePalaver();
+const { createPalaverEntry, updatePalaverEntry } = usePalaver();
 const { closeModal, openErrorModal, openSuccessModal } = usePalaverStore();
 
 const type = ref<PalaverType>("discussion_note");
@@ -103,12 +110,61 @@ const recTitle = ref("");
 const recAuthor = ref("");
 const tags = ref<string[]>([]);
 
+const isEditMode = computed(() => Boolean(props.entry?.id));
+const shouldShowBookSelect = computed(() =>
+    ["discussion_note", "progress_note"].includes(type.value)
+);
+
+const resetForm = () => {
+    type.value = "discussion_note";
+    text.value = "";
+    bookInfo.value = { title: "", id: "" };
+    recTitle.value = "";
+    recAuthor.value = "";
+    tags.value = [];
+};
+
+const syncFormWithEntry = (entry: PalaverEntry) => {
+    if (!entry?.id) {
+        resetForm();
+        return;
+    }
+
+    type.value = entry.type;
+    text.value = entry.text ?? "";
+    bookInfo.value = entry.bookInfo
+        ? { ...entry.bookInfo }
+        : { title: "", id: "" };
+    recTitle.value = entry.recommendation?.title ?? "";
+    recAuthor.value = entry.recommendation?.author ?? "";
+    tags.value = entry.recommendation?.tags
+        ? [...entry.recommendation.tags]
+        : [];
+};
+
+watch(
+    () => props.entry,
+    (entry) => {
+        if (entry?.id) {
+            syncFormWithEntry(entry);
+        } else {
+            resetForm();
+        }
+    },
+    { immediate: true }
+);
+
 const messages = computed(() => {
     switch (type.value) {
         case "discussion_note":
             return {
                 stock: "comment on a book",
                 placeholder: "dish out the tea, my dude",
+            };
+        case "progress_note":
+            return {
+                stock: "log your progress",
+                placeholder: "what page you at, chief?",
             };
         case "recommendation":
             return {
@@ -157,31 +213,51 @@ const onTagClick = (tag: string) => {
     }
 };
 
+const handleTypeSelect = (selectedType: PalaverType) => {
+    if (isEditMode.value) return;
+    type.value = selectedType;
+};
+
+const buildEntryPayload = () =>
+    buildPalaverEntry({
+        type: type.value,
+        text: text.value.trim(),
+        bookInfo: bookInfo.value,
+        recTitle: recTitle.value.trim(),
+        recAuthor: recAuthor.value.trim(),
+        tags: tags.value,
+    });
+
 const submit = async () => {
     try {
         props.setLoading(true);
-        const entry = buildPalaverEntry({
-            type: type.value,
-            text: text.value.trim(),
-            bookInfo: bookInfo.value,
-            recTitle: recTitle.value.trim(),
-            recAuthor: recAuthor.value.trim(),
-            tags: tags.value,
-        });
-        await createPalaverEntry(entry);
-        openSuccessModal(type.value, "create");
-        text.value = "";
-        recTitle.value = "";
-        recAuthor.value = "";
-        tags.value = [];
-        bookInfo.value = {
-            title: "",
-            id: "",
-        };
+        const normalizedEntry = buildEntryPayload();
+
+        if (isEditMode.value) {
+            const updatedEntry: PalaverEntry = {
+                ...props.entry,
+                type: normalizedEntry.type,
+                text: normalizedEntry.text,
+                bookInfo: normalizedEntry.bookInfo,
+                recommendation: normalizedEntry.recommendation,
+            };
+            await updatePalaverEntry(updatedEntry, {
+                username: useUserStore().loggedInUser?.username,
+                updateType: type.value,
+            });
+            openSuccessModal(type.value, "update");
+        } else {
+            await createPalaverEntry(normalizedEntry);
+            openSuccessModal(type.value, "create");
+            resetForm();
+        }
     } catch (error) {
         console.error("Error submitting palaver entry:", error);
         await useLog().error(`Error submitting palaver entry: ${error}`);
-        openErrorModal((error as Error).message, "create");
+        openErrorModal(
+            (error as Error).message,
+            isEditMode.value ? "update" : "create"
+        );
     } finally {
         props.setLoading(false);
     }

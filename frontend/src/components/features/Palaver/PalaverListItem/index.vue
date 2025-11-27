@@ -7,13 +7,17 @@
             />
         </div>
         <div class="content">
-            <div class="meta">
-                <span class="type-label">{{ typeLabel }}</span>
-                <span class="dot">•</span>
-                <span class="timestamp">{{
-                    formatDateForDevice(entry.createdAt)
-                }}</span>
+            <div class="header-content">
+                <div class="meta">
+                    <span class="type-label">{{ typeLabel }}</span>
+                    <span class="dot">•</span>
+                    <span class="timestamp">{{
+                        formatDateForDevice(entry.createdAt)
+                    }}</span>
+                </div>
+                <ListItemActions v-if="!isGuestUser()" :entry="entry" />
             </div>
+
             <p class="stock-text">
                 <span class="username">@{{ entry.userInfo.username }}</span>
                 {{ stockMessage }}
@@ -33,13 +37,11 @@
                 </span>
             </p>
             <transition name="fade">
-                <div v-if="showDetails" class="details">
-                    <BookRecommendationDetails
-                        v-if="entry.recommendation"
-                        :recommendation="entry.recommendation"
-                    />
-                    <p class="text">{{ entry.text }}</p>
-                </div>
+                <ListItemDetails
+                    v-if="showDetails"
+                    :entry="entry"
+                    :variant="themeVariant"
+                />
             </transition>
             <div class="toggle">
                 <BaseButton
@@ -60,13 +62,18 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useDisplay } from "vuetify";
-import type { PalaverEntry, PalaverType } from "@/types/palaver";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
+import ListItemActions from "@/components/features/Palaver/PalaverListItem/ListItemActions.vue";
+import ListItemDetails from "@/components/features/Palaver/PalaverListItem/ListItemDetails.vue";
+import type { PalaverEntry, PalaverType } from "@/types/palaver";
 import { AVATAR_ICON_LIST } from "@/constants";
-import BookRecommendationDetails from "./BookRecommendationDetails.vue";
+import { isGuestUser } from "@/utils";
 
+defineOptions({ name: "PalaverListItem" });
 const props = defineProps<{ entry: PalaverEntry }>();
+
 const { mobile } = useDisplay();
+
 const showDetails = ref(false);
 
 const iconFor = (iconName: string) => {
@@ -135,17 +142,33 @@ const formatDateForDevice = computed(() => {
     };
 });
 
-const themeColor = computed(() => {
+const themeVariant = computed(() => {
     switch (props.entry.type) {
         case "discussion_note":
-            return "var(--accent-lavender)";
+            return "lavender";
         case "progress_note":
-            return "var(--accent-fuschia)";
+            return "fuschia";
         case "recommendation":
-            return "var(--accent-green)";
+            return "green";
         case "suggestion":
-            return "var(--accent-red)";
+            return "red";
         case "misc":
+        default:
+            return "blue";
+    }
+});
+
+const themeColor = computed(() => {
+    switch (themeVariant.value) {
+        case "lavender":
+            return "var(--accent-lavender)";
+        case "fuschia":
+            return "var(--accent-fuschia)";
+        case "green":
+            return "var(--accent-green)";
+        case "red":
+            return "var(--accent-red)";
+        case "blue":
         default:
             return "var(--accent-blue)";
     }
@@ -179,7 +202,13 @@ const themeColor = computed(() => {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .meta {
@@ -257,7 +286,6 @@ const themeColor = computed(() => {
 @media (max-width: 768px) {
     .palaver-item {
         font-size: 1rem;
-        padding: 0.75rem;
         gap: 0.5rem;
         width: 100%;
     }

@@ -75,6 +75,41 @@ export const FUTURE_BOOK_ADDED_SUCCESS_ALERT: Alert = {
     dismissable: false,
 };
 
+export const LIKED_PALAVER_ENTRY_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "liked palaver entry successfully.",
+        "'you like that??' - Kirko Thuggins",
+    ],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
+export const DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: ["disliked palaver entry successfully.", "shit's weak, bro, lol"],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
+export const ADDED_COMMENT_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: ["comment added successfully.", "your comment is now live."],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
+export const UPDATED_COMMENT_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: ["comment updated successfully.", "your comment is now live."],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
 export const futureBookVotedSuccessAlert = (hasVoted: boolean): Alert => {
     const message1 = hasVoted
         ? "vote removed successfully."

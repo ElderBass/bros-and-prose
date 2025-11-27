@@ -1,13 +1,13 @@
 <template>
     <SuccessModal :open="!!successModalOpen" @close="closeModal">
-        <p>your {{ itemTypeText }} has been {{ actionText }}</p>
-        <p>it's part of god's plan now, my dude</p>
+        <p>your {{ itemTypeText }} was {{ actionText }}</p>
+        <p>{{ secondaryMessage }}</p>
     </SuccessModal>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import SuccessModal from "./SuccessModal.vue";
+import SuccessModal from "@/components/modal/SuccessModal.vue";
 import { storeToRefs } from "pinia";
 import type { PalaverSuccessModal } from "@/stores/palaver";
 import { usePalaverStore } from "@/stores/palaver";
@@ -41,10 +41,20 @@ const itemTypeText = computed(() => {
             return "palaver item";
     }
 });
+
+const secondaryMessage = computed(() => {
+    switch ((modal.value as PalaverSuccessModal)?.action) {
+        case "create":
+            return "it's part of god's plan now, my dude";
+        default:
+            return "as written #godsplan";
+    }
+});
 </script>
 
 <style scoped>
 p {
+    text-align: center;
     font-size: 1.25rem;
     color: var(--main-text);
 }

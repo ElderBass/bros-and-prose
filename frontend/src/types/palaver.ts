@@ -1,4 +1,5 @@
 import type { UserInfo } from "./user";
+import type { Comment } from "./books";
 
 export type PalaverType =
     | "discussion_note"
@@ -30,4 +31,22 @@ export interface PalaverEntry {
         id: string;
     };
     recommendation?: Recommendation;
+    likes?: string[];
+    dislikes?: string[];
+    comments?: Comment[];
 }
+
+export interface PalaverEntryMetadata {
+    username: string;
+    bookTitle?: string;
+    targetUsername?: string;
+    targetUserEmail?: string;
+    updateType?: ReactionType | PalaverType;
+}
+
+export interface PalaverEntryRequest {
+    entry: PalaverEntry;
+    metadata: PalaverEntryMetadata;
+}
+
+export type ReactionType = "like" | "dislike" | "comment";

@@ -11,15 +11,13 @@
             <slot />
         </div>
         <template #footer>
-            <div class="button-container">
-                <BaseButton
-                    variant="outline-success"
-                    :size="mobile ? 'small' : 'medium'"
-                    @click="onClose"
-                >
-                    hell yeah
-                </BaseButton>
-            </div>
+            <BaseButton
+                variant="outline-success"
+                :size="mobile ? 'small' : 'medium'"
+                @click="onClose"
+            >
+                hell yeah
+            </BaseButton>
         </template>
     </BaseModal>
 </template>
@@ -45,6 +43,7 @@ const onClose = () => {
 
 <style scoped>
 .success-modal-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;

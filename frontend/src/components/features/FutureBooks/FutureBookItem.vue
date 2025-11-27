@@ -12,6 +12,8 @@
                 />
                 <EditActions
                     v-if="userIsFutureBookSelector"
+                    editTitle="fix your silly blurb, change the tags, etc."
+                    deleteTitle="delete this drivel and choose something actually interesting"
                     :handleEdit="handleEdit"
                     :handleDelete="handleDelete"
                 />

@@ -1,4 +1,4 @@
-import type { PalaverEntry, PalaverType } from "@/types";
+import type { PalaverEntry, PalaverType, ReactionType } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 import {
     getUserInfo,
@@ -76,7 +76,6 @@ export const filterPalaverEntries = (
     filters: PalaverFilter[],
     filteredBro: string
 ) => {
-    console.log("KERTWANGING filtering entries", entries, filters, filteredBro);
     if (filters.length === 0 && filteredBro === "") return entries;
     if (filters.length === 0)
         return entries.filter((e) => e.userInfo.id === filteredBro);
@@ -87,4 +86,37 @@ export const filterPalaverEntries = (
             filters.includes(e.type as PalaverFilter) &&
             e.userInfo.id === filteredBro
     );
+};
+
+export const buildPalaverEntryMetadata = (entry: PalaverEntry) => {
+    switch (entry.type) {
+        case "discussion_note":
+            return {
+                bookTitle: entry.bookInfo?.title ?? "",
+                username: entry.userInfo.username,
+            };
+        case "recommendation":
+            return {
+                bookTitle: entry.recommendation?.title ?? "",
+                username: entry.userInfo.username,
+            };
+        case "suggestion":
+        case "progress_note":
+        case "misc":
+        default:
+            return { username: entry.userInfo.username };
+    }
+};
+
+export const buildPalaverReactionMetadata = (
+    entry: PalaverEntry,
+    reactionType: ReactionType
+) => {
+    const loggedInUsername = useUserStore().loggedInUser.username;
+    return {
+        username: loggedInUsername,
+        targetUsername: entry.userInfo.username,
+        targetUserEmail: entry.userInfo.email,
+        updateType: reactionType,
+    };
 };
