@@ -36,4 +36,17 @@ export interface PalaverEntry {
     comments?: Comment[];
 }
 
-export type ReactionType = "like" | "dislike";
+export interface PalaverEntryMetadata {
+    username: string;
+    bookTitle?: string;
+    targetUsername?: string;
+    targetUserEmail?: string;
+    updateType?: ReactionType | PalaverType;
+}
+
+export interface PalaverEntryRequest {
+    entry: PalaverEntry;
+    metadata: PalaverEntryMetadata;
+}
+
+export type ReactionType = "like" | "dislike" | "comment";

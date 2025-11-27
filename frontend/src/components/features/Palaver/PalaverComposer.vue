@@ -66,6 +66,7 @@ import type { ItemTypeButtonProp, PalaverType, PalaverEntry } from "@/types";
 import { buildPalaverEntry } from "@/utils";
 import { useLog } from "@/composables";
 import { usePalaverStore } from "@/stores/palaver";
+import { useUserStore } from "@/stores/user";
 
 const props = defineProps<{
     entry: PalaverEntry;
@@ -240,7 +241,10 @@ const submit = async () => {
                 bookInfo: normalizedEntry.bookInfo,
                 recommendation: normalizedEntry.recommendation,
             };
-            await updatePalaverEntry(updatedEntry);
+            await updatePalaverEntry(updatedEntry, {
+                username: useUserStore().loggedInUser?.username,
+                updateType: type.value,
+            });
             openSuccessModal(type.value, "update");
         } else {
             await createPalaverEntry(normalizedEntry);
