@@ -1,5 +1,6 @@
 import express from "express";
 import { db } from "../db/index.js";
+import { sendEmailNotification } from "../mailjet/sendEmailNotification.js";
 
 export const getPalaverEntries = async (_: express.Request, res: express.Response) => {
     try {
@@ -21,15 +22,16 @@ export const getPalaverEntries = async (_: express.Request, res: express.Respons
 };
 
 export const addPalaverEntry = async (req: express.Request, res: express.Response) => {
-    console.log("ADD PALAVER ENTRIES entry in addPalaverEntry", req.body);
+    const { entry, metadata } = req.body;
+    console.log("ADD PALAVER ENTRIES entry in addPalaverEntry", entry);
+    console.log("ADD PALAVER ENTRIES metadata in addPalaverEntry", metadata);
     try {
-        const entriesRef = await db.ref("palaver").push(req.body);
-        const updatedEntries = await entriesRef.child(req.body.id).once("value");
-        console.log("ADD PALAVER ENTRIES updatedEntries in addPalaverEntry", updatedEntries.val());
+        await db.ref("palaver").child(entry.id).set(entry);
+        sendEmailNotification(entry.type, metadata);
         res.json({
             success: true,
             message: "Palaver entry added successfully",
-            data: updatedEntries.val(),
+            data: entry,
         });
     } catch (error) {
         console.log("ADD PALAVER ENTRIES ERROR in addPalaverEntry", error);
@@ -43,18 +45,22 @@ export const addPalaverEntry = async (req: express.Request, res: express.Respons
 
 export const updatePalaverEntry = async (req: express.Request, res: express.Response) => {
     const { entryId } = req.params;
-    console.log("UPDATE PALAVER ENTRY entryId in updatePalaverEntry", entryId);
-    console.log("UPDATE PALAVER ENTRY req.body in updatePalaverEntry", req.body);
+    const { entry, metadata } = req.body;
+    console.log("UPDATE PALAVER ENTRY entry in updatePalaverEntry", entry);
+
     try {
         const entryRef = db.ref(`palaver/${entryId}`);
-        await entryRef.set(req.body);
+        await entryRef.set(entry);
         const updatedEntry = await entryRef.once("value");
+
         console.log("UPDATE PALAVER ENTRY updatedEntry in updatePalaverEntry", updatedEntry.val());
         res.json({
             success: true,
             message: `Palaver entry ${entryId} updated successfully`,
             data: updatedEntry.val(),
         });
+
+        sendEmailNotification(metadata.updateType ?? entry.type, metadata);
     } catch (error) {
         console.log("UPDATE PALAVER ENTRY ERROR in updatePalaverEntry", error);
         res.status(500).json({

@@ -82,6 +82,7 @@ export const usePalaverStore = defineStore("palaver", {
             this.filteredBro = bro;
         },
         setEntries(entries: PalaverEntry[]) {
+            console.log("Setting entries in palaver store:", entries);
             const updatedEntries = entries.map((entry) => {
                 return {
                     ...entry,
@@ -98,6 +99,7 @@ export const usePalaverStore = defineStore("palaver", {
             this.hasUnreadEntries = hasUnread;
         },
         prepend(entry: PalaverEntry) {
+            console.log("Prepending entry to palaver store:", entry);
             this.entries = [entry, ...this.entries];
         },
         openItemModal(action: PalaverAction, entry = {} as PalaverEntry) {

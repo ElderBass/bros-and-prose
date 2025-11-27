@@ -2,10 +2,12 @@ import { ref, onValue, off, type DataSnapshot } from "firebase/database";
 import { getFirebase } from "@/setup/firebaseClient";
 import { palaverService } from "@/services";
 import { usePalaverStore } from "@/stores/palaver";
-import type { Book, Comment, PalaverEntry } from "@/types";
-import { useBooks } from "./useBooks";
-import { currentBookId } from "@/services/books";
-import { checkForUnreadEntries, getUserInfo } from "@/utils";
+import type { Comment, PalaverEntry, PalaverEntryMetadata } from "@/types";
+import {
+    buildPalaverEntryMetadata,
+    buildPalaverReactionMetadata,
+    checkForUnreadEntries,
+} from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { useLog } from "./useLog";
 
@@ -48,7 +50,6 @@ export function unsubscribeFromPalaver() {
 
 export const usePalaver = () => {
     const palaverStore = usePalaverStore();
-    const { loggedInUser } = useUserStore();
 
     const getPalaverEntries = async (isInit = false) => {
         const response = await palaverService.list();
@@ -66,36 +67,43 @@ export const usePalaver = () => {
 
     const createPalaverEntry = async (entry: PalaverEntry) => {
         await useLog().info(`Creating palaver entry: ${JSON.stringify(entry)}`);
-        const response = await palaverService.create(entry);
+        const metadata = buildPalaverEntryMetadata(entry);
+        const response = await palaverService.create({ entry, metadata });
         if (response.success) {
-            palaverStore.prepend(response.data);
-            if (entry.type === "discussion_note") {
-                let book: Book;
-                if (entry.bookInfo?.id === currentBookId) {
-                    book = await useBooks().getCurrentBook();
-                } else {
-                    book = await useBooks().getPastBook(
-                        entry.bookInfo?.id as string
-                    );
-                }
-                if (book) {
-                    await useLog().info(
-                        `Adding discussion comment to book: ${book.title}`
-                    );
-                    await useBooks().addDiscussionComment(book, {
-                        id: entry.id,
-                        createdAt: entry.createdAt,
-                        comment: entry.text,
-                        user: getUserInfo(loggedInUser),
-                    });
-                }
-            }
+            // if (entry.type === "discussion_note") {
+            //     let book: Book;
+            //     if (entry.bookInfo?.id === currentBookId) {
+            //         book = await useBooks().getCurrentBook();
+            //     } else {
+            //         book = await useBooks().getPastBook(
+            //             entry.bookInfo?.id as string
+            //         );
+            //     }
+            //     if (book) {
+            //         await useLog().info(
+            //             `Adding discussion comment to book: ${book.title}`
+            //         );
+            //         await useBooks().addDiscussionComment(book, {
+            //             id: entry.id,
+            //             createdAt: entry.createdAt,
+            //             comment: entry.text,
+            //             user: getUserInfo(loggedInUser),
+            //         });
+            //     }
+            // }
         }
         return response.data;
     };
 
-    const updatePalaverEntry = async (entry: PalaverEntry) => {
-        const response = await palaverService.update(entry);
+    const updatePalaverEntry = async (
+        entry: PalaverEntry,
+        metadata: PalaverEntryMetadata
+    ) => {
+        const updateType = metadata.updateType ?? entry.type;
+        const response = await palaverService.update({
+            entry,
+            metadata: { ...metadata, updateType },
+        });
         if (response.success) {
             palaverStore.setEntries(
                 palaverStore.entries.map((e) =>
@@ -137,7 +145,8 @@ export const usePalaver = () => {
             entry.dislikes = [...(entry.dislikes || []), loggedInUsername];
             entry.likes = entry.likes?.filter((l) => l !== loggedInUsername);
         }
-        return await updatePalaverEntry(entry);
+        const metadata = buildPalaverReactionMetadata(entry, action);
+        return await updatePalaverEntry(entry, metadata);
     };
 
     const likePalaverEntry = async (entry: PalaverEntry) => {
@@ -157,9 +166,11 @@ export const usePalaver = () => {
     };
 
     const addComment = async (entry: PalaverEntry, comment: Comment) => {
+        const metadata = buildPalaverReactionMetadata(entry, "comment");
+        
         const response = await palaverService.update({
-            ...entry,
-            comments: [...(entry.comments || []), comment],
+            entry: { ...entry, comments: [...(entry.comments || []), comment] },
+            metadata,
         });
         return response;
     };
