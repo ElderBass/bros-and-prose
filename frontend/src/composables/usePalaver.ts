@@ -167,7 +167,7 @@ export const usePalaver = () => {
 
     const addComment = async (entry: PalaverEntry, comment: Comment) => {
         const metadata = buildPalaverReactionMetadata(entry, "comment");
-        
+
         const response = await palaverService.update({
             entry: { ...entry, comments: [...(entry.comments || []), comment] },
             metadata,
