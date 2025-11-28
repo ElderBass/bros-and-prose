@@ -7,7 +7,7 @@ import {
     buildPalaverEntryMetadata,
     buildPalaverReactionMetadata,
     checkForUnreadEntries,
-    sortPalaverEntries,
+    sortPalaverStuff,
 } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { useLog } from "./useLog";
@@ -24,7 +24,9 @@ export function subscribeToPalaver() {
         const list = Object.values(value).filter(
             (item: unknown) => (item as PalaverEntry).id
         );
-        const sortedEntries = sortPalaverEntries(list as PalaverEntry[]);
+        const sortedEntries = sortPalaverStuff(
+            list as PalaverEntry[]
+        ) as PalaverEntry[];
         usePalaverStore().setEntries(sortedEntries);
         checkForUnreadEntries(sortedEntries);
     };
@@ -48,7 +50,9 @@ export const usePalaver = () => {
     const getPalaverEntries = async (isInit = false) => {
         const response = await palaverService.list();
         if (response.success) {
-            const sortedEntries = sortPalaverEntries(response.data);
+            const sortedEntries = sortPalaverStuff(
+                response.data
+            ) as PalaverEntry[];
             palaverStore.setEntries(sortedEntries);
             if (isInit) {
                 subscribeToPalaver();
@@ -64,27 +68,7 @@ export const usePalaver = () => {
         const metadata = buildPalaverEntryMetadata(entry);
         const response = await palaverService.create({ entry, metadata });
         if (response.success) {
-            // if (entry.type === "discussion_note") {
-            //     let book: Book;
-            //     if (entry.bookInfo?.id === currentBookId) {
-            //         book = await useBooks().getCurrentBook();
-            //     } else {
-            //         book = await useBooks().getPastBook(
-            //             entry.bookInfo?.id as string
-            //         );
-            //     }
-            //     if (book) {
-            //         await useLog().info(
-            //             `Adding discussion comment to book: ${book.title}`
-            //         );
-            //         await useBooks().addDiscussionComment(book, {
-            //             id: entry.id,
-            //             createdAt: entry.createdAt,
-            //             comment: entry.text,
-            //             user: getUserInfo(loggedInUser),
-            //         });
-            //     }
-            // }
+            useLog().info(`Palaver entry created: ${JSON.stringify(entry)}`);
         }
         return response.data;
     };

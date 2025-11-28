@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import type { PalaverEntry, PalaverType } from "@/types/palaver";
-import { filterPalaverEntries } from "@/utils/palaverUtils";
+import type { Comment, PalaverEntry, PalaverType } from "@/types/palaver";
+import { filterPalaverEntries, sortPalaverStuff } from "@/utils/palaverUtils";
 
 export type PalaverFilter = PalaverType;
 export type PalaverAction = "create" | "update" | "delete";
@@ -85,14 +85,12 @@ export const usePalaverStore = defineStore("palaver", {
             const updatedEntries = entries.map((entry) => {
                 return {
                     ...entry,
-                    comments: Object.values(entry.comments || {}).sort(
-                        (a, b) =>
-                            new Date(b.createdAt).getTime() -
-                            new Date(a.createdAt).getTime()
-                    ),
+                    comments: sortPalaverStuff(
+                        entry.comments || ([] as Comment[])
+                    ) as Comment[],
                 };
             });
-            this.entries = updatedEntries;
+            this.entries = sortPalaverStuff(updatedEntries) as PalaverEntry[];
         },
         setHasUnreadEntries(hasUnread: boolean) {
             this.hasUnreadEntries = hasUnread;

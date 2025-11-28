@@ -43,7 +43,7 @@
                     :variant="themeVariant"
                 />
             </transition>
-            <div class="toggle">
+            <div v-if="!isInbrospection" class="toggle">
                 <BaseButton
                     size="xsmall"
                     :variant="
@@ -70,11 +70,19 @@ import { AVATAR_ICON_LIST } from "@/constants";
 import { isGuestUser } from "@/utils";
 
 defineOptions({ name: "PalaverListItem" });
-const props = defineProps<{ entry: PalaverEntry }>();
 
+const props = withDefaults(
+    defineProps<{
+        entry: PalaverEntry;
+        isInbrospection?: boolean;
+    }>(),
+    {
+        isInbrospection: false,
+    }
+);
 const { mobile } = useDisplay();
 
-const showDetails = ref(false);
+const showDetails = ref(props.isInbrospection);
 
 const iconFor = (iconName: string) => {
     return (

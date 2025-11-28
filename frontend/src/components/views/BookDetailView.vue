@@ -30,16 +30,21 @@ import AppLayout from "../layout/AppLayout.vue";
 import type { Book, BroReview, Comment } from "@/types";
 import { useRoute } from "vue-router";
 import { useBooks } from "@/composables/useBooks";
-import { DISCUSSION_COMMENT_ADDED_SUCCESS_ALERT } from "@/constants";
+import {
+    DISCUSSION_COMMENT_ADDED_SUCCESS_ALERT,
+    QUICK_ERROR,
+} from "@/constants";
 import { useUIStore } from "@/stores/ui";
 import PastBookDetail from "@/components/features/PastBooks/PastBookDetail.vue";
 import AddCommentFab from "@/components/features/PastBooks/AddCommentFab.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
-import { getReviewsAndAverageRating } from "@/utils";
+import { buildPalaverEntry, getReviewsAndAverageRating } from "@/utils";
 import { isGuestUser } from "@/utils";
 import { useBooksStore } from "@/stores/books";
+import { useLog, usePalaver } from "@/composables";
 
-const { addDiscussionComment, getPastBook } = useBooks();
+const { getPastBook } = useBooks();
+const { createPalaverEntry } = usePalaver();
 const { showAlert } = useUIStore();
 const route = useRoute();
 
@@ -73,10 +78,31 @@ const loadBookData = async () => {
 
 const handleSubmitComment = async (comment: Comment) => {
     isLoading.value = true;
-    await addDiscussionComment(book.value, comment);
-    showAddCommentModal.value = false;
-    showAlert(DISCUSSION_COMMENT_ADDED_SUCCESS_ALERT);
-    await loadBookData();
+    try {
+        const entry = buildPalaverEntry({
+            type: "discussion_note",
+            text: comment.comment,
+            bookInfo: {
+                title: book.value.title,
+                id: book.value.id,
+            },
+        });
+        await createPalaverEntry(entry);
+        showAddCommentModal.value = false;
+        showAlert(DISCUSSION_COMMENT_ADDED_SUCCESS_ALERT);
+        await loadBookData();
+    } catch (error) {
+        console.error("Error submitting comment:", error);
+        await useLog().error(`Error submitting comment: ${error}`);
+        showAlert(
+            QUICK_ERROR([
+                "something fucked with submitting your comment: ",
+                (error as Error).message ?? "unknown error",
+            ])
+        );
+    } finally {
+        isLoading.value = false;
+    }
 };
 
 onMounted(async () => {
