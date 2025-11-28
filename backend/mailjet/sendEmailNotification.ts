@@ -1,9 +1,6 @@
 import Mailjet from "node-mailjet";
 
-const getEmailMessaging = (
-    updateType: string,
-    data: { [key: string]: string }
-) => {
+const getEmailMessaging = (updateType: string, data: { [key: string]: string }) => {
     console.log("Getting email messaging for update type:", updateType);
     switch (updateType) {
         case "discussion_note":
@@ -46,6 +43,15 @@ const getEmailMessaging = (
                 title: "New Suggestion",
                 message: `${data.username} suggested some shit for the app.`,
             };
+        case "future_book_added":
+            return {
+                title: "New Future Book",
+                message: `${
+                    data.username
+                } nominated <span style="font-weight: bold;color:#ff4dff;">${
+                    data.bookTitle?.toUpperCase() ?? ""
+                }</span> as a future book.`,
+            };
         default:
             return {
                 title: "New Misc Item",
@@ -76,6 +82,7 @@ const getEmailInfo = (updateType: string, data: { [key: string]: string }) => {
 };
 
 const buildHtmlTemplate = (title: string = "", message: string = "") => {
+    const endpoint = title.toLocaleLowerCase().includes("future") ? "future-books" : "palaver";
     return `<!DOCTYPE html>
 <html lang="en">
     <head>
@@ -94,12 +101,16 @@ const buildHtmlTemplate = (title: string = "", message: string = "") => {
                         </tr>
                         <tr>
                             <td style="padding:32px;color:#f5f5f5;">
-                                <h1 style="margin:0 0 18px;color:#00bfff;font-size:28px;font-family:'Libre Baskerville','Times New Roman',serif;">${title ?? ""}</h1>
-                                <p style="font-size:18px;line-height:1.6;margin:0 0 28px;">${message ?? ""}</p>
+                                <h1 style="margin:0 0 18px;color:#00bfff;font-size:28px;font-family:'Libre Baskerville','Times New Roman',serif;">${
+                                    title ?? ""
+                                }</h1>
+                                <p style="font-size:18px;line-height:1.6;margin:0 0 28px;">${
+                                    message ?? ""
+                                }</p>
                                 <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0">
                                     <tr>
                                         <td align="center" style="border-radius:999px;background-color:#ff4dff;">
-                                            <a href="https://bros-and-prose.vercel.app/palaver" style="display:inline-block;padding:14px 32px;border-radius:999px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0b0b13;text-decoration:none;">visit palaver</a>
+                                            <a href="https://bros-and-prose.vercel.app/${endpoint}" style="display:inline-block;padding:14px 32px;border-radius:999px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0b0b13;text-decoration:none;">visit ${endpoint}</a>
                                         </td>
                                     </tr>
                                 </table>

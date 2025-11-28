@@ -1,5 +1,6 @@
 import express from "express";
 import { db } from "../db/index.js";
+import { sendEmailNotification } from "../mailjet/sendEmailNotification.js";
 
 export const getCurrentFutureBooks = async (_: express.Request, res: express.Response) => {
     try {
@@ -89,11 +90,14 @@ export const setFutureBookSelector = async (req: express.Request, res: express.R
 
 export const addCurrentSelection = async (req: express.Request, res: express.Response) => {
     try {
-        console.log("ADD CURRENT SELECTION futureBook in addCurrentSelection", req.body);
+        const { selection, metadata } = req.body;
+        console.log("ADD CURRENT SELECTION futureBook in addCurrentSelection", selection);
+        console.log("ADD CURRENT SELECTION metadata in addCurrentSelection", metadata);
         const futureBookRef = db.ref("books/futureBooks/current");
-        await futureBookRef.child(req.body.id).set(req.body);
+        await futureBookRef.child(selection.id).set(selection);
         const updatedSelections = await futureBookRef.once("value");
         console.log("ADD CURRENT SELECTION future books after addition: ", updatedSelections.val());
+        sendEmailNotification("future_book_added", metadata);
         res.json({
             success: true,
             message: "Future book selection added successfully",
