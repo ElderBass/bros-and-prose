@@ -72,7 +72,7 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
 const getEmailRecipients = (targetUserEmail?: string) => {
     let recipients = [];
     if (targetUserEmail) {
-        recipients.push({ Email: targetUserEmail });
+        recipients.push(targetUserEmail);
     } else {
         recipients = process.env.EMAIL_RECIPIENTS?.split(",") || [];
     }

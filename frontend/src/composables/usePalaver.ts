@@ -172,7 +172,14 @@ export const usePalaver = () => {
             entry: { ...entry, comments: [...(entry.comments || []), comment] },
             metadata,
         });
-        return response;
+        if (response.success) {
+            palaverStore.setEntries(
+                palaverStore.entries.map((e) =>
+                    e.id === entry.id ? response.data : e
+                )
+            );
+        }
+        return response.data;
     };
 
     return {
