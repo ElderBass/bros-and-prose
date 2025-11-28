@@ -27,8 +27,8 @@ withDefaults(
 <style scoped>
 .count-badge {
     position: absolute;
-    top: -0.6rem;
-    right: -0.6rem;
+    top: -0.58rem;
+    right: -0.58rem;
     min-width: 1.05rem;
     height: 1.05rem;
     border-radius: 999px;
