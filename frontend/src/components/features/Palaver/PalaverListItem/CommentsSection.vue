@@ -34,8 +34,6 @@ const props = withDefaults(
     }
 );
 
-console.log("commentSize", props.commentSize);
-
 const comments = computed<Comment[]>(() => props.entry.comments || []);
 </script>
 
