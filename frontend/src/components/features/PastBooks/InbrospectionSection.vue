@@ -3,10 +3,10 @@
         <PageTitle title="inbrospection..." />
 
         <div v-if="comments.length" class="comments-list">
-            <CommentItem
+            <PalaverListItem
                 v-for="comment in comments"
                 :key="comment.id"
-                :comment="comment"
+                :entry="comment"
             />
         </div>
 
@@ -19,27 +19,15 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
-import type { Book, Comment } from "@/types";
-import CommentItem from "../common/CommentItem.vue";
+import type { Book } from "@/types";
+import PalaverListItem from "@/components/features/Palaver/PalaverListItem/index.vue";
+import { getPalaverCommentsForBook } from "@/utils";
 
 const props = defineProps<{
     book: Book;
 }>();
 
-const comments = computed(() => {
-    const rawComments = Object.values(
-        props.book?.discussionComments ?? {}
-    ) as Comment[];
-    const filteredComments = rawComments.filter((c) => typeof c === "object");
-    const orderedComments = filteredComments
-        .slice()
-        .sort(
-            (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-        );
-    return orderedComments;
-});
+const comments = computed(() => getPalaverCommentsForBook(props.book.id));
 </script>
 
 <style scoped>

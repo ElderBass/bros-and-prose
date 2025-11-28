@@ -7,18 +7,12 @@ import {
     buildPalaverEntryMetadata,
     buildPalaverReactionMetadata,
     checkForUnreadEntries,
+    sortPalaverEntries,
 } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { useLog } from "./useLog";
 
 let unsubscribe: (() => void) | null = null;
-
-const sortEntries = (entries: PalaverEntry[]) => {
-    return [...entries].sort(
-        (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-};
 
 export function subscribeToPalaver() {
     if (unsubscribe) return; // already listening
@@ -30,7 +24,7 @@ export function subscribeToPalaver() {
         const list = Object.values(value).filter(
             (item: unknown) => (item as PalaverEntry).id
         );
-        const sortedEntries = sortEntries(list as PalaverEntry[]);
+        const sortedEntries = sortPalaverEntries(list as PalaverEntry[]);
         usePalaverStore().setEntries(sortedEntries);
         checkForUnreadEntries(sortedEntries);
     };
@@ -54,7 +48,7 @@ export const usePalaver = () => {
     const getPalaverEntries = async (isInit = false) => {
         const response = await palaverService.list();
         if (response.success) {
-            const sortedEntries = sortEntries(response.data);
+            const sortedEntries = sortPalaverEntries(response.data);
             palaverStore.setEntries(sortedEntries);
             if (isInit) {
                 subscribeToPalaver();
