@@ -1,9 +1,7 @@
 import { booksService } from "@/services";
 import { useBooksStore } from "@/stores/books";
-import type { Book, Comment, OpenLibraryBookResult } from "@/types";
+import type { Book, OpenLibraryBookResult } from "@/types";
 import { useLog } from "./useLog";
-import { usePalaver } from "./usePalaver";
-import { buildPalaverEntry } from "@/utils";
 
 export const useBooks = () => {
     const booksStore = useBooksStore();
@@ -59,37 +57,6 @@ export const useBooks = () => {
         return updatedBook;
     };
 
-    const addDiscussionComment = async (
-        book: Book,
-        comment: Comment,
-        isProgressUpdate = false
-    ) => {
-        const isCurrentBook = book.id === booksStore.currentBook.id;
-        let updatedBook = {
-            ...book,
-            discussionComments: {
-                ...book.discussionComments,
-                [comment.id]: comment,
-            },
-        };
-        updatedBook = await booksService.updateBook(updatedBook, isCurrentBook);
-        updateBookStore(updatedBook, isCurrentBook);
-
-        const palaverEntry = buildPalaverEntry({
-            type: isProgressUpdate ? "progress_note" : "discussion_note",
-            text: comment.comment,
-            bookInfo: {
-                title: book.title,
-                id: book.id,
-            },
-            recTitle: "",
-            recAuthor: "",
-            tags: [],
-        });
-        await usePalaver().createPalaverEntry(palaverEntry);
-        return updatedBook;
-    };
-
     const updateBookStore = (updatedBook: Book, isCurrentBook: boolean) => {
         if (isCurrentBook) {
             booksStore.setCurrentBook(updatedBook);
@@ -110,6 +77,5 @@ export const useBooks = () => {
         getBookByTitle,
         searchBooksByTitle,
         updateBook,
-        addDiscussionComment,
     };
 };

@@ -54,6 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import { storeToRefs } from "pinia";
 import CurrentUserProgress from "./UserProgress.vue";
 import CurrentBookUserReview from "./UserReview.vue";
 import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
@@ -69,9 +70,9 @@ import {
 } from "@/constants";
 import type { Book, Comment, SubmitReviewArgs } from "@/types";
 import { useUser } from "@/composables/useUser";
+import { usePalaver } from "@/composables/usePalaver";
 import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
-import { useBooks } from "@/composables/useBooks";
+import { buildPalaverEntry } from "@/utils";
 
 const props = defineProps<{
     book: Book;
@@ -79,7 +80,7 @@ const props = defineProps<{
 
 const { loggedInUser } = useUserStore();
 const { addReview, updateUserProgress } = useUser();
-const { addDiscussionComment } = useBooks();
+const { createPalaverEntry } = usePalaver();
 
 const uiStore = useUIStore();
 const { showAlert } = uiStore;
@@ -164,7 +165,15 @@ const onUpdateProgress = async (updatedProgress: number) => {
 const onAddComment = async (comment: Comment) => {
     setShowAddCommentModal(false);
     loadingMessage.value = "adding your comment...";
-    await addDiscussionComment(props.book, comment, true);
+    const entry = buildPalaverEntry({
+        type: "progress_note",
+        text: comment.comment,
+        bookInfo: {
+            title: props.book.title,
+            id: props.book.id,
+        },
+    });
+    await createPalaverEntry(entry);
     loadingMessage.value = "";
     showAlert(UPDATE_PROGRESS_SUCCESS_ALERT);
 };

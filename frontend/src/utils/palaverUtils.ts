@@ -1,4 +1,10 @@
-import type { PalaverEntry, PalaverType, ReactionType } from "@/types";
+import type {
+    BookInfo,
+    Comment,
+    PalaverEntry,
+    PalaverType,
+    ReactionType,
+} from "@/types";
 import { v4 as uuidv4 } from "uuid";
 import {
     getUserInfo,
@@ -13,20 +19,17 @@ import { usePalaverStore, type PalaverFilter } from "@/stores/palaver";
 export const buildPalaverEntry = ({
     type,
     text,
-    bookInfo,
-    recTitle,
-    recAuthor,
-    tags,
+    bookInfo = {} as BookInfo,
+    recTitle = "",
+    recAuthor = "",
+    tags = [],
 }: {
     type: PalaverType;
     text: string;
-    bookInfo: {
-        title: string;
-        id: string;
-    };
-    recTitle: string;
-    recAuthor: string;
-    tags: string[];
+    bookInfo?: BookInfo;
+    recTitle?: string;
+    recAuthor?: string;
+    tags?: string[];
 }) => {
     const bookInfoValue =
         type === "discussion_note" || type === "progress_note"
@@ -121,8 +124,8 @@ export const buildPalaverReactionMetadata = (
     };
 };
 
-export const sortPalaverEntries = (entries: PalaverEntry[]) => {
-    return entries.sort((a, b) => {
+export const sortPalaverStuff = (stuff: PalaverEntry[] | Comment[]) => {
+    return stuff.sort((a, b) => {
         const bDate = b.updatedAt
             ? new Date(b.updatedAt)
             : new Date(b.createdAt);
@@ -134,7 +137,7 @@ export const sortPalaverEntries = (entries: PalaverEntry[]) => {
 };
 
 export const getPalaverCommentsForBook = (bookId: string) => {
-    return sortPalaverEntries(
+    return sortPalaverStuff(
         usePalaverStore().entries.filter((e) => e.bookInfo?.id === bookId)
     );
 };

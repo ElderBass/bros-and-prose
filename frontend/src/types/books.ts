@@ -1,5 +1,3 @@
-import type { UserInfo } from "./user";
-
 export interface Book {
     id: string;
     title: string;
@@ -11,9 +9,6 @@ export interface Book {
     completed: boolean;
     groupConsensus?: string;
     dateCompleted?: string;
-    discussionComments: {
-        [key: string]: Comment;
-    };
 }
 
 export interface BooksState {
@@ -47,13 +42,6 @@ export interface IBookSearchResult {
     author: string;
     yearPublished: number;
     imageSrc: string;
-}
-
-export interface Comment {
-    id: string;
-    user: UserInfo;
-    comment: string;
-    createdAt: string;
 }
 
 export interface FutureBook {
