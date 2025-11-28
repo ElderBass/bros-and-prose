@@ -22,7 +22,12 @@ export const setGuestUser = (isGuest: boolean) => {
 };
 
 export const isGuestUser = () => {
-    return localStorage.getItem(guest_storage_key) === "true";
+    const guest = localStorage.getItem(guest_storage_key);
+    const loggedIn = getUserFromStorage();
+    if (!loggedIn?.id && !guest) {
+        return true;
+    }
+    return guest === "true";
 };
 
 export const getLastUnreadPalaverEntry = () => {
