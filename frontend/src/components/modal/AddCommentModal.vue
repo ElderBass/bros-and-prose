@@ -56,7 +56,7 @@
 import { computed, ref, watch } from "vue";
 import { useDisplay } from "vuetify";
 import type { Comment } from "@/types";
-import { buildComment } from "@/utils/pastBookUtils";
+import { buildPalaverComment } from "@/utils";
 
 const emit = defineEmits<{
     (e: "close"): void;
@@ -142,7 +142,7 @@ const actionButtonSize = computed(() => (mobile ? "small" : "medium"));
 const submit = () => {
     if (!canSubmitComment.value) return;
     const payload = localComment.value.trim() as string;
-    const fullComment = buildComment(payload);
+    const fullComment = buildPalaverComment(payload);
     emit("submit", fullComment);
 };
 const onClose = () => emit("close");

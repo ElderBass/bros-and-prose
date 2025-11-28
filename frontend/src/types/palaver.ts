@@ -26,7 +26,7 @@ export interface BookInfo {
 
 export interface Comment {
     id: string;
-    user: UserInfo;
+    userInfo: UserInfo;
     comment: string;
     createdAt: string;
     updatedAt?: string;

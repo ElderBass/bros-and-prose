@@ -1,14 +1,27 @@
 <template>
-    <div v-if="count > 0" class="count-badge" :class="`count-badge--${color}`">
+    <div
+        v-if="count > 0"
+        class="count-badge"
+        :class="[
+            `count-badge--${color}`,
+            { 'count-badge--child': isChildComment },
+        ]"
+    >
         <span class="count">{{ count }}</span>
     </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-    count: number;
-    color: string;
-}>();
+withDefaults(
+    defineProps<{
+        count: number;
+        color: string;
+        isChildComment?: boolean;
+    }>(),
+    {
+        isChildComment: false,
+    }
+);
 </script>
 
 <style scoped>
@@ -47,6 +60,15 @@ defineProps<{
         height: 0.95rem;
         font-size: 0.65rem;
         padding: 0 0.15rem;
+    }
+
+    .count-badge--child {
+        top: -0.45rem;
+        right: -0.45rem;
+        min-width: 0.75rem;
+        height: 0.75rem;
+        font-size: 0.5rem;
+        border-width: 0.75px;
     }
 }
 </style>

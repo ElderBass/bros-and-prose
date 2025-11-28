@@ -54,6 +54,17 @@ export const buildPalaverEntry = ({
     return entry;
 };
 
+export const buildPalaverComment = (commentText: string): Comment => {
+    const user = useUserStore().loggedInUser;
+
+    return {
+        id: uuidv4(),
+        userInfo: getUserInfo(user),
+        comment: commentText,
+        createdAt: new Date().toISOString(),
+    };
+};
+
 export const checkForUnreadEntries = (entries: PalaverEntry[]) => {
     const { entryId, date } = getLastUnreadPalaverEntry();
 
@@ -112,14 +123,14 @@ export const buildPalaverEntryMetadata = (entry: PalaverEntry) => {
 };
 
 export const buildPalaverReactionMetadata = (
-    entry: PalaverEntry,
+    item: PalaverEntry | Comment,
     reactionType: ReactionType
 ) => {
     const loggedInUsername = useUserStore().loggedInUser.username;
     return {
         username: loggedInUsername,
-        targetUsername: entry.userInfo.username,
-        targetUserEmail: entry.userInfo.email,
+        targetUsername: item.userInfo.username,
+        targetUserEmail: item.userInfo.email,
         updateType: reactionType,
     };
 };
@@ -140,4 +151,27 @@ export const getPalaverCommentsForBook = (bookId: string) => {
     return sortPalaverStuff(
         usePalaverStore().entries.filter((e) => e.bookInfo?.id === bookId)
     );
+};
+
+export const getReactions = (
+    reaction: ReactionType,
+    item: PalaverEntry | Comment
+): string[] => {
+    return reaction === "like" ? item.likes || [] : item.dislikes || [];
+};
+
+export const updatePalaverLikesDislikes = (
+    item: PalaverEntry | Comment,
+    action: "like" | "dislike"
+) => {
+    const loggedInUsername = useUserStore().loggedInUser.username;
+
+    if (action === "like") {
+        item.likes = [...(item.likes || []), loggedInUsername];
+        item.dislikes = item.dislikes?.filter((d) => d !== loggedInUsername);
+    } else {
+        item.dislikes = [...(item.dislikes || []), loggedInUsername];
+        item.likes = item.likes?.filter((l) => l !== loggedInUsername);
+    }
+    return item;
 };
