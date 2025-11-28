@@ -10,6 +10,7 @@
             :handleDelete="handleDelete"
             :buttonSize="buttonSize"
         />
+        <CommentButton :entry="entry" />
     </div>
     <ReactionActions v-else :entry="entry" />
 </template>
@@ -20,6 +21,7 @@ import { storeToRefs } from "pinia";
 import type { PalaverEntry } from "@/types";
 import EditButton from "@/components/ui/EditButton.vue";
 import DeleteButton from "@/components/ui/DeleteButton.vue";
+import CommentButton from "@/components/features/Palaver/PalaverListItem/CommentButton.vue";
 import ReactionActions from "@/components/features/Palaver/PalaverListItem/ReactionActions.vue";
 import { useUserStore } from "@/stores/user";
 import { useDisplay } from "vuetify";

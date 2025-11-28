@@ -79,7 +79,10 @@ export const usePalaver = () => {
     ) => {
         const updateType = metadata.updateType ?? entry.type;
         const response = await palaverService.update({
-            entry,
+            entry: {
+                ...entry,
+                updatedAt: new Date().toISOString(),
+            },
             metadata: { ...metadata, updateType },
         });
         if (response.success) {
