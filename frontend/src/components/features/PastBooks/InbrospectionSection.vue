@@ -2,11 +2,12 @@
     <div class="inbrospection-section">
         <PageTitle title="inbrospection..." />
 
-        <div v-if="comments.length" class="comments-list">
-            <CommentItem
-                v-for="comment in comments"
-                :key="comment.id"
-                :comment="comment"
+        <div v-if="discussionItems.length" class="comments-list">
+            <PalaverListItem
+                v-for="item in discussionItems"
+                :key="item.id"
+                :entry="item"
+                :isInbrospection="true"
             />
         </div>
 
@@ -19,27 +20,17 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
-import type { Book, Comment } from "@/types";
-import CommentItem from "../common/CommentItem.vue";
+import type { Book, PalaverEntry } from "@/types";
+import PalaverListItem from "@/components/features/Palaver/PalaverListItem/index.vue";
+import { getPalaverCommentsForBook } from "@/utils";
 
 const props = defineProps<{
     book: Book;
 }>();
 
-const comments = computed(() => {
-    const rawComments = Object.values(
-        props.book?.discussionComments ?? {}
-    ) as Comment[];
-    const filteredComments = rawComments.filter((c) => typeof c === "object");
-    const orderedComments = filteredComments
-        .slice()
-        .sort(
-            (a, b) =>
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-        );
-    return orderedComments;
-});
+const discussionItems = computed(
+    () => getPalaverCommentsForBook(props.book.id) as PalaverEntry[]
+);
 </script>
 
 <style scoped>

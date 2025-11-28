@@ -5,18 +5,17 @@
             :recommendation="entry.recommendation"
         />
         <p class="text">{{ entry.text }}</p>
-        <ReactionDetails
-            :likes="entry.likes || []"
-            :dislikes="entry.dislikes || []"
+        <CommentsSection
+            :entry="entry"
+            :variant="variant"
+            commentSize="compact"
         />
-        <CommentsSection :entry="entry" :variant="variant" />
     </div>
 </template>
 
 <script setup lang="ts">
 import type { PalaverEntry } from "@/types";
 import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
-import ReactionDetails from "@/components/features/Palaver/PalaverListItem/ReactionDetails.vue";
 import CommentsSection from "@/components/features/Palaver/PalaverListItem/CommentsSection.vue";
 
 withDefaults(

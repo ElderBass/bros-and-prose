@@ -35,9 +35,6 @@
                 :handleClick="goToProfile"
                 :currentAvatar="currentAvatar"
             />
-            <RouterLink v-if="isGuest" class="login-link" to="/">
-                login
-            </RouterLink>
         </RouterLink>
 
         <button

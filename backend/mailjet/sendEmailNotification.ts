@@ -5,66 +5,57 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
     switch (updateType) {
         case "discussion_note":
             return {
-                text: `${data.username} said some shit about ${data.bookTitle}. It's time to check it out!`,
-                html:
-                    "<h3>Palaver Alert: New Book Comment</h3><p>" +
-                    `${data.username} said some shit about ${data.bookTitle}. <a href='https://bros-and-prose.vercel.app/palaver'>Check it out.</a></p>`,
+                title: "New Book Comment",
+                message: `${data.username} said some shit about ${data.bookTitle}.`,
             };
         case "like":
             return {
-                text: `${data.username} liked your palaver. It's time to check it out!`,
-                html:
-                    "<h3>Palaver Alert: New Item Liked</h3><p>" +
-                    `${data.username} liked your palaver. <a href='https://bros-and-prose.vercel.app/palaver'>Check it out.</a></p>`,
+                title: "Item Update",
+                message: `${data.username} liked your palaver.`,
             };
         case "dislike":
             return {
-                text: `${data.username} thinks your shit's weak. Check it out!`,
-                html:
-                    "<h3>Palaver Alert: New Item Disliked</h3><p>" +
-                    `${data.username} thinks your shit's weak. <a href='https://bros-and-prose.vercel.app/palaver'>Check it out.</a></p>`,
+                title: "Item Update",
+                message: `${data.username} thinks your shit's weak.`,
             };
         case "comment":
             return {
-                text: `${data.username} commented on your palaver. Check it out!`,
-                html:
-                    "<h3>Palaver Alert: New Comment</h3><p>" +
-                    `${data.username} commented on your palaver. <a href='https://bros-and-prose.vercel.app/palaver'>Check it out.</a></p>`,
+                title: "Item Update",
+                message: `${data.username} commented on your palaver.`,
             };
         case "progress_note":
             return {
-                text: `${data.username} made progress on the current book. Check it out!`,
-                html:
-                    "<h3>Palaver Alert: New Progress</h3><p>" +
-                    `${data.username} made progress on the current book. <a href='https://bros-and-prose.vercel.app/palaver'>Check it out.</a></p>`,
+                title: "New Progress Update",
+                message: `${data.username} made progress on the current book.`,
             };
         case "review":
             return {
-                text: `${data.username} reviewed ${data.bookTitle}. Check it out!`,
-                html:
-                    "<h3>Palaver Alert: New Review</h3><p>" +
-                    `${data.username} reviewed ${data.bookTitle}. <a href='https://bros-and-prose.vercel.app/palaver'>Check it out.</a></p>`,
+                title: "New Review",
+                message: `${data.username} reviewed ${data.bookTitle}.`,
             };
         case "recommendation":
             return {
-                text: `${data.username} recommended ${data.bookTitle}. Check it out!`,
-                html:
-                    "<h3>Palaver Alert: New Recommendation</h3><p>" +
-                    `${data.username} recommended ${data.bookTitle}. <a href='https://bros-and-prose.vercel.app/palaver'>Check it out.</a></p>`,
+                title: "New Recommendation",
+                message: `${data.username} recommended ${data.bookTitle}.`,
             };
         case "suggestion":
             return {
-                text: `${data.username} suggested some shit for the app. Check it out!`,
-                html:
-                    "<h3>Palaver Alert: New Suggestion</h3><p>" +
-                    `${data.username} suggested some shit for the app. <a href='https://bros-and-prose.vercel.app/palaver'>Check it out.</a></p>`,
+                title: "New Suggestion",
+                message: `${data.username} suggested some shit for the app.`,
+            };
+        case "future_book_added":
+            return {
+                title: "New Future Book",
+                message: `${
+                    data.username
+                } nominated <span style="font-weight: bold;color:#ff4dff;">${
+                    data.bookTitle?.toUpperCase() ?? ""
+                }</span> as a future book.`,
             };
         default:
             return {
-                text: `${data.username} has thoughts... Check it out!`,
-                html:
-                    "<h3>Palaver Alert: New Misc Post</h3><p>" +
-                    `${data.username} has thoughts... <a href='https://bros-and-prose.vercel.app/palaver'>Check it out.</a></p>`,
+                title: "New Misc Item",
+                message: `${data.username} said some bullshit...`,
             };
     }
 };
@@ -80,15 +71,62 @@ const getEmailRecipients = (targetUserEmail?: string) => {
 };
 
 const getEmailInfo = (updateType: string, data: { [key: string]: string }) => {
-    const { text, html } = getEmailMessaging(updateType, data);
+    const { title, message } = getEmailMessaging(updateType, data);
     const emailRecipients = getEmailRecipients(data.targetUserEmail);
 
     return {
         subject: "Bros and Prose Update",
-        text,
-        html,
+        html: buildHtmlTemplate(title, message),
         emailRecipients,
     };
+};
+
+const buildHtmlTemplate = (title: string = "", message: string = "") => {
+    const endpoint = title.toLocaleLowerCase().includes("future") ? "future" : "palaver";
+    return `<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>${title}</title>
+    </head>
+    <body bgcolor="#0b0b13" style="margin:0;padding:0;background-color:#0b0b13;color:#f5f5f5;font-family:'Crimson Text',Georgia,serif;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" bgcolor="#0b0b13" style="background-color:#0b0b13;padding:32px 0;">
+            <tr>
+                <td align="center">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="540" style="background-color:#12121f;border:1px solid rgba(0,191,255,0.2);border-radius:18px;overflow:hidden;">
+                        <tr>
+                            <td align="center" style="padding:24px;background:linear-gradient(135deg,rgba(0,191,255,0.35),rgba(255,77,255,0.35));">
+                                <p style="margin:0;text-transform:uppercase;letter-spacing:0.25em;color:#12121f;font-size:18px;font-weight:600;">bros & prose</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:32px;color:#f5f5f5;">
+                                <h1 style="margin:0 0 18px;color:#00bfff;font-size:28px;font-family:'Libre Baskerville','Times New Roman',serif;">${
+                                    title ?? ""
+                                }</h1>
+                                <p style="font-size:18px;line-height:1.6;margin:0 0 28px;">${
+                                    message ?? ""
+                                }</p>
+                                <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0">
+                                    <tr>
+                                        <td align="center" style="border-radius:999px;background-color:#ff4dff;">
+                                            <a href="https://bros-and-prose.vercel.app/${endpoint}" style="display:inline-block;padding:14px 32px;border-radius:999px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0b0b13;text-decoration:none;">check it out</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:24px;text-align:center;font-size:13px;color:#bdbdd2;border-top:1px solid rgba(0,191,255,0.08);">
+                                <p style="margin:0;">You're getting this email because you're part of the Bros and Prose crew. If this feels unexpected, just ignore it or tell Seth to fuck all the way off.</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>`;
 };
 
 export const sendEmailNotification = async (
@@ -100,11 +138,10 @@ export const sendEmailNotification = async (
             process.env.MAILJET_API_KEY || "",
             process.env.MAILJET_API_SECRET || ""
         );
-        const { subject, text, html, emailRecipients } = getEmailInfo(updateType, data);
+        const { subject, html, emailRecipients } = getEmailInfo(updateType, data);
 
         console.log("Sending email notification to:", emailRecipients);
         console.log("Email subject:", subject);
-        console.log("Email text:", text);
         console.log("Email html:", html);
 
         const response = await mailjet.post("send", { version: "v3.1" }).request({
@@ -113,7 +150,6 @@ export const sendEmailNotification = async (
                     From: { Email: process.env.MAILJET_FROM_EMAIL || "" },
                     To: emailRecipients,
                     Subject: subject,
-                    TextPart: text,
                     HTMLPart: html,
                 },
             ],

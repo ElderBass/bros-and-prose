@@ -1,5 +1,4 @@
 import type { UserInfo } from "./user";
-import type { Comment } from "./books";
 
 export type PalaverType =
     | "discussion_note"
@@ -20,20 +19,33 @@ export interface Recommendation {
     tags: string[];
 }
 
+export interface BookInfo {
+    title: string;
+    id: string;
+}
+
+export interface Comment {
+    id: string;
+    userInfo: UserInfo;
+    comment: string;
+    createdAt: string;
+    updatedAt?: string;
+    likes?: string[];
+    dislikes?: string[];
+}
+
 export interface PalaverEntry {
     id: string;
     type: PalaverType;
     text: string;
     createdAt: string;
     userInfo: UserInfo;
-    bookInfo?: {
-        title: string;
-        id: string;
-    };
+    bookInfo?: BookInfo;
     recommendation?: Recommendation;
     likes?: string[];
     dislikes?: string[];
     comments?: Comment[];
+    updatedAt?: string;
 }
 
 export interface PalaverEntryMetadata {

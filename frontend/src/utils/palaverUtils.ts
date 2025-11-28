@@ -1,4 +1,10 @@
-import type { PalaverEntry, PalaverType, ReactionType } from "@/types";
+import type {
+    BookInfo,
+    Comment,
+    PalaverEntry,
+    PalaverType,
+    ReactionType,
+} from "@/types";
 import { v4 as uuidv4 } from "uuid";
 import {
     getUserInfo,
@@ -13,20 +19,17 @@ import { usePalaverStore, type PalaverFilter } from "@/stores/palaver";
 export const buildPalaverEntry = ({
     type,
     text,
-    bookInfo,
-    recTitle,
-    recAuthor,
-    tags,
+    bookInfo = {} as BookInfo,
+    recTitle = "",
+    recAuthor = "",
+    tags = [],
 }: {
     type: PalaverType;
     text: string;
-    bookInfo: {
-        title: string;
-        id: string;
-    };
-    recTitle: string;
-    recAuthor: string;
-    tags: string[];
+    bookInfo?: BookInfo;
+    recTitle?: string;
+    recAuthor?: string;
+    tags?: string[];
 }) => {
     const bookInfoValue =
         type === "discussion_note" || type === "progress_note"
@@ -49,6 +52,17 @@ export const buildPalaverEntry = ({
                 : undefined,
     };
     return entry;
+};
+
+export const buildPalaverComment = (commentText: string): Comment => {
+    const user = useUserStore().loggedInUser;
+
+    return {
+        id: uuidv4(),
+        userInfo: getUserInfo(user),
+        comment: commentText,
+        createdAt: new Date().toISOString(),
+    };
 };
 
 export const checkForUnreadEntries = (entries: PalaverEntry[]) => {
@@ -109,14 +123,55 @@ export const buildPalaverEntryMetadata = (entry: PalaverEntry) => {
 };
 
 export const buildPalaverReactionMetadata = (
-    entry: PalaverEntry,
+    item: PalaverEntry | Comment,
     reactionType: ReactionType
 ) => {
     const loggedInUsername = useUserStore().loggedInUser.username;
     return {
         username: loggedInUsername,
-        targetUsername: entry.userInfo.username,
-        targetUserEmail: entry.userInfo.email,
+        targetUsername: item.userInfo.username,
+        targetUserEmail: item.userInfo.email,
         updateType: reactionType,
     };
+};
+
+export const sortPalaverStuff = (stuff: PalaverEntry[] | Comment[]) => {
+    return stuff.sort((a, b) => {
+        const bDate = b.updatedAt
+            ? new Date(b.updatedAt)
+            : new Date(b.createdAt);
+        const aDate = a.updatedAt
+            ? new Date(a.updatedAt)
+            : new Date(a.createdAt);
+        return bDate.getTime() - aDate.getTime();
+    });
+};
+
+export const getPalaverCommentsForBook = (bookId: string) => {
+    return sortPalaverStuff(
+        usePalaverStore().entries.filter((e) => e.bookInfo?.id === bookId)
+    );
+};
+
+export const getReactions = (
+    reaction: ReactionType,
+    item: PalaverEntry | Comment
+): string[] => {
+    return reaction === "like" ? item.likes || [] : item.dislikes || [];
+};
+
+export const updatePalaverLikesDislikes = (
+    item: PalaverEntry | Comment,
+    action: "like" | "dislike"
+) => {
+    const loggedInUsername = useUserStore().loggedInUser.username;
+
+    if (action === "like") {
+        item.likes = [...(item.likes || []), loggedInUsername];
+        item.dislikes = item.dislikes?.filter((d) => d !== loggedInUsername);
+    } else {
+        item.dislikes = [...(item.dislikes || []), loggedInUsername];
+        item.likes = item.likes?.filter((l) => l !== loggedInUsername);
+    }
+    return item;
 };

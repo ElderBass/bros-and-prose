@@ -8,7 +8,11 @@
             :disabled="userHasReacted"
             :color="color"
         />
-        <ReactionCountBadge :count="reactionCount" :color="color" />
+        <ReactionCountBadge
+            :count="reactionCount"
+            :color="color"
+            :isChildComment="isChildComment"
+        />
     </div>
 </template>
 
@@ -22,11 +26,17 @@ import IconButton from "@/components/ui/IconButton.vue";
 import ReactionCountBadge from "./ReactionCountBadge.vue";
 import type { ReactionType } from "@/types";
 
-const props = defineProps<{
-    type: ReactionType;
-    reactions: string[];
-    onClick: () => void;
-}>();
+const props = withDefaults(
+    defineProps<{
+        type: ReactionType;
+        reactions: string[];
+        onClick: () => void;
+        isChildComment?: boolean;
+    }>(),
+    {
+        isChildComment: false,
+    }
+);
 
 const { mobile } = useDisplay();
 const userStore = useUserStore();
@@ -62,7 +72,11 @@ const color = computed(() => {
 });
 
 const buttonSize = computed(() => {
-    return mobile.value ? "xsmall" : "small";
+    return props.isChildComment
+        ? "supersmall"
+        : mobile.value
+          ? "xsmall"
+          : "small";
 });
 </script>
 

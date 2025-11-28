@@ -29,7 +29,7 @@ import type { CSSProperties } from "vue";
 withDefaults(
     defineProps<{
         icon: IconDefinition;
-        size: "xsmall" | "small" | "medium" | "large";
+        size: "supersmall" | "xsmall" | "small" | "medium" | "large";
         title: string;
         color?: "blue" | "fuschia" | "green" | "lavender" | "red";
         shadowColor?: "lavender" | "fuschia" | "green" | "blue";
@@ -123,6 +123,13 @@ defineOptions({ inheritAttrs: false });
     width: 1.5rem;
     height: 1.5rem;
     font-size: 0.75rem;
+}
+
+.icon-button.size-supersmall {
+    width: 1.2rem;
+    height: 1.2rem;
+    font-size: 0.6rem;
+    padding: 0.25rem;
 }
 
 .icon-button.size-small {

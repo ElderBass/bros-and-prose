@@ -36,9 +36,19 @@
                     }}</span>
                 </span>
             </p>
+            <BookRecommendationDetails
+                v-if="entry.recommendation"
+                :recommendation="entry.recommendation"
+            />
+            <p class="text">{{ entry.text }}</p>
+            <ReactionDetails
+                v-if="entry.likes || entry.dislikes"
+                :likes="entry.likes || []"
+                :dislikes="entry.dislikes || []"
+            />
             <transition name="fade">
-                <ListItemDetails
-                    v-if="showDetails"
+                <CommentsSection
+                    v-if="showComments"
                     :entry="entry"
                     :variant="themeVariant"
                 />
@@ -47,11 +57,11 @@
                 <BaseButton
                     size="xsmall"
                     :variant="
-                        showDetails ? 'outline-secondary' : 'outline-success'
+                        showComments ? 'outline-secondary' : 'outline-success'
                     "
-                    @click="showDetails = !showDetails"
+                    @click="showComments = !showComments"
                 >
-                    {{ showDetails ? "hide details" : "show details" }}
+                    {{ showComments ? "hide comments" : "show comments" }}
                 </BaseButton>
             </div>
         </div>
@@ -64,17 +74,27 @@ import { computed, ref } from "vue";
 import { useDisplay } from "vuetify";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import ListItemActions from "@/components/features/Palaver/PalaverListItem/ListItemActions.vue";
-import ListItemDetails from "@/components/features/Palaver/PalaverListItem/ListItemDetails.vue";
+import ReactionDetails from "@/components/features/Palaver/PalaverListItem/ReactionDetails.vue";
+import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
 import { AVATAR_ICON_LIST } from "@/constants";
 import { isGuestUser } from "@/utils";
+import CommentsSection from "./CommentsSection.vue";
 
 defineOptions({ name: "PalaverListItem" });
-const props = defineProps<{ entry: PalaverEntry }>();
 
+const props = withDefaults(
+    defineProps<{
+        entry: PalaverEntry;
+        isInbrospection?: boolean;
+    }>(),
+    {
+        isInbrospection: false,
+    }
+);
 const { mobile } = useDisplay();
 
-const showDetails = ref(false);
+const showComments = ref(false);
 
 const iconFor = (iconName: string) => {
     return (
@@ -86,9 +106,9 @@ const iconFor = (iconName: string) => {
 const typeLabel = computed(() => {
     switch (props.entry.type) {
         case "discussion_note":
-            return "Book Comment";
+            return props.isInbrospection ? "Comment" : "Book Comment";
         case "progress_note":
-            return "Progress Update";
+            return props.isInbrospection ? "Progress" : "Progress Update";
         case "suggestion":
             return "App Suggestion";
         case "recommendation":
@@ -292,9 +312,13 @@ const themeColor = computed(() => {
     .username {
         font-size: 1rem;
     }
+    .content {
+        gap: 0.5rem;
+    }
     .meta {
         padding-top: 0.25rem;
         line-height: 1.2;
+        gap: 0.25rem;
     }
     .type-label {
         font-size: 1rem;

@@ -7,6 +7,7 @@
             <CommentItem
                 v-for="comment in comments"
                 :key="comment.id"
+                :entryId="entry.id"
                 :comment="comment"
                 :size="commentSize"
                 :variant="variant"
@@ -19,7 +20,7 @@
 import { computed } from "vue";
 import type { PalaverEntry } from "@/types/palaver";
 import type { Comment } from "@/types";
-import CommentItem from "@/components/features/common/CommentItem.vue";
+import CommentItem from "@/components/features/common/CommentItem/index.vue";
 
 const props = withDefaults(
     defineProps<{

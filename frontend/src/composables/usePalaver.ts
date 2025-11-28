@@ -7,18 +7,12 @@ import {
     buildPalaverEntryMetadata,
     buildPalaverReactionMetadata,
     checkForUnreadEntries,
+    sortPalaverStuff,
+    updatePalaverLikesDislikes,
 } from "@/utils";
-import { useUserStore } from "@/stores/user";
 import { useLog } from "./useLog";
 
 let unsubscribe: (() => void) | null = null;
-
-const sortEntries = (entries: PalaverEntry[]) => {
-    return [...entries].sort(
-        (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-};
 
 export function subscribeToPalaver() {
     if (unsubscribe) return; // already listening
@@ -30,7 +24,9 @@ export function subscribeToPalaver() {
         const list = Object.values(value).filter(
             (item: unknown) => (item as PalaverEntry).id
         );
-        const sortedEntries = sortEntries(list as PalaverEntry[]);
+        const sortedEntries = sortPalaverStuff(
+            list as PalaverEntry[]
+        ) as PalaverEntry[];
         usePalaverStore().setEntries(sortedEntries);
         checkForUnreadEntries(sortedEntries);
     };
@@ -54,7 +50,9 @@ export const usePalaver = () => {
     const getPalaverEntries = async (isInit = false) => {
         const response = await palaverService.list();
         if (response.success) {
-            const sortedEntries = sortEntries(response.data);
+            const sortedEntries = sortPalaverStuff(
+                response.data
+            ) as PalaverEntry[];
             palaverStore.setEntries(sortedEntries);
             if (isInit) {
                 subscribeToPalaver();
@@ -70,27 +68,7 @@ export const usePalaver = () => {
         const metadata = buildPalaverEntryMetadata(entry);
         const response = await palaverService.create({ entry, metadata });
         if (response.success) {
-            // if (entry.type === "discussion_note") {
-            //     let book: Book;
-            //     if (entry.bookInfo?.id === currentBookId) {
-            //         book = await useBooks().getCurrentBook();
-            //     } else {
-            //         book = await useBooks().getPastBook(
-            //             entry.bookInfo?.id as string
-            //         );
-            //     }
-            //     if (book) {
-            //         await useLog().info(
-            //             `Adding discussion comment to book: ${book.title}`
-            //         );
-            //         await useBooks().addDiscussionComment(book, {
-            //             id: entry.id,
-            //             createdAt: entry.createdAt,
-            //             comment: entry.text,
-            //             user: getUserInfo(loggedInUser),
-            //         });
-            //     }
-            // }
+            useLog().info(`Palaver entry created: ${JSON.stringify(entry)}`);
         }
         return response.data;
     };
@@ -101,7 +79,10 @@ export const usePalaver = () => {
     ) => {
         const updateType = metadata.updateType ?? entry.type;
         const response = await palaverService.update({
-            entry,
+            entry: {
+                ...entry,
+                updatedAt: new Date().toISOString(),
+            },
             metadata: { ...metadata, updateType },
         });
         if (response.success) {
@@ -124,41 +105,43 @@ export const usePalaver = () => {
         return response.data;
     };
 
-    const updatePalaverEntryLikesDislikes = async (
-        entry: PalaverEntry,
-        action: "like" | "dislike"
+    const updatePalaverItemLikesDislikes = async (
+        item: PalaverEntry | Comment,
+        action: "like" | "dislike",
+        entryId?: string
     ) => {
-        const loggedInUsername = useUserStore().loggedInUser?.username;
+        let updatedItem;
 
-        if (action === "like") {
-            if (entry.likes?.includes(loggedInUsername)) {
-                return;
-            }
-            entry.likes = [...(entry.likes || []), loggedInUsername];
-            entry.dislikes = entry.dislikes?.filter(
-                (d) => d !== loggedInUsername
+        if (entryId) {
+            const updatedComment = updatePalaverLikesDislikes(
+                item,
+                action
+            ) as Comment;
+            const entry = palaverStore.entries.find(
+                (e) => e.id === entryId
+            ) as PalaverEntry;
+            entry.comments = entry.comments?.map((c) =>
+                c.id === item.id ? updatedComment : c
             );
+            updatedItem = entry;
         } else {
-            if (entry.dislikes?.includes(loggedInUsername)) {
-                return;
-            }
-            entry.dislikes = [...(entry.dislikes || []), loggedInUsername];
-            entry.likes = entry.likes?.filter((l) => l !== loggedInUsername);
+            updatedItem = updatePalaverLikesDislikes(
+                item,
+                action
+            ) as PalaverEntry;
         }
-        const metadata = buildPalaverReactionMetadata(entry, action);
-        return await updatePalaverEntry(entry, metadata);
+
+        const metadata = buildPalaverReactionMetadata(updatedItem, action);
+        return await updatePalaverEntry(updatedItem, metadata);
     };
 
     const likePalaverEntry = async (entry: PalaverEntry) => {
-        const updateEntry = await updatePalaverEntryLikesDislikes(
-            entry,
-            "like"
-        );
+        const updateEntry = await updatePalaverItemLikesDislikes(entry, "like");
         return updateEntry;
     };
 
     const dislikePalaverEntry = async (entry: PalaverEntry) => {
-        const updateEntry = await updatePalaverEntryLikesDislikes(
+        const updateEntry = await updatePalaverItemLikesDislikes(
             entry,
             "dislike"
         );
@@ -182,6 +165,24 @@ export const usePalaver = () => {
         return response.data;
     };
 
+    const likeComment = async (comment: Comment, entryId: string) => {
+        const updateEntry = await updatePalaverItemLikesDislikes(
+            comment,
+            "like",
+            entryId
+        );
+        return updateEntry;
+    };
+
+    const dislikeComment = async (comment: Comment, entryId: string) => {
+        const updateEntry = await updatePalaverItemLikesDislikes(
+            comment,
+            "dislike",
+            entryId
+        );
+        return updateEntry;
+    };
+
     return {
         getPalaverEntries,
         createPalaverEntry,
@@ -190,5 +191,7 @@ export const usePalaver = () => {
         likePalaverEntry,
         dislikePalaverEntry,
         addComment,
+        likeComment,
+        dislikeComment,
     };
 };
