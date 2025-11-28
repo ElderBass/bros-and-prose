@@ -34,6 +34,7 @@ export interface PalaverEntry {
     likes?: string[];
     dislikes?: string[];
     comments?: Comment[];
+    updatedAt?: string;
 }
 
 export interface PalaverEntryMetadata {

@@ -120,3 +120,21 @@ export const buildPalaverReactionMetadata = (
         updateType: reactionType,
     };
 };
+
+export const sortPalaverEntries = (entries: PalaverEntry[]) => {
+    return entries.sort((a, b) => {
+        const bDate = b.updatedAt
+            ? new Date(b.updatedAt)
+            : new Date(b.createdAt);
+        const aDate = a.updatedAt
+            ? new Date(a.updatedAt)
+            : new Date(a.createdAt);
+        return bDate.getTime() - aDate.getTime();
+    });
+};
+
+export const getPalaverCommentsForBook = (bookId: string) => {
+    return sortPalaverEntries(
+        usePalaverStore().entries.filter((e) => e.bookInfo?.id === bookId)
+    );
+};
