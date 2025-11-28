@@ -4,7 +4,7 @@
             v-for="reaction in REACTION_TYPES"
             :key="reaction"
             :type="reaction"
-            :reactions="getReactions(reaction)"
+            :reactions="getReactions(reaction, props.entry)"
             :onClick="() => handleReaction(reaction)"
         />
         <CommentButton :entry="entry" />
@@ -23,6 +23,7 @@ import {
     DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT,
 } from "@/constants";
 import type { PalaverEntry, ReactionType } from "@/types";
+import { getReactions } from "@/utils";
 
 const { likePalaverEntry, dislikePalaverEntry } = usePalaver();
 const { showAlert } = useUIStore();
@@ -58,12 +59,6 @@ const handleDislike = async () => {
         console.error(error);
         await logError(`Error disliking palaver entry: ${props.entry.id}`);
     }
-};
-
-const getReactions = (reaction: ReactionType): string[] => {
-    return reaction === "like"
-        ? props.entry.likes || []
-        : props.entry.dislikes || [];
 };
 </script>
 

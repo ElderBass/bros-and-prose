@@ -94,9 +94,9 @@ const iconFor = (iconName: string) => {
 const typeLabel = computed(() => {
     switch (props.entry.type) {
         case "discussion_note":
-            return "Book Comment";
+            return props.isInbrospection ? "Comment" : "Book Comment";
         case "progress_note":
-            return "Progress Update";
+            return props.isInbrospection ? "Progress" : "Progress Update";
         case "suggestion":
             return "App Suggestion";
         case "recommendation":
@@ -296,6 +296,8 @@ const themeColor = computed(() => {
         font-size: 1rem;
         gap: 0.5rem;
         width: 100%;
+        padding: 0.75rem;
+        padding-top: 1rem;
     }
     .username {
         font-size: 1rem;
@@ -303,6 +305,7 @@ const themeColor = computed(() => {
     .meta {
         padding-top: 0.25rem;
         line-height: 1.2;
+        gap: 0.25rem;
     }
     .type-label {
         font-size: 1rem;

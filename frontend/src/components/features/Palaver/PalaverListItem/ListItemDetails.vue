@@ -9,7 +9,11 @@
             :likes="entry.likes || []"
             :dislikes="entry.dislikes || []"
         />
-        <CommentsSection :entry="entry" :variant="variant" />
+        <CommentsSection
+            :entry="entry"
+            :variant="variant"
+            commentSize="compact"
+        />
     </div>
 </template>
 

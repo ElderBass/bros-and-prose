@@ -2,17 +2,26 @@
     <div class="comment-item" :class="[`variant-${variant}`, `size-${size}`]">
         <div class="avatar">
             <AvatarImage
-                :icon="iconFor(comment.user.avatar)"
+                :icon="iconFor(comment.userInfo.avatar)"
                 :size="avatarSize"
             />
         </div>
         <div class="content">
-            <div class="meta">
-                <span class="username">@{{ comment.user.username }}</span>
-                <span class="dot">•</span>
-                <span class="timestamp">{{
-                    formatDateForDevice(comment.createdAt)
-                }}</span>
+            <div class="header">
+                <div class="meta">
+                    <span class="username"
+                        >@{{ comment.userInfo.username }}</span
+                    >
+                    <span class="dot">•</span>
+                    <span class="timestamp">{{
+                        formatDateForDevice(comment.createdAt)
+                    }}</span>
+                </div>
+                <ReactionActions
+                    v-if="showReactionActions"
+                    :comment="comment"
+                    :entryId="entryId"
+                />
             </div>
             <p class="text">{{ comment.comment }}</p>
         </div>
@@ -23,14 +32,18 @@
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import type { Comment } from "@/types";
+import ReactionActions from "./ReactionActions.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import { AVATAR_ICON_LIST } from "@/constants";
+import { isGuestUser } from "@/utils";
+import { useUserStore } from "@/stores/user";
 
-const { mobile } = useDisplay();
+defineOptions({ name: "CommentItem" });
 
 const props = withDefaults(
     defineProps<{
         comment: Comment;
+        entryId: string;
         size?: "default" | "compact";
         variant?: "lavender" | "fuschia" | "blue" | "green" | "red";
     }>(),
@@ -39,6 +52,8 @@ const props = withDefaults(
         variant: "lavender",
     }
 );
+
+const { mobile } = useDisplay();
 
 const iconFor = (iconName: string) => {
     return (
@@ -59,13 +74,16 @@ const formatDateForDevice = computed(() => {
     return (iso: string) => {
         try {
             const d = new Date(iso);
-            return mobile.value === true || props.size === "compact"
+            const useCompactFormat =
+                mobile.value === true || props.size === "compact";
+            return useCompactFormat
                 ? d.toLocaleString(undefined, {
                       month: "2-digit",
                       day: "2-digit",
                       year: "2-digit",
                       hour: "2-digit",
                       minute: "2-digit",
+                      hour12: false,
                   })
                 : d.toLocaleString(undefined, {
                       year: "numeric",
@@ -78,6 +96,13 @@ const formatDateForDevice = computed(() => {
             return iso;
         }
     };
+});
+
+const showReactionActions = computed(() => {
+    return (
+        !isGuestUser() &&
+        props.comment.userInfo.id !== useUserStore().loggedInUser.id
+    );
 });
 </script>
 
@@ -123,6 +148,12 @@ const formatDateForDevice = computed(() => {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .meta {
@@ -171,11 +202,9 @@ const formatDateForDevice = computed(() => {
 }
 
 @media (max-width: 768px) {
-    .comment-item {
-        padding: 0.75rem;
-    }
     .comment-item.size-compact {
         padding: 0.5rem;
+        padding-top: 0.75rem;
     }
 }
 </style>

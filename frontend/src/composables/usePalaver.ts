@@ -8,8 +8,8 @@ import {
     buildPalaverReactionMetadata,
     checkForUnreadEntries,
     sortPalaverStuff,
+    updatePalaverLikesDislikes,
 } from "@/utils";
-import { useUserStore } from "@/stores/user";
 import { useLog } from "./useLog";
 
 let unsubscribe: (() => void) | null = null;
@@ -102,41 +102,43 @@ export const usePalaver = () => {
         return response.data;
     };
 
-    const updatePalaverEntryLikesDislikes = async (
-        entry: PalaverEntry,
-        action: "like" | "dislike"
+    const updatePalaverItemLikesDislikes = async (
+        item: PalaverEntry | Comment,
+        action: "like" | "dislike",
+        entryId?: string
     ) => {
-        const loggedInUsername = useUserStore().loggedInUser?.username;
+        let updatedItem;
 
-        if (action === "like") {
-            if (entry.likes?.includes(loggedInUsername)) {
-                return;
-            }
-            entry.likes = [...(entry.likes || []), loggedInUsername];
-            entry.dislikes = entry.dislikes?.filter(
-                (d) => d !== loggedInUsername
+        if (entryId) {
+            const updatedComment = updatePalaverLikesDislikes(
+                item,
+                action
+            ) as Comment;
+            const entry = palaverStore.entries.find(
+                (e) => e.id === entryId
+            ) as PalaverEntry;
+            entry.comments = entry.comments?.map((c) =>
+                c.id === item.id ? updatedComment : c
             );
+            updatedItem = entry;
         } else {
-            if (entry.dislikes?.includes(loggedInUsername)) {
-                return;
-            }
-            entry.dislikes = [...(entry.dislikes || []), loggedInUsername];
-            entry.likes = entry.likes?.filter((l) => l !== loggedInUsername);
+            updatedItem = updatePalaverLikesDislikes(
+                item,
+                action
+            ) as PalaverEntry;
         }
-        const metadata = buildPalaverReactionMetadata(entry, action);
-        return await updatePalaverEntry(entry, metadata);
+
+        const metadata = buildPalaverReactionMetadata(updatedItem, action);
+        return await updatePalaverEntry(updatedItem, metadata);
     };
 
     const likePalaverEntry = async (entry: PalaverEntry) => {
-        const updateEntry = await updatePalaverEntryLikesDislikes(
-            entry,
-            "like"
-        );
+        const updateEntry = await updatePalaverItemLikesDislikes(entry, "like");
         return updateEntry;
     };
 
     const dislikePalaverEntry = async (entry: PalaverEntry) => {
-        const updateEntry = await updatePalaverEntryLikesDislikes(
+        const updateEntry = await updatePalaverItemLikesDislikes(
             entry,
             "dislike"
         );
@@ -160,6 +162,24 @@ export const usePalaver = () => {
         return response.data;
     };
 
+    const likeComment = async (comment: Comment, entryId: string) => {
+        const updateEntry = await updatePalaverItemLikesDislikes(
+            comment,
+            "like",
+            entryId
+        );
+        return updateEntry;
+    };
+
+    const dislikeComment = async (comment: Comment, entryId: string) => {
+        const updateEntry = await updatePalaverItemLikesDislikes(
+            comment,
+            "dislike",
+            entryId
+        );
+        return updateEntry;
+    };
+
     return {
         getPalaverEntries,
         createPalaverEntry,
@@ -168,5 +188,7 @@ export const usePalaver = () => {
         likePalaverEntry,
         dislikePalaverEntry,
         addComment,
+        likeComment,
+        dislikeComment,
     };
 };
