@@ -6,56 +6,56 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
         case "discussion_note":
             return {
                 title: "New Book Comment",
-                message: `${data.username} said some shit about ${data.bookTitle}.`,
+                message: `<span style="font-weight: bold;color:##00bfff;">@${data.username}</span> said some shit about <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
             };
         case "like":
             return {
                 title: "Item Update",
-                message: `${data.username} liked your palaver.`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> liked your palaver.`,
             };
         case "dislike":
             return {
                 title: "Item Update",
-                message: `${data.username} thinks your shit's weak.`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> thinks your shit's weak.`,
             };
         case "comment":
             return {
                 title: "Item Update",
-                message: `${data.username} commented on your palaver.`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> commented on your palaver.`,
             };
         case "progress_note":
             return {
                 title: "New Progress Update",
-                message: `${data.username} made progress on the current book.`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> made progress on the current book.`,
             };
         case "review":
             return {
                 title: "New Review",
-                message: `${data.username} reviewed ${data.bookTitle}.`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> reviewed <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
             };
         case "recommendation":
             return {
                 title: "New Recommendation",
-                message: `${data.username} recommended ${data.bookTitle}.`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> recommended <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
             };
         case "suggestion":
             return {
                 title: "New Suggestion",
-                message: `${data.username} suggested some shit for the app.`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> suggested some shit for the app.`,
             };
         case "future_book_added":
             return {
                 title: "New Future Book",
-                message: `${
+                message: `<span style="font-weight: bold;color:#00bfff;">@${
                     data.username
-                } nominated <span style="font-weight: bold;color:#ff4dff;">${
+                }</span> nominated <span style="font-weight: bold;color:#ff4dff;">${
                     data.bookTitle?.toUpperCase() ?? ""
                 }</span> as a future book.`,
             };
         default:
             return {
                 title: "New Misc Item",
-                message: `${data.username} said some bullshit...`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> said some bullshit...`,
             };
     }
 };
