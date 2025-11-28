@@ -1,10 +1,20 @@
 <template>
-    <form @submit.prevent="handleSignup">
+    <LoadingSpinnerContainer
+        v-if="loadingMessage === signupLoadingMessage"
+        size="large"
+        :message="signupLoadingMessage"
+    />
+    <form v-if="!loadingMessage" @submit.prevent="handleSignup">
         <div class="header-container">
             <h1>welcome to bros and prose</h1>
         </div>
         <BroSelect v-model="broName" />
-        <div class="form-container-wrapper">
+        <LoadingSpinnerContainer
+            v-if="loadingMessage === broSelectLoadingMessage"
+            size="large"
+            :message="broSelectLoadingMessage"
+        />
+        <div v-if="!loadingMessage" class="form-container-wrapper">
             <transition name="slide-in">
                 <div v-if="isSignup" class="form-container">
                     <h3>register once, then never again</h3>
@@ -132,12 +142,16 @@ import { faUserAstronaut } from "@fortawesome/free-solid-svg-icons";
 const { signup, login } = useAuth();
 const { getUser } = useUser();
 
+const loadingMessage = ref("");
 const broName = ref("");
 const email = ref("");
 const username = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const activeForm = ref("");
+
+const broSelectLoadingMessage = "fetching your bro, bro...";
+const signupLoadingMessage = "registering your bro, bro...";
 
 const onGuestClick = () => {
     setGuestUser(true);
@@ -147,6 +161,7 @@ const onGuestClick = () => {
 watch(broName, async (newVal) => {
     if (newVal) {
         activeForm.value = "";
+        loadingMessage.value = broSelectLoadingMessage;
 
         try {
             const broId = getIdFromBroName(newVal);
@@ -167,12 +182,15 @@ watch(broName, async (newVal) => {
             console.error(err);
             const errorMessage = `Error getting user from bro name: ${err}`;
             void useLog().error(errorMessage);
+        } finally {
+            loadingMessage.value = "";
         }
     }
 });
 
 const handleSignup = async () => {
     try {
+        loadingMessage.value = signupLoadingMessage;
         const bro = broName.value.split(" ");
         const payload = {
             firstName: bro[0],
@@ -185,6 +203,8 @@ const handleSignup = async () => {
         await action(payload);
     } catch (err) {
         console.error(err);
+    } finally {
+        loadingMessage.value = "";
     }
 };
 
