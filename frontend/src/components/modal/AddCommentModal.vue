@@ -5,14 +5,20 @@
         :title="modalTitle"
         size="medium"
     >
-        <form class="add-comment-form" @submit.prevent="submit">
+        <div v-if="submitting" class="loading-content">
+            <LoadingSpinnerContainer
+                :size="mobile ? 'medium' : 'large'"
+                :message="loadingMessage"
+            />
+        </div>
+        <form v-else class="add-comment-form" @submit.prevent="submit">
             <div class="field">
-                <label for="comment-input">your inbrospection</label>
+                <label for="comment-input">{{ labelText }}</label>
                 <textarea
                     id="comment-input"
                     v-model="localComment"
                     class="comment-textarea"
-                    :rows="isMobile ? 5 : 6"
+                    :rows="mobile ? 5 : 6"
                     :placeholder="textareaPlaceholder"
                 ></textarea>
                 <div class="meta-row">
@@ -29,7 +35,7 @@
                 <BaseButton
                     variant="outline-secondary"
                     @click="onClose"
-                    :size="isMobile ? 'small' : 'medium'"
+                    :size="actionButtonSize"
                     :style="{ width: '100%' }"
                     >{{ primaryButtonLabel }}</BaseButton
                 >
@@ -37,7 +43,7 @@
                     variant="outline"
                     type="submit"
                     :disabled="!canSubmitComment"
-                    :size="isMobile ? 'small' : 'medium'"
+                    :size="actionButtonSize"
                     :style="{ width: '100%' }"
                     >{{ secondaryButtonLabel }}</BaseButton
                 >
@@ -48,8 +54,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import type { Comment } from "@/types";
 import { buildComment } from "@/utils/pastBookUtils";
 
@@ -62,16 +67,19 @@ const props = withDefaults(
     defineProps<{
         open: boolean;
         isProgressUpdate?: boolean;
+        submitting?: boolean;
+        isItemComment?: boolean;
     }>(),
     {
         isProgressUpdate: false,
+        submitting: false,
+        isItemComment: false,
     }
 );
 
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const localComment = ref("");
-const maxLength = 500;
 
 watch(
     () => props.open,
@@ -80,29 +88,45 @@ watch(
     }
 );
 
+const loadingMessage = computed(() =>
+    props.isProgressUpdate ? "updating progress..." : "adding comment..."
+);
+
+const labelText = computed(() => {
+    if (props.isItemComment) {
+        return "join the palaver";
+    } else {
+        return "your inbrospection";
+    }
+});
+
+const maxLength = computed(() => (props.isItemComment ? 200 : 500));
+
 const modalTitle = computed(() =>
     props.isProgressUpdate ? "hit'em with a supdate" : "add a comment"
 );
 
-const textareaPlaceholder = computed(() =>
-    props.isProgressUpdate
-        ? "(comment optional, but sexy)"
-        : "regale us with erudite insight"
-);
+const textareaPlaceholder = computed(() => {
+    if (props.isProgressUpdate) {
+        return "(comment optional, but sexy)";
+    } else if (props.isItemComment) {
+        return "holla atcha boy";
+    } else {
+        return "regale us with erudite insight";
+    }
+});
 
 const validationMessage = computed(() => {
     const text = localComment.value.trim();
-    if (text.length === 0 && !props.isProgressUpdate)
-        return "comment is required";
-    if (text.length < 3 && !props.isProgressUpdate)
-        return "minimum 3 characters";
-    if (text.length > maxLength) return `maximum ${maxLength} characters`;
+    if (text.length < 3) return "minimum 3 characters";
+    if (text.length > maxLength.value)
+        return `maximum ${maxLength.value} characters`;
     return "";
 });
 
 const canSubmitComment = computed(() => {
     const text = localComment.value.trim();
-    return text.length >= 3 && text.length <= maxLength;
+    return text.length >= 3 && text.length <= maxLength.value;
 });
 
 const primaryButtonLabel = computed(() =>
@@ -112,6 +136,8 @@ const primaryButtonLabel = computed(() =>
 const secondaryButtonLabel = computed(() =>
     props.isProgressUpdate ? "send it" : "submit"
 );
+
+const actionButtonSize = computed(() => (mobile ? "small" : "medium"));
 
 const submit = () => {
     if (!canSubmitComment.value) return;
