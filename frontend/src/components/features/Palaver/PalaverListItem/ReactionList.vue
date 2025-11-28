@@ -3,7 +3,9 @@
         <span class="label" :class="color">{{ label }} by:</span>
         <div v-for="(username, index) in reactions" :key="username">
             <span class="reaction-user">
-                {{ userHasReacted ? "you" : `@${username}` }}
+                {{
+                    username === loggedInUser?.username ? "you" : `@${username}`
+                }}
                 <span v-if="index !== reactions.length - 1" class="comma"
                     >,</span
                 >
@@ -22,10 +24,6 @@ const props = defineProps<{ type: ReactionType; reactions: string[] }>();
 
 const userStore = useUserStore();
 const { loggedInUser } = storeToRefs(userStore);
-
-const userHasReacted = computed(() => {
-    return props.reactions.includes(loggedInUser.value?.username);
-});
 
 const label = computed(() => {
     return props.type === "like" ? "liked" : "disliked";
