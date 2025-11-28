@@ -29,6 +29,16 @@ export interface CurrentSelectorResponse {
     data: string;
 }
 
+export interface FutureBookMetadata {
+    bookTitle: string;
+    username: string;
+}
+
+export interface FutureBookRequest {
+    selection: FutureBook;
+    metadata: FutureBookMetadata;
+}
+
 export const futureBooksService = {
     getCurrentSelector: async () => {
         const response = await apiRequest<CurrentSelectorResponse>(
@@ -52,11 +62,14 @@ export const futureBooksService = {
         );
         return response.data;
     },
-    addCurrentSelection: async (selection: FutureBook) => {
+    addCurrentSelection: async (
+        selection: FutureBook,
+        metadata: FutureBookMetadata
+    ) => {
         const response = await apiRequest<FutureBooksResponse>(
             "POST",
             "/api/futureBooks/current",
-            selection
+            { selection, metadata }
         );
         return response.data;
     },
