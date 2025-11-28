@@ -82,7 +82,7 @@ const getEmailInfo = (updateType: string, data: { [key: string]: string }) => {
 };
 
 const buildHtmlTemplate = (title: string = "", message: string = "") => {
-    const endpoint = title.toLocaleLowerCase().includes("future") ? "future-books" : "palaver";
+    const endpoint = title.toLocaleLowerCase().includes("future") ? "future" : "palaver";
     return `<!DOCTYPE html>
 <html lang="en">
     <head>
