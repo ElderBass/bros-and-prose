@@ -110,7 +110,7 @@ const buildHtmlTemplate = (title: string = "", message: string = "") => {
                                 <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0">
                                     <tr>
                                         <td align="center" style="border-radius:999px;background-color:#ff4dff;">
-                                            <a href="https://bros-and-prose.vercel.app/${endpoint}" style="display:inline-block;padding:14px 32px;border-radius:999px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0b0b13;text-decoration:none;">visit ${endpoint}</a>
+                                            <a href="https://bros-and-prose.vercel.app/${endpoint}" style="display:inline-block;padding:14px 32px;border-radius:999px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0b0b13;text-decoration:none;">check it out</a>
                                         </td>
                                     </tr>
                                 </table>
