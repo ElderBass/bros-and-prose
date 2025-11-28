@@ -10,6 +10,7 @@ import type {
     FutureBookSelectorRequest,
     PalaverEntryRequest,
 } from "@/types";
+import type { FutureBookRequest } from "./futureBooks";
 
 const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL ||
@@ -49,6 +50,7 @@ export const apiRequest = async <T>(
         | PalaverEntryRequest
         | ArchivedBooksEntry
         | FutureBookSelectorRequest
+        | FutureBookRequest
 ): Promise<T> => {
     try {
         const response = await apiClient({

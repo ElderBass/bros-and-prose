@@ -69,8 +69,14 @@ export const useFutureBooks = () => {
     };
 
     const addCurrentSelection = async (selection: FutureBook) => {
-        const updatedSelections =
-            await futureBooksService.addCurrentSelection(selection);
+        const metadata = {
+            bookTitle: selection.title,
+            username: futureBooksStore.currentSelector.username,
+        };
+        const updatedSelections = await futureBooksService.addCurrentSelection(
+            selection,
+            metadata
+        );
         futureBooksStore.setCurrentSelections(updatedSelections);
         return updatedSelections;
     };
