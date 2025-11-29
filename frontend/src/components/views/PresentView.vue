@@ -35,10 +35,7 @@
             </template>
         </CurrentBookLayout>
         <PalaverModals />
-        <PalaverFab
-            v-if="!isGuestUser() && IS_PALAVER_ENABLED"
-            @click="openItemModal('create')"
-        />
+        <PalaverFab v-if="!isGuestUser()" @click="openItemModal('create')" />
     </AppLayout>
 </template>
 
@@ -62,7 +59,6 @@ import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { storeToRefs } from "pinia";
-import { IS_PALAVER_ENABLED } from "@/constants";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();

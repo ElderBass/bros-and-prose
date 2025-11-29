@@ -29,6 +29,11 @@ export const useUser = () => {
         return user;
     };
 
+    const getUserByUsername = async (username: string) => {
+        const user = await usersService.getUserByUsername(username);
+        return user;
+    };
+
     const getUsers = async (shouldMock: boolean = false) => {
         const users = await usersService.getUsers(shouldMock);
         setAllUsers(users);
@@ -135,6 +140,7 @@ export const useUser = () => {
 
     return {
         getUser,
+        getUserByUsername,
         getUsers,
         getFutureBookSelector,
         getOtherBros,

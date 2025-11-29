@@ -23,6 +23,30 @@ export const getUser = async (req: express.Request, res: express.Response) => {
     }
 };
 
+export const getUserByUsername = async (req: express.Request, res: express.Response) => {
+    const { username } = req.params;
+    try {
+        const usersRef = db.ref("users");
+        const users = await usersRef.once("value");
+        const targetUser = Object.values(users.val()).find(
+            (user: any) => user.username === username
+        );
+
+        return res.json({
+            success: true,
+            message: "User fetched successfully",
+            data: targetUser,
+        });
+    } catch (error) {
+        console.log("KERTWANGING ERROR in getUserByUsername", error);
+        res.status(500).json({
+            success: false,
+            message: "Failed to get user by username",
+            error: error,
+        });
+    }
+};
+
 export const getUsers = async (_: express.Request, res: express.Response) => {
     try {
         console.log("KERTWANGING INCOMING getUsers");

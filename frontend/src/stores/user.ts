@@ -23,6 +23,10 @@ export const useUserStore = defineStore("user", {
         currentUserReviews: (state) => state.loggedInUser?.reviews || {},
         userIsFutureBookSelector: (state) =>
             state.loggedInUser?.id === state.futureBookSelector.id,
+        getUserByUsername: (state) => (username: string) =>
+            state.allUsers.find((user) => user.username === username),
+        getUserById: (state) => (id: string) =>
+            state.allUsers.find((user) => user.id === id),
     },
 
     actions: {

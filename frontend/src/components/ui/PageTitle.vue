@@ -1,21 +1,24 @@
 <template>
-    <h1 :style="style">{{ title }}</h1>
+    <h1 :style="style" class="page-title">
+        <slot>{{ title }}</slot>
+    </h1>
 </template>
 
 <script setup lang="ts">
 withDefaults(
     defineProps<{
-        title: string;
+        title?: string;
         style?: string;
     }>(),
     {
+        title: "",
         style: "",
     }
 );
 </script>
 
 <style scoped>
-h1 {
+.page-title {
     font-size: 1.5rem;
     color: var(--main-text);
     border-bottom: 2px solid var(--accent-blue);
@@ -26,7 +29,7 @@ h1 {
 }
 
 @media (min-width: 768px) {
-    h1 {
+    .page-title {
         font-size: 1.75rem;
     }
 }
