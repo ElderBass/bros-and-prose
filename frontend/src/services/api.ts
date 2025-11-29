@@ -43,7 +43,6 @@ export const apiRequest = async <T>(
         | SignupCredentials
         | LoginCredentials
         | User
-        | { username: string }
         | Review
         | Book
         | { log: Log }

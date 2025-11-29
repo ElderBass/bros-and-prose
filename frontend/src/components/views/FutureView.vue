@@ -1,15 +1,14 @@
 <template>
     <AppLayout>
-        <h1 class="future-books-title">
+        <PageTitle>
             <span class="username">@{{ futureBookSelector.username }}'s</span>
             selections
-        </h1>
-        <div v-if="isAppLoading" class="spinner-container">
-            <LoadingSpinner
-                size="large"
-                message="retrieving the future prose, bros..."
-            />
-        </div>
+        </PageTitle>
+        <LoadingSpinnerContainer
+            v-if="isAppLoading"
+            size="large"
+            message="retrieving the future prose, bros..."
+        />
         <FutureBooksContainer
             v-else
             :hasReadWriteAccess="userIsFutureBookSelector"
@@ -64,6 +63,8 @@ import { useLog } from "@/composables/useLog";
 import type { FutureBook } from "@/types";
 import { useFutureBooksStore } from "@/stores/futureBooks";
 import { useFutureBooks } from "@/composables/useFutureBooks";
+import PageTitle from "../ui/PageTitle.vue";
+import LoadingSpinnerContainer from "../ui/LoadingSpinnerContainer.vue";
 
 const { addCurrentSelection, updateCurrentSelection, getArchivedSelections } =
     useFutureBooks();
