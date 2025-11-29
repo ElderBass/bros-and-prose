@@ -9,10 +9,7 @@
             />
             <PalaverList v-else />
         </div>
-        <PalaverFab
-            v-if="!isGuestUser() && IS_PALAVER_ENABLED"
-            @click="openPalaverItemModal"
-        />
+        <PalaverFab v-if="!isGuestUser()" @click="openPalaverItemModal" />
         <PalaverModals />
     </AppLayout>
 </template>
@@ -25,7 +22,6 @@ import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
 import PalaverModals from "@/components/modal/PalaverModals/index.vue";
 import PalaverList from "@/components/features/Palaver/PalaverList.vue";
 import { isGuestUser, setLastUnreadPalaverEntry } from "@/utils";
-import { IS_PALAVER_ENABLED } from "@/constants/palaver";
 import { usePalaverStore } from "@/stores/palaver";
 import { usePalaver } from "@/composables/usePalaver";
 import LoadingSpinnerContainer from "../ui/LoadingSpinnerContainer.vue";

@@ -18,7 +18,7 @@ import {
     deleteCurrentSelection,
     archiveFutureBooks,
 } from "./futureBooks.js";
-import { getUser, getUsers, updateUser } from "./user.js";
+import { getUser, getUserByUsername, getUsers, updateUser } from "./user.js";
 import { postLog } from "./log.js";
 import {
     getPalaverEntries,
@@ -55,9 +55,10 @@ router.get("/futureBooks/currentSelector", getCurrentSelector);
 router.post("/futureBooks/setSelector", setFutureBookSelector);
 
 // USER ROUTES
-router.get("/users/:userId", getUser);
-router.get("/users", getUsers);
-router.put("/users/:userId", updateUser);
+router.get("/users/id/:userId", getUser);
+router.get("/users/username/:username", getUserByUsername);
+router.get("/users/all", getUsers);
+router.put("/users/id/:userId", updateUser);
 
 // PALAVER ROUTES
 router.get("/palaver", getPalaverEntries);

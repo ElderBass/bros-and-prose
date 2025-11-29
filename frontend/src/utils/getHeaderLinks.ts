@@ -1,5 +1,3 @@
-import { IS_PALAVER_ENABLED } from "@/constants";
-
 export const getMainLinks = () => {
     return [
         { path: "/past", label: "past" },
@@ -16,9 +14,7 @@ export const getOtherLinks = (isMobile = false) => {
     if (isMobile) {
         otherLinks = otherLinks.filter((l) => l.label !== "profile");
     }
-    if (!IS_PALAVER_ENABLED) {
-        otherLinks = otherLinks.filter((l) => l.label !== "palaver");
-    }
+
     return otherLinks;
 };
 

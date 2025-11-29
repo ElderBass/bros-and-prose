@@ -1,33 +1,34 @@
 <template>
     <BaseCard
         shadow-color="lavender"
-        :style="{ width: isMobile ? '100%' : '50%' }"
+        :style="{ width: mobile ? '100%' : '50%' }"
     >
         <div class="header">
             <div class="user">
                 <AvatarImage
                     :icon="currentIcon"
-                    :size="isMobile ? 'medium' : 'large'"
+                    :size="mobile ? 'medium' : 'large'"
                 />
                 <div class="name">
                     <h2>
-                        {{ loggedInUser?.username }}
+                        {{ user?.username }}
                     </h2>
                     <p>
-                        {{ loggedInUser?.firstName?.toLowerCase() }}
-                        {{ loggedInUser?.lastName?.toLowerCase() }}
+                        {{ user?.firstName?.toLowerCase() }}
+                        {{ user?.lastName?.toLowerCase() }}
                     </p>
-                    <p class="email">{{ loggedInUser?.email }}</p>
+                    <p class="email">{{ user?.email }}</p>
                 </div>
             </div>
             <v-menu content-class="profile-actions-menu">
                 <template #activator="{ props: menuProps }">
                     <IconButton
+                        v-if="isLoggedInUser"
                         v-bind="menuProps"
                         :icon="faMarker"
                         :handleClick="() => {}"
                         title="edit your dumbass details"
-                        :size="isMobile ? 'small' : 'medium'"
+                        :size="mobile ? 'small' : 'medium'"
                     />
                 </template>
                 <v-list>
@@ -62,9 +63,10 @@
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import AvatarSelectorModal from "@/components/modal/AvatarSelectorModal.vue";
 import ChangeUsernameModal from "@/components/modal/ChangeUsernameModal.vue";
+import { useDisplay } from "vuetify";
+import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user";
 import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
 import { faMarker, faUserAstronaut } from "@fortawesome/free-solid-svg-icons";
 import { computed, ref } from "vue";
 import { AVATAR_ICON_LIST } from "@/constants";
@@ -73,11 +75,17 @@ import {
     PROFILE_UPDATED_SUCCESS_ALERT,
     USERNAME_UPDATED_SUCCESS_ALERT,
 } from "@/constants";
+import type { User } from "@/types";
+
+const { isLoggedInUser, user } = defineProps<{
+    isLoggedInUser: boolean;
+    user: User;
+}>();
 
 const { updateUserAvatar, updateUserUsername } = useUser();
 const { loggedInUser } = storeToRefs(useUserStore());
-const { isMobile } = storeToRefs(useUIStore());
 const { showAlert } = useUIStore();
+const { mobile } = useDisplay();
 
 const activeModal = ref<"avatar" | "username" | "">("");
 

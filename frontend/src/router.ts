@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { IS_PALAVER_ENABLED } from "./constants/palaver";
+import { getUserFromStorage } from "@/utils";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -26,17 +26,26 @@ const router = createRouter({
         },
         {
             path: "/profile",
+            name: "profile-root",
+            redirect: () => {
+                const user = getUserFromStorage();
+                if (user?.username) {
+                    return {
+                        name: "profile-user",
+                        params: { username: user.username },
+                    };
+                }
+                return { path: "/" };
+            },
+        },
+        {
+            path: "/profile/:username",
+            name: "profile-user",
             component: () => import("@/components/views/ProfileView.vue"),
+            props: true,
         },
         {
             path: "/palaver",
-            beforeEnter: (to, from, next) => {
-                if (IS_PALAVER_ENABLED) {
-                    next();
-                } else {
-                    next({ name: "four-oh-four" });
-                }
-            },
             component: () => import("@/components/views/PalaverView.vue"),
         },
         {

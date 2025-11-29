@@ -29,10 +29,10 @@
                 />
             </RouterLink>
         </div>
-        <RouterLink class="router-link-wrapper" to="/profile">
+        <RouterLink class="router-link-wrapper" :to="profileLink">
             <ProfileButton
                 v-if="!isMobile && currentAvatar && !isGuest"
-                :handleClick="goToProfile"
+                :handleClick="() => {}"
                 :currentAvatar="currentAvatar"
             />
         </RouterLink>
@@ -67,15 +67,15 @@
                         v-if="link.path === '/palaver' && hasUnreadEntries"
                     />
                 </RouterLink>
-                <button
+                <RouterLink
                     v-if="currentAvatar && !isGuest"
+                    :to="profileLink"
                     class="mobile-profile-btn"
-                    type="button"
-                    @click="goToProfile"
+                    style="color: var(--accent-blue)"
                 >
                     <FontAwesomeIcon :icon="currentAvatar" />
                     <span>Profile</span>
-                </button>
+                </RouterLink>
                 <RouterLink v-if="isGuest" class="login-link" to="/">
                     login
                 </RouterLink>
@@ -117,6 +117,10 @@ const isGuest = computed(() => {
     return isGuestUser() || loggedInUser.value.id === "guest";
 });
 
+const profileLink = computed(() => {
+    return `/profile/${loggedInUser.value.username}`;
+});
+
 watch(
     () => loggedInUser.value.avatar,
     (newAvatar) => {
@@ -140,11 +144,6 @@ const toggleMobileMenu = () => {
 
 const closeMobileMenu = () => {
     isMobileMenuOpen.value = false;
-};
-
-const goToProfile = async () => {
-    await router.push("/profile");
-    closeMobileMenu();
 };
 
 onMounted(() => {
