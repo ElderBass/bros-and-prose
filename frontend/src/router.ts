@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { getUserFromStorage } from "@/utils";
+import { beforeEnterProfileView, getUserFromStorage } from "@/utils";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -42,7 +42,12 @@ const router = createRouter({
             path: "/profile/:username",
             name: "profile-user",
             component: () => import("@/components/views/ProfileView.vue"),
-            props: true,
+            props: (route) => ({
+                user: route.meta.user,
+                isLoggedInUser: route.meta.isLoggedInUser,
+            }),
+            beforeEnter: async (to, from, next) =>
+                await beforeEnterProfileView(to, from, next),
         },
         {
             path: "/palaver",

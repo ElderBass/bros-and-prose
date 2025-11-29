@@ -1,23 +1,23 @@
 <template>
     <AppLayout>
         <PageTitle>
-            <template v-if="isLoggedInUserProfile">
+            <template v-if="isLoggedInUser">
                 check urself / wreck urself
             </template>
             <template v-else>
-                checking out <span class="username">@{{ username }}</span>
+                checking out <span class="username">@{{ user.username }}</span>
             </template>
         </PageTitle>
         <LoadingSpinnerContainer
-            v-if="loading"
+            v-if="isAppLoading"
             size="large"
             message="retrieving the user..."
         />
         <div v-else class="profile-content">
             <UserInfoCard
-                v-if="targetUser"
-                :isLoggedInUser="isLoggedInUserProfile"
-                :user="targetUser"
+                v-if="user"
+                :isLoggedInUser="isLoggedInUser"
+                :user="user"
             />
             <div class="bookshelves-container">
                 <!-- <Bookshelf :bookshelf="haveRead" />
@@ -41,46 +41,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { ref } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
 import UserInfoCard from "../features/UserProfile/UserInfoCard.vue";
 import FloatingActionButton from "../ui/FloatingActionButton.vue";
 import AddBookModal from "../modal/AddBookModal.vue";
 import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
-import { useUserStore } from "@/stores/user";
-import { useUser } from "@/composables/useUser";
 import type { User } from "@/types";
-import { useLog } from "@/composables/useLog";
+import { storeToRefs } from "pinia";
+import { useUIStore } from "@/stores/ui";
 
-const { username } = defineProps<{
-    username: string;
+const { user } = defineProps<{
+    user: User;
+    isLoggedInUser: boolean;
 }>();
 
-const loading = ref(true);
-const targetUser = ref<User | null>(null);
-
-onMounted(async () => {
-    try {
-        loading.value = true;
-        const storedUser = useUserStore().loggedInUser;
-        if (storedUser?.username === username) {
-            targetUser.value = storedUser;
-        } else {
-            targetUser.value = await useUser().getUserByUsername(username);
-        }
-        console.log("KERTWANGING targetUser", targetUser.value);
-    } catch (error) {
-        console.error("Error fetching user", error);
-        await useLog().error(`Error fetching user: ${error}`);
-    } finally {
-        loading.value = false;
-    }
-});
-const isLoggedInUserProfile = computed(() => {
-    const loggedInUser = useUserStore().loggedInUser;
-    return loggedInUser.username === username;
-});
+const { isAppLoading } = storeToRefs(useUIStore());
 
 const addBookModalOpen = ref(false);
 const areBookshelvesEnabled = ref(false);
