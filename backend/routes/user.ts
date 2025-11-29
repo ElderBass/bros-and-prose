@@ -31,7 +31,7 @@ export const getUserByUsername = async (req: express.Request, res: express.Respo
         const targetUser = Object.values(users.val()).find(
             (user: any) => user.username === username
         );
-
+        console.log("KERTWANGING OUTGOING targetUser in getUserByUsername", targetUser);
         return res.json({
             success: true,
             message: "User fetched successfully",
