@@ -16,7 +16,7 @@
             :openFormModal="openFormModal"
             :futureBooks="currentSelections"
         />
-        <ArchivesContainer :archives="archivedSelections" />
+        <ArchivesSection :archives="archivedSelections" />
         <AddFutureBookFab
             v-if="userIsFutureBookSelector && !fabDisabled"
             @click="openFormModal"
@@ -48,23 +48,21 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import AddFutureBookFab from "@/components/features/FutureBooks/AddFutureBookFab.vue";
 import FutureBookModal from "@/components/modal/FutureBookModal.vue";
 import SuccessModal from "@/components/modal/SuccessModal.vue";
 import ErrorModal from "@/components/modal/ErrorModal.vue";
 import FutureBooksContainer from "@/components/features/FutureBooks/FutureBooksContainer.vue";
-import ArchivesContainer from "@/components/features/FutureBooks/ArchivesContainer.vue";
-import { computed, onMounted } from "vue";
+import ArchivesSection from "@/components/features/FutureBooks/ArchivesSection.vue";
 import { useUserStore } from "@/stores/user";
-import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "@/composables/useLog";
 import type { FutureBook } from "@/types";
 import { useFutureBooksStore } from "@/stores/futureBooks";
 import { useFutureBooks } from "@/composables/useFutureBooks";
-import PageTitle from "../ui/PageTitle.vue";
-import LoadingSpinnerContainer from "../ui/LoadingSpinnerContainer.vue";
 
 const { addCurrentSelection, updateCurrentSelection, getArchivedSelections } =
     useFutureBooks();

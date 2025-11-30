@@ -20,9 +20,9 @@
                 :user="user"
             />
             <ReviewsSection
-                v-if="user"
+                v-if="user.reviews"
                 :username="user.username"
-                :reviews="userReviews"
+                :reviews="Object.values(user.reviews || {})"
                 :heading="reviewsHeading"
             />
             <div class="bookshelves-container">
@@ -70,7 +70,6 @@ const { isAppLoading } = storeToRefs(useUIStore());
 const addBookModalOpen = ref(false);
 const areBookshelvesEnabled = ref(false);
 
-const userReviews = computed(() => Object.values(user.value?.reviews || {}));
 const reviewsHeading = computed(() =>
     isLoggedInUser.value
         ? "shit you've said about books"

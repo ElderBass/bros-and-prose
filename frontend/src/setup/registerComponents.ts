@@ -8,6 +8,8 @@ import BaseTextArea from "@/components/form/BaseTextArea.vue";
 import BaseTooltip from "@/components/ui/BaseTooltip.vue";
 import FloatingActionButton from "@/components/ui/FloatingActionButton.vue";
 import IconButton from "@/components/ui/IconButton.vue";
+import InfiniteScroll from "@/components/ui/InfiniteScroll.vue";
+import ExpansionPanel from "@/components/ui/ExpansionPanel.vue";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
@@ -25,6 +27,8 @@ export const registerComponents = (app: App) => {
     app.component("BaseTooltip", BaseTooltip);
     app.component("FloatingActionButton", FloatingActionButton);
     app.component("IconButton", IconButton);
+    app.component("InfiniteScroll", InfiniteScroll);
+    app.component("ExpansionPanel", ExpansionPanel);
     app.component("LoadingSpinner", LoadingSpinner);
     app.component("LoadingSpinnerContainer", LoadingSpinnerContainer);
     app.component("FontAwesomeIcon", FontAwesomeIcon);

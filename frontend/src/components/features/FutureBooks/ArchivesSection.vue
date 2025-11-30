@@ -4,43 +4,35 @@
         <p v-if="!archives.length" class="empty-copy">
             no archived selections yet — keep voting, bros.
         </p>
-        <v-expansion-panels
+        <ExpansionPanel
             v-else
+            v-for="entry in archives"
+            :key="entry.archivedAt + entry.selectorId"
             variant="accordion"
             multiple
-            class="archives-panels"
         >
-            <v-expansion-panel
-                v-for="entry in archives"
-                :key="entry.archivedAt + entry.selectorId"
-                elevation="0"
-                class="archive-panel"
-                :expandIcon="ExpandArchiveIcon"
-                :collapseIcon="CollapseArchiveIcon"
-            >
-                <v-expansion-panel-title>
-                    <div class="panel-title">
-                        <span class="selector">
-                            {{ selectorLabel(entry.selectorId) }}
-                        </span>
-                        <span class="separator">•</span>
-                        <span class="date">
-                            {{ formatDate(entry.archivedAt) }}
-                        </span>
-                    </div>
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                    <div class="books-grid">
-                        <ArchiveBookCard
-                            v-for="book in entry.archivedBooks"
-                            :key="book.id"
-                            :book="book"
-                            :isHighlighted="book.id === topBookId(entry)"
-                        />
-                    </div>
-                </v-expansion-panel-text>
-            </v-expansion-panel>
-        </v-expansion-panels>
+            <template #title>
+                <div class="panel-title">
+                    <span class="selector">
+                        {{ selectorLabel(entry.selectorId) }}
+                    </span>
+                    <span class="separator">•</span>
+                    <span class="date">
+                        {{ formatDate(entry.archivedAt) }}
+                    </span>
+                </div>
+            </template>
+            <template #text>
+                <div class="books-grid">
+                    <ArchiveBookCard
+                        v-for="book in entry.archivedBooks"
+                        :key="book.id"
+                        :book="book"
+                        :isHighlighted="book.id === topBookId(entry)"
+                    />
+                </div>
+            </template>
+        </ExpansionPanel>
     </section>
 </template>
 
@@ -49,8 +41,6 @@ import { ref, watch } from "vue";
 import type { ArchivedBooksEntry } from "@/types/books";
 import ArchiveBookCard from "./ArchiveBookCard.vue";
 import { getUserFromId } from "@/utils/getUserFromId";
-import ExpandArchiveIcon from "./ExpandArchiveIcon.vue";
-import CollapseArchiveIcon from "./CollapseArchiveIcon.vue";
 import { getMostVotedFutureBookId } from "@/utils";
 
 const props = defineProps<{
