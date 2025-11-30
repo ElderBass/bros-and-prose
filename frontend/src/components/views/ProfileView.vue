@@ -19,12 +19,7 @@
                 :isLoggedInUser="isLoggedInUser"
                 :user="user"
             />
-            <ReviewsSection
-                v-if="user.reviews"
-                :username="user.username"
-                :reviews="Object.values(user.reviews || {})"
-                :heading="reviewsHeading"
-            />
+            <UserContentSection :user="user" sectionTitle="activity" />
             <div class="bookshelves-container">
                 <!-- <Bookshelf :bookshelf="haveRead" />
                 <Bookshelf :bookshelf="currentlyReading" />
@@ -47,16 +42,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs } from "vue";
+import { ref, toRefs } from "vue";
+import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
 import UserInfoCard from "../features/UserProfile/UserInfoCard.vue";
-import ReviewsSection from "../features/UserProfile/ReviewsSection.vue";
-import FloatingActionButton from "../ui/FloatingActionButton.vue";
+import UserContentSection from "../features/UserProfile/UserContentSection.vue";
 import AddBookModal from "../modal/AddBookModal.vue";
 import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
 import type { User } from "@/types";
-import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui";
 
 const props = defineProps<{
@@ -69,12 +63,6 @@ const { isAppLoading } = storeToRefs(useUIStore());
 
 const addBookModalOpen = ref(false);
 const areBookshelvesEnabled = ref(false);
-
-const reviewsHeading = computed(() =>
-    isLoggedInUser.value
-        ? "shit you've said about books"
-        : `shit ${user.value?.username || "this bro"} said about books`
-);
 
 const openAddBookModal = () => {
     addBookModalOpen.value = true;
@@ -89,6 +77,7 @@ const openAddBookModal = () => {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
+    gap: 1rem;
     margin-top: 2rem;
 }
 

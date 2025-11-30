@@ -7,6 +7,7 @@
     >
         <v-expansion-panel
             class="bro-expansion-panel"
+            :class="`color-${color}`"
             :variant="variant"
             :elevation="elevation"
             :rounded="rounded"
@@ -35,12 +36,14 @@ withDefaults(
         elevation?: number;
         rounded?: string | number;
         multiple?: boolean;
+        color?: "blue" | "fuschia" | "green" | "lavender" | "red";
     }>(),
     {
         variant: "accordion",
         elevation: 0,
         rounded: "18px",
         multiple: false,
+        color: "blue",
     }
 );
 </script>
@@ -54,9 +57,28 @@ withDefaults(
 :deep(.bro-expansion-panel) {
     border: 1px solid var(--accent-blue);
     background: rgba(18, 18, 41, 0.6);
-    margin-bottom: 0.5rem;
     transition: border-color 0.2s ease;
     border-radius: 1rem;
+}
+
+:deep(.bro-expansion-panel.color-blue) {
+    border-color: var(--accent-blue);
+}
+
+:deep(.bro-expansion-panel.color-fuschia) {
+    border-color: var(--accent-fuschia);
+}
+
+:deep(.bro-expansion-panel.color-green) {
+    border-color: var(--accent-green);
+}
+
+:deep(.bro-expansion-panel.color-lavender) {
+    border-color: var(--accent-lavender);
+}
+
+:deep(.bro-expansion-panel.color-red) {
+    border-color: var(--accent-red);
 }
 
 :deep(.bro-expansion-panel .v-expansion-panel-title__overlay) {

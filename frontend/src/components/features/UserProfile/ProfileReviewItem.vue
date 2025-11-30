@@ -125,7 +125,7 @@ const formatDateForDevice = computed(() => {
 
 <style scoped>
 .profile-review-item {
-    flex: 1 0 100%;
+    flex: 1 0 50%;
     display: flex;
     gap: 0.9rem;
     padding: 0.75rem;
@@ -237,6 +237,7 @@ const formatDateForDevice = computed(() => {
     .profile-review-item {
         font-size: 0.95rem;
         gap: 0.75rem;
+        flex: 1 0 100%;
     }
 
     .content {
