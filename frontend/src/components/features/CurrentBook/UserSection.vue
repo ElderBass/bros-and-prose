@@ -170,6 +170,7 @@ const onAddComment = async (comment: Comment) => {
         text: comment.comment,
         bookInfo: {
             title: props.book.title,
+            author: props.book.author,
             id: props.book.id,
         },
     });

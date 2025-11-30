@@ -3,7 +3,7 @@
         <BaseCard shadowColor="blue" size="medium">
             <BookInfo :book="book" />
         </BaseCard>
-        <BroReviewsCard :book="book" :broReviews="userReviews" />
+        <BroReviewsSection :book="book" :broReviews="userReviews" />
     </div>
     <GroupConsensus
         :groupConsensus="book.groupConsensus"
@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import BookInfo from "@/components/features/common/BookInfo.vue";
-import BroReviewsCard from "@/components/features/PastBooks/BroReviewsCard.vue";
+import BroReviewsSection from "@/components/features/PastBooks/BroReviewsSection.vue";
 import GroupConsensus from "@/components/features/PastBooks/GroupConsensusSection.vue";
 import InbrospectionSection from "@/components/features/PastBooks/InbrospectionSection.vue";
 import type { Book, BroReview } from "@/types";

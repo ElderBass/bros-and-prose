@@ -6,10 +6,10 @@ import {
     QUICK_ERROR,
     REVIEW_SUBMITTED_SUCCESS_ALERT,
 } from "@/constants";
-import { v4 as uuidv4 } from "uuid";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "./useLog";
 import { useFutureBooks } from "./useFutureBooks";
+import { buildReview, isReviewOfCurrentBook } from "@/utils";
 
 export const useUser = () => {
     const {
@@ -97,30 +97,23 @@ export const useUser = () => {
         return updatedUser;
     };
 
-    const addReview = async (
-        reviewArgs: SubmitReviewArgs,
-        currentBook: Book
-    ) => {
+    const addReview = async (reviewArgs: SubmitReviewArgs, book: Book) => {
         try {
-            const newReview = {
-                id: uuidv4(),
-                book: {
-                    id: currentBook.id,
-                    name: currentBook.title,
-                    author: currentBook.author,
-                },
-                rating: reviewArgs.rating,
-                reviewComment: reviewArgs.reviewComment,
-            };
+            const newReview = buildReview(reviewArgs, book);
             await useLog().info(
                 `newReview in addReview: reviewer = ${loggedInUser.username} | review = ${newReview}`
             );
+
+            const currentBookProgress = isReviewOfCurrentBook(book)
+                ? FINISHED_BOOK_PROGRESS
+                : loggedInUser.currentBookProgress;
+
             const updatedUser = await updateUser(loggedInUser.id, {
                 ...loggedInUser,
-                currentBookProgress: FINISHED_BOOK_PROGRESS,
+                currentBookProgress,
                 reviews: {
                     ...loggedInUser.reviews,
-                    [currentBook.id]: newReview,
+                    [book.id]: newReview,
                 },
             });
             showAlert(REVIEW_SUBMITTED_SUCCESS_ALERT);

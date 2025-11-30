@@ -7,6 +7,11 @@ export const DEFAULT_REVIEW = {
     rating: DEFAULT_RATING,
     reviewComment: "",
 };
+export const EMPTY_BOOK_INFO = {
+    title: "",
+    author: "",
+    id: "",
+};
 
 export const RATING_MAP = {
     0: "nunya",

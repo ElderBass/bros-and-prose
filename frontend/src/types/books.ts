@@ -11,6 +11,12 @@ export interface Book {
     dateCompleted?: string;
 }
 
+export interface BookInfo {
+    title: string;
+    author: string;
+    id: string;
+}
+
 export interface BooksState {
     mostVotedFutureBookId: string;
     currentBook: Book;

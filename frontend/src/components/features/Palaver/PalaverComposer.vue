@@ -67,6 +67,7 @@ import { buildPalaverEntry } from "@/utils";
 import { useLog } from "@/composables";
 import { usePalaverStore } from "@/stores/palaver";
 import { useUserStore } from "@/stores/user";
+import { EMPTY_BOOK_INFO } from "@/constants";
 
 const props = defineProps<{
     entry: PalaverEntry;
@@ -102,10 +103,7 @@ const { closeModal, openErrorModal, openSuccessModal } = usePalaverStore();
 
 const type = ref<PalaverType>("discussion_note");
 const text = ref("");
-const bookInfo = ref({
-    title: "",
-    id: "",
-});
+const bookInfo = ref(EMPTY_BOOK_INFO);
 const recTitle = ref("");
 const recAuthor = ref("");
 const tags = ref<string[]>([]);
@@ -118,7 +116,7 @@ const shouldShowBookSelect = computed(() =>
 const resetForm = () => {
     type.value = "discussion_note";
     text.value = "";
-    bookInfo.value = { title: "", id: "" };
+    bookInfo.value = EMPTY_BOOK_INFO;
     recTitle.value = "";
     recAuthor.value = "";
     tags.value = [];
@@ -132,9 +130,7 @@ const syncFormWithEntry = (entry: PalaverEntry) => {
 
     type.value = entry.type;
     text.value = entry.text ?? "";
-    bookInfo.value = entry.bookInfo
-        ? { ...entry.bookInfo }
-        : { title: "", id: "" };
+    bookInfo.value = entry.bookInfo ? { ...entry.bookInfo } : EMPTY_BOOK_INFO;
     recTitle.value = entry.recommendation?.title ?? "";
     recAuthor.value = entry.recommendation?.author ?? "";
     tags.value = entry.recommendation?.tags

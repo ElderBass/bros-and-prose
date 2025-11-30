@@ -14,9 +14,13 @@
                     >'s review for
                 </p>
                 <div class="book-info">
-                    <span class="book-title">{{ props.book?.title }}</span>
+                    <span class="book-title">{{
+                        props.brosReview.book?.title
+                    }}</span>
                     <p class="heading-text">by</p>
-                    <span class="book-author">{{ props.book?.author }}</span>
+                    <span class="book-author">{{
+                        props.brosReview.book?.author
+                    }}</span>
                 </div>
             </div>
             <div class="star-rating-container">
@@ -47,7 +51,7 @@
 
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
-import type { Book, Review } from "@/types";
+import type { Review } from "@/types";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import ReviewComment from "../features/Review/ReviewComment.vue";
 import { useUIStore } from "@/stores/ui";
@@ -57,7 +61,6 @@ const { isMobile } = storeToRefs(useUIStore());
 
 const props = defineProps<{
     showModal: boolean;
-    book: Book;
     brosName: string;
     brosReview: Review;
     onClose: () => void;
