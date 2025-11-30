@@ -104,7 +104,7 @@ export const useUser = () => {
                 `newReview in addReview: reviewer = ${loggedInUser.username} | review = ${newReview}`
             );
 
-            const currentBookProgress = isReviewOfCurrentBook(book)
+            const currentBookProgress = isReviewOfCurrentBook(book.id)
                 ? FINISHED_BOOK_PROGRESS
                 : loggedInUser.currentBookProgress;
 

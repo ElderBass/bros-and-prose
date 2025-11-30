@@ -37,8 +37,8 @@ export const hasFinishedBook = (bro: User, totalPages: number) => {
     return broProgress === FINISHED_BOOK_PROGRESS || broProgress === totalPages;
 };
 
-export const isReviewOfCurrentBook = (book: Book) => {
-    return book.id === useBooksStore().currentBook.id;
+export const isReviewOfCurrentBook = (bookId: string) => {
+    return bookId === useBooksStore().currentBook.id;
 };
 
 export const buildReview = (reviewArgs: SubmitReviewArgs, book: Book) => {
