@@ -1,33 +1,14 @@
 <template>
     <div class="user-content-section">
         <h2 class="section-title">{{ sectionTitle }}</h2>
-        <ReviewsSection
-            :reviews="reviews"
-            :username="user.username"
-            :isLoggedInUser="isLoggedInUser"
-        />
-        <PalaverSection :entries="entries" :isLoggedInUser="isLoggedInUser" />
+        <slot />
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import ReviewsSection from "./ReviewsSection.vue";
-import PalaverSection from "./PalaverSection.vue";
-import type { User } from "@/types";
-import { getUserContent } from "@/utils";
-import { useUserStore } from "@/stores/user";
-
-const props = defineProps<{
-    user: User;
+defineProps<{
     sectionTitle: string;
 }>();
-
-const reviews = computed(() => Object.values(props.user.reviews || {}));
-const entries = computed(() => getUserContent(props.user.id));
-const isLoggedInUser = computed(
-    () => props.user.id === useUserStore().loggedInUser.id
-);
 </script>
 
 <style scoped>
