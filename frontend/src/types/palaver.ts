@@ -1,3 +1,4 @@
+import type { BookInfo } from "./books";
 import type { UserInfo } from "./user";
 
 export type PalaverType =
@@ -17,11 +18,6 @@ export interface Recommendation {
     title: string;
     author: string;
     tags: string[];
-}
-
-export interface BookInfo {
-    title: string;
-    id: string;
 }
 
 export interface Comment {

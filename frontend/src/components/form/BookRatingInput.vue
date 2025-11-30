@@ -1,11 +1,11 @@
 <template>
-    <div class="book-rating-input">
+    <div class="book-rating-input" :data-size="size">
         <h6 v-if="!readOnly">how'd you like this book?</h6>
         <div class="book-rating-container">
             <div
                 v-for="book in 10"
                 :key="book"
-                :class="`book-wrapper ${readOnly && 'disabled'}`"
+                :class="['book-wrapper', { disabled: readOnly }]"
                 @click="handleBookClick(book)"
                 @mousemove="handleMouseMove(book)"
                 @mouseleave="handleMouseLeave"
@@ -28,11 +28,9 @@ const props = withDefaults(
     defineProps<{
         modelValue: number;
         readOnly?: boolean;
-        size?: "small" | "medium" | "large";
+        size?: "xsmall" | "small" | "medium" | "large";
     }>(),
     {
-        disabled: false,
-        showValue: false,
         readOnly: false,
         size: "medium",
     }
@@ -98,6 +96,7 @@ const handleMouseLeave = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
+    text-align: center;
     gap: 0.75rem;
 }
 
@@ -120,6 +119,39 @@ h6 {
     position: relative;
     display: flex;
     transition: transform 0.2s ease;
+    font-size: 1.5rem; /* medium default */
+}
+
+.book-rating-input[data-size="xsmall"] {
+    gap: 0.15rem;
+}
+
+.book-rating-input[data-size="small"] {
+    gap: 0.25rem;
+}
+
+.book-rating-input[data-size="medium"] {
+    gap: 0.5rem;
+}
+
+.book-rating-input[data-size="large"] {
+    gap: 0.75rem;
+}
+
+.book-rating-input[data-size="xsmall"] .book-wrapper {
+    font-size: 0.85rem;
+}
+
+.book-rating-input[data-size="small"] .book-wrapper {
+    font-size: 1.1rem;
+}
+
+.book-rating-input[data-size="medium"] .book-wrapper {
+    font-size: 1.25rem;
+}
+
+.book-rating-input[data-size="large"] .book-wrapper {
+    font-size: 1.75rem;
 }
 
 .book-wrapper:hover {
@@ -134,21 +166,8 @@ h6 {
     transform: none;
 }
 
-/* Size variants */
 .book-rating-container {
-    font-size: 1.5rem; /* medium default */
-}
-
-.book-rating-input[data-size="small"] .book-rating-container {
-    font-size: 1rem;
-}
-
-.book-rating-input[data-size="medium"] .book-rating-container {
-    font-size: 1.5rem;
-}
-
-.book-rating-input[data-size="large"] .book-rating-container {
-    font-size: 2rem;
+    font-size: inherit;
 }
 
 /* Book states */

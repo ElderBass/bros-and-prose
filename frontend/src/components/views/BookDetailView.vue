@@ -85,6 +85,7 @@ const handleSubmitComment = async (comment: Comment) => {
             bookInfo: {
                 title: book.value.title,
                 id: book.value.id,
+                author: book.value.author,
             },
         });
         await createPalaverEntry(entry);
