@@ -19,7 +19,8 @@
                 :isLoggedInUser="isLoggedInUser"
                 :user="user"
             />
-            <UserContentSection :user="user" sectionTitle="activity" />
+            <UserShelvesSection :isLoggedInUser="isLoggedInUser" />
+            <UserActivitySection :user="user" />
             <div class="bookshelves-container">
                 <!-- <Bookshelf :bookshelf="haveRead" />
                 <Bookshelf :bookshelf="currentlyReading" />
@@ -47,7 +48,8 @@ import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
 import UserInfoCard from "../features/UserProfile/UserInfoCard.vue";
-import UserContentSection from "../features/UserProfile/UserContentSection.vue";
+import UserActivitySection from "../features/UserProfile/UserActivitySection.vue";
+import UserShelvesSection from "../features/UserProfile/UserShelvesSection.vue";
 import AddBookModal from "../modal/AddBookModal.vue";
 import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
 import type { User } from "@/types";
