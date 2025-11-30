@@ -18,24 +18,25 @@
                     :read-only="true"
                 />
             </div>
-            <transition name="fade">
-                <p v-if="showFullReview" class="review-text">
-                    {{ review.reviewComment }}
-                </p>
-            </transition>
             <div class="toggle">
                 <BaseButton
                     size="xsmall"
-                    :variant="
-                        showFullReview ? 'outline-secondary' : 'outline-success'
-                    "
-                    @click="showFullReview = !showFullReview"
+                    variant="outline-tertiary"
+                    @click="setShowOtherBroReviewModal(true)"
                 >
-                    {{ showFullReview ? "hide review" : "peep review" }}
+                    <FontAwesomeIcon :icon="faGlasses" class="icon" />
+                    peep review
                 </BaseButton>
             </div>
         </div>
     </div>
+    <OtherBroReviewModal
+        v-if="showOtherBroReviewModal"
+        :showModal="showOtherBroReviewModal"
+        :brosName="username"
+        :brosReview="review"
+        :onClose="() => setShowOtherBroReviewModal(false)"
+    />
 </template>
 
 <script setup lang="ts">
@@ -44,6 +45,8 @@ import { useDisplay } from "vuetify";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import type { Review } from "@/types";
+import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
+import { faGlasses } from "@fortawesome/free-solid-svg-icons";
 
 const props = withDefaults(
     defineProps<{
@@ -57,7 +60,11 @@ const props = withDefaults(
 
 const { mobile } = useDisplay();
 
-const showFullReview = ref(false);
+const showOtherBroReviewModal = ref(false);
+
+const setShowOtherBroReviewModal = (value: boolean) => {
+    showOtherBroReviewModal.value = value;
+};
 
 const themeVariant = computed(() => {
     const rating = props.review.rating ?? 0;
@@ -118,6 +125,7 @@ const formatDateForDevice = computed(() => {
 
 <style scoped>
 .profile-review-item {
+    flex: 1 0 100%;
     display: flex;
     gap: 0.9rem;
     padding: 0.75rem;
@@ -131,12 +139,14 @@ const formatDateForDevice = computed(() => {
     box-shadow:
         0 4px 20px color-mix(in srgb, var(--theme-color) 25%, transparent),
         inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    z-index: 10;
 }
 
 .content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 0.75rem;
 }
 
@@ -161,6 +171,7 @@ const formatDateForDevice = computed(() => {
 }
 
 .book-title {
+    max-width: 80%;
     font-weight: 600;
     font-style: italic;
     font-size: 1.25rem;
@@ -220,16 +231,6 @@ const formatDateForDevice = computed(() => {
 
 .rating-block :deep(.rating-message) {
     font-size: 1rem;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-    transition: opacity 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-    opacity: 0;
 }
 
 @media (max-width: 768px) {

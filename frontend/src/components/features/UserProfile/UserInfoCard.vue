@@ -1,9 +1,12 @@
 <template>
     <BaseCard
         shadow-color="lavender"
-        :style="{ width: mobile ? '100%' : '50%' }"
+        :style="{
+            width: mobile ? '100%' : '50%',
+            minHeight: mobile ? '120px' : '160px',
+        }"
     >
-        <div class="header">
+        <div class="content">
             <div class="user">
                 <AvatarImage
                     :icon="currentIcon"
@@ -127,10 +130,11 @@ const isUsernameModalOpen = computed(() => {
 </script>
 
 <style scoped>
-.header {
+.content {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 100%;
     gap: 1.5rem;
 }
 
