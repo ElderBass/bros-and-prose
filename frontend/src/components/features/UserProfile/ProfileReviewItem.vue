@@ -237,6 +237,7 @@ const formatDateForDevice = computed(() => {
     .profile-review-item {
         font-size: 0.95rem;
         gap: 0.75rem;
+        flex: 1 0 100%;
     }
 
     .content {
