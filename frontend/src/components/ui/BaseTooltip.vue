@@ -67,7 +67,7 @@ const props = withDefaults(
         dismissOnClick: true,
     }
 );
-console.log(" KERTWANG MY MAX WIDTH??", props.maxWidth);
+
 const emit = defineEmits<{
     "update:modelValue": [value: boolean];
 }>();
