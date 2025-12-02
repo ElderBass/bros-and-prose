@@ -21,14 +21,9 @@
             />
             <UserShelvesSection :isLoggedInUser="isLoggedInUser" />
             <UserActivitySection :user="user" />
-            <div class="bookshelves-container">
-                <!-- <Bookshelf :bookshelf="haveRead" />
-                <Bookshelf :bookshelf="currentlyReading" />
-                <Bookshelf :bookshelf="wantToRead" /> -->
-            </div>
         </div>
         <FloatingActionButton
-            v-if="areBookshelvesEnabled"
+            v-if="false"
             :icon="faBookMedical"
             title="add a book"
             @click="openAddBookModal"
@@ -64,7 +59,6 @@ const { user, isLoggedInUser } = toRefs(props);
 const { isAppLoading } = storeToRefs(useUIStore());
 
 const addBookModalOpen = ref(false);
-const areBookshelvesEnabled = ref(false);
 
 const openAddBookModal = () => {
     addBookModalOpen.value = true;
