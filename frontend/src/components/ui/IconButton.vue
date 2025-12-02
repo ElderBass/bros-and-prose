@@ -13,7 +13,7 @@
                 :title="title"
                 :style="style"
                 :disabled="disabled"
-                @click="handleClick"
+                @click="(event) => handleClick(event)"
             >
                 <FontAwesomeIcon :icon="icon" />
             </button>
@@ -35,7 +35,7 @@ withDefaults(
         shadowColor?: "lavender" | "fuschia" | "green" | "blue";
         disabled?: boolean;
         style?: CSSProperties;
-        handleClick: () => void;
+        handleClick: (event?: MouseEvent) => void;
         openDelay?: number;
     }>(),
     {

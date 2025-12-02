@@ -15,6 +15,7 @@
                 class="tooltip-activator-wrapper"
                 @click="handleActivatorClick"
                 @touchstart="handleTouchStart"
+                :style="maxWidth ? { width: maxWidth } : {}"
             >
                 <slot name="activator" :props="activatorProps" />
             </div>

@@ -22,31 +22,21 @@
             <UserShelvesSection :isLoggedInUser="isLoggedInUser" />
             <UserActivitySection :user="user" />
         </div>
-        <FloatingActionButton
-            v-if="false"
-            :icon="faBookMedical"
-            title="add a book"
-            @click="openAddBookModal"
-        />
-
-        <AddBookModal
-            v-if="addBookModalOpen"
-            :open="addBookModalOpen"
-            @close="addBookModalOpen = false"
-        />
+        <ProfileFab v-if="isLoggedInUser" />
+        <PalaverModals v-if="isLoggedInUser" />
     </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from "vue";
+import { toRefs } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
 import UserInfoCard from "../features/UserProfile/UserInfoCard.vue";
+import ProfileFab from "../features/UserProfile/ProfileFab.vue";
 import UserActivitySection from "../features/UserProfile/UserActivitySection.vue";
 import UserShelvesSection from "../features/UserProfile/UserShelvesSection.vue";
-import AddBookModal from "../modal/AddBookModal.vue";
-import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
+import PalaverModals from "../modal/PalaverModals/index.vue";
 import type { User } from "@/types";
 import { useUIStore } from "@/stores/ui";
 
@@ -57,12 +47,6 @@ const props = defineProps<{
 const { user, isLoggedInUser } = toRefs(props);
 
 const { isAppLoading } = storeToRefs(useUIStore());
-
-const addBookModalOpen = ref(false);
-
-const openAddBookModal = () => {
-    addBookModalOpen.value = true;
-};
 </script>
 
 <style scoped>
