@@ -15,6 +15,7 @@
                 class="tooltip-activator-wrapper"
                 @click="handleActivatorClick"
                 @touchstart="handleTouchStart"
+                :style="maxWidth ? { width: maxWidth } : {}"
             >
                 <slot name="activator" :props="activatorProps" />
             </div>
@@ -66,7 +67,7 @@ const props = withDefaults(
         dismissOnClick: true,
     }
 );
-
+console.log(" KERTWANG MY MAX WIDTH??", props.maxWidth);
 const emit = defineEmits<{
     "update:modelValue": [value: boolean];
 }>();

@@ -4,6 +4,7 @@
         :text="title.toLowerCase().trim()"
         :shadow-color="tooltipShadowColor"
         :open-delay="750"
+        :max-width="props.style?.width"
     >
         <template #activator="{ props: tooltipProps }">
             <button
@@ -63,6 +64,7 @@ const props = withDefaults(
         variant?: ButtonVariant;
         style?: CSSProperties;
         showTooltip?: boolean;
+        tooltipStyle?: CSSProperties;
     }>(),
     {
         title: "some dumb shitty button",

@@ -1,12 +1,29 @@
 <template>
     <div class="fab-container" :class="{ fixed: !draggable }">
         <IconButton
+            v-bind="$attrs"
             color="green"
             :icon="icon"
             :title="title"
             size="large"
             :style="style"
-            :handleClick="() => $emit('click')"
+            :handleClick="
+                (event?: MouseEvent) => {
+                    if (!event) return;
+                    // Call Vuetify's onClick handler if it exists (from menu props)
+                    const onClickHandler = $attrs.onClick as
+                        | ((event: MouseEvent) => void)
+                        | undefined;
+                    if (
+                        onClickHandler &&
+                        typeof onClickHandler === 'function'
+                    ) {
+                        onClickHandler(event);
+                    }
+                    // Emit our own click event
+                    $emit('click', event);
+                }
+            "
             :disabled="disabled"
             :openDelay="3000"
         />
@@ -17,6 +34,8 @@
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import IconButton from "@/components/ui/IconButton.vue";
 import type { CSSProperties } from "vue";
+
+defineOptions({ inheritAttrs: false });
 
 withDefaults(
     defineProps<{

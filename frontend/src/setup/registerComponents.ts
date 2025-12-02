@@ -2,6 +2,7 @@ import BaseAlert from "@/components/ui/BaseAlert.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import BaseInput from "@/components/form/BaseInput.vue";
 import BaseCard from "@/components/ui/BaseCard.vue";
+import BaseMenu from "@/components/ui/BaseMenu.vue";
 import BaseModal from "@/components/ui/BaseModal.vue";
 import BaseSelect from "@/components/form/BaseSelect.vue";
 import BaseTextArea from "@/components/form/BaseTextArea.vue";
@@ -21,6 +22,7 @@ export const registerComponents = (app: App) => {
     app.component("BaseButton", BaseButton);
     app.component("BaseCard", BaseCard);
     app.component("BaseInput", BaseInput);
+    app.component("BaseMenu", BaseMenu);
     app.component("BaseModal", BaseModal);
     app.component("BaseSelect", BaseSelect);
     app.component("BaseTextArea", BaseTextArea);
