@@ -37,7 +37,7 @@ const color = computed(() => {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.25rem;
     font-size: 1rem;
 }
 
