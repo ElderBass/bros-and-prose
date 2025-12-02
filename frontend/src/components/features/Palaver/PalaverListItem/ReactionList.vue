@@ -1,16 +1,14 @@
 <template>
     <div v-if="reactions.length" class="section">
         <span class="label" :class="color">{{ label }} by:</span>
-        <div v-for="(username, index) in reactions" :key="username">
-            <span class="reaction-user">
-                {{
-                    username === loggedInUser?.username ? "you" : `@${username}`
-                }}
-                <span v-if="index !== reactions.length - 1" class="comma"
-                    >,</span
-                >
-            </span>
-        </div>
+        <span
+            v-for="(username, index) in reactions"
+            :key="username"
+            class="reaction-user"
+        >
+            {{ username === loggedInUser?.username ? "you" : `@${username}` }}
+            <span v-if="index !== reactions.length - 1" class="comma">,</span>
+        </span>
     </div>
 </template>
 
@@ -38,6 +36,7 @@ const color = computed(() => {
 .section {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
     font-size: 1rem;
 }
