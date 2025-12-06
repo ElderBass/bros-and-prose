@@ -8,7 +8,7 @@
                 >{{ shelfMessage }}</label
             >
             <label v-else for="shelf-book-title" class="title-label">
-                book not found; enter details manually
+                book not found; you're on your own
             </label>
             <BaseInput
                 v-model="title"
