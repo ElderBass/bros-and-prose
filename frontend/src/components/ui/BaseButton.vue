@@ -134,10 +134,12 @@ const showTooltip = computed(() => {
 /* Primary variant - blue to fuschia */
 .base-button[variant="primary"] {
     background-color: var(--accent-blue);
+    border: 2px solid var(--accent-blue);
 }
 
 .base-button[variant="primary"]:hover {
     background-color: var(--accent-fuschia);
+    border: 2px solid var(--accent-fuschia);
 }
 
 .base-button[variant="outline"] {
@@ -178,26 +180,32 @@ const showTooltip = computed(() => {
 
 .base-button[variant="secondary"] {
     background-color: var(--accent-fuschia);
+    border: 2px solid var(--accent-fuschia);
 }
 
 .base-button[variant="secondary"]:hover {
     background-color: var(--accent-blue);
+    border: 2px solid var(--accent-blue);
 }
 
 .base-button[variant="tertiary"] {
     background-color: var(--accent-lavender);
+    border: 2px solid var(--accent-lavender);
 }
 
 .base-button[variant="tertiary"]:hover {
     background-color: var(--accent-blue);
+    border: 2px solid var(--accent-blue);
 }
 
 .base-button[variant="success"] {
     background-color: var(--accent-green);
+    border: 2px solid var(--accent-green);
 }
 
 .base-button[variant="success"]:hover {
     background-color: var(--accent-lavender);
+    border: 2px solid var(--accent-lavender);
 }
 
 .base-button[variant="outline-success"] {
@@ -249,10 +257,12 @@ const showTooltip = computed(() => {
 
 .base-button[variant="error"] {
     background-color: var(--accent-red);
+    border: 2px solid var(--accent-red);
 }
 
 .base-button[variant="error"]:hover {
     background-color: var(--accent-lavender);
+    border: 2px solid var(--accent-lavender);
 }
 
 .base-button[variant="error"]:disabled {

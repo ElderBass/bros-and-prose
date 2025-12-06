@@ -35,7 +35,7 @@ import PageTitle from "../ui/PageTitle.vue";
 import UserInfoCard from "../features/UserProfile/UserInfoCard.vue";
 import ProfileFab from "../features/UserProfile/ProfileFab.vue";
 import UserActivitySection from "../features/UserProfile/UserActivitySection.vue";
-import UserShelvesSection from "../features/UserProfile/UserShelvesSection.vue";
+import UserShelvesSection from "../features/UserProfile/Shelves/UserShelvesSection.vue";
 import PalaverModals from "../modal/PalaverModals/index.vue";
 import type { User } from "@/types";
 import { useUIStore } from "@/stores/ui";
