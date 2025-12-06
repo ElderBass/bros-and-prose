@@ -36,11 +36,7 @@
         </v-fab>
     </div>
 
-    <AddBookModal
-        v-if="addBookModalOpen"
-        :open="addBookModalOpen"
-        @close="addBookModalOpen = false"
-    />
+    <ShelfModals />
 </template>
 
 <script setup lang="ts">
@@ -53,8 +49,9 @@ import {
     faPlus,
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import AddBookModal from "@/components/modal/AddBookModal.vue";
+import ShelfModals from "@/components/features/UserProfile/Shelves/ShelfModals/index.vue";
 import { usePalaverStore } from "@/stores/palaver";
+import { useShelfModalStore } from "@/stores/shelfModal";
 
 const props = withDefaults(
     defineProps<{
@@ -66,7 +63,6 @@ const props = withDefaults(
 );
 
 const isOpen = ref(false);
-const addBookModalOpen = ref(false);
 const palaver = usePalaverStore();
 
 const menuLocation = "top";
@@ -193,7 +189,7 @@ onUnmounted(() => {
 });
 
 const openAddBookModal = () => {
-    addBookModalOpen.value = true;
+    useShelfModalStore().openAddBook();
     isOpen.value = false;
 };
 

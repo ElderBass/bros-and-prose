@@ -20,7 +20,8 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import UserContentPanel from "./UserContentPanel.vue";
+import UserContentPanel from "@/components/features/UserProfile/UserContentPanel.vue";
+import WantToReadListItem from "./WantToReadListItem.vue";
 import type { Book } from "@/types";
 
 const props = defineProps<{

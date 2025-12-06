@@ -101,7 +101,7 @@ const handleBackdropClick = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: 2000;
     padding: 1rem;
 }
 
@@ -114,7 +114,7 @@ const handleBackdropClick = () => {
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 90vh;
+    max-height: 80vh;
     max-width: 90vw;
     display: flex;
     flex-direction: column;
@@ -331,7 +331,7 @@ const handleBackdropClick = () => {
     }
 
     .modal-container {
-        max-height: 95vh;
+        max-height: 98vh;
         max-width: 95vw;
     }
 
