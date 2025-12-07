@@ -40,6 +40,7 @@ export interface OpenLibraryBookResult {
     lending_identifier_s: string;
     public_scan_b: boolean;
     title: string;
+    subtitle?: string;
 }
 
 export interface IBookSearchResult {

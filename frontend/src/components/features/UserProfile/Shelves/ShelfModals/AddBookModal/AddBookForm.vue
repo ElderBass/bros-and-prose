@@ -111,6 +111,7 @@ const noBookFound = ref(false);
 
 const loading = ref(false);
 const title = ref("");
+const fullTitle = ref("");
 const author = ref("");
 const yearPublished = ref("");
 const tags = ref<string[]>([]);
@@ -159,6 +160,10 @@ const runSearch = async () => {
         if (bookResult.value.title && bookResult.value.author_name?.[0]) {
             showBookDetails.value = true;
             author.value = bookResult.value.author_name[0];
+            title.value = bookResult.value.title;
+            if (bookResult.value.subtitle) {
+                fullTitle.value = `${bookResult.value.title}: ${bookResult.value.subtitle}`;
+            }
             yearPublished.value =
                 bookResult.value.first_publish_year?.toString() || "";
         } else {
@@ -170,8 +175,8 @@ const runSearch = async () => {
         console.error("error in runSearch for shelf form", e);
         await useLog().error(`Error in runSearch for shelf form: ${e}`);
         openAddBookError(
-            title.value,
-            props.shelfDisplayName,
+            emptyBook.value,
+            props.selectedShelf,
             "oof  bud, hit an error searching for that book..."
         );
     } finally {
@@ -195,12 +200,12 @@ const submit = async () => {
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);
-        openAddBookSuccess(book.title, props.shelfDisplayName, message);
+        openAddBookSuccess(book, props.selectedShelf, message);
         resetForm();
     } catch (error) {
         openAddBookError(
-            title.value,
-            props.shelfDisplayName,
+            emptyBook.value,
+            props.selectedShelf,
             "error adding book to shelf: " + (error as Error).message
         );
     } finally {
@@ -208,6 +213,18 @@ const submit = async () => {
     }
 };
 
+const emptyBook = computed(() => {
+    return {
+        id: "",
+        title: title.value,
+        author: "",
+        yearPublished: 0,
+        tags: [],
+        description: "",
+        imageSrc: "",
+        votes: [],
+    };
+});
 // Debounce search when the title changes
 let searchTimer: number | null = null;
 const DEBOUNCE_MS = 1200;
@@ -217,7 +234,9 @@ watch(
     () => {
         if (searchTimer) window.clearTimeout(searchTimer);
         searchTimer = window.setTimeout(() => {
-            runSearch();
+            if (!fullTitle.value) {
+                runSearch();
+            }
         }, DEBOUNCE_MS);
     },
     { flush: "post" }

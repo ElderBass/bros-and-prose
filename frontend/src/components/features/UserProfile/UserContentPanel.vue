@@ -47,7 +47,6 @@ const computedTitle = computed(() => `${props.title} (${props.contentCount})`);
 .scroll-content {
     display: flex;
     gap: 1rem;
-    padding: 0.5rem;
 }
 
 .pb {

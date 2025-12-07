@@ -9,10 +9,12 @@
                 :tag="tag"
                 :selected="true"
                 color="blue"
-                :size="mobile ? 'xsmall' : 'small'"
+                :size="mobile ? 'supersmall' : 'xsmall'"
             />
         </div>
-        <div v-else class="no-tags">no tags</div>
+        <div v-else class="no-tags">
+            <span class="no-tags-text">no tags</span>
+        </div>
     </div>
 </template>
 
@@ -38,7 +40,7 @@ const { mobile } = useDisplay();
     padding: 0 0.5rem 0.5rem 0.5rem;
     border-bottom: 1px solid var(--accent-green);
     transition: background-color 0.2s ease;
-    width: 100%;
+    width: 95%;
 }
 
 .have-read-list-item:hover {
@@ -46,7 +48,8 @@ const { mobile } = useDisplay();
 }
 
 .book-title {
-    font-size: 1rem;
+    flex: 1 0 30%;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--accent-fuschia);
     font-family: "Courier New", serif;
@@ -54,19 +57,29 @@ const { mobile } = useDisplay();
 }
 
 .book-author {
-    font-size: 0.9rem;
+    flex: 1 0 30%;
+    font-size: 0.8rem;
     color: var(--accent-green);
+    text-align: center;
 }
 
 .book-tags {
+    flex: 1 0 40%;
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .no-tags {
+    flex: 1 0 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-tags-text {
     font-size: 0.85rem;
     color: var(--main-text);
     opacity: 0.5;
