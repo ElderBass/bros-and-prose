@@ -3,7 +3,7 @@
         :modelValue="confirmDeleteModalOpen"
         @close="closeModal"
         title="you sure bro?"
-        size="small"
+        :size="modalSize"
         shadow-color="red"
         :header-icon="faSurprise"
     >
@@ -18,8 +18,7 @@
                     variant="outline"
                     title="on second thought this book is aight"
                     @click="closeModal"
-                    :size="mobile ? 'small' : 'medium'"
-                    :style="{ width: mobile ? '100%' : 'auto' }"
+                    v-bind="buttonProps"
                 >
                     cancel
                 </BaseButton>
@@ -28,8 +27,7 @@
                     title="fuck that book in particular"
                     @click="handleDelete"
                     :disabled="loading"
-                    :size="mobile ? 'small' : 'medium'"
-                    :style="{ width: mobile ? '100%' : 'auto' }"
+                    v-bind="buttonProps"
                 >
                     {{ loading ? "removing..." : "fuck it" }}
                 </BaseButton>
@@ -62,6 +60,17 @@ const loading = ref(false);
 const shelfDisplayName = computed(() => {
     if (!selectedBookShelf.value) return "shelf";
     return getShelfDisplayName(selectedBookShelf.value);
+});
+
+const modalSize = computed(() => {
+    return mobile.value ? "small" : "medium";
+});
+
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? "small" : "medium",
+        style: mobile.value ? { width: "100%" } : {},
+    };
 });
 
 const handleDelete = async () => {
