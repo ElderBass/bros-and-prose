@@ -19,7 +19,11 @@
                 :isLoggedInUser="isLoggedInUser"
                 :user="user"
             />
-            <UserShelvesSection :isLoggedInUser="isLoggedInUser" />
+            <UserShelvesSection
+                :isLoggedInUser="isLoggedInUser"
+                :wantToRead="wantToRead"
+                :haveRead="haveRead"
+            />
             <UserActivitySection :user="user" />
         </div>
         <ProfileFab v-if="isLoggedInUser" />
@@ -28,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs } from "vue";
+import { toRefs, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
@@ -39,12 +43,38 @@ import UserShelvesSection from "../features/UserProfile/Shelves/UserShelvesSecti
 import PalaverModals from "../modal/PalaverModals/index.vue";
 import type { User } from "@/types";
 import { useUIStore } from "@/stores/ui";
+import { useUserStore } from "@/stores/user";
 
 const props = defineProps<{
     user: User;
     isLoggedInUser: boolean;
 }>();
-const { user, isLoggedInUser } = toRefs(props);
+
+const { loggedInUser } = storeToRefs(useUserStore());
+const { isLoggedInUser } = toRefs(props);
+const user = ref(props.user);
+const wantToRead = ref(Object.values(props.user.wantToRead || []));
+const haveRead = ref(Object.values(props.user.haveRead || []));
+
+watch(
+    [loggedInUser, isLoggedInUser],
+    ([newLoggedInUser, isOwnProfile]) => {
+        if (isOwnProfile && newLoggedInUser?.id) {
+            user.value = newLoggedInUser;
+            const updatedWantToRead = Object.values(
+                newLoggedInUser.wantToRead || []
+            );
+            const updatedHaveRead = Object.values(
+                newLoggedInUser.haveRead || []
+            );
+            console.log("KERTWANG updatedWantToRead", updatedWantToRead);
+            console.log("KERTWANG updatedHaveRead", updatedHaveRead);
+            wantToRead.value = updatedWantToRead;
+            haveRead.value = updatedHaveRead;
+        }
+    },
+    { immediate: true }
+);
 
 const { isAppLoading } = storeToRefs(useUIStore());
 </script>

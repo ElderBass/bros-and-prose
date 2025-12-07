@@ -1,4 +1,4 @@
-import type { OpenLibraryBookResult, FutureBook } from "@/types";
+import type { OpenLibraryBookResult, FutureBook, User } from "@/types";
 import { capitalizeBookTitle } from "./capitalizeBookTitle";
 import { v4 as uuid } from "uuid";
 import { faBookMedical, faBookOpen } from "@fortawesome/free-solid-svg-icons";
@@ -46,8 +46,8 @@ export const getErrorActionText = (modalType: ModalType) => {
             return "adding";
         case "editBook":
             return "editing";
-        case "deleteBook":
-            return "deleting";
+        case "removeBook":
+            return "removing";
         case "moveBook":
             return "moving";
         default:
@@ -57,4 +57,11 @@ export const getErrorActionText = (modalType: ModalType) => {
 
 export const getShelfIcon = (shelf: "wantToRead" | "haveRead") => {
     return shelf === "wantToRead" ? faBookMedical : faBookOpen;
+};
+
+export const getUserShelves = (user: User) => {
+    return {
+        wantToRead: Object.values(user.wantToRead || []),
+        haveRead: Object.values(user.haveRead || []),
+    };
 };

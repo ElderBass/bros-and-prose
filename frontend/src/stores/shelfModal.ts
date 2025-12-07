@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
+import type { FutureBook } from "@/types";
 
 export type ModalType =
     | "addBook"
     | "editBook"
-    | "deleteBook"
+    | "removeBook"
     | "moveBook"
     | "addBookSuccess"
     | "addBookError"
@@ -14,6 +15,8 @@ interface ModalState {
     bookTitle: string;
     shelfDisplayName: string;
     message: string;
+    selectedBook: FutureBook | null;
+    selectedBookShelf: "wantToRead" | "haveRead" | null;
 }
 
 export const useShelfModalStore = defineStore("shelfModal", {
@@ -22,6 +25,8 @@ export const useShelfModalStore = defineStore("shelfModal", {
         bookTitle: "",
         shelfDisplayName: "",
         message: "",
+        selectedBook: null,
+        selectedBookShelf: null,
     }),
 
     actions: {
@@ -30,6 +35,11 @@ export const useShelfModalStore = defineStore("shelfModal", {
         },
         openAddBook() {
             this.modal = "addBook";
+        },
+        openEditBook(book: FutureBook, shelf: "wantToRead" | "haveRead") {
+            this.modal = "editBook";
+            this.selectedBook = book;
+            this.selectedBookShelf = shelf;
         },
         openAddBookSuccess(
             bookTitle: string,
@@ -51,17 +61,32 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.shelfDisplayName = shelfDisplayName;
             this.message = message;
         },
+        openConfirmRemove(book: FutureBook, shelf: "wantToRead" | "haveRead") {
+            this.modal = "removeBook";
+            this.bookTitle = book.title;
+            this.selectedBook = book;
+            this.selectedBookShelf = shelf;
+        },
+        openConfirmMove(book: FutureBook) {
+            this.modal = "moveBook";
+            this.selectedBook = book;
+        },
         closeModal() {
             this.modal = null;
             this.bookTitle = "";
             this.shelfDisplayName = "";
             this.message = "";
+            this.selectedBook = null;
+            this.selectedBookShelf = null;
         },
     },
 
     getters: {
         isModalOpen: (state) => state.modal !== null,
         addBookModalOpen: (state) => state.modal === "addBook",
+        editBookModalOpen: (state) => state.modal === "editBook",
+        confirmRemoveModalOpen: (state) => state.modal === "removeBook",
+        confirmMoveModalOpen: (state) => state.modal === "moveBook",
         addBookSuccessModalOpen: (state) => state.modal === "addBookSuccess",
         addBookErrorModalOpen: (state) => state.modal === "addBookError",
     },

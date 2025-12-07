@@ -20,7 +20,7 @@ withDefaults(
         selected: boolean;
         color?: "blue" | "fuschia" | "green" | "lavender";
         onClick?: () => void;
-        size?: "small" | "medium" | "large";
+        size?: "xsmall" | "small" | "medium" | "large";
     }>(),
     {
         selected: false,
@@ -35,6 +35,11 @@ withDefaults(
     background-color: inherit;
     padding: 0.25rem 0.5rem;
     border-radius: 9999px;
+}
+
+.book-tag.size-xsmall {
+    padding: 0.15rem 0.35rem;
+    font-size: 0.75rem;
 }
 
 .book-tag.size-small {

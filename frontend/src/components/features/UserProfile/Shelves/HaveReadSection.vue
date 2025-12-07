@@ -2,14 +2,14 @@
     <UserContentPanel
         title="have read"
         :noContentMessage="noContentMessage"
-        :hasContent="hasRead.length > 0"
+        :hasContent="haveRead.length > 0"
         scrollDirection="vertical"
         color="green"
     >
         <template #scroll-content>
             <div class="have-read-list">
                 <HaveReadListItem
-                    v-for="book in hasRead"
+                    v-for="book in haveRead"
                     :key="book.id"
                     :book="book"
                 />
@@ -22,10 +22,10 @@
 import { computed } from "vue";
 import UserContentPanel from "@/components/features/UserProfile/UserContentPanel.vue";
 import HaveReadListItem from "./HaveReadListItem.vue";
-import type { Book } from "@/types";
+import type { FutureBook } from "@/types";
 
 const props = defineProps<{
-    hasRead: Book[];
+    haveRead: FutureBook[];
     isLoggedInUser: boolean;
 }>();
 
