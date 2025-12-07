@@ -1,8 +1,8 @@
 <template>
     <UserContentPanel
-        :title="title"
+        title="reviews"
         noContentMessage="zero takes logged. start beefing with some books."
-        :hasContent="reviews.length > 0"
+        :contentCount="reviews.length"
         color="lavender"
     >
         <template #scroll-content>
@@ -17,17 +17,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import ProfileReviewItem from "./ProfileReviewItem.vue";
 import type { Review } from "@/types";
 import UserContentPanel from "./UserContentPanel.vue";
 
-const props = defineProps<{
+defineProps<{
     username: string;
     reviews: Review[];
 }>();
-
-const title = computed(() => `reviews (${props.reviews?.length || 0})`);
 </script>
 
 <style scoped></style>

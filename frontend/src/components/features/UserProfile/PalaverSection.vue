@@ -1,8 +1,8 @@
 <template>
     <UserContentPanel
-        :title="title"
+        title="palaver"
         :noContentMessage="noContentMessage"
-        :hasContent="entries.length > 0"
+        :contentCount="entries.length"
         scrollDirection="vertical"
         color="fuschia"
     >
@@ -35,8 +35,6 @@ const noContentMessage = computed(() =>
         ? "no palaver yet — go drop some spicy takes."
         : "no palaver yet — you probably don't wanna hear what they bro have to say anyway."
 );
-
-const title = computed(() => `palaver (${props.entries?.length || 0})`);
 </script>
 
 <style scoped>
