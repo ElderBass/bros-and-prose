@@ -21,8 +21,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import UserContentPanel from "@/components/features/UserProfile/UserContentPanel.vue";
-import HaveReadListItem from "./HaveReadListItem.vue";
+import HaveReadListItem from "@/components/features/UserProfile/Shelves/HaveReadSection/HaveReadListItem.vue";
 import type { FutureBook } from "@/types";
+
+defineOptions({
+    name: "HaveReadSection",
+});
 
 const props = defineProps<{
     haveRead: FutureBook[];

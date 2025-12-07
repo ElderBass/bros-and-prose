@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import UserContentSection from "@/components/features/UserProfile/UserContentSection.vue";
-import HaveReadSection from "./HaveReadSection.vue";
+import HaveReadSection from "./HaveReadSection/index.vue";
 import WantToReadSection from "@/components/features/UserProfile/Shelves/WantToReadSection/index.vue";
 import type { FutureBook } from "@/types";
 
