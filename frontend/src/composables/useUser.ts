@@ -1,5 +1,5 @@
 import { usersService } from "@/services/users";
-import type { Book, SubmitReviewArgs, User } from "@/types";
+import type { Book, FutureBook, SubmitReviewArgs, User } from "@/types";
 import { useUserStore } from "@/stores/user";
 import {
     FINISHED_BOOK_PROGRESS,
@@ -97,7 +97,10 @@ export const useUser = () => {
         return updatedUser;
     };
 
-    const addReview = async (reviewArgs: SubmitReviewArgs, book: Book) => {
+    const addReview = async (
+        reviewArgs: SubmitReviewArgs,
+        book: Book | FutureBook
+    ) => {
         try {
             const newReview = buildReview(reviewArgs, book);
             await useLog().info(

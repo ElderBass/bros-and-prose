@@ -9,10 +9,15 @@ export const buildBookShelfEntry = (
     comment: string,
     tags: string[]
 ): FutureBook => {
-    const { title, author_name, first_publish_year, cover_i } = bookData;
+    const { title, subtitle, author_name, first_publish_year, cover_i } =
+        bookData;
+    let fullTitle = title.trim();
+    if (subtitle) {
+        fullTitle += `: ${subtitle.trim()}`;
+    }
     return {
         id: uuid(),
-        title: capitalizeBookTitle(title.trim()),
+        title: capitalizeBookTitle(fullTitle),
         author: author_name[0].trim(),
         description: comment.trim(),
         yearPublished: parseInt(first_publish_year?.toString()) || 1969,

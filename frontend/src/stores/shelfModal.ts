@@ -8,25 +8,22 @@ export type ModalType =
     | "moveBook"
     | "addBookSuccess"
     | "addBookError"
+    | "review"
     | null;
 
 interface ModalState {
     modal: ModalType;
-    bookTitle: string;
-    shelfDisplayName: string;
-    message: string;
     selectedBook: FutureBook | null;
     selectedBookShelf: "wantToRead" | "haveRead" | null;
+    message: string;
 }
 
 export const useShelfModalStore = defineStore("shelfModal", {
     state: (): ModalState => ({
         modal: null,
-        bookTitle: "",
-        shelfDisplayName: "",
-        message: "",
         selectedBook: null,
         selectedBookShelf: null,
+        message: "",
     }),
 
     actions: {
@@ -42,28 +39,27 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.selectedBookShelf = shelf;
         },
         openAddBookSuccess(
-            bookTitle: string,
-            shelfDisplayName: string,
+            book: FutureBook,
+            shelf: "wantToRead" | "haveRead",
             message: string
         ) {
             this.modal = "addBookSuccess";
-            this.bookTitle = bookTitle;
-            this.shelfDisplayName = shelfDisplayName;
+            this.selectedBook = book;
+            this.selectedBookShelf = shelf;
             this.message = message;
         },
         openAddBookError(
-            bookTitle: string,
-            shelfDisplayName: string,
+            book: FutureBook,
+            shelf: "wantToRead" | "haveRead",
             message: string
         ) {
             this.modal = "addBookError";
-            this.bookTitle = bookTitle;
-            this.shelfDisplayName = shelfDisplayName;
+            this.selectedBook = book;
+            this.selectedBookShelf = shelf;
             this.message = message;
         },
         openConfirmRemove(book: FutureBook, shelf: "wantToRead" | "haveRead") {
             this.modal = "removeBook";
-            this.bookTitle = book.title;
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
         },
@@ -71,13 +67,14 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.modal = "moveBook";
             this.selectedBook = book;
         },
+        openReview() {
+            this.modal = "review";
+        },
         closeModal() {
             this.modal = null;
-            this.bookTitle = "";
-            this.shelfDisplayName = "";
-            this.message = "";
             this.selectedBook = null;
             this.selectedBookShelf = null;
+            this.message = "";
         },
     },
 
@@ -89,5 +86,6 @@ export const useShelfModalStore = defineStore("shelfModal", {
         confirmMoveModalOpen: (state) => state.modal === "moveBook",
         addBookSuccessModalOpen: (state) => state.modal === "addBookSuccess",
         addBookErrorModalOpen: (state) => state.modal === "addBookError",
+        reviewModalOpen: (state) => state.modal === "review",
     },
 });

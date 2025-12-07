@@ -1,4 +1,4 @@
-import type { Book, SubmitReviewArgs, User } from "@/types";
+import type { Book, FutureBook, SubmitReviewArgs, User } from "@/types";
 import {
     BRO_NOT_STARTED,
     BRO_NOT_STARTED_MOBILE,
@@ -41,7 +41,10 @@ export const isReviewOfCurrentBook = (bookId: string) => {
     return bookId === useBooksStore().currentBook.id;
 };
 
-export const buildReview = (reviewArgs: SubmitReviewArgs, book: Book) => {
+export const buildReview = (
+    reviewArgs: SubmitReviewArgs,
+    book: Book | FutureBook
+) => {
     return {
         id: uuidv4(),
         createdAt: new Date().toISOString(),

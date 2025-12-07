@@ -37,3 +37,11 @@ export const buildArchiveEntry = (
         archivedAt: new Date().toISOString(),
     };
 };
+
+export const getBookInfoFromFutureBook = (futureBook: FutureBook) => {
+    return {
+        title: futureBook.title,
+        author: futureBook.author,
+        tags: futureBook.tags,
+    };
+};

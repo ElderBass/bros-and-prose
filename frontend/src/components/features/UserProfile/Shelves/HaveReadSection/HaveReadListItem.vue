@@ -12,7 +12,9 @@
                 :size="mobile ? 'xsmall' : 'small'"
             />
         </div>
-        <div v-else class="no-tags">no tags</div>
+        <div v-else class="no-tags">
+            <span class="no-tags-text">no tags</span>
+        </div>
     </div>
 </template>
 
@@ -46,6 +48,7 @@ const { mobile } = useDisplay();
 }
 
 .book-title {
+    flex: 1 0 30%;
     font-size: 1rem;
     font-weight: 600;
     color: var(--accent-fuschia);
@@ -54,19 +57,29 @@ const { mobile } = useDisplay();
 }
 
 .book-author {
+    flex: 1 0 30%;
     font-size: 0.9rem;
     color: var(--accent-green);
+    text-align: center;
 }
 
 .book-tags {
+    flex: 1 0 40%;
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .no-tags {
+    flex: 1 0 40%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.no-tags-text {
     font-size: 0.85rem;
     color: var(--main-text);
     opacity: 0.5;

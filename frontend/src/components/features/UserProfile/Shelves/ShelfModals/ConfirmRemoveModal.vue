@@ -9,7 +9,7 @@
     >
         <div class="content">
             <p>sure you wanna remove</p>
-            <p class="book-title">{{ bookTitle.toUpperCase() }}</p>
+            <p class="book-title">{{ selectedBook?.title.toUpperCase() }}</p>
             <p>from your {{ shelfDisplayName }} shelf?</p>
         </div>
         <template #footer>
@@ -54,7 +54,7 @@ const { error: logError } = useLog();
 const { showAlert } = useUIStore();
 
 const shelfModalStore = useShelfModalStore();
-const { confirmRemoveModalOpen, bookTitle, selectedBook, selectedBookShelf } =
+const { confirmRemoveModalOpen, selectedBook, selectedBookShelf } =
     storeToRefs(shelfModalStore);
 const { closeModal } = shelfModalStore;
 

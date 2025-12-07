@@ -13,6 +13,15 @@
                 to your
                 <span class="shelf-name">{{ shelfDisplayName }}</span> shelf!
             </p>
+            <BaseButton
+                v-if="showReviewButton"
+                variant="tertiary"
+                title="review that shit"
+                @click="openReview"
+                :size="mobile ? 'small' : 'medium'"
+            >
+                leave a review
+            </BaseButton>
         </div>
         <template #footer>
             <BaseButton
@@ -44,14 +53,30 @@ import BaseModal from "@/components/ui/BaseModal.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import type { ButtonSize } from "@/types";
+import { HAVE_READ } from "@/constants";
+import { getShelfDisplayName } from "@/utils";
 
 const shelfModalStore = useShelfModalStore();
-const { addBookSuccessModalOpen, bookTitle, shelfDisplayName } =
+const { addBookSuccessModalOpen, selectedBook, selectedBookShelf } =
     storeToRefs(shelfModalStore);
 
-const { closeModal, openAddBook } = shelfModalStore;
+const { closeModal, openAddBook, openReview } = shelfModalStore;
 
 const { mobile } = useDisplay();
+
+const bookTitle = computed(() => {
+    return selectedBook.value?.title;
+});
+
+const shelfDisplayName = computed(() => {
+    return getShelfDisplayName(
+        selectedBookShelf.value as "wantToRead" | "haveRead"
+    );
+});
+
+const showReviewButton = computed(() => {
+    return shelfDisplayName.value === HAVE_READ;
+});
 
 const modalSize = computed(() => {
     return mobile.value ? "small" : "medium";

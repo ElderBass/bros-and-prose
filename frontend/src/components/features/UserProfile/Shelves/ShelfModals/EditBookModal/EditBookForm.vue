@@ -182,12 +182,12 @@ const submit = async () => {
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);
-        openAddBookSuccess(updatedBook.title, props.shelfDisplayName, message);
+        openAddBookSuccess(updatedBook, props.selectedShelf, message);
         resetForm();
     } catch (error) {
         openAddBookError(
-            title.value,
-            props.shelfDisplayName,
+            props.book,
+            props.selectedShelf,
             "error updating book: " + (error as Error).message
         );
     } finally {
