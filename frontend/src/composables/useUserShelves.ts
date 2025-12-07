@@ -39,9 +39,8 @@ export const useUserShelves = () => {
         try {
             const loggedInUser = useUserStore().loggedInUser;
             const currentShelf = getUserShelves(loggedInUser)[shelf];
-            console.log("KERTWANG removeFromShelf currentShelf", currentShelf);
             const updatedShelf = currentShelf.filter((b) => b.id !== bookId);
-            console.log("KERTWANG removeFromShelf updatedShelf", updatedShelf);
+
             const updatedUser = await updateUser({
                 ...loggedInUser,
                 [shelf]: updatedShelf,
@@ -143,7 +142,6 @@ export const useUserShelves = () => {
 
     const updateUser = async (user: User) => {
         const updatedUser = await usersService.updateUser(user.id, user);
-        console.log("KERTWANG updateUser updatedUser", updatedUser);
         useUserStore().setLoggedInUser(updatedUser);
         return updatedUser;
     };

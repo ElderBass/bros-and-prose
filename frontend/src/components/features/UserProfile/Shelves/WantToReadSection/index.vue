@@ -39,11 +39,4 @@ const noContentMessage = computed(() =>
 );
 </script>
 
-<style scoped>
-.want-to-read-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 0.5rem;
-}
-</style>
+<style scoped></style>

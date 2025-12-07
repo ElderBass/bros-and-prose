@@ -59,11 +59,6 @@ const haveRead = ref(Object.values(props.user.haveRead || []));
 watch(
     [loggedInUser, isLoggedInUser],
     ([newLoggedInUser, isOwnProfile]) => {
-        console.log(
-            "KERTWANG watch loggedInUser, isLoggedInUser",
-            newLoggedInUser,
-            isOwnProfile
-        );
         if (isOwnProfile && newLoggedInUser?.id) {
             user.value = newLoggedInUser;
             const updatedWantToRead = Object.values(

@@ -3,7 +3,7 @@
         :modelValue="confirmMoveModalOpen"
         @close="closeModal"
         title="move this book?"
-        size="small"
+        :size="modalSize"
         shadow-color="green"
         :header-icon="faArrowRight"
     >
@@ -18,8 +18,7 @@
                     variant="outline"
                     title="on second thought, keep it where it is"
                     @click="closeModal"
-                    :size="mobile ? 'small' : 'medium'"
-                    :style="{ width: mobile ? '100%' : 'auto' }"
+                    v-bind="buttonProps"
                 >
                     cancel
                 </BaseButton>
@@ -28,8 +27,7 @@
                     title="yeah, move that shit"
                     @click="handleMove"
                     :disabled="loading"
-                    :size="mobile ? 'small' : 'medium'"
-                    :style="{ width: mobile ? '100%' : 'auto' }"
+                    v-bind="buttonProps"
                 >
                     {{ loading ? "moving..." : "send it" }}
                 </BaseButton>
@@ -39,23 +37,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { useLog } from "@/composables/useLog";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { useShelfModalStore } from "@/stores/shelfModal";
-import { useLog } from "@/composables/useLog";
+import { useUIStore } from "@/stores/ui";
+import { MOVED_BOOK_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 
 const { mobile } = useDisplay();
 const { moveFromWantToReadToHaveRead } = useUserShelves();
-const { error: logError } = useLog();
+const { error: logError, info } = useLog();
+const { showAlert } = useUIStore();
 
 const shelfModalStore = useShelfModalStore();
 const { confirmMoveModalOpen, selectedBook } = storeToRefs(shelfModalStore);
-const { closeModal, openAddBookError } = shelfModalStore;
+const { closeModal } = shelfModalStore;
 
 const loading = ref(false);
+
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? "small" : "medium",
+        style: mobile.value ? { width: "100%" } : {},
+    };
+});
+
+const modalSize = computed(() => {
+    return mobile.value ? "small" : "medium";
+});
 
 const handleMove = async () => {
     if (!selectedBook.value) {
@@ -66,17 +78,20 @@ const handleMove = async () => {
     try {
         loading.value = true;
         await moveFromWantToReadToHaveRead(selectedBook.value);
-        closeModal();
+        await info(`Moved ${selectedBook.value.title} to have read shelf`);
+        showAlert(MOVED_BOOK_SUCCESS_ALERT);
     } catch (error) {
         console.error("Error moving book:", error);
         await logError(`Error moving book: ${error}`);
-        openAddBookError(
-            selectedBook.value.title,
-            "have read",
-            `error moving ${selectedBook.value.title} to have read shelf: ${(error as Error).message}`
+        showAlert(
+            QUICK_ERROR([
+                "fucking goofed when moving that book.",
+                (error as Error).message,
+            ])
         );
     } finally {
         loading.value = false;
+        closeModal();
     }
 };
 </script>
