@@ -1,6 +1,6 @@
 <template>
     <UserContentPanel
-        title="have read"
+        :title="title"
         :noContentMessage="noContentMessage"
         :hasContent="haveRead.length > 0"
         scrollDirection="vertical"
@@ -34,6 +34,8 @@ const noContentMessage = computed(() =>
         ? "no books on your have read list yet — add some books to get started."
         : "no books on this user's have read list yet — they probably don't want to read anything anyway."
 );
+
+const title = computed(() => `have read (${props.haveRead?.length || 0})`);
 </script>
 
 <style scoped>
