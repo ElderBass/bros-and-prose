@@ -4,4 +4,5 @@ export * from "./books";
 export * from "./log";
 export * from "./palaver";
 export * from "./review";
+export * from "./ui";
 export * from "./user";

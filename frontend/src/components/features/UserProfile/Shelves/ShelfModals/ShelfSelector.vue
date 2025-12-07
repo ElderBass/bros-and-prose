@@ -1,20 +1,22 @@
 <template>
     <div class="shelf-selector">
         <BaseButton
-            :variant="getVariant('wantToRead')"
-            :size="buttonSize"
-            title="books you want to read"
-            @click="$emit('selectShelf', 'wantToRead')"
-        >
-            want to read
-        </BaseButton>
-        <BaseButton
             :variant="getVariant('haveRead')"
             :size="buttonSize"
             title="books you've already read"
             @click="$emit('selectShelf', 'haveRead')"
+            :disabled="disabled"
         >
             have read
+        </BaseButton>
+        <BaseButton
+            :variant="getVariant('wantToRead')"
+            :size="buttonSize"
+            title="books you want to read"
+            @click="$emit('selectShelf', 'wantToRead')"
+            :disabled="disabled"
+        >
+            want to read
         </BaseButton>
     </div>
 </template>
@@ -33,12 +35,13 @@ defineEmits<{
 
 const props = defineProps<{
     selectedShelf: "wantToRead" | "haveRead";
+    disabled?: boolean;
 }>();
 
 const { mobile } = useDisplay();
 
 const buttonSize = computed(() => {
-    return mobile ? "xsmall" : "small";
+    return mobile.value ? "xsmall" : "small";
 });
 
 const getVariant = (shelf: "wantToRead" | "haveRead") => {

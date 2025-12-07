@@ -43,7 +43,7 @@ const { addBookModalOpen } = storeToRefs(shelfModalStore);
 
 const { closeModal } = shelfModalStore;
 
-const selectedShelf = ref<"wantToRead" | "haveRead">("wantToRead");
+const selectedShelf = ref<"wantToRead" | "haveRead">("haveRead");
 
 const loading = ref(false);
 

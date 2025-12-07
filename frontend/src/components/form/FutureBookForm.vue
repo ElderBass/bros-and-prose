@@ -270,8 +270,8 @@ onMounted(() => {
         author.value = formModal.value.futureBook.author;
         yearPublished.value =
             formModal.value.futureBook.yearPublished.toString();
-        description.value = formModal.value.futureBook.description;
-        tags.value = formModal.value.futureBook.tags;
+        description.value = formModal.value.futureBook.description ?? "";
+        tags.value = formModal.value.futureBook.tags ?? ([] as string[]);
         image.value = formModal.value.futureBook.imageSrc;
     }
 });

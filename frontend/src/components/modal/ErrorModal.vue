@@ -3,7 +3,7 @@
         :modelValue="open"
         @close="onClose"
         title="sucks to suck"
-        size="small"
+        :size="modalSize"
         shadowColor="red"
         :headerIcon="faHandMiddleFinger"
     >
@@ -19,7 +19,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { useDisplay } from "vuetify";
 import { faHandMiddleFinger } from "@fortawesome/free-solid-svg-icons";
+
+const { mobile } = useDisplay();
 
 defineProps<{
     open: boolean;
@@ -32,6 +36,10 @@ const emit = defineEmits<{
 const onClose = () => {
     emit("close");
 };
+
+const modalSize = computed(() => {
+    return mobile.value ? "small" : "medium";
+});
 </script>
 
 <style scoped>

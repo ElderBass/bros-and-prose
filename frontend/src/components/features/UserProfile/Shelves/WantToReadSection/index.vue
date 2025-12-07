@@ -3,7 +3,7 @@
         title="want to read"
         :noContentMessage="noContentMessage"
         :hasContent="wantToRead.length > 0"
-        scrollDirection="vertical"
+        scrollDirection="horizontal"
         color="blue"
     >
         <template #scroll-content>

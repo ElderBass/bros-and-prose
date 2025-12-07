@@ -85,7 +85,7 @@
 import { computed, ref, onMounted } from "vue";
 import BookTagsSelector from "@/components/form/BookTagsSelector.vue";
 import { useUserShelves } from "@/composables/useUserShelves";
-import { buildBookShelfEntry, getShelfSuccessMessage } from "@/utils";
+import { getShelfSuccessMessage } from "@/utils";
 import type { FutureBook, OpenLibraryBookResult } from "@/types/books";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import FormActions from "../FormStuff/FormActions.vue";
@@ -164,16 +164,16 @@ const submit = async () => {
     try {
         loading.value = true;
 
-        // Build updated book entry, preserving the original ID
         const updatedBook: FutureBook = {
-            ...buildBookShelfEntry(bookResult.value, comment.value, tags.value),
-            id: props.book.id, // Preserve the original book ID
+            votes: [],
+            title: title.value,
+            author: author.value,
+            yearPublished: parseInt(yearPublished.value),
+            tags: tags.value,
+            description: comment.value,
+            imageSrc: props.book.imageSrc,
+            id: props.book.id,
         };
-
-        // If we have imageSrc from the original book, preserve it
-        if (props.book.imageSrc && !updatedBook.imageSrc) {
-            updatedBook.imageSrc = props.book.imageSrc;
-        }
 
         if (props.selectedShelf === "wantToRead") {
             await updateWantToRead(props.book.id, updatedBook);

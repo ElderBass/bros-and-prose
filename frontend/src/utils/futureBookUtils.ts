@@ -4,8 +4,9 @@ import type { FutureBook, ArchivedBooksEntry } from "@/types";
 export const getUsersFutureBookVoteId = (userId: string) => {
     const futureBooksStore = useFutureBooksStore();
     return (
-        futureBooksStore.currentSelections.find((b) => b.votes.includes(userId))
-            ?.id || ""
+        futureBooksStore.currentSelections.find((b) =>
+            b.votes?.includes(userId)
+        )?.id || ""
     );
 };
 
@@ -15,14 +16,14 @@ export const userHasVotedForBook = (bookId: string, userId: string) => {
 
 export const getMostVotedFutureBookId = (futureBooks: FutureBook[]) => {
     return sanitizeFutureBookVotes(futureBooks).reduce((max, book) =>
-        book.votes.length > max.votes.length ? book : max
+        book.votes?.length > max.votes?.length ? book : max
     ).id;
 };
 
 export const sanitizeFutureBookVotes = (futureBooks: FutureBook[]) => {
     return futureBooks.map((book) => ({
         ...book,
-        votes: book.votes.filter((vote) => vote !== "placeholder"),
+        votes: book.votes?.filter((vote) => vote !== "placeholder") || [],
     }));
 };
 
