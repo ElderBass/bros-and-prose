@@ -1,7 +1,7 @@
 <template>
     <ExpansionPanel :color="color">
         <template #title>
-            <ExpansionPanelTitle :title="title" :color="color" />
+            <ExpansionPanelTitle :title="computedTitle" :color="color" />
         </template>
         <template #text>
             <div v-if="!hasContent" class="empty-state">
@@ -20,21 +20,27 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import ExpansionPanelTitle from "@/components/ui/ExpansionPanelTitle.vue";
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         title: string;
         noContentMessage: string;
-        hasContent: boolean;
+        contentCount: number;
         color?: "blue" | "fuschia" | "green" | "lavender" | "red";
         scrollDirection?: "vertical" | "horizontal";
     }>(),
     {
         color: "blue",
         scrollDirection: "horizontal",
+        contentCount: 0,
     }
 );
+
+const hasContent = computed(() => props.contentCount > 0);
+
+const computedTitle = computed(() => `${props.title} (${props.contentCount})`);
 </script>
 
 <style scoped>

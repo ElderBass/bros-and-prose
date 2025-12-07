@@ -1,8 +1,8 @@
 <template>
     <UserContentPanel
         title="have read"
+        :contentCount="haveRead.length"
         :noContentMessage="noContentMessage"
-        :hasContent="haveRead.length > 0"
         scrollDirection="vertical"
         color="green"
     >

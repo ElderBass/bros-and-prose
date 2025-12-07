@@ -2,7 +2,7 @@
     <UserContentPanel
         title="palaver"
         :noContentMessage="noContentMessage"
-        :hasContent="entries.length > 0"
+        :contentCount="entries.length"
         scrollDirection="vertical"
         color="fuschia"
     >

@@ -1,8 +1,8 @@
 <template>
     <UserContentPanel
         title="want to read"
+        :contentCount="wantToRead.length"
         :noContentMessage="noContentMessage"
-        :hasContent="wantToRead.length > 0"
         scrollDirection="horizontal"
         color="blue"
     >

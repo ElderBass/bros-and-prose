@@ -2,7 +2,7 @@
     <UserContentPanel
         title="reviews"
         noContentMessage="zero takes logged. start beefing with some books."
-        :hasContent="reviews.length > 0"
+        :contentCount="reviews.length"
         color="lavender"
     >
         <template #scroll-content>
