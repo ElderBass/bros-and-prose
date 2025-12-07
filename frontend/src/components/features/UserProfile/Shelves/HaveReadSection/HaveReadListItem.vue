@@ -9,7 +9,7 @@
                 :tag="tag"
                 :selected="true"
                 color="blue"
-                :size="mobile ? 'xsmall' : 'small'"
+                :size="mobile ? 'supersmall' : 'xsmall'"
             />
         </div>
         <div v-else class="no-tags">
@@ -40,7 +40,7 @@ const { mobile } = useDisplay();
     padding: 0 0.5rem 0.5rem 0.5rem;
     border-bottom: 1px solid var(--accent-green);
     transition: background-color 0.2s ease;
-    width: 100%;
+    width: 95%;
 }
 
 .have-read-list-item:hover {
@@ -49,7 +49,7 @@ const { mobile } = useDisplay();
 
 .book-title {
     flex: 1 0 30%;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--accent-fuschia);
     font-family: "Courier New", serif;
@@ -58,7 +58,7 @@ const { mobile } = useDisplay();
 
 .book-author {
     flex: 1 0 30%;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--accent-green);
     text-align: center;
 }
