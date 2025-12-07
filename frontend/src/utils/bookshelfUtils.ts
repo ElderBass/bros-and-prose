@@ -46,8 +46,8 @@ export const getErrorActionText = (modalType: ModalType) => {
             return "adding";
         case "editBook":
             return "editing";
-        case "deleteBook":
-            return "deleting";
+        case "removeBook":
+            return "removing";
         case "moveBook":
             return "moving";
         default:

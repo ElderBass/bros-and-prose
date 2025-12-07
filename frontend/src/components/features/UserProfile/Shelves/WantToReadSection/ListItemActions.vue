@@ -7,7 +7,7 @@
         />
         <DeleteButton
             title="remove from want to read"
-            :handleDelete="handleDelete"
+            :handleDelete="handleRemove"
             :buttonSize="buttonSize"
         />
         <MoveButton
@@ -34,14 +34,14 @@ const props = defineProps<{
 const { mobile } = useDisplay();
 
 const shelfModalStore = useShelfModalStore();
-const { openEditBook, openConfirmDelete, openConfirmMove } = shelfModalStore;
+const { openEditBook, openConfirmRemove, openConfirmMove } = shelfModalStore;
 
 const handleEdit = () => {
     openEditBook(props.book, "wantToRead");
 };
 
-const handleDelete = () => {
-    openConfirmDelete(props.book, "wantToRead");
+const handleRemove = () => {
+    openConfirmRemove(props.book, "wantToRead");
 };
 
 const handleMove = () => {

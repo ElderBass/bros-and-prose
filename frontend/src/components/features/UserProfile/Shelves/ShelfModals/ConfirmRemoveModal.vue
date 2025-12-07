@@ -1,6 +1,6 @@
 <template>
     <BaseModal
-        :modelValue="confirmDeleteModalOpen"
+        :modelValue="confirmRemoveModalOpen"
         @close="closeModal"
         title="you sure bro?"
         :size="modalSize"
@@ -42,18 +42,21 @@ import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { faSurprise } from "@fortawesome/free-solid-svg-icons";
 import { useUserShelves } from "@/composables/useUserShelves";
-import { useShelfModalStore } from "@/stores/shelfModal";
-import { getShelfDisplayName } from "@/utils/bookshelfUtils";
 import { useLog } from "@/composables/useLog";
+import { useShelfModalStore } from "@/stores/shelfModal";
+import { useUIStore } from "@/stores/ui";
+import { getShelfDisplayName } from "@/utils/bookshelfUtils";
+import { QUICK_ERROR, REMOVED_BOOK_SUCCESS_ALERT } from "@/constants";
 
 const { mobile } = useDisplay();
 const { removeFromWantToRead, removeFromHaveRead } = useUserShelves();
 const { error: logError } = useLog();
+const { showAlert } = useUIStore();
 
 const shelfModalStore = useShelfModalStore();
-const { confirmDeleteModalOpen, bookTitle, selectedBook, selectedBookShelf } =
+const { confirmRemoveModalOpen, bookTitle, selectedBook, selectedBookShelf } =
     storeToRefs(shelfModalStore);
-const { closeModal, openAddBookError } = shelfModalStore;
+const { closeModal } = shelfModalStore;
 
 const loading = ref(false);
 
@@ -87,13 +90,15 @@ const handleDelete = async () => {
             await removeFromHaveRead(selectedBook.value.id);
         }
         closeModal();
+        showAlert(REMOVED_BOOK_SUCCESS_ALERT);
     } catch (error) {
         console.error("Error deleting book from shelf:", error);
         await logError(`Error deleting book from shelf: ${error}`);
-        openAddBookError(
-            bookTitle.value,
-            shelfDisplayName.value,
-            `error removing ${selectedBook.value.title} from ${shelfDisplayName.value} shelf: ${(error as Error).message}`
+        showAlert(
+            QUICK_ERROR([
+                "fucking goofed when removing that book.",
+                (error as Error).message,
+            ])
         );
     } finally {
         loading.value = false;

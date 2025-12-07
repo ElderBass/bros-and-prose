@@ -4,7 +4,7 @@ import type { FutureBook } from "@/types";
 export type ModalType =
     | "addBook"
     | "editBook"
-    | "deleteBook"
+    | "removeBook"
     | "moveBook"
     | "addBookSuccess"
     | "addBookError"
@@ -61,8 +61,8 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.shelfDisplayName = shelfDisplayName;
             this.message = message;
         },
-        openConfirmDelete(book: FutureBook, shelf: "wantToRead" | "haveRead") {
-            this.modal = "deleteBook";
+        openConfirmRemove(book: FutureBook, shelf: "wantToRead" | "haveRead") {
+            this.modal = "removeBook";
             this.bookTitle = book.title;
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
@@ -85,7 +85,7 @@ export const useShelfModalStore = defineStore("shelfModal", {
         isModalOpen: (state) => state.modal !== null,
         addBookModalOpen: (state) => state.modal === "addBook",
         editBookModalOpen: (state) => state.modal === "editBook",
-        confirmDeleteModalOpen: (state) => state.modal === "deleteBook",
+        confirmRemoveModalOpen: (state) => state.modal === "removeBook",
         confirmMoveModalOpen: (state) => state.modal === "moveBook",
         addBookSuccessModalOpen: (state) => state.modal === "addBookSuccess",
         addBookErrorModalOpen: (state) => state.modal === "addBookError",
