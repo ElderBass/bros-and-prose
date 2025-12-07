@@ -2,6 +2,7 @@ import { usersService } from "@/services/users";
 import { useUserStore } from "@/stores/user";
 import type { FutureBook, User } from "@/types";
 import { useLog } from "./useLog";
+import { getUserShelves } from "@/utils/bookshelfUtils";
 
 export const useUserShelves = () => {
     const { info, error: logError } = useLog();
@@ -13,9 +14,7 @@ export const useUserShelves = () => {
         try {
             const loggedInUser = useUserStore().loggedInUser;
 
-            const currentShelf = Array.from(
-                loggedInUser[shelf] || []
-            ) as FutureBook[];
+            const currentShelf = getUserShelves(loggedInUser)[shelf];
 
             const updatedUser = await updateUser({
                 ...loggedInUser,
@@ -39,8 +38,10 @@ export const useUserShelves = () => {
     ): Promise<User | null> => {
         try {
             const loggedInUser = useUserStore().loggedInUser;
-            const currentShelf = loggedInUser[shelf] || [];
+            const currentShelf = getUserShelves(loggedInUser)[shelf];
+            console.log("KERTWANG removeFromShelf currentShelf", currentShelf);
             const updatedShelf = currentShelf.filter((b) => b.id !== bookId);
+            console.log("KERTWANG removeFromShelf updatedShelf", updatedShelf);
             const updatedUser = await updateUser({
                 ...loggedInUser,
                 [shelf]: updatedShelf,
@@ -92,7 +93,7 @@ export const useUserShelves = () => {
     ): Promise<User | null> => {
         try {
             const loggedInUser = useUserStore().loggedInUser;
-            const currentWantToRead = loggedInUser.wantToRead || [];
+            const currentWantToRead = getUserShelves(loggedInUser).wantToRead;
             const updatedWantToRead = currentWantToRead.map((b) =>
                 b.id === bookId ? updatedBook : b
             );
@@ -113,8 +114,36 @@ export const useUserShelves = () => {
         }
     };
 
+    const updateHaveRead = async (
+        bookId: string,
+        updatedBook: FutureBook
+    ): Promise<User | null> => {
+        try {
+            const loggedInUser = useUserStore().loggedInUser;
+            const currentHaveRead = getUserShelves(loggedInUser).haveRead;
+            const updatedHaveRead = currentHaveRead.map((b) =>
+                b.id === bookId ? updatedBook : b
+            );
+
+            const updatedUser = await updateUser({
+                ...loggedInUser,
+                haveRead: updatedHaveRead,
+            });
+
+            await info(
+                `Updated book ${updatedBook.title} in haveRead for ${loggedInUser.username}`
+            );
+            return updatedUser;
+        } catch (err) {
+            console.error("error in updateHaveRead", err);
+            await logError(`Error updating haveRead: ${err}`);
+            throw new Error(`Error updating haveRead: ${err}`);
+        }
+    };
+
     const updateUser = async (user: User) => {
         const updatedUser = await usersService.updateUser(user.id, user);
+        console.log("KERTWANG updateUser updatedUser", updatedUser);
         useUserStore().setLoggedInUser(updatedUser);
         return updatedUser;
     };
@@ -126,5 +155,6 @@ export const useUserShelves = () => {
         removeFromHaveRead,
         moveFromWantToReadToHaveRead,
         updateWantToRead,
+        updateHaveRead,
     };
 };

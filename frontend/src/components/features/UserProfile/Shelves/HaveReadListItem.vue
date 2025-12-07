@@ -7,10 +7,10 @@
 </template>
 
 <script setup lang="ts">
-import type { Book } from "@/types";
+import type { FutureBook } from "@/types";
 
 defineProps<{
-    book: Book;
+    book: FutureBook;
 }>();
 </script>
 

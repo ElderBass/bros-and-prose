@@ -1,0 +1,146 @@
+<template>
+    <BaseModal
+        :modelValue="confirmDeleteModalOpen"
+        @close="closeModal"
+        title="you sure bro?"
+        size="small"
+        shadow-color="red"
+        :header-icon="faSurprise"
+    >
+        <div class="content">
+            <p>sure you wanna remove</p>
+            <p class="book-title">{{ bookTitle.toUpperCase() }}</p>
+            <p>from your {{ shelfDisplayName }} shelf?</p>
+        </div>
+        <template #footer>
+            <div class="actions">
+                <BaseButton
+                    variant="outline"
+                    title="on second thought this book is aight"
+                    @click="closeModal"
+                    :size="mobile ? 'small' : 'medium'"
+                    :style="{ width: mobile ? '100%' : 'auto' }"
+                >
+                    cancel
+                </BaseButton>
+                <BaseButton
+                    variant="outline-error"
+                    title="fuck that book in particular"
+                    @click="handleDelete"
+                    :disabled="loading"
+                    :size="mobile ? 'small' : 'medium'"
+                    :style="{ width: mobile ? '100%' : 'auto' }"
+                >
+                    {{ loading ? "removing..." : "fuck it" }}
+                </BaseButton>
+            </div>
+        </template>
+    </BaseModal>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
+import { faSurprise } from "@fortawesome/free-solid-svg-icons";
+import { useUserShelves } from "@/composables/useUserShelves";
+import { useShelfModalStore } from "@/stores/shelfModal";
+import { getShelfDisplayName } from "@/utils/bookshelfUtils";
+import { useLog } from "@/composables/useLog";
+
+const { mobile } = useDisplay();
+const { removeFromWantToRead, removeFromHaveRead } = useUserShelves();
+const { error: logError } = useLog();
+
+const shelfModalStore = useShelfModalStore();
+const { confirmDeleteModalOpen, bookTitle, selectedBook, selectedBookShelf } =
+    storeToRefs(shelfModalStore);
+const { closeModal, openAddBookError } = shelfModalStore;
+
+const loading = ref(false);
+
+const shelfDisplayName = computed(() => {
+    if (!selectedBookShelf.value) return "shelf";
+    return getShelfDisplayName(selectedBookShelf.value);
+});
+
+const handleDelete = async () => {
+    if (!selectedBook.value || !selectedBookShelf.value) {
+        console.error("Missing book or shelf for delete operation");
+        return;
+    }
+
+    try {
+        loading.value = true;
+        if (selectedBookShelf.value === "wantToRead") {
+            await removeFromWantToRead(selectedBook.value.id);
+        } else {
+            await removeFromHaveRead(selectedBook.value.id);
+        }
+        closeModal();
+    } catch (error) {
+        console.error("Error deleting book from shelf:", error);
+        await logError(`Error deleting book from shelf: ${error}`);
+        openAddBookError(
+            bookTitle.value,
+            shelfDisplayName.value,
+            `error removing ${selectedBook.value.title} from ${shelfDisplayName.value} shelf: ${(error as Error).message}`
+        );
+    } finally {
+        loading.value = false;
+    }
+};
+</script>
+
+<style scoped>
+.content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+p {
+    text-align: center;
+    font-size: 1.55rem;
+    color: var(--main-text);
+}
+
+.book-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--accent-blue);
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding: 2rem;
+    }
+
+    p {
+        font-size: 1.25rem;
+    }
+
+    .book-title {
+        font-size: 1.5rem;
+    }
+
+    .actions {
+        padding: 0rem;
+        justify-content: space-between;
+        width: 100%;
+    }
+}
+</style>

@@ -7,13 +7,12 @@
         color="blue"
     >
         <template #scroll-content>
-            <div class="want-to-read-list">
-                <WantToReadListItem
-                    v-for="book in wantToRead"
-                    :key="book.id"
-                    :book="book"
-                />
-            </div>
+            <WantToReadListItem
+                v-for="book in wantToRead"
+                :key="book.id"
+                :book="book"
+                :showActions="isLoggedInUser"
+            />
         </template>
     </UserContentPanel>
 </template>
@@ -21,11 +20,15 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import UserContentPanel from "@/components/features/UserProfile/UserContentPanel.vue";
-import WantToReadListItem from "./WantToReadListItem.vue";
-import type { Book } from "@/types";
+import WantToReadListItem from "@/components/features/UserProfile/Shelves/WantToReadSection/WantToReadListItem.vue";
+import type { FutureBook } from "@/types";
+
+defineOptions({
+    name: "WantToReadSection",
+});
 
 const props = defineProps<{
-    wantToRead: Book[];
+    wantToRead: FutureBook[];
     isLoggedInUser: boolean;
 }>();
 
@@ -36,4 +39,11 @@ const noContentMessage = computed(() =>
 );
 </script>
 
-<style scoped></style>
+<style scoped>
+.want-to-read-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.5rem;
+}
+</style>

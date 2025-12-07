@@ -1,21 +1,16 @@
 <template>
     <form @submit.prevent="submit" class="form">
         <div class="form-container">
-            <label
-                v-if="!noBookFound"
-                for="shelf-book-title"
-                class="title-label"
-                >{{ shelfMessage }}</label
-            >
-            <label v-else for="shelf-book-title" class="title-label">
-                book not found; you're on your own
+            <label for="edit-book-title" class="title-label">
+                {{ shelfMessage }}
             </label>
             <BaseInput
                 v-model="title"
-                id="shelf-book-title"
+                id="edit-book-title"
                 label="title"
                 size="medium"
                 placeholder="book title"
+                disabled
             />
         </div>
 
@@ -26,43 +21,45 @@
         <template v-if="showBookDetails && !isLoading">
             <div class="form-row">
                 <div class="form-container">
-                    <label for="shelf-book-author" class="label">author</label>
+                    <label for="edit-book-author" class="label">author</label>
                     <BaseInput
                         v-model="author"
-                        id="shelf-book-author"
+                        id="edit-book-author"
                         label="author"
                         size="medium"
                         placeholder="author"
+                        disabled
                     />
                 </div>
                 <div class="form-container">
-                    <label for="shelf-book-year" class="label"
+                    <label for="edit-book-year" class="label"
                         >year published</label
                     >
                     <BaseInput
                         v-model="yearPublished"
-                        id="shelf-book-year"
+                        id="edit-book-year"
                         label="year published"
                         placeholder="year"
                         size="medium"
+                        disabled
                     />
                 </div>
             </div>
 
             <div class="form-container">
-                <label for="shelf-book-tags" class="label"
+                <label for="edit-book-tags" class="label"
                     >tags (optional)</label
                 >
                 <BookTagsSelector :tags="tags" :onClick="toggleTag" />
             </div>
 
             <div class="form-container">
-                <label for="shelf-book-comment" class="label"
+                <label for="edit-book-comment" class="label"
                     >comment (optional)</label
                 >
                 <BaseTextArea
                     v-model="comment"
-                    id="shelf-book-comment"
+                    id="edit-book-comment"
                     label="comment"
                     placeholder="add your thoughts about this book..."
                     :style="{ height: '120px' }"
@@ -78,35 +75,34 @@
             v-if="showBookDetails && !isLoading"
             :canSubmit="canSubmit"
             :shelfDisplayName="shelfDisplayName"
+            action="update"
             @closeModal="closeModal"
         />
     </form>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch, onBeforeUnmount } from "vue";
+import { computed, ref, onMounted } from "vue";
 import BookTagsSelector from "@/components/form/BookTagsSelector.vue";
-import { useBooks } from "@/composables/useBooks";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { buildBookShelfEntry, getShelfSuccessMessage } from "@/utils";
 import type { FutureBook, OpenLibraryBookResult } from "@/types/books";
-import { useLog } from "@/composables/useLog";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import FormActions from "../FormStuff/FormActions.vue";
 
 const props = defineProps<{
+    book: FutureBook;
     selectedShelf: "wantToRead" | "haveRead";
     shelfMessage: string;
     shelfDisplayName: string;
 }>();
 
-const { searchBooksByTitle } = useBooks();
-const { addToWantToRead, addToHaveRead } = useUserShelves();
+const { updateWantToRead, updateHaveRead } = useUserShelves();
 const { openAddBookSuccess, openAddBookError, closeModal } =
     useShelfModalStore();
 
 const isLoading = ref(false);
-const showBookDetails = ref(false);
+const showBookDetails = ref(true); // Start with true since we have existing book data
 const noBookFound = ref(false);
 
 const loading = ref(false);
@@ -116,6 +112,26 @@ const yearPublished = ref("");
 const tags = ref<string[]>([]);
 const comment = ref("");
 const bookResult = ref<OpenLibraryBookResult>({} as OpenLibraryBookResult);
+
+// Initialize form with existing book data
+onMounted(() => {
+    title.value = props.book.title || "";
+    author.value = props.book.author || "";
+    yearPublished.value = props.book.yearPublished?.toString() || "";
+    tags.value = props.book.tags || [];
+    comment.value = props.book.description || "";
+
+    // Set up bookResult for the image
+    if (props.book.imageSrc) {
+        // Extract cover_i from imageSrc if it's an OpenLibrary URL
+        const coverMatch = props.book.imageSrc.match(/\/b\/id\/(\d+)-/);
+        if (coverMatch) {
+            bookResult.value = {
+                cover_i: parseInt(coverMatch[1]),
+            } as OpenLibraryBookResult;
+        }
+    }
+});
 
 const canSubmit = computed(() => {
     return (
@@ -134,98 +150,50 @@ const toggleTag = (tag: string) => {
 };
 
 const resetForm = () => {
-    title.value = "";
-    author.value = "";
-    yearPublished.value = "";
-    tags.value = [];
-    comment.value = "";
-    showBookDetails.value = false;
+    // Reset to original book values
+    title.value = props.book.title || "";
+    author.value = props.book.author || "";
+    yearPublished.value = props.book.yearPublished?.toString() || "";
+    tags.value = props.book.tags || [];
+    comment.value = props.book.description || "";
+    showBookDetails.value = true;
     noBookFound.value = false;
-    bookResult.value = {} as OpenLibraryBookResult;
-};
-
-const runSearch = async () => {
-    const query = title.value.trim();
-    if (!query) {
-        bookResult.value = {} as OpenLibraryBookResult;
-        showBookDetails.value = false;
-        return;
-    }
-    try {
-        isLoading.value = true;
-        const books = await searchBooksByTitle(query);
-        bookResult.value = (books && books[0]) || {};
-
-        if (bookResult.value.title && bookResult.value.author_name?.[0]) {
-            showBookDetails.value = true;
-            author.value = bookResult.value.author_name[0];
-            yearPublished.value =
-                bookResult.value.first_publish_year?.toString() || "";
-        } else {
-            noBookFound.value = true;
-            showBookDetails.value = true;
-        }
-    } catch (e) {
-        bookResult.value = {} as OpenLibraryBookResult;
-        console.error("error in runSearch for shelf form", e);
-        await useLog().error(`Error in runSearch for shelf form: ${e}`);
-        openAddBookError(
-            title.value,
-            props.shelfDisplayName,
-            "oof  bud, hit an error searching for that book..."
-        );
-    } finally {
-        isLoading.value = false;
-    }
 };
 
 const submit = async () => {
     try {
         loading.value = true;
-        const book: FutureBook = buildBookShelfEntry(
-            bookResult.value,
-            comment.value,
-            tags.value
-        );
+
+        // Build updated book entry, preserving the original ID
+        const updatedBook: FutureBook = {
+            ...buildBookShelfEntry(bookResult.value, comment.value, tags.value),
+            id: props.book.id, // Preserve the original book ID
+        };
+
+        // If we have imageSrc from the original book, preserve it
+        if (props.book.imageSrc && !updatedBook.imageSrc) {
+            updatedBook.imageSrc = props.book.imageSrc;
+        }
 
         if (props.selectedShelf === "wantToRead") {
-            await addToWantToRead(book);
+            await updateWantToRead(props.book.id, updatedBook);
         } else {
-            await addToHaveRead(book);
+            await updateHaveRead(props.book.id, updatedBook);
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);
-        openAddBookSuccess(book.title, props.shelfDisplayName, message);
+        openAddBookSuccess(updatedBook.title, props.shelfDisplayName, message);
         resetForm();
     } catch (error) {
         openAddBookError(
             title.value,
             props.shelfDisplayName,
-            "error adding book to shelf: " + (error as Error).message
+            "error updating book: " + (error as Error).message
         );
     } finally {
         loading.value = false;
     }
 };
-
-// Debounce search when the title changes
-let searchTimer: number | null = null;
-const DEBOUNCE_MS = 1200;
-
-watch(
-    title,
-    () => {
-        if (searchTimer) window.clearTimeout(searchTimer);
-        searchTimer = window.setTimeout(() => {
-            runSearch();
-        }, DEBOUNCE_MS);
-    },
-    { flush: "post" }
-);
-
-onBeforeUnmount(() => {
-    if (searchTimer) window.clearTimeout(searchTimer);
-});
 </script>
 
 <style scoped>
@@ -255,15 +223,6 @@ onBeforeUnmount(() => {
     align-items: center;
     width: 100%;
     min-height: 200px;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    gap: 1rem;
-    width: 100%;
-    margin-top: 1rem;
 }
 
 .label {
@@ -304,15 +263,6 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 768px) {
-    .shelf-form {
-        gap: 0.75rem;
-        min-height: 400px;
-    }
-
-    .shelf-selector {
-        gap: 0.5rem;
-    }
-
     .form {
         gap: 0.75rem;
     }
@@ -320,13 +270,6 @@ onBeforeUnmount(() => {
     .form-row {
         flex-direction: column;
         gap: 0.75rem;
-    }
-
-    .form-actions {
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-        margin-top: 0.5rem;
     }
 
     .title-label {
@@ -341,10 +284,6 @@ onBeforeUnmount(() => {
         min-height: 150px;
         font-size: 1.125rem;
         padding: 1rem;
-    }
-
-    .stock-text {
-        font-size: 1.125rem;
     }
 }
 </style>

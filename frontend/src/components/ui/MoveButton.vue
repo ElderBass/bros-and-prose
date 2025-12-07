@@ -1,16 +1,16 @@
 <template>
     <IconButton
-        :icon="faMarker"
+        :icon="faArrowRightToBracket"
         :size="computedButtonSize"
         :title="title"
-        :handleClick="handleEdit"
-        color="fuschia"
+        :handleClick="handleMove"
+        color="green"
     />
 </template>
 
 <script setup lang="ts">
 import IconButton from "@/components/ui/IconButton.vue";
-import { faMarker } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightToBracket } from "@fortawesome/free-solid-svg-icons";
 import { useDisplay } from "vuetify";
 import { computed } from "vue";
 
@@ -18,11 +18,11 @@ const { mobile } = useDisplay();
 
 const props = defineProps<{
     title: string;
-    handleEdit: () => void;
+    handleMove: () => void;
     buttonSize?: "supersmall" | "xsmall" | "small" | "medium" | "large";
 }>();
 
 const computedButtonSize = computed(() => {
-    return props.buttonSize || (mobile ? "small" : "medium");
+    return props.buttonSize || (mobile.value ? "xsmall" : "small");
 });
 </script>

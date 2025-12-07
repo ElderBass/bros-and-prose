@@ -14,10 +14,14 @@
             :disabled="!canSubmit"
             variant="success"
             type="submit"
-            :title="`add to ${shelfDisplayName} shelf`"
+            :title="
+                props.action === 'update'
+                    ? `update book in ${props.shelfDisplayName} shelf`
+                    : `add to ${props.shelfDisplayName} shelf`
+            "
             :style="{ width: mobile ? '100%' : '50%' }"
         >
-            add to shelf
+            {{ props.action === "update" ? "update book" : "add to shelf" }}
         </BaseButton>
     </div>
 </template>
@@ -25,10 +29,16 @@
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
 
-defineProps<{
-    canSubmit: boolean;
-    shelfDisplayName: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        canSubmit: boolean;
+        shelfDisplayName: string;
+        action?: "add" | "update";
+    }>(),
+    {
+        action: "add",
+    }
+);
 
 defineEmits<{
     closeModal: [];
