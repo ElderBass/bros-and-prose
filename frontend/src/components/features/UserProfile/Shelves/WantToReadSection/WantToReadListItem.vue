@@ -1,5 +1,5 @@
 <template>
-    <BaseCard shadow-color="blue" size="small">
+    <div class="want-to-read-list-item-container">
         <div class="want-to-read-list-item">
             <div class="cover-and-info">
                 <img
@@ -41,7 +41,7 @@
                 {{ book.description }}
             </p>
         </div>
-    </BaseCard>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -61,10 +61,24 @@ const { mobile } = useDisplay();
 </script>
 
 <style scoped>
-.want-to-read-list-item {
+.want-to-read-list-item-container {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 1rem;
+    border: 1px solid var(--accent-blue);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--surface-color);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    flex: 1 0 100%;
+}
+.want-to-read-list-item {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     padding: 0.5rem;
 }
 
@@ -172,7 +186,11 @@ const { mobile } = useDisplay();
     padding-top: 0.25rem;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
+    .want-to-read-list-item-container {
+        flex: 1 0 60%;
+    }
+
     .want-to-read-list-item {
         gap: 1rem;
         padding: 0.75rem;
@@ -198,11 +216,11 @@ const { mobile } = useDisplay();
     }
 
     .author-and-meta {
-        font-size: 1rem;
+        font-size: 1.25rem;
     }
 
     .description {
-        font-size: 1rem;
+        font-size: 1.125rem;
         padding-top: 0.75rem;
         padding-left: 0.75rem;
     }
@@ -210,45 +228,6 @@ const { mobile } = useDisplay();
     .tags {
         gap: 0.5rem;
         margin-top: 0.5rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .want-to-read-list-item {
-        gap: 0.5rem;
-        padding: 0.375rem;
-    }
-
-    .cover-and-info {
-        gap: 0.5rem;
-    }
-
-    .cover,
-    .cover-placeholder {
-        flex: 0 0 50px;
-        width: 50px;
-        height: 75px;
-    }
-
-    .cover-placeholder {
-        font-size: 1.25rem;
-    }
-
-    .title {
-        font-size: 0.9rem;
-    }
-
-    .author-and-meta {
-        font-size: 0.8rem;
-    }
-
-    .description {
-        font-size: 0.8rem;
-        padding-top: 0.375rem;
-    }
-
-    .tags {
-        gap: 0.125rem;
     }
 }
 </style>

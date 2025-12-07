@@ -15,6 +15,7 @@
             <ShelfSelector
                 :selectedShelf="selectedShelf"
                 @selectShelf="selectedShelf = $event"
+                :disabled="true"
             />
             <EditBookForm
                 v-if="selectedBook"

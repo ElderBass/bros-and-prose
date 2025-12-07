@@ -1,6 +1,6 @@
 <template>
     <ErrorModal :open="addBookErrorModalOpen" @close="closeModal">
-        <p>fucking caught an error when {{ actionText }} that book:</p>
+        <p>fucking goofed when {{ actionText }} that book:</p>
         <p v-if="message" class="error-message">{{ message }}</p>
         <p v-else class="error-message">something went wrong, bro</p>
     </ErrorModal>
@@ -31,5 +31,14 @@ p {
 .error-message {
     font-size: 1rem;
     color: var(--accent-red);
+}
+
+@media (min-width: 768px) {
+    p {
+        font-size: 1.5rem;
+    }
+    .error-message {
+        font-size: 1.25rem;
+    }
 }
 </style>

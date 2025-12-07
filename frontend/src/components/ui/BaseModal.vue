@@ -114,7 +114,7 @@ const handleBackdropClick = () => {
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
-    max-height: 80vh;
+    max-height: 95vh;
     max-width: 90vw;
     display: flex;
     flex-direction: column;

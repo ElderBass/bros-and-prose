@@ -51,9 +51,9 @@ const props = defineProps<{
 }>();
 
 const voteLabel = computed(() =>
-    props.book.votes.length === 1
+    props.book.votes?.length === 1
         ? "1 vote"
-        : `${props.book.votes.length} votes`
+        : `${props.book.votes?.length} votes`
 );
 const iconProps = computed(() => {
     if (props.isHighlighted) {

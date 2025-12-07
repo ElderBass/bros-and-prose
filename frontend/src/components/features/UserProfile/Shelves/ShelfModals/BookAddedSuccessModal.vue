@@ -3,7 +3,7 @@
         :modelValue="addBookSuccessModalOpen"
         @close="closeModal"
         title="book added to shelf"
-        size="small"
+        :size="modalSize"
         shadow-color="green"
         :header-icon="faCheckCircle"
     >
@@ -17,19 +17,17 @@
         <template #footer>
             <BaseButton
                 variant="outline-secondary"
-                :size="mobile ? 'small' : 'medium'"
                 title="close this modal"
                 @click="closeModal"
-                :style="{ width: mobile ? '100%' : '50%' }"
+                v-bind="buttonProps"
             >
                 close
             </BaseButton>
             <BaseButton
                 variant="success"
-                :size="mobile ? 'small' : 'medium'"
                 title="add another book to your shelf"
                 @click="openAddBook"
-                :style="{ width: mobile ? '100%' : '50%' }"
+                v-bind="buttonProps"
             >
                 add another
             </BaseButton>
@@ -38,12 +36,14 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import BaseModal from "@/components/ui/BaseModal.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
+import type { ButtonSize } from "@/types";
 
 const shelfModalStore = useShelfModalStore();
 const { addBookSuccessModalOpen, bookTitle, shelfDisplayName } =
@@ -52,6 +52,17 @@ const { addBookSuccessModalOpen, bookTitle, shelfDisplayName } =
 const { closeModal, openAddBook } = shelfModalStore;
 
 const { mobile } = useDisplay();
+
+const modalSize = computed(() => {
+    return mobile.value ? "small" : "medium";
+});
+
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? ("small" as ButtonSize) : ("medium" as ButtonSize),
+        style: mobile.value ? { width: "100%" } : {},
+    };
+});
 </script>
 
 <style scoped>

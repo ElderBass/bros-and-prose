@@ -119,8 +119,8 @@ export const useFutureBooks = () => {
             await removeVoteForFutureBook(voteId, userId);
         }
         const updatedVotes = hasVotedForCurrentBook
-            ? book.votes.filter((v) => v !== userId)
-            : [...book.votes, userId];
+            ? book.votes?.filter((v) => v !== userId)
+            : [...(book.votes || []), userId];
         const updatedSelection = await updateCurrentSelection({
             ...book,
             votes: updatedVotes,
@@ -136,7 +136,7 @@ export const useFutureBooks = () => {
             await useLog().error(`Future book not found: ${bookId}`);
             return;
         }
-        const votes = book.votes.filter((v) => v !== userId);
+        const votes = book.votes?.filter((v) => v !== userId) || [];
         await updateCurrentSelection({ ...book, votes });
     };
 

@@ -2,15 +2,13 @@
     <div class="form-actions">
         <BaseButton
             variant="outline-secondary"
-            size="small"
             title="cancel adding this book"
             @click="$emit('closeModal')"
-            :style="{ width: mobile ? '100%' : '50%' }"
+            v-bind="buttonProps"
         >
             cancel
         </BaseButton>
         <BaseButton
-            size="small"
             :disabled="!canSubmit"
             variant="success"
             type="submit"
@@ -19,7 +17,7 @@
                     ? `update book in ${props.shelfDisplayName} shelf`
                     : `add to ${props.shelfDisplayName} shelf`
             "
-            :style="{ width: mobile ? '100%' : '50%' }"
+            v-bind="buttonProps"
         >
             {{ props.action === "update" ? "update book" : "add to shelf" }}
         </BaseButton>
@@ -27,6 +25,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useDisplay } from "vuetify";
 
 const props = withDefaults(
@@ -45,6 +44,13 @@ defineEmits<{
 }>();
 
 const { mobile } = useDisplay();
+
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? "small" : "medium",
+        style: mobile.value ? { width: "100%" } : {},
+    };
+});
 </script>
 
 <style scoped>
@@ -53,7 +59,13 @@ const { mobile } = useDisplay();
     justify-content: flex-end;
     align-items: flex-end;
     gap: 1rem;
-    width: 100%;
     margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        justify-content: space-between;
+        width: 100%;
+    }
 }
 </style>

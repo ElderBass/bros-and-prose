@@ -23,7 +23,7 @@
                     cancel
                 </BaseButton>
                 <BaseButton
-                    variant="outline-error"
+                    variant="error"
                     title="fuck that book in particular"
                     @click="handleDelete"
                     :disabled="loading"
@@ -133,7 +133,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    width: 100%;
+    width: 50%;
     gap: 1rem;
     padding: 1rem;
 }

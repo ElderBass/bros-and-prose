@@ -40,7 +40,7 @@ withDefaults(
 <style scoped>
 .scroll-content {
     display: flex;
-    gap: 0.75rem;
+    gap: 1rem;
     padding: 0.5rem;
 }
 
@@ -55,5 +55,11 @@ withDefaults(
     text-align: center;
     font-style: italic;
     opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+    .scroll-content {
+        gap: 0.75rem;
+    }
 }
 </style>
