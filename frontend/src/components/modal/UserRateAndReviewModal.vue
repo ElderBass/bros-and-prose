@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import RateAndReviewBookForm from "@/components/form/RateAndReviewBookForm.vue";
 import type { Book, FutureBook, SubmitReviewArgs } from "@/types";
-import { DEFAULT_RATING } from "@/constants";
+import { DEFAULT_RATING, DEFAULT_REVIEW } from "@/constants";
 
 withDefaults(
     defineProps<{
@@ -29,11 +29,7 @@ withDefaults(
         onClose: () => void;
     }>(),
     {
-        bookReview: () => ({
-            bookId: "",
-            rating: DEFAULT_RATING,
-            reviewComment: "",
-        }),
+        bookReview: () => DEFAULT_REVIEW,
     }
 );
 </script>

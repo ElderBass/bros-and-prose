@@ -61,20 +61,17 @@ const props = defineProps<{
     rating: number;
     comment: string;
     handleCancel: () => void;
-    handleSubmit: (review: SubmitReviewArgs, bookId: string) => Promise<void>;
+    handleSubmit: (review: SubmitReviewArgs) => Promise<void>;
 }>();
 
 const starRating = ref(props.rating);
 const reviewComment = ref(props.comment);
 
 const onSubmit = async () =>
-    await props.handleSubmit(
-        {
-            rating: starRating.value,
-            reviewComment: reviewComment.value,
-        },
-        props.book.id
-    );
+    await props.handleSubmit({
+        rating: starRating.value,
+        reviewComment: reviewComment.value,
+    });
 
 const buttonSize = computed(() => {
     return isMobile ? "small" : "medium";
