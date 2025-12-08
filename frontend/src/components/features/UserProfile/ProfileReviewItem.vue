@@ -32,7 +32,7 @@
     </div>
     <OtherBroReviewModal
         v-if="showOtherBroReviewModal"
-        :showModal="showOtherBroReviewModal"
+        :open="showOtherBroReviewModal"
         :brosName="username"
         :brosReview="review"
         :onClose="() => setShowOtherBroReviewModal(false)"

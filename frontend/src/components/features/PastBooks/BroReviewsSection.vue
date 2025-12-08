@@ -25,7 +25,7 @@
     </BaseCard>
     <OtherBroReviewModal
         v-if="showOtherBroReviewModal"
-        :showModal="showOtherBroReviewModal"
+        :open="showOtherBroReviewModal"
         :book="book"
         :brosName="selectedBroName"
         :brosReview="selectedBroReview"

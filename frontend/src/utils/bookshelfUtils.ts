@@ -1,4 +1,4 @@
-import type { OpenLibraryBookResult, FutureBook, User } from "@/types";
+import type { OpenLibraryBookResult, FutureBook, User, Review } from "@/types";
 import { capitalizeBookTitle } from "./capitalizeBookTitle";
 import { v4 as uuid } from "uuid";
 import { faBookMedical, faBookOpen } from "@fortawesome/free-solid-svg-icons";
@@ -69,4 +69,10 @@ export const getUserShelves = (user: User) => {
         wantToRead: Object.values(user.wantToRead || []),
         haveRead: Object.values(user.haveRead || []),
     };
+};
+
+export const getBookReview = (user: User, bookId: string) => {
+    const reviews = Object.values(user.reviews);
+    console.log(" KERTWANG REVIEWS??", reviews);
+    return reviews.find((review: Review) => review.book.id === bookId);
 };
