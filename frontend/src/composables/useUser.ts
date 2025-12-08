@@ -51,7 +51,6 @@ export const useUser = () => {
     };
 
     const updateUser = async (userId: string, user: User) => {
-        console.log(" KERTWANG INCOMING USER TP UPDATE USER CALL??", user);
         const updatedUser = await usersService.updateUser(userId, user);
         if (userId === loggedInUser.value.id) {
             setLoggedInUser(user);

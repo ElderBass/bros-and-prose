@@ -73,6 +73,5 @@ export const getUserShelves = (user: User) => {
 
 export const getBookReview = (user: User, bookId: string) => {
     const reviews = Object.values(user.reviews);
-    console.log(" KERTWANG REVIEWS??", reviews);
     return reviews.find((review: Review) => review.book.id === bookId);
 };

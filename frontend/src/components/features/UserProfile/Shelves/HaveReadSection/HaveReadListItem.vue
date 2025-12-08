@@ -52,7 +52,6 @@ onMounted(() => {
         useUserStore().getUserByUsername(
             (router.currentRoute.value.meta.user as User).username
         ) ?? null;
-    console.log(" KERTWANG BOOK ID in have read list item??", props.book.id);
     if (user) {
         review.value = getBookReview(user, props.book.id) ?? null;
     }
