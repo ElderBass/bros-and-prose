@@ -1,6 +1,6 @@
 <template>
     <BaseModal
-        :modelValue="showModal"
+        :modelValue="open"
         @close="onClose"
         title="bro's got thoughts"
         size="medium"
@@ -60,7 +60,7 @@ import { storeToRefs } from "pinia";
 const { isMobile } = storeToRefs(useUIStore());
 
 const props = defineProps<{
-    showModal: boolean;
+    open: boolean;
     brosName: string;
     brosReview: Review;
     onClose: () => void;

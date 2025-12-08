@@ -10,20 +10,19 @@ import { useUIStore } from "@/stores/ui";
 import { useLog } from "./useLog";
 import { useFutureBooks } from "./useFutureBooks";
 import { buildReview, isReviewOfCurrentBook } from "@/utils";
+import { storeToRefs } from "pinia";
 
 export const useUser = () => {
-    const {
-        loggedInUser,
-        setLoggedInUser,
-        setAllUsers,
-        setFutureBookSelector,
-    } = useUserStore();
+    const { setLoggedInUser, setAllUsers, setFutureBookSelector } =
+        useUserStore();
+
+    const { loggedInUser } = storeToRefs(useUserStore());
 
     const { showAlert } = useUIStore();
 
     const getUser = async (userId: string) => {
         const user = await usersService.getUser(userId);
-        if (userId === loggedInUser.id) {
+        if (userId === loggedInUser.value.id) {
             setLoggedInUser(user);
         }
         return user;
@@ -48,12 +47,12 @@ export const useUser = () => {
 
     const getOtherBros = async () => {
         const users = await usersService.getUsers();
-        return users.filter((user) => user.id !== loggedInUser.id);
+        return users.filter((user) => user.id !== loggedInUser.value.id);
     };
 
     const updateUser = async (userId: string, user: User) => {
         const updatedUser = await usersService.updateUser(userId, user);
-        if (userId === loggedInUser.id) {
+        if (userId === loggedInUser.value.id) {
             setLoggedInUser(user);
         }
         return updatedUser;
@@ -62,10 +61,10 @@ export const useUser = () => {
     const updateUserProgress = async (userId: string, progress: number) => {
         try {
             const updatedUser = await usersService.updateUser(userId, {
-                ...loggedInUser,
+                ...loggedInUser.value,
                 currentBookProgress: progress,
             });
-            if (userId === loggedInUser.id) {
+            if (userId === loggedInUser.value.id) {
                 setLoggedInUser(updatedUser);
             }
             return updatedUser;
@@ -83,7 +82,7 @@ export const useUser = () => {
 
     const updateUserAvatar = async (userId: string, avatar: string) => {
         const updatedUser = await updateUser(userId, {
-            ...loggedInUser,
+            ...loggedInUser.value,
             avatar,
         });
         return updatedUser;
@@ -91,7 +90,7 @@ export const useUser = () => {
 
     const updateUserUsername = async (userId: string, username: string) => {
         const updatedUser = await updateUser(userId, {
-            ...loggedInUser,
+            ...loggedInUser.value,
             username,
         });
         return updatedUser;
@@ -104,18 +103,18 @@ export const useUser = () => {
         try {
             const newReview = buildReview(reviewArgs, book);
             await useLog().info(
-                `newReview in addReview: reviewer = ${loggedInUser.username} | review = ${newReview}`
+                `newReview in addReview: reviewer = ${loggedInUser.value.username} | review = ${newReview}`
             );
 
             const currentBookProgress = isReviewOfCurrentBook(book.id)
                 ? FINISHED_BOOK_PROGRESS
-                : loggedInUser.currentBookProgress;
+                : loggedInUser.value.currentBookProgress;
 
-            const updatedUser = await updateUser(loggedInUser.id, {
-                ...loggedInUser,
+            const updatedUser = await updateUser(loggedInUser.value.id, {
+                ...loggedInUser.value,
                 currentBookProgress,
                 reviews: {
-                    ...loggedInUser.reviews,
+                    ...loggedInUser.value.reviews,
                     [book.id]: newReview,
                 },
             });
