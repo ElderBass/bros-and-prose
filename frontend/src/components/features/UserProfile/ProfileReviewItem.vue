@@ -47,6 +47,7 @@ import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import type { Review } from "@/types";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import { faGlasses } from "@fortawesome/free-solid-svg-icons";
+import { getReviewThemeColor } from "@/utils";
 
 const props = withDefaults(
     defineProps<{
@@ -66,27 +67,9 @@ const setShowOtherBroReviewModal = (value: boolean) => {
     showOtherBroReviewModal.value = value;
 };
 
-const themeVariant = computed(() => {
-    const rating = props.review.rating ?? 0;
-    if (rating <= 4) return "red";
-    if (rating <= 6) return "fuschia";
-    if (rating <= 8) return "blue";
-    return "green";
-});
-
-const themeColor = computed(() => {
-    switch (themeVariant.value) {
-        case "red":
-            return "var(--accent-red)";
-        case "fuschia":
-            return "var(--accent-fuschia)";
-        case "green":
-            return "var(--accent-green)";
-        case "blue":
-        default:
-            return "var(--accent-blue)";
-    }
-});
+const themeColor = computed(() =>
+    getReviewThemeColor(props.review.rating ?? 0)
+);
 
 type ReviewBookMeta = Review["book"] & { title?: string; name?: string };
 

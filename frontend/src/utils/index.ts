@@ -13,4 +13,5 @@ export * from "./futureBookUtils";
 export * from "./localStorageUtils";
 export * from "./palaverUtils";
 export * from "./pastBookUtils";
+export * from "./reviewUtils";
 export * from "./routerUtils";

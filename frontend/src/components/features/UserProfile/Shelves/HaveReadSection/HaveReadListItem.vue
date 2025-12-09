@@ -2,15 +2,11 @@
     <div class="have-read-list-item">
         <div class="book-title">{{ book.title }}</div>
         <div class="book-author">{{ book.author }}</div>
-        <div v-if="review" class="book-tags">
-            <BaseButton
-                title="peep review"
-                :size="mobile ? 'xsmall' : 'small'"
-                variant="outline-tertiary"
+        <div v-if="review" class="review-button">
+            <ReviewButton
+                :rating="review?.rating ?? 0"
                 @click="reviewModalOpen = true"
-            >
-                {{ review.rating }} / 10
-            </BaseButton>
+            />
         </div>
         <div v-else class="no-review">
             <span class="no-review-text">unreviewed</span>
@@ -30,10 +26,10 @@ import { ref, onMounted } from "vue";
 import { useDisplay } from "vuetify";
 import { useRouter } from "vue-router";
 import type { Review, FutureBook, User } from "@/types";
-import BaseButton from "@/components/ui/BaseButton.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import { getBookReview } from "@/utils";
 import { useUserStore } from "@/stores/user";
+import ReviewButton from "./ReviewButton.vue";
 
 const router = useRouter();
 
@@ -91,7 +87,7 @@ onMounted(() => {
     text-align: center;
 }
 
-.book-tags {
+.review-button {
     flex: 1 0 30%;
     display: flex;
     flex-wrap: wrap;
