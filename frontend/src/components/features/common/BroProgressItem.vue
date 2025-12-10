@@ -3,11 +3,16 @@
         <div class="bro-avatar-container">
             <AvatarImage
                 :icon="props.broAvatar"
-                :size="isMobile ? 'xsmall' : 'small'"
+                :size="mobile ? 'xsmall' : 'small'"
             />
-            <p :class="{ isLoggedInUser }">
-                {{ isLoggedInUser ? "you" : props.broName }}
+            <p v-if="isLoggedInUser" class="isLoggedInUser">
+                {{ isLoggedInUser }}
             </p>
+            <UsernameLink
+                v-else
+                :username="props.broName"
+                :fontSize="mobile ? 'small' : 'medium'"
+            />
         </div>
         <div class="progress-value-container">
             <p :class="{ finished: props.hasFinished }" class="progress-value">
@@ -32,13 +37,11 @@
 
 <script setup lang="ts">
 import { defineProps, withDefaults, computed } from "vue";
+import { useDisplay } from "vuetify";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import { faGlasses, faMarker } from "@fortawesome/free-solid-svg-icons";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
-
-const { isMobile } = storeToRefs(useUIStore());
+import UsernameLink from "@/components/ui/UsernameLink.vue";
 
 const props = withDefaults(
     defineProps<{
@@ -53,6 +56,8 @@ const props = withDefaults(
         isLoggedInUser: false,
     }
 );
+
+const { mobile } = useDisplay();
 
 const buttonTitle = computed(() => {
     return props.isLoggedInUser

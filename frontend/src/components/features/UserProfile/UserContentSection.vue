@@ -25,7 +25,7 @@ defineProps<{
     text-align: left;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: var(--accent-blue);
     margin: 0;
     padding-left: 0.75rem;
@@ -35,6 +35,9 @@ defineProps<{
     .user-content-section {
         width: 60%;
         gap: 1rem;
+    }
+    .section-title {
+        font-size: 1.125rem;
     }
 }
 </style>
