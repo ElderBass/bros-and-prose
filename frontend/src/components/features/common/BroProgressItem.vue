@@ -5,9 +5,7 @@
                 :icon="props.broAvatar"
                 :size="mobile ? 'xsmall' : 'small'"
             />
-            <p v-if="isLoggedInUser" class="isLoggedInUser">
-                {{ isLoggedInUser }}
-            </p>
+            <p v-if="isLoggedInUser" class="isLoggedInUser">you</p>
             <UsernameLink
                 v-else
                 :username="props.broName"
