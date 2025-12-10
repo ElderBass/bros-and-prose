@@ -22,7 +22,10 @@
             </BaseButton>
             <p v-else class="no-future-books-message">
                 holla at your bro
-                <span class="username">@{{ currentSelectorUsername }}</span>
+                <UsernameLink
+                    :username="currentSelectorUsername"
+                    fontSize="large"
+                />
                 and get them to add a fucking book, already
             </p>
         </div>
@@ -109,11 +112,6 @@ const onArchiveClick = async () => {
     font-size: 1.5rem;
     font-style: normal;
     width: 100%;
-}
-
-.username {
-    font-weight: 600;
-    color: var(--accent-fuschia);
 }
 
 @media (max-width: 768px) {

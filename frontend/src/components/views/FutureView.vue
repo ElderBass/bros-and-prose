@@ -1,8 +1,11 @@
 <template>
     <AppLayout>
         <PageTitle>
-            <span class="username">@{{ futureBookSelector.username }}'s</span>
-            selections
+            <UsernameLink
+                :username="futureBookSelector.username"
+                fontSize="large"
+            />
+            's selections
         </PageTitle>
         <LoadingSpinnerContainer
             v-if="isAppLoading"
@@ -147,12 +150,6 @@ const fabDisabled = computed(() => {
     width: fit-content;
     margin: 0 auto;
     margin-bottom: 0.25rem;
-}
-
-.username {
-    font-weight: bold;
-    font-style: normal;
-    color: var(--accent-fuschia);
 }
 
 .spinner-container {

@@ -19,7 +19,10 @@
             </div>
 
             <p class="stock-text">
-                <span class="username">@{{ entry.userInfo.username }}</span>
+                <UsernameLink
+                    :username="entry.userInfo.username"
+                    :fontSize="mobile ? 'small' : 'medium'"
+                />
                 {{ stockMessage }}
                 <span v-if="entry.type === 'discussion_note'">
                     <span class="book-title">{{
@@ -240,12 +243,6 @@ const themeColor = computed(() => {
     opacity: 0.85;
 }
 
-.username {
-    color: var(--accent-fuschia);
-    font-size: 1.25rem;
-    font-weight: 600;
-}
-
 .dot {
     opacity: 0.6;
 }
@@ -308,9 +305,6 @@ const themeColor = computed(() => {
         font-size: 1rem;
         gap: 0.5rem;
         width: 100%;
-    }
-    .username {
-        font-size: 1rem;
     }
     .content {
         gap: 0.5rem;

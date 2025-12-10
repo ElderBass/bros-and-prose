@@ -10,7 +10,7 @@
             <div class="heading">
                 <p class="heading-text">
                     peeping
-                    <span class="other-bro-name">@{{ brosName }}</span
+                    <UsernameLink :username="brosName" fontSize="large" />
                     >'s review for
                 </p>
                 <div class="book-info">
@@ -102,13 +102,6 @@ const buttonSize = computed(() => {
     text-align: center;
 }
 
-.other-bro-name {
-    font-size: 1.25rem;
-    color: var(--accent-fuschia);
-    font-family: "Libre Baskerville", serif;
-    font-weight: 600;
-}
-
 .book-info {
     display: flex;
     align-items: center;
@@ -158,10 +151,6 @@ const buttonSize = computed(() => {
 
     .book-author {
         font-size: 1rem;
-    }
-
-    .other-bro-name {
-        font-size: 1.125rem;
     }
 
     .heading {

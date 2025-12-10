@@ -23,7 +23,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import { useDisplay } from "vuetify";
 import { useRouter } from "vue-router";
 import type { Review, FutureBook, User } from "@/types";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
@@ -40,8 +39,6 @@ const props = defineProps<{
 const review = ref<Review | null>(null);
 const reviewModalOpen = ref(false);
 const username = ref(router.currentRoute.value.params.username as string);
-
-const { mobile } = useDisplay();
 
 onMounted(() => {
     const user =

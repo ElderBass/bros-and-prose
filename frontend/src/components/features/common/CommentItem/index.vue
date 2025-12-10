@@ -9,9 +9,10 @@
         <div class="content">
             <div class="header">
                 <div class="meta">
-                    <span class="username"
-                        >@{{ comment.userInfo.username }}</span
-                    >
+                    <UsernameLink
+                        :username="comment.userInfo.username"
+                        fontSize="small"
+                    />
                     <span class="dot">•</span>
                     <span class="timestamp">{{
                         formatDateForDevice(comment.createdAt)
@@ -167,12 +168,6 @@ const showReactionActions = computed(() => {
 
 .comment-item.size-compact .meta {
     font-size: 0.8rem;
-}
-
-.username {
-    color: var(--accent-fuschia);
-    font-size: 1.1rem;
-    font-weight: 600;
 }
 
 .comment-item.size-compact .username {
