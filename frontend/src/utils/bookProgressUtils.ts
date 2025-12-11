@@ -24,6 +24,11 @@ export const getProgressString = (bro: User, totalPages: number) => {
     return `${!isMobile ? "page" : ""} ${broProgress} / ${totalPages} (${convertToPercentage(broProgress, totalPages)}%)`;
 };
 
+export const getProgressPercentage = (current: number) => {
+    const currentBook = useBooksStore().currentBook;
+    return convertToPercentage(current, currentBook.totalPages);
+};
+
 export const getRatingReviewString = (broReview: Review, isMobile: boolean) => {
     let ratingReviewString = `${broReview.rating} / 10`;
     if (!isMobile) {

@@ -1,11 +1,5 @@
 <template>
-    <BaseCard
-        shadow-color="lavender"
-        :style="{
-            width: mobile ? '100%' : '50%',
-            minHeight: mobile ? '120px' : '160px',
-        }"
-    >
+    <div class="user-info-section">
         <div class="content">
             <div class="user">
                 <AvatarImage
@@ -20,12 +14,17 @@
                         {{ user?.firstName?.toLowerCase() }}
                         {{ user?.lastName?.toLowerCase() }}
                     </p>
-                    <p class="email">{{ user?.email }}</p>
+                    <div class="current-progress">
+                        <p>current book progress:</p>
+                        <span class="current-progress-percentage">
+                            {{ currentProgress }}%
+                        </span>
+                    </div>
                 </div>
             </div>
             <EditUserButton v-if="isLoggedInUser" />
         </div>
-    </BaseCard>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -36,6 +35,7 @@ import { useDisplay } from "vuetify";
 import { faUserAstronaut } from "@fortawesome/free-solid-svg-icons";
 import { AVATAR_ICON_LIST } from "@/constants";
 import type { User } from "@/types";
+import { getProgressPercentage } from "@/utils";
 
 const { isLoggedInUser, user } = defineProps<{
     isLoggedInUser: boolean;
@@ -50,9 +50,32 @@ const currentIcon = computed(() => {
         faUserAstronaut
     );
 });
+
+const currentProgress = computed(() => {
+    return getProgressPercentage(user.currentBookProgress);
+});
 </script>
 
 <style scoped>
+.user-info-section {
+    width: 50%;
+    min-height: 160px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--accent-lavender) 12%, transparent),
+        color-mix(in srgb, var(--accent-lavender) 6%, transparent)
+    );
+    border: 2px solid var(--accent-lavender);
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow:
+        0 4px 8px color-mix(in srgb, var(--accent-lavender) 25%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
 .content {
     display: flex;
     justify-content: space-between;
@@ -73,16 +96,33 @@ const currentIcon = computed(() => {
     font-family: "Libre Baskerville", serif;
 }
 
-.email {
+.current-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.current-progress-percentage {
+    font-size: 1.25rem;
+    font-weight: 600;
     opacity: 0.8;
     font-size: 0.9rem;
+    color: var(--accent-blue);
 }
 
 @media (max-width: 768px) {
+    .user-info-section {
+        width: 100%;
+        min-height: 120px;
+        gap: 1rem;
+    }
     .name h2 {
         font-size: 1rem;
     }
-    .email {
+    .current-progress {
+        gap: 0.5rem;
+    }
+    .current-progress-percentage {
         font-size: 1rem;
     }
 }
