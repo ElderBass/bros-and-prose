@@ -39,8 +39,12 @@ const router = createRouter({
             },
         },
         {
-            path: "/profile/:username",
-            name: "profile-user",
+            path: "/bros",
+            component: () => import("@/components/views/BrosView.vue"),
+        },
+        {
+            path: "/bros/:username",
+            name: "bro-user",
             component: () => import("@/components/views/ProfileView.vue"),
             props: (route) => ({
                 user: route.meta.user,
