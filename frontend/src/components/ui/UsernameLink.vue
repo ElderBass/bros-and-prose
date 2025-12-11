@@ -2,7 +2,7 @@
     <RouterLink
         class="router-link-wrapper username-link"
         :class="`font-size-${fontSize}`"
-        :to="`/profile/${username}`"
+        :to="`/bros/${username}`"
     >
         @{{ username }}
     </RouterLink>
