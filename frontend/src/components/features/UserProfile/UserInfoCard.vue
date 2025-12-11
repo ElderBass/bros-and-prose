@@ -82,6 +82,7 @@ const currentProgress = computed(() => {
     align-items: center;
     height: 100%;
     gap: 1.5rem;
+    font-size: 1.25rem;
 }
 
 .user {
@@ -119,11 +120,11 @@ const currentProgress = computed(() => {
     .name h2 {
         font-size: 1rem;
     }
+    .content {
+        font-size: 1rem;
+    }
     .current-progress {
         gap: 0.5rem;
-    }
-    .current-progress-percentage {
-        font-size: 1rem;
     }
 }
 </style>
