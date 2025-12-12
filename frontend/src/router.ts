@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { beforeEnterProfileView, getUserFromStorage } from "@/utils";
+import { beforeEnterProfileView } from "@/utils";
+import { useUserStore } from "./stores/user";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -27,16 +28,11 @@ const router = createRouter({
         {
             path: "/profile",
             name: "profile-root",
-            redirect: () => {
-                const user = getUserFromStorage();
-                if (user?.username) {
-                    return {
-                        name: "profile-user",
-                        params: { username: user.username },
-                    };
-                }
-                return { path: "/" };
-            },
+            component: () => import("@/components/views/ProfileView.vue"),
+            props: () => ({
+                user: useUserStore().loggedInUser,
+                isLoggedInUser: true,
+            }),
         },
         {
             path: "/bros",

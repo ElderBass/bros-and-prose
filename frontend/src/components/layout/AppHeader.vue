@@ -29,7 +29,7 @@
                 />
             </RouterLink>
         </div>
-        <RouterLink class="router-link-wrapper" :to="profileLink">
+        <RouterLink class="router-link-wrapper" to="/profile">
             <ProfileButton
                 v-if="!isMobile && currentAvatar && !isGuest"
                 :handleClick="() => {}"
@@ -69,7 +69,7 @@
                 </RouterLink>
                 <RouterLink
                     v-if="currentAvatar && !isGuest"
-                    :to="profileLink"
+                    to="/profile"
                     class="mobile-profile-btn"
                     style="color: var(--accent-blue)"
                 >
@@ -115,10 +115,6 @@ const currentAvatar = ref<IconDefinition | null>(null);
 
 const isGuest = computed(() => {
     return isGuestUser() || loggedInUser.value.id === "guest";
-});
-
-const profileLink = computed(() => {
-    return `/profile/${loggedInUser.value.username}`;
 });
 
 watch(
