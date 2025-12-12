@@ -1,6 +1,6 @@
 <template>
     <v-tooltip
-        :model-value="modelValue"
+        v-model="isVisible"
         :location="location"
         :open-delay="openDelay"
         :close-delay="closeDelay"
@@ -9,8 +9,16 @@
         content-class="base-tooltip-content"
         :max-width="maxWidth"
     >
-        <template #activator="{ props }">
-            <slot name="activator" :props="props" />
+        <template #activator="{ props: activatorProps }">
+            <div
+                v-bind="activatorProps"
+                class="tooltip-activator-wrapper"
+                @click="handleActivatorClick"
+                @touchstart="handleTouchStart"
+                :style="maxWidth ? { width: maxWidth } : {}"
+            >
+                <slot name="activator" :props="activatorProps" />
+            </div>
         </template>
 
         <div class="base-tooltip-wrapper">
@@ -21,6 +29,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
+
 type TooltipLocation =
     | "top"
     | "bottom"
@@ -35,7 +45,7 @@ type TooltipLocation =
 
 type ShadowColor = "lavender" | "fuschia" | "green" | "blue";
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         text?: string;
         modelValue?: boolean;
@@ -45,6 +55,7 @@ withDefaults(
         offset?: number;
         maxWidth?: number | string;
         shadowColor?: ShadowColor;
+        dismissOnClick?: boolean;
     }>(),
     {
         location: "top",
@@ -53,8 +64,48 @@ withDefaults(
         offset: 8,
         maxWidth: 300,
         shadowColor: "lavender",
+        dismissOnClick: true,
     }
 );
+
+const emit = defineEmits<{
+    "update:modelValue": [value: boolean];
+}>();
+
+const isVisible = ref(props.modelValue ?? false);
+
+// Sync with external modelValue changes
+watch(
+    () => props.modelValue,
+    (newVal) => {
+        isVisible.value = newVal ?? false;
+    }
+);
+
+// Emit changes back to parent
+watch(isVisible, (newVal) => {
+    emit("update:modelValue", newVal);
+});
+
+// Handle click/touch events to dismiss tooltip on mobile
+const handleActivatorClick = () => {
+    if (props.dismissOnClick && isVisible.value) {
+        // Small delay to allow click event to propagate first
+        setTimeout(() => {
+            isVisible.value = false;
+        }, 50);
+    }
+};
+
+const handleTouchStart = () => {
+    // On touch devices, dismiss tooltip after a short delay
+    // This handles the case where tooltip opens on touch but user wants to interact
+    if (props.dismissOnClick && isVisible.value) {
+        setTimeout(() => {
+            isVisible.value = false;
+        }, 300);
+    }
+};
 </script>
 
 <style>
@@ -117,6 +168,10 @@ withDefaults(
 </style>
 
 <style scoped>
+.tooltip-activator-wrapper {
+    display: inline-block;
+}
+
 .base-tooltip-wrapper {
     max-width: 100%;
     word-wrap: break-word;

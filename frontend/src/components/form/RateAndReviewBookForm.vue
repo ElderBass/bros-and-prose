@@ -3,9 +3,9 @@
         <div class="heading">
             <p class="heading-text">leave a review for</p>
             <div class="book-info">
-                <span class="book-title">{{ currentBook?.title }}</span>
+                <span class="book-title">{{ book?.title }}</span>
                 <p class="heading-text">by</p>
-                <span class="book-author">{{ currentBook?.author }}</span>
+                <span class="book-author">{{ book?.author }}</span>
             </div>
         </div>
         <div class="star-rating-container">
@@ -50,14 +50,14 @@
 <script setup lang="ts">
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import { ref, computed } from "vue";
-import type { SubmitReviewArgs, Book } from "@/types";
+import type { SubmitReviewArgs, Book, FutureBook } from "@/types";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
 
 const { isMobile } = storeToRefs(useUIStore());
 
 const props = defineProps<{
-    currentBook: Book;
+    book: Book | FutureBook;
     rating: number;
     comment: string;
     handleCancel: () => void;

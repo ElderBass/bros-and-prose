@@ -11,6 +11,12 @@ export interface Book {
     dateCompleted?: string;
 }
 
+export interface BookInfo {
+    title: string;
+    author: string;
+    id: string;
+}
+
 export interface BooksState {
     mostVotedFutureBookId: string;
     currentBook: Book;
@@ -34,6 +40,7 @@ export interface OpenLibraryBookResult {
     lending_identifier_s: string;
     public_scan_b: boolean;
     title: string;
+    subtitle?: string;
 }
 
 export interface IBookSearchResult {
@@ -50,8 +57,8 @@ export interface FutureBook {
     author: string;
     yearPublished: number;
     imageSrc: string;
-    tags: string[];
-    description: string;
+    tags?: string[];
+    description?: string;
     votes: string[];
 }
 
@@ -64,3 +71,5 @@ export interface ArchivedBooksEntry {
 export interface FutureBookSelectorRequest {
     selectorId: string;
 }
+
+export type Shelf = "currentlyReading" | "wantToRead" | "haveRead";

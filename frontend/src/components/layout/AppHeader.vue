@@ -32,7 +32,7 @@
         <RouterLink class="router-link-wrapper" to="/profile">
             <ProfileButton
                 v-if="!isMobile && currentAvatar && !isGuest"
-                :handleClick="goToProfile"
+                :handleClick="() => {}"
                 :currentAvatar="currentAvatar"
             />
         </RouterLink>
@@ -67,15 +67,15 @@
                         v-if="link.path === '/palaver' && hasUnreadEntries"
                     />
                 </RouterLink>
-                <button
+                <RouterLink
                     v-if="currentAvatar && !isGuest"
+                    to="/profile"
                     class="mobile-profile-btn"
-                    type="button"
-                    @click="goToProfile"
+                    style="color: var(--accent-blue)"
                 >
                     <FontAwesomeIcon :icon="currentAvatar" />
                     <span>Profile</span>
-                </button>
+                </RouterLink>
                 <RouterLink v-if="isGuest" class="login-link" to="/">
                     login
                 </RouterLink>
@@ -140,11 +140,6 @@ const toggleMobileMenu = () => {
 
 const closeMobileMenu = () => {
     isMobileMenuOpen.value = false;
-};
-
-const goToProfile = async () => {
-    await router.push("/profile");
-    closeMobileMenu();
 };
 
 onMounted(() => {

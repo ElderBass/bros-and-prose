@@ -1,0 +1,143 @@
+<template>
+    <BaseModal
+        :modelValue="addBookSuccessModalOpen"
+        @close="closeModal"
+        title="book added to shelf"
+        :size="modalSize"
+        shadow-color="green"
+        :header-icon="faCheckCircle"
+    >
+        <div class="success-modal-content">
+            <p class="success-message">
+                <span class="book-title">{{ bookTitle }}</span> has been added
+                to your
+                <span class="shelf-name">{{ shelfDisplayName }}</span> shelf!
+            </p>
+            <BaseButton
+                v-if="showReviewButton"
+                variant="tertiary"
+                title="review that shit"
+                @click="openReview"
+                :size="mobile ? 'small' : 'medium'"
+            >
+                leave a review
+            </BaseButton>
+        </div>
+        <template #footer>
+            <BaseButton
+                variant="outline-secondary"
+                title="close this modal"
+                @click="closeModal"
+                v-bind="buttonProps"
+            >
+                close
+            </BaseButton>
+            <BaseButton
+                variant="success"
+                title="add another book to your shelf"
+                @click="openAddBook(selectedBookShelf as Shelf)"
+                v-bind="buttonProps"
+            >
+                add another
+            </BaseButton>
+        </template>
+    </BaseModal>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import BaseModal from "@/components/ui/BaseModal.vue";
+import BaseButton from "@/components/ui/BaseButton.vue";
+import { useShelfModalStore } from "@/stores/shelfModal";
+import type { ButtonSize } from "@/types";
+import { HAVE_READ } from "@/constants";
+import { getShelfDisplayName } from "@/utils";
+import type { Shelf } from "@/types";
+
+const shelfModalStore = useShelfModalStore();
+const { addBookSuccessModalOpen, selectedBook, selectedBookShelf } =
+    storeToRefs(shelfModalStore);
+
+const { closeModal, openAddBook, openReview } = shelfModalStore;
+
+const { mobile } = useDisplay();
+
+const bookTitle = computed(() => {
+    return selectedBook.value?.title;
+});
+
+const shelfDisplayName = computed(() => {
+    return getShelfDisplayName(selectedBookShelf.value as Shelf);
+});
+
+const showReviewButton = computed(() => {
+    return shelfDisplayName.value === HAVE_READ;
+});
+
+const modalSize = computed(() => {
+    return mobile.value ? "small" : "medium";
+});
+
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? ("small" as ButtonSize) : ("medium" as ButtonSize),
+        style: mobile.value ? { width: "100%" } : {},
+    };
+});
+</script>
+
+<style scoped>
+.success-modal-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.success-message {
+    font-size: 1.5rem;
+    color: var(--main-text);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.book-title {
+    color: var(--accent-blue);
+    font-weight: 600;
+    font-style: italic;
+}
+
+.shelf-name {
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+.secondary-message {
+    font-size: 1.25rem;
+    color: var(--accent-fuschia);
+    font-style: italic;
+    margin: 0;
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+    .success-modal-content {
+        padding: 1rem;
+    }
+
+    .success-message {
+        font-size: 1.25rem;
+    }
+
+    .secondary-message {
+        font-size: 1.1rem;
+    }
+}
+</style>

@@ -1,54 +1,118 @@
 <template>
     <AppLayout>
-        <PageTitle title="check urself / wreck urself" />
-        <div class="profile-content">
-            <UserInfoCard />
-            <div class="bookshelves-container">
-                <!-- <Bookshelf :bookshelf="haveRead" />
-                <Bookshelf :bookshelf="currentlyReading" />
-                <Bookshelf :bookshelf="wantToRead" /> -->
+        <PageTitle>
+            <template v-if="isLoggedInUser">
+                check urself / wreck urself
+            </template>
+            <template v-else>
+                checking out <span class="username">@{{ user.username }}</span>
+            </template>
+        </PageTitle>
+        <LoadingSpinnerContainer
+            v-if="isAppLoading"
+            size="large"
+            message="retrieving the user..."
+        />
+        <div v-else class="profile-content">
+            <MainUserInfoSection
+                v-if="user"
+                :user="user"
+                :isLoggedInUser="isLoggedInUser"
+            />
+            <div class="secondary-content">
+                <UserShelvesSection
+                    :isLoggedInUser="isLoggedInUser"
+                    :wantToRead="wantToRead"
+                    :haveRead="haveRead"
+                />
+                <UserActivitySection :user="user" />
             </div>
         </div>
-        <FloatingActionButton
-            v-if="areBookshelvesEnabled"
-            :icon="faBookMedical"
-            title="add a book"
-            @click="openAddBookModal"
-        />
-
-        <AddBookModal
-            v-if="addBookModalOpen"
-            :open="addBookModalOpen"
-            @close="addBookModalOpen = false"
-        />
+        <ProfileFab v-if="isLoggedInUser" />
+        <PalaverModals v-if="isLoggedInUser" />
     </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { toRefs, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
-import UserInfoCard from "../features/UserProfile/UserInfoCard.vue";
-import FloatingActionButton from "../ui/FloatingActionButton.vue";
-import AddBookModal from "../modal/AddBookModal.vue";
-import { faBookMedical } from "@fortawesome/free-solid-svg-icons";
+import MainUserInfoSection from "../features/UserProfile/MainUserInfoSection.vue";
+import ProfileFab from "../features/UserProfile/ProfileFab.vue";
+import UserActivitySection from "../features/UserProfile/UserActivitySection.vue";
+import UserShelvesSection from "../features/UserProfile/Shelves/UserShelvesSection.vue";
+import PalaverModals from "../modal/PalaverModals/index.vue";
+import type { User } from "@/types";
+import { useUIStore } from "@/stores/ui";
+import { useUserStore } from "@/stores/user";
 
-const addBookModalOpen = ref(false);
-const areBookshelvesEnabled = ref(false);
+const props = defineProps<{
+    user: User;
+    isLoggedInUser: boolean;
+}>();
 
-const openAddBookModal = () => {
-    addBookModalOpen.value = true;
-};
+const { loggedInUser } = storeToRefs(useUserStore());
+const { isLoggedInUser } = toRefs(props);
+const user = ref(props.user);
+const wantToRead = ref(Object.values(props.user.wantToRead || []));
+const haveRead = ref(Object.values(props.user.haveRead || []));
+
+watch(
+    [loggedInUser, isLoggedInUser],
+    ([newLoggedInUser, isOwnProfile]) => {
+        if (isOwnProfile && newLoggedInUser?.id) {
+            user.value = newLoggedInUser;
+            const updatedWantToRead = Object.values(
+                newLoggedInUser.wantToRead || []
+            );
+            const updatedHaveRead = Object.values(
+                newLoggedInUser.haveRead || []
+            );
+            console.log("KERTWANG updatedWantToRead", updatedWantToRead);
+            console.log("KERTWANG updatedHaveRead", updatedHaveRead);
+            wantToRead.value = updatedWantToRead;
+            haveRead.value = updatedHaveRead;
+        }
+    },
+    { immediate: true }
+);
+
+const { isAppLoading } = storeToRefs(useUIStore());
 </script>
 
 <style scoped>
 .profile-content {
-    height: 50%;
+    height: 100vh;
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    gap: 1rem;
     margin-top: 2rem;
+}
+
+.secondary-content {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
+.username {
+    color: var(--accent-fuschia);
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .profile-content {
+        margin-top: 1rem;
+    }
+    .secondary-content {
+        width: 100%;
+    }
 }
 </style>

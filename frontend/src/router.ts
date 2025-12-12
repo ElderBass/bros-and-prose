@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { IS_PALAVER_ENABLED } from "./constants/palaver";
+import { beforeEnterProfileView } from "@/utils";
+import { useUserStore } from "./stores/user";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -26,17 +27,30 @@ const router = createRouter({
         },
         {
             path: "/profile",
+            name: "profile-root",
             component: () => import("@/components/views/ProfileView.vue"),
+            props: () => ({
+                user: useUserStore().loggedInUser,
+                isLoggedInUser: true,
+            }),
+        },
+        {
+            path: "/bros",
+            component: () => import("@/components/views/BrosView.vue"),
+        },
+        {
+            path: "/bros/:username",
+            name: "bro-user",
+            component: () => import("@/components/views/ProfileView.vue"),
+            props: (route) => ({
+                user: route.meta.user,
+                isLoggedInUser: route.meta.isLoggedInUser,
+            }),
+            beforeEnter: async (to, from, next) =>
+                await beforeEnterProfileView(to, from, next),
         },
         {
             path: "/palaver",
-            beforeEnter: (to, from, next) => {
-                if (IS_PALAVER_ENABLED) {
-                    next();
-                } else {
-                    next({ name: "four-oh-four" });
-                }
-            },
             component: () => import("@/components/views/PalaverView.vue"),
         },
         {

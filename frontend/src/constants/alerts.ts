@@ -110,6 +110,28 @@ export const UPDATED_COMMENT_SUCCESS_ALERT: Alert = {
     dismissable: false,
 };
 
+export const MOVED_BOOK_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "fuckin sent that shit, my dude.",
+        "buckle up, buttercup, cuz you got some reading to do.",
+    ],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
+export const REMOVED_BOOK_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "sent that shit to oblivion, my guy.",
+        "that book is now like my will to live - R.I.P.",
+    ],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
 export const futureBookVotedSuccessAlert = (hasVoted: boolean): Alert => {
     const message1 = hasVoted
         ? "vote removed successfully."

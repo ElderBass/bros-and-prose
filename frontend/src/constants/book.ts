@@ -1,4 +1,4 @@
-import type { Book, User } from "@/types";
+import type { Book, FutureBook, User } from "@/types";
 
 export const FINISHED_BOOK_PROGRESS = 69420;
 
@@ -6,6 +6,11 @@ export const DEFAULT_RATING = 5;
 export const DEFAULT_REVIEW = {
     rating: DEFAULT_RATING,
     reviewComment: "",
+};
+export const EMPTY_BOOK_INFO = {
+    title: "",
+    author: "",
+    id: "",
 };
 
 export const RATING_MAP = {
@@ -46,25 +51,39 @@ export const ON_DECK_BOOK_SELECTOR = "chris_dub";
 export const ARCHIVE_ENABLED = false;
 
 export const COMMON_BOOK_TAGS = [
-    "mystery",
-    "thriller",
-    "sci-fi",
-    "fantasy",
-    "dystopian",
-    "cerebral",
-    "satire",
-    "noir",
-    "historical",
-    "nonfiction",
-    "pop-culture",
-    "political",
-    "classic",
-    "memoir",
+    "adventure",
     "biography",
-    "romance",
+    "cerebral",
+    "classic",
+    "dystopian",
+    "fantasy",
+    "historical",
     "horror",
     "humor",
+    "literary",
+    "memoir",
+    "mystery",
+    "noir",
+    "nonfiction",
     "philosophy",
+    "political",
+    "pop-culture",
     "psychology",
+    "romance",
+    "satire",
+    "self-help",
+    "sci-fi",
     "tech",
+    "thriller",
 ];
+
+export const EMPTY_CURRENT_BOOK: FutureBook = {
+    id: "",
+    title: "",
+    author: "",
+    imageSrc: "",
+    tags: [],
+    description: "",
+    yearPublished: 0,
+    votes: [],
+};

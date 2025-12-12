@@ -96,8 +96,10 @@ const onConfirm = () => emit("confirm", localUsername.value.trim());
 
 <style scoped>
 .username-form {
+    flex: 1 0 auto;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 1rem;
     padding: 1rem;
 }

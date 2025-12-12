@@ -1,15 +1,17 @@
 <template>
     <AppLayout>
-        <h1 class="future-books-title">
-            <span class="username">@{{ futureBookSelector.username }}'s</span>
-            selections
-        </h1>
-        <div v-if="isAppLoading" class="spinner-container">
-            <LoadingSpinner
-                size="large"
-                message="retrieving the future prose, bros..."
+        <PageTitle>
+            <UsernameLink
+                :username="futureBookSelector.username"
+                fontSize="large"
             />
-        </div>
+            's selections
+        </PageTitle>
+        <LoadingSpinnerContainer
+            v-if="isAppLoading"
+            size="large"
+            message="retrieving the future prose, bros..."
+        />
         <FutureBooksContainer
             v-else
             :hasReadWriteAccess="userIsFutureBookSelector"
@@ -17,7 +19,7 @@
             :openFormModal="openFormModal"
             :futureBooks="currentSelections"
         />
-        <ArchivesContainer :archives="archivedSelections" />
+        <ArchivesSection :archives="archivedSelections" />
         <AddFutureBookFab
             v-if="userIsFutureBookSelector && !fabDisabled"
             @click="openFormModal"
@@ -49,16 +51,16 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted } from "vue";
+import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import AddFutureBookFab from "@/components/features/FutureBooks/AddFutureBookFab.vue";
 import FutureBookModal from "@/components/modal/FutureBookModal.vue";
 import SuccessModal from "@/components/modal/SuccessModal.vue";
 import ErrorModal from "@/components/modal/ErrorModal.vue";
 import FutureBooksContainer from "@/components/features/FutureBooks/FutureBooksContainer.vue";
-import ArchivesContainer from "@/components/features/FutureBooks/ArchivesContainer.vue";
-import { computed, onMounted } from "vue";
+import ArchivesSection from "@/components/features/FutureBooks/ArchivesSection.vue";
 import { useUserStore } from "@/stores/user";
-import { storeToRefs } from "pinia";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "@/composables/useLog";
 import type { FutureBook } from "@/types";
@@ -148,12 +150,6 @@ const fabDisabled = computed(() => {
     width: fit-content;
     margin: 0 auto;
     margin-bottom: 0.25rem;
-}
-
-.username {
-    font-weight: bold;
-    font-style: normal;
-    color: var(--accent-fuschia);
 }
 
 .spinner-container {

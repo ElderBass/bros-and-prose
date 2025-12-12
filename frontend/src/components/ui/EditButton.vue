@@ -19,7 +19,7 @@ const { mobile } = useDisplay();
 const props = defineProps<{
     title: string;
     handleEdit: () => void;
-    buttonSize?: "xsmall" | "small" | "medium" | "large";
+    buttonSize?: "supersmall" | "xsmall" | "small" | "medium" | "large";
 }>();
 
 const computedButtonSize = computed(() => {

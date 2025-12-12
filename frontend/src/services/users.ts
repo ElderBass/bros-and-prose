@@ -7,7 +7,19 @@ export const usersService = {
         try {
             const response = await apiRequest<ApiResponse<User>>(
                 "GET",
-                `/api/users/${userId}`
+                `/api/users/id/${userId}`
+            );
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    },
+    getUserByUsername: async (username: string) => {
+        try {
+            const response = await apiRequest<ApiResponse<User>>(
+                "GET",
+                `/api/users/username/${username}`
             );
             return response.data;
         } catch (error) {
@@ -22,7 +34,7 @@ export const usersService = {
             }
             const response = await apiRequest<ApiResponse<User[]>>(
                 "GET",
-                `/api/users`
+                `/api/users/all`
             );
             return response.data;
         } catch (error) {
@@ -34,7 +46,7 @@ export const usersService = {
         try {
             const response = await apiRequest<ApiResponse<User>>(
                 "PUT",
-                `/api/users/${userId}`,
+                `/api/users/id/${userId}`,
                 user
             );
             return response.data;

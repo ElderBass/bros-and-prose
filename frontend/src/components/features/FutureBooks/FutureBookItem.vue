@@ -3,10 +3,10 @@
         <div class="future-book-item">
             <FutureBookItemInfo :book="book" />
             <div class="footer">
-                <VoteCount :voteCount="book.votes.length - 1 || 0" />
+                <VoteCount :voteCount="book.votes?.length - 1 || 0" />
                 <VoteActions
                     v-if="!userIsFutureBookSelector || isGuestUser()"
-                    :voteCount="book.votes.length - 1 || 0"
+                    :voteCount="book.votes?.length - 1 || 0"
                     :userHasVoted="userHasVoted"
                     :handleVote="handleVote"
                 />
@@ -59,7 +59,7 @@ const deleteFutureBookModalOpen = ref(false);
 const handleEdit = () => openFormModal(props.book, "update");
 const handleDelete = () => (deleteFutureBookModalOpen.value = true);
 
-const userHasVoted = ref(props.book.votes.includes(loggedInUser.id));
+const userHasVoted = ref(props.book.votes?.includes(loggedInUser.id));
 
 const handleVote = async () => {
     try {
@@ -73,7 +73,7 @@ const handleVote = async () => {
         showAlert(QUICK_ERROR(["voter fraud!", error as string]));
     } finally {
         useUIStore().setIsAppLoading(false);
-        showAlert(futureBookVotedSuccessAlert(userHasVoted.value));
+        showAlert(futureBookVotedSuccessAlert(userHasVoted.value ?? false));
     }
 };
 

@@ -175,3 +175,7 @@ export const updatePalaverLikesDislikes = (
     }
     return item;
 };
+
+export const getUserContent = (userId: string) => {
+    return usePalaverStore().entries.filter((e) => e.userInfo.id === userId);
+};

@@ -1,6 +1,6 @@
 <template>
     <BaseModal
-        :modelValue="showModal"
+        :modelValue="open"
         @close="onClose"
         title="bro's got thoughts"
         size="medium"
@@ -10,13 +10,17 @@
             <div class="heading">
                 <p class="heading-text">
                     peeping
-                    <span class="other-bro-name">{{ brosName }}</span
+                    <UsernameLink :username="brosName" fontSize="large" />
                     >'s review for
                 </p>
                 <div class="book-info">
-                    <span class="book-title">{{ props.book?.title }}</span>
+                    <span class="book-title">{{
+                        props.brosReview.book?.title
+                    }}</span>
                     <p class="heading-text">by</p>
-                    <span class="book-author">{{ props.book?.author }}</span>
+                    <span class="book-author">{{
+                        props.brosReview.book?.author
+                    }}</span>
                 </div>
             </div>
             <div class="star-rating-container">
@@ -47,7 +51,7 @@
 
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
-import type { Book, Review } from "@/types";
+import type { Review } from "@/types";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import ReviewComment from "../features/Review/ReviewComment.vue";
 import { useUIStore } from "@/stores/ui";
@@ -56,8 +60,7 @@ import { storeToRefs } from "pinia";
 const { isMobile } = storeToRefs(useUIStore());
 
 const props = defineProps<{
-    showModal: boolean;
-    book: Book;
+    open: boolean;
     brosName: string;
     brosReview: Review;
     onClose: () => void;
@@ -99,13 +102,6 @@ const buttonSize = computed(() => {
     text-align: center;
 }
 
-.other-bro-name {
-    font-size: 1.25rem;
-    color: var(--accent-green);
-    font-family: "Libre Baskerville", serif;
-    font-weight: 600;
-}
-
 .book-info {
     display: flex;
     align-items: center;
@@ -124,7 +120,7 @@ const buttonSize = computed(() => {
 
 .book-author {
     font-size: 1.25rem;
-    color: var(--accent-lavender);
+    color: var(--accent-blue);
     font-family: "Libre Baskerville", serif;
 }
 
@@ -155,10 +151,6 @@ const buttonSize = computed(() => {
 
     .book-author {
         font-size: 1rem;
-    }
-
-    .other-bro-name {
-        font-size: 1.125rem;
     }
 
     .heading {
