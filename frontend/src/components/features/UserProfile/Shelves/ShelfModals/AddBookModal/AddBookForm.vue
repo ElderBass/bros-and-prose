@@ -254,6 +254,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .form {
+    flex: 1 0 auto;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -328,11 +329,6 @@ onBeforeUnmount(() => {
 }
 
 @media (max-width: 768px) {
-    .shelf-form {
-        gap: 0.75rem;
-        min-height: 400px;
-    }
-
     .shelf-selector {
         gap: 0.5rem;
     }

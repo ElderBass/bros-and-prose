@@ -14,7 +14,7 @@ export type ModalType =
 interface ModalState {
     modal: ModalType;
     selectedBook: FutureBook | null;
-    selectedBookShelf: Shelf | null;
+    selectedBookShelf: Shelf;
     message: string;
 }
 
@@ -22,7 +22,7 @@ export const useShelfModalStore = defineStore("shelfModal", {
     state: (): ModalState => ({
         modal: null,
         selectedBook: null,
-        selectedBookShelf: null,
+        selectedBookShelf: "haveRead",
         message: "",
     }),
 
@@ -30,8 +30,9 @@ export const useShelfModalStore = defineStore("shelfModal", {
         openModal(modalType: ModalType) {
             this.modal = modalType;
         },
-        openAddBook() {
+        openAddBook(shelf?: Shelf) {
             this.modal = "addBook";
+            this.selectedBookShelf = shelf || "haveRead";
         },
         openEditBook(book: FutureBook, shelf: Shelf) {
             this.modal = "editBook";
@@ -65,7 +66,7 @@ export const useShelfModalStore = defineStore("shelfModal", {
         closeModal() {
             this.modal = null;
             this.selectedBook = null;
-            this.selectedBookShelf = null;
+            this.selectedBookShelf = "haveRead";
             this.message = "";
         },
     },

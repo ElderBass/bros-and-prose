@@ -71,6 +71,7 @@ export const COMMON_BOOK_TAGS = [
     "psychology",
     "romance",
     "satire",
+    "self-help",
     "sci-fi",
     "tech",
     "thriller",

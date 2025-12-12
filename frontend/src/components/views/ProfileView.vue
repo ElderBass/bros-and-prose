@@ -95,4 +95,10 @@ const { isAppLoading } = storeToRefs(useUIStore());
     color: var(--accent-fuschia);
     font-weight: 600;
 }
+
+@media (max-width: 768px) {
+    .profile-content {
+        margin-top: 1rem;
+    }
+}
 </style>

@@ -35,7 +35,7 @@
             <BaseButton
                 variant="success"
                 title="add another book to your shelf"
-                @click="openAddBook"
+                @click="openAddBook(selectedBookShelf as Shelf)"
                 v-bind="buttonProps"
             >
                 add another
@@ -55,6 +55,7 @@ import { useShelfModalStore } from "@/stores/shelfModal";
 import type { ButtonSize } from "@/types";
 import { HAVE_READ } from "@/constants";
 import { getShelfDisplayName } from "@/utils";
+import type { Shelf } from "@/types";
 
 const shelfModalStore = useShelfModalStore();
 const { addBookSuccessModalOpen, selectedBook, selectedBookShelf } =
@@ -69,9 +70,7 @@ const bookTitle = computed(() => {
 });
 
 const shelfDisplayName = computed(() => {
-    return getShelfDisplayName(
-        selectedBookShelf.value as "wantToRead" | "haveRead"
-    );
+    return getShelfDisplayName(selectedBookShelf.value as Shelf);
 });
 
 const showReviewButton = computed(() => {
