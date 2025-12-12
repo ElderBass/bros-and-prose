@@ -64,7 +64,7 @@ const currentProgress = computed(() => {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    width: 50%;
+    width: 100%;
 }
 
 h4 {
@@ -133,7 +133,6 @@ h4 {
 
 @media (max-width: 768px) {
     .user-info-section {
-        width: 100%;
         min-height: 120px;
         gap: 1rem;
     }

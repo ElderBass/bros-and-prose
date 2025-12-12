@@ -25,7 +25,6 @@ const { mobile } = useDisplay();
 <style scoped>
 .main-user-info-section {
     display: flex;
-    align-items: stretch;
     justify-content: space-between;
     gap: 0.5rem;
     width: 100%;

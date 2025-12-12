@@ -1,4 +1,4 @@
-import type { Book, User } from "@/types";
+import type { Book, FutureBook, User } from "@/types";
 
 export const FINISHED_BOOK_PROGRESS = 69420;
 
@@ -76,3 +76,14 @@ export const COMMON_BOOK_TAGS = [
     "tech",
     "thriller",
 ];
+
+export const EMPTY_CURRENT_BOOK: FutureBook = {
+    id: "",
+    title: "",
+    author: "",
+    imageSrc: "",
+    tags: [],
+    description: "",
+    yearPublished: 0,
+    votes: [],
+};

@@ -32,9 +32,6 @@ defineProps<{
 }
 
 @media (min-width: 768px) {
-    .user-content-section {
-        width: 60%;
-    }
     .section-title {
         font-size: 1.125rem;
     }

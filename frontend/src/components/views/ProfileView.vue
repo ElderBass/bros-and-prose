@@ -19,12 +19,14 @@
                 :user="user"
                 :isLoggedInUser="isLoggedInUser"
             />
-            <UserShelvesSection
-                :isLoggedInUser="isLoggedInUser"
-                :wantToRead="wantToRead"
-                :haveRead="haveRead"
-            />
-            <UserActivitySection :user="user" />
+            <div class="secondary-content">
+                <UserShelvesSection
+                    :isLoggedInUser="isLoggedInUser"
+                    :wantToRead="wantToRead"
+                    :haveRead="haveRead"
+                />
+                <UserActivitySection :user="user" />
+            </div>
         </div>
         <ProfileFab v-if="isLoggedInUser" />
         <PalaverModals v-if="isLoggedInUser" />
@@ -91,6 +93,15 @@ const { isAppLoading } = storeToRefs(useUIStore());
     margin-top: 2rem;
 }
 
+.secondary-content {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+}
+
 .username {
     color: var(--accent-fuschia);
     font-weight: 600;
@@ -99,6 +110,9 @@ const { isAppLoading } = storeToRefs(useUIStore());
 @media (max-width: 768px) {
     .profile-content {
         margin-top: 1rem;
+    }
+    .secondary-content {
+        width: 100%;
     }
 }
 </style>

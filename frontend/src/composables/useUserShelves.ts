@@ -3,6 +3,8 @@ import { useUserStore } from "@/stores/user";
 import type { FutureBook, User } from "@/types";
 import { useLog } from "./useLog";
 import { getUserShelves } from "@/utils/bookshelfUtils";
+import { EMPTY_CURRENT_BOOK } from "@/constants";
+import { useShelfModalStore } from "@/stores/shelfModal";
 
 export const useUserShelves = () => {
     const { info, error: logError } = useLog();
@@ -16,6 +18,26 @@ export const useUserShelves = () => {
             ...loggedInUser,
             currentlyReading: book,
         });
+        return updatedUser;
+    };
+
+    const finishCurrentlyReading = async (): Promise<User | null> => {
+        const loggedInUser = useUserStore().loggedInUser;
+        const currentBook = loggedInUser.currentlyReading;
+
+        const updatedUser = await updateUser({
+            ...loggedInUser,
+            currentlyReading: EMPTY_CURRENT_BOOK,
+        });
+
+        if (currentBook?.id) {
+            await addToShelf("haveRead", currentBook);
+        }
+        useShelfModalStore().openAddBookSuccess(
+            currentBook as FutureBook,
+            "haveRead",
+            "the present has now shifted to the past"
+        );
         return updatedUser;
     };
 
@@ -160,6 +182,7 @@ export const useUserShelves = () => {
 
     return {
         updateCurrentlyReading,
+        finishCurrentlyReading,
         addToWantToRead,
         removeFromWantToRead,
         addToHaveRead,
