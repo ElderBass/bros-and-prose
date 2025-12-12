@@ -3,7 +3,7 @@
         <BaseButton
             :variant="getVariant('haveRead')"
             :size="buttonSize"
-            title="books you've already read"
+            title="fucking shit you've sent, my dude"
             @click="$emit('selectShelf', 'haveRead')"
             :disabled="disabled"
         >
@@ -12,11 +12,20 @@
         <BaseButton
             :variant="getVariant('wantToRead')"
             :size="buttonSize"
-            title="books you want to read"
+            title="books that need to get got"
             @click="$emit('selectShelf', 'wantToRead')"
             :disabled="disabled"
         >
             want to read
+        </BaseButton>
+        <BaseButton
+            :variant="getVariant('currentlyReading')"
+            :size="buttonSize"
+            title="that side hustle book"
+            @click="$emit('selectShelf', 'currentlyReading')"
+            :disabled="disabled"
+        >
+            currently reading
         </BaseButton>
     </div>
 </template>
@@ -24,17 +33,18 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
+import type { Shelf } from "@/types";
 
 defineOptions({
     name: "ShelfSelector",
 });
 
 defineEmits<{
-    selectShelf: [shelf: "wantToRead" | "haveRead"];
+    selectShelf: [shelf: Shelf];
 }>();
 
 const props = defineProps<{
-    selectedShelf: "wantToRead" | "haveRead";
+    selectedShelf: Shelf;
     disabled?: boolean;
 }>();
 
@@ -44,7 +54,7 @@ const buttonSize = computed(() => {
     return mobile.value ? "xsmall" : "small";
 });
 
-const getVariant = (shelf: "wantToRead" | "haveRead") => {
+const getVariant = (shelf: Shelf) => {
     return props.selectedShelf === shelf ? "secondary" : "outline-secondary";
 };
 </script>

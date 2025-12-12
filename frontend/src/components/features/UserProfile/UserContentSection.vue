@@ -1,6 +1,6 @@
 <template>
-    <div class="user-content-section">
-        <h2 class="section-title">{{ sectionTitle }}</h2>
+    <div class="user-content-section" sectionTitle="{{ sectionTitle }}">
+        <h4 class="section-title">{{ sectionTitle }}</h4>
         <slot />
     </div>
 </template>
@@ -34,7 +34,6 @@ defineProps<{
 @media (min-width: 768px) {
     .user-content-section {
         width: 60%;
-        gap: 1rem;
     }
     .section-title {
         font-size: 1.125rem;

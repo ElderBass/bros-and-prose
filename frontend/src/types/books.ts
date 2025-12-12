@@ -71,3 +71,5 @@ export interface ArchivedBooksEntry {
 export interface FutureBookSelectorRequest {
     selectorId: string;
 }
+
+export type Shelf = "currentlyReading" | "wantToRead" | "haveRead";

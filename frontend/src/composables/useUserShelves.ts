@@ -7,6 +7,18 @@ import { getUserShelves } from "@/utils/bookshelfUtils";
 export const useUserShelves = () => {
     const { info, error: logError } = useLog();
 
+    const updateCurrentlyReading = async (
+        book: FutureBook
+    ): Promise<User | null> => {
+        const loggedInUser = useUserStore().loggedInUser;
+        console.log("KERTWANGING updateCurrentlyReading", book);
+        const updatedUser = await updateUser({
+            ...loggedInUser,
+            currentlyReading: book,
+        });
+        return updatedUser;
+    };
+
     const addToShelf = async (
         shelf: "wantToRead" | "haveRead",
         book: FutureBook
@@ -147,6 +159,7 @@ export const useUserShelves = () => {
     };
 
     return {
+        updateCurrentlyReading,
         addToWantToRead,
         removeFromWantToRead,
         addToHaveRead,

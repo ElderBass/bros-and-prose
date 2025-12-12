@@ -14,10 +14,10 @@
             message="retrieving the user..."
         />
         <div v-else class="profile-content">
-            <UserInfoCard
+            <MainUserInfoSection
                 v-if="user"
-                :isLoggedInUser="isLoggedInUser"
                 :user="user"
+                :isLoggedInUser="isLoggedInUser"
             />
             <UserShelvesSection
                 :isLoggedInUser="isLoggedInUser"
@@ -36,7 +36,7 @@ import { toRefs, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
-import UserInfoCard from "../features/UserProfile/UserInfoCard.vue";
+import MainUserInfoSection from "../features/UserProfile/MainUserInfoSection.vue";
 import ProfileFab from "../features/UserProfile/ProfileFab.vue";
 import UserActivitySection from "../features/UserProfile/UserActivitySection.vue";
 import UserShelvesSection from "../features/UserProfile/Shelves/UserShelvesSection.vue";

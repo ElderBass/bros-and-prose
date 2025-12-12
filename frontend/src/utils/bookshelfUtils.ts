@@ -1,7 +1,11 @@
-import type { OpenLibraryBookResult, FutureBook, User } from "@/types";
+import type { OpenLibraryBookResult, FutureBook, User, Shelf } from "@/types";
 import { capitalizeBookTitle } from "./capitalizeBookTitle";
 import { v4 as uuid } from "uuid";
-import { faBookMedical, faBookOpen } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBookMedical,
+    faBookOpen,
+    faBookOpenReader,
+} from "@fortawesome/free-solid-svg-icons";
 import type { ModalType } from "@/stores/shelfModal";
 
 export const buildBookShelfEntry = (
@@ -29,20 +33,37 @@ export const buildBookShelfEntry = (
     };
 };
 
-export const getShelfDisplayName = (shelf: "wantToRead" | "haveRead") => {
-    return shelf === "wantToRead" ? "want to read" : "have read";
+export const getShelfDisplayName = (shelf: Shelf) => {
+    switch (shelf) {
+        case "currentlyReading":
+            return "currently reading";
+        case "wantToRead":
+            return "want to read";
+        case "haveRead":
+            return "have read";
+    }
 };
 
-export const getShelfMessage = (shelf: "wantToRead" | "haveRead") => {
-    return shelf === "wantToRead"
-        ? "fucking NEED this book, dawg"
-        : "been there, read that";
+export const getShelfMessage = (shelf: Shelf) => {
+    switch (shelf) {
+        case "currentlyReading":
+            return "esketit, literature-wise";
+        case "wantToRead":
+            return "fucking NEED this book, dawg";
+        case "haveRead":
+            return "been there, read that";
+    }
 };
 
-export const getShelfSuccessMessage = (shelf: "wantToRead" | "haveRead") => {
-    return shelf === "wantToRead"
-        ? "that book's gunna get got."
-        : "look at you, all reading and shit.";
+export const getShelfSuccessMessage = (shelf: Shelf) => {
+    switch (shelf) {
+        case "currentlyReading":
+            return "just don't neglect the required prose, my dude";
+        case "wantToRead":
+            return "that book's gunna get got.";
+        case "haveRead":
+            return "look at you, all reading and shit.";
+    }
 };
 
 export const getErrorActionText = (modalType: ModalType) => {
@@ -60,12 +81,20 @@ export const getErrorActionText = (modalType: ModalType) => {
     }
 };
 
-export const getShelfIcon = (shelf: "wantToRead" | "haveRead") => {
-    return shelf === "wantToRead" ? faBookMedical : faBookOpen;
+export const getShelfIcon = (shelf: Shelf) => {
+    switch (shelf) {
+        case "currentlyReading":
+            return faBookOpenReader;
+        case "wantToRead":
+            return faBookMedical;
+        case "haveRead":
+            return faBookOpen;
+    }
 };
 
 export const getUserShelves = (user: User) => {
     return {
+        currentlyReading: user.currentlyReading || null,
         wantToRead: Object.values(user.wantToRead || []),
         haveRead: Object.values(user.haveRead || []),
     };

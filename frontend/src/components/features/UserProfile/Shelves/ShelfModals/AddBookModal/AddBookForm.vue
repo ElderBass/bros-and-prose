@@ -89,19 +89,20 @@ import BookTagsSelector from "@/components/form/BookTagsSelector.vue";
 import { useBooks } from "@/composables/useBooks";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { buildBookShelfEntry, getShelfSuccessMessage } from "@/utils";
-import type { FutureBook, OpenLibraryBookResult } from "@/types/books";
+import type { FutureBook, OpenLibraryBookResult, Shelf } from "@/types/books";
 import { useLog } from "@/composables/useLog";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import FormActions from "../FormStuff/FormActions.vue";
 
 const props = defineProps<{
-    selectedShelf: "wantToRead" | "haveRead";
+    selectedShelf: Shelf;
     shelfMessage: string;
     shelfDisplayName: string;
 }>();
 
 const { searchBooksByTitle } = useBooks();
-const { addToWantToRead, addToHaveRead } = useUserShelves();
+const { addToWantToRead, addToHaveRead, updateCurrentlyReading } =
+    useUserShelves();
 const { openAddBookSuccess, openAddBookError, closeModal } =
     useShelfModalStore();
 
@@ -195,8 +196,12 @@ const submit = async () => {
 
         if (props.selectedShelf === "wantToRead") {
             await addToWantToRead(book);
-        } else {
+        } else if (props.selectedShelf === "haveRead") {
             await addToHaveRead(book);
+        } else if (props.selectedShelf === "currentlyReading") {
+            await updateCurrentlyReading(book);
+        } else {
+            throw new Error("Invalid shelf selected");
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);

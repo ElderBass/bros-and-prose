@@ -1,36 +1,39 @@
 <template>
-    <div class="user-info-section">
-        <div class="content">
-            <div class="user">
-                <AvatarImage
-                    :icon="currentIcon"
-                    :size="mobile ? 'medium' : 'large'"
-                />
-                <div class="name">
-                    <h2>
-                        {{ user?.username }}
-                    </h2>
-                    <p>
-                        {{ user?.firstName?.toLowerCase() }}
-                        {{ user?.lastName?.toLowerCase() }}
-                    </p>
-                    <div class="current-progress">
-                        <p>current book progress:</p>
-                        <span class="current-progress-percentage">
-                            {{ currentProgress }}%
-                        </span>
+    <UserContentSection sectionTitle="ABOUT">
+        <div class="user-info-section">
+            <div class="content">
+                <div class="user">
+                    <AvatarImage
+                        :icon="currentIcon"
+                        :size="mobile ? 'medium' : 'large'"
+                    />
+                    <div class="name">
+                        <h2>
+                            {{ user?.username }}
+                        </h2>
+                        <p>
+                            {{ user?.firstName?.toLowerCase() }}
+                            {{ user?.lastName?.toLowerCase() }}
+                        </p>
+                        <div class="current-progress">
+                            <p>current book progress:</p>
+                            <span class="current-progress-percentage">
+                                {{ currentProgress }}%
+                            </span>
+                        </div>
                     </div>
                 </div>
+                <EditUserButton v-if="isLoggedInUser" />
             </div>
-            <EditUserButton v-if="isLoggedInUser" />
         </div>
-    </div>
+    </UserContentSection>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import EditUserButton from "@/components/features/UserProfile/EditUserButton.vue";
+import UserContentSection from "./UserContentSection.vue";
 import { useDisplay } from "vuetify";
 import { faUserAstronaut } from "@fortawesome/free-solid-svg-icons";
 import { AVATAR_ICON_LIST } from "@/constants";
@@ -57,8 +60,24 @@ const currentProgress = computed(() => {
 </script>
 
 <style scoped>
-.user-info-section {
+.section-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     width: 50%;
+}
+
+h4 {
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.9rem;
+    color: var(--accent-blue);
+    margin: 0;
+    padding-left: 0.75rem;
+    font-family: "Libre Baskerville", serif;
+}
+.user-info-section {
     min-height: 160px;
     display: flex;
     justify-content: space-between;
@@ -77,6 +96,7 @@ const currentProgress = computed(() => {
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 .content {
+    flex: 1 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -95,6 +115,7 @@ const currentProgress = computed(() => {
     margin: 0;
     color: var(--accent-blue);
     font-family: "Libre Baskerville", serif;
+    font-size: 1.5rem;
 }
 
 .current-progress {
@@ -107,7 +128,6 @@ const currentProgress = computed(() => {
     font-size: 1.25rem;
     font-weight: 600;
     opacity: 0.8;
-    font-size: 0.9rem;
     color: var(--accent-blue);
 }
 
@@ -125,6 +145,9 @@ const currentProgress = computed(() => {
     }
     .current-progress {
         gap: 0.5rem;
+    }
+    .current-progress-percentage {
+        font-size: 1rem;
     }
 }
 </style>

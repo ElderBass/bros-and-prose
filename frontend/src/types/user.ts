@@ -18,6 +18,7 @@ export interface User {
         [key: string]: Review;
     };
     role: "admin" | "user";
+    currentlyReading?: FutureBook;
     wantToRead?: FutureBook[];
     haveRead?: FutureBook[];
 }
