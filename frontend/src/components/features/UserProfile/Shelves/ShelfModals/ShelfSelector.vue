@@ -4,7 +4,7 @@
             :variant="getVariant('haveRead')"
             :size="buttonSize"
             title="fucking shit you've sent, my dude"
-            @click="$emit('selectShelf', 'haveRead')"
+            @click="selectShelf('haveRead')"
             :disabled="disabled"
         >
             have read
@@ -13,7 +13,7 @@
             :variant="getVariant('wantToRead')"
             :size="buttonSize"
             title="books that need to get got"
-            @click="$emit('selectShelf', 'wantToRead')"
+            @click="selectShelf('wantToRead')"
             :disabled="disabled"
         >
             want to read
@@ -22,7 +22,7 @@
             :variant="getVariant('currentlyReading')"
             :size="buttonSize"
             title="that side hustle book"
-            @click="$emit('selectShelf', 'currentlyReading')"
+            @click="selectShelf('currentlyReading')"
             :disabled="disabled"
         >
             currently reading
@@ -32,30 +32,36 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import type { Shelf } from "@/types";
+import { useShelfModalStore } from "@/stores/shelfModal";
 
 defineOptions({
     name: "ShelfSelector",
 });
 
-defineEmits<{
-    selectShelf: [shelf: Shelf];
-}>();
-
-const props = defineProps<{
-    selectedShelf: Shelf;
+defineProps<{
     disabled?: boolean;
 }>();
 
+const shelfModalStore = useShelfModalStore();
+const { selectedBookShelf } = storeToRefs(shelfModalStore);
+
 const { mobile } = useDisplay();
+
+const selectShelf = (shelf: Shelf) => {
+    shelfModalStore.selectedBookShelf = shelf;
+};
 
 const buttonSize = computed(() => {
     return mobile.value ? "xsmall" : "small";
 });
 
 const getVariant = (shelf: Shelf) => {
-    return props.selectedShelf === shelf ? "secondary" : "outline-secondary";
+    return selectedBookShelf.value === shelf
+        ? "secondary"
+        : "outline-secondary";
 };
 </script>
 
