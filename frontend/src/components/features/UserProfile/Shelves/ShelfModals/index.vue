@@ -5,6 +5,7 @@
     <ShelfErrorModal />
     <ConfirmDeleteBookModal />
     <ConfirmMoveBookModal />
+    <ConfirmFinishCurrentBookModal />
     <UserRateAndReviewModal
         v-if="reviewModalOpen && selectedBook"
         :showReviewModal="reviewModalOpen"
@@ -23,6 +24,7 @@ import BookAddedSuccessModal from "./BookAddedSuccessModal.vue";
 import ShelfErrorModal from "./ShelfErrorModal.vue";
 import ConfirmDeleteBookModal from "./ConfirmRemoveModal.vue";
 import ConfirmMoveBookModal from "./ConfirmMoveModal.vue";
+import ConfirmFinishCurrentBookModal from "./ConfirmFinishCurrentBook.vue";
 import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { useUIStore } from "@/stores/ui";

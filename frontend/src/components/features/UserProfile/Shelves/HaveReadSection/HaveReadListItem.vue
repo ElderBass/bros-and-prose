@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import type { Review, FutureBook, User } from "@/types";
+import type { Review, FutureBook } from "@/types";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import { getBookReview } from "@/utils";
 import { useUserStore } from "@/stores/user";
@@ -38,13 +38,15 @@ const props = defineProps<{
 
 const review = ref<Review | null>(null);
 const reviewModalOpen = ref(false);
-const username = ref(router.currentRoute.value.params.username as string);
+const username = ref("");
 
 onMounted(() => {
-    const user =
-        useUserStore().getUserByUsername(
-            (router.currentRoute.value.meta.user as User).username
-        ) ?? null;
+    if (router.currentRoute.value.name === "profile-root") {
+        username.value = useUserStore().loggedInUser.username;
+    } else {
+        username.value = router.currentRoute.value.params.username as string;
+    }
+    const user = useUserStore().getUserByUsername(username.value);
     if (user) {
         review.value = getBookReview(user, props.book.id) ?? null;
     }

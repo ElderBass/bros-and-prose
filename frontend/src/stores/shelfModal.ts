@@ -6,6 +6,7 @@ export type ModalType =
     | "editBook"
     | "removeBook"
     | "moveBook"
+    | "finishCurrentBook"
     | "addBookSuccess"
     | "addBookError"
     | "review"
@@ -60,6 +61,10 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.modal = "moveBook";
             this.selectedBook = book;
         },
+        openConfirmFinishCurrentBook(book: FutureBook) {
+            this.modal = "finishCurrentBook";
+            this.selectedBook = book;
+        },
         openReview() {
             this.modal = "review";
         },
@@ -77,6 +82,8 @@ export const useShelfModalStore = defineStore("shelfModal", {
         editBookModalOpen: (state) => state.modal === "editBook",
         confirmRemoveModalOpen: (state) => state.modal === "removeBook",
         confirmMoveModalOpen: (state) => state.modal === "moveBook",
+        confirmFinishCurrentBookModalOpen: (state) =>
+            state.modal === "finishCurrentBook",
         addBookSuccessModalOpen: (state) => state.modal === "addBookSuccess",
         addBookErrorModalOpen: (state) => state.modal === "addBookError",
         reviewModalOpen: (state) => state.modal === "review",

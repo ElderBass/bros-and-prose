@@ -44,20 +44,50 @@
         <p v-if="currentlyReading.description" class="description">
             {{ currentlyReading.description }}
         </p>
+
+        <div class="actions">
+            <BaseButton
+                variant="outline-secondary"
+                title="remove from currently reading"
+                @click="handleFinished"
+                v-bind="buttonProps"
+            >
+                <FontAwesomeIcon :icon="faCircleCheck" />
+                finished
+            </BaseButton>
+        </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import type { FutureBook } from "@/types";
 import BookTag from "@/components/ui/BookTag.vue";
-import { faBookOpenReader } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBookOpenReader,
+    faCircleCheck,
+} from "@fortawesome/free-solid-svg-icons";
+import { useShelfModalStore } from "@/stores/shelfModal";
 
 const { mobile } = useDisplay();
 
-defineProps<{
+const props = defineProps<{
     currentlyReading: FutureBook;
 }>();
+
+const { openConfirmFinishCurrentBook } = useShelfModalStore();
+
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? "small" : "medium",
+        style: { width: "100%" },
+    };
+});
+
+const handleFinished = () => {
+    openConfirmFinishCurrentBook(props.currentlyReading);
+};
 </script>
 
 <style scoped>
@@ -162,6 +192,10 @@ defineProps<{
     border-top-left-radius: 0.5rem;
     padding-left: 0.5rem;
     padding-top: 0.25rem;
+}
+
+.actions {
+    margin-top: 0.5rem;
 }
 
 @media (min-width: 768px) {

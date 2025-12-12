@@ -3,7 +3,7 @@
         <div class="currently-reading-section">
             <div class="content">
                 <InfoContent
-                    v-if="currentlyReading"
+                    v-if="currentlyReading?.id"
                     :currentlyReading="currentlyReading"
                 />
                 <NoBookContent v-else :isLoggedInUser="isLoggedInUser" />
@@ -28,7 +28,7 @@ defineProps<{
 
 <style scoped>
 .currently-reading-section {
-    width: 50%;
+    width: 100%;
     min-height: 160px;
     display: flex;
     flex-direction: column;
@@ -56,7 +56,6 @@ defineProps<{
 
 @media (max-width: 768px) {
     .currently-reading-section {
-        width: 100%;
         min-height: 120px;
         gap: 1rem;
     }
