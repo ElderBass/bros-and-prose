@@ -86,18 +86,19 @@ import { computed, ref, onMounted } from "vue";
 import BookTagsSelector from "@/components/form/BookTagsSelector.vue";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { getShelfSuccessMessage } from "@/utils";
-import type { FutureBook, OpenLibraryBookResult } from "@/types/books";
+import type { FutureBook, OpenLibraryBookResult, Shelf } from "@/types";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import FormActions from "../FormStuff/FormActions.vue";
 
 const props = defineProps<{
     book: FutureBook;
-    selectedShelf: "wantToRead" | "haveRead";
+    selectedShelf: Shelf;
     shelfMessage: string;
     shelfDisplayName: string;
 }>();
 
-const { updateWantToRead, updateHaveRead } = useUserShelves();
+const { updateWantToRead, updateHaveRead, updateCurrentlyReading } =
+    useUserShelves();
 const { openAddBookSuccess, openAddBookError, closeModal } =
     useShelfModalStore();
 
@@ -177,8 +178,12 @@ const submit = async () => {
 
         if (props.selectedShelf === "wantToRead") {
             await updateWantToRead(props.book.id, updatedBook);
-        } else {
+        } else if (props.selectedShelf === "haveRead") {
             await updateHaveRead(props.book.id, updatedBook);
+        } else if (props.selectedShelf === "currentlyReading") {
+            await updateCurrentlyReading(updatedBook);
+        } else {
+            throw new Error("Invalid shelf selected");
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);

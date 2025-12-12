@@ -28,31 +28,3 @@ const isLoggedInUser = computed(
     () => props.user.id === useUserStore().loggedInUser.id
 );
 </script>
-
-<style scoped>
-.user-content-section {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    margin-top: 1rem;
-}
-
-.section-title {
-    text-align: left;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 1rem;
-    color: var(--accent-blue);
-    margin: 0;
-    padding-left: 0.75rem;
-}
-
-@media (min-width: 768px) {
-    .user-content-section {
-        width: 60%;
-        gap: 1rem;
-    }
-}
-</style>

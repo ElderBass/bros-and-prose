@@ -1,6 +1,6 @@
 <template>
-    <div class="user-content-section" sectionTitle="{{ sectionTitle }}">
-        <h4 class="section-title">{{ sectionTitle }}</h4>
+    <div class="section-wrapper">
+        <h4>{{ sectionTitle }}</h4>
         <slot />
     </div>
 </template>
@@ -12,16 +12,14 @@ defineProps<{
 </script>
 
 <style scoped>
-.user-content-section {
-    width: 100%;
+.section-wrapper {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
     gap: 0.5rem;
-    margin-top: 1rem;
+    width: 100%;
 }
 
-.section-title {
+h4 {
     text-align: left;
     text-transform: uppercase;
     letter-spacing: 0.2em;
@@ -29,13 +27,14 @@ defineProps<{
     color: var(--accent-blue);
     margin: 0;
     padding-left: 0.75rem;
+    font-family: "Libre Baskerville", serif;
 }
 
 @media (min-width: 768px) {
-    .user-content-section {
-        width: 60%;
+    .section-wrapper {
+        width: 50%;
     }
-    .section-title {
+    h4 {
         font-size: 1.125rem;
     }
 }

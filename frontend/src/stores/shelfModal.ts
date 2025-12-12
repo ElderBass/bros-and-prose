@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { FutureBook } from "@/types";
+import type { FutureBook, Shelf } from "@/types";
 
 export type ModalType =
     | "addBook"
@@ -14,7 +14,7 @@ export type ModalType =
 interface ModalState {
     modal: ModalType;
     selectedBook: FutureBook | null;
-    selectedBookShelf: "wantToRead" | "haveRead" | null;
+    selectedBookShelf: Shelf | null;
     message: string;
 }
 
@@ -33,32 +33,24 @@ export const useShelfModalStore = defineStore("shelfModal", {
         openAddBook() {
             this.modal = "addBook";
         },
-        openEditBook(book: FutureBook, shelf: "wantToRead" | "haveRead") {
+        openEditBook(book: FutureBook, shelf: Shelf) {
             this.modal = "editBook";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
         },
-        openAddBookSuccess(
-            book: FutureBook,
-            shelf: "wantToRead" | "haveRead",
-            message: string
-        ) {
+        openAddBookSuccess(book: FutureBook, shelf: Shelf, message: string) {
             this.modal = "addBookSuccess";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
             this.message = message;
         },
-        openAddBookError(
-            book: FutureBook,
-            shelf: "wantToRead" | "haveRead",
-            message: string
-        ) {
+        openAddBookError(book: FutureBook, shelf: Shelf, message: string) {
             this.modal = "addBookError";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
             this.message = message;
         },
-        openConfirmRemove(book: FutureBook, shelf: "wantToRead" | "haveRead") {
+        openConfirmRemove(book: FutureBook, shelf: Shelf) {
             this.modal = "removeBook";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;

@@ -33,6 +33,7 @@ import ShelfSelector from "../ShelfSelector.vue";
 import AddBookForm from "./AddBookForm.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { getShelfDisplayName, getShelfMessage } from "@/utils/bookshelfUtils";
+import type { Shelf } from "@/types";
 
 defineOptions({
     name: "AddBookToShelfModal",
@@ -43,7 +44,7 @@ const { addBookModalOpen } = storeToRefs(shelfModalStore);
 
 const { closeModal } = shelfModalStore;
 
-const selectedShelf = ref<"wantToRead" | "haveRead">("haveRead");
+const selectedShelf = ref<Shelf>("haveRead");
 
 const loading = ref(false);
 
