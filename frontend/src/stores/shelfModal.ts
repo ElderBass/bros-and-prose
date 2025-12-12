@@ -31,7 +31,6 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.modal = modalType;
         },
         openAddBook(shelf?: Shelf) {
-            console.log("KERTWANGING openAddBook", shelf);
             this.modal = "addBook";
             this.selectedBookShelf = shelf || "haveRead";
         },

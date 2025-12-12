@@ -30,7 +30,7 @@
 
                 <div v-if="currentlyReading.tags?.length" class="tags">
                     <BookTag
-                        v-for="tag in currentlyReading.tags.slice(0, 3)"
+                        v-for="tag in currentlyReading.tags"
                         :key="tag"
                         :tag="tag"
                         :selected="true"
