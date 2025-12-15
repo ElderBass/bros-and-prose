@@ -51,6 +51,7 @@ export const apiRequest = async <T>(
         | ArchivedBooksEntry
         | FutureBookSelectorRequest
         | FutureBookRequest
+        | { title: string }
 ): Promise<T> => {
     try {
         const response = await apiClient({

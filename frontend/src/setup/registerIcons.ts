@@ -41,6 +41,7 @@ import {
     faUserGraduate,
     faUserNinja,
     faUserTie,
+    faXmark,
     faXmarkCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -87,6 +88,7 @@ export const registerIcons = () => {
         faUserGraduate,
         faUserNinja,
         faUserTie,
+        faXmark,
         faXmarkCircle
     );
 };

@@ -1,6 +1,11 @@
 import { booksService } from "@/services";
 import { useBooksStore } from "@/stores/books";
-import type { Book, OpenLibraryBookResult } from "@/types";
+import type {
+    Book,
+    BookshelfBook,
+    GoogleBooksResult,
+    OpenLibraryBookResult,
+} from "@/types";
 import { useLog } from "./useLog";
 
 export const useBooks = () => {
@@ -69,6 +74,31 @@ export const useBooks = () => {
         }
     };
 
+    const searchGoogleByTitle = async (
+        title: string
+    ): Promise<BookshelfBook[]> => {
+        const results: GoogleBooksResult[] =
+            await booksService.searchGoogleByTitle(title);
+
+        const parsePublishedYear = (publishedDate: unknown): number => {
+            if (typeof publishedDate !== "string") return 0;
+            const match = publishedDate.match(/\d{4}/);
+            if (!match) return 0;
+            const year = Number(match[0]);
+            return Number.isFinite(year) ? year : 0;
+        };
+
+        const data = results.map((item: GoogleBooksResult) => ({
+            title: item.volumeInfo?.title ?? "",
+            author: item.volumeInfo?.authors?.[0] ?? "",
+            imageSrc: item.volumeInfo?.imageLinks?.thumbnail ?? "",
+            description: item.volumeInfo?.description ?? "",
+            yearPublished: parsePublishedYear(item.volumeInfo?.publishedDate),
+            pages: item.volumeInfo?.pageCount ?? 0,
+        }));
+        return data;
+    };
+
     return {
         getCurrentBook,
         getPastBook,
@@ -77,5 +107,6 @@ export const useBooks = () => {
         getBookByTitle,
         searchBooksByTitle,
         updateBook,
+        searchGoogleByTitle,
     };
 };
