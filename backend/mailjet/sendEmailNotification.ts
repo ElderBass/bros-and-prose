@@ -114,7 +114,7 @@ const buildHtmlTemplate = (title: string = "", message: string = "", text: strin
                                 <p style="font-size:18px;line-height:1.6;margin:0 0 28px;">${
                                     message ?? ""
                                 }</p>
-                                <p style="font-size:12px;line-height:1.6;margin:0 0 20px;">${
+                                <p style="font-size:14px;line-height:1.6;margin:0 0 20px;">${
                                     text ?? ""
                                 }</p>
                                 <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0">
@@ -149,10 +149,6 @@ export const sendEmailNotification = async (
             process.env.MAILJET_API_SECRET || ""
         );
         const { subject, html, emailRecipients } = getEmailInfo(updateType, data);
-
-        console.log("Sending email notification to:", emailRecipients);
-        console.log("Email subject:", subject);
-        console.log("Email html:", html);
 
         const response = await mailjet.post("send", { version: "v3.1" }).request({
             Messages: [
