@@ -15,6 +15,7 @@ export interface BookInfo {
     title: string;
     author: string;
     id: string;
+    tags?: string[];
 }
 
 export interface BooksState {

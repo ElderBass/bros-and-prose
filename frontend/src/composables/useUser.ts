@@ -11,6 +11,7 @@ import { useLog } from "./useLog";
 import { useFutureBooks } from "./useFutureBooks";
 import { buildReview, isReviewOfCurrentBook } from "@/utils";
 import { storeToRefs } from "pinia";
+import { usePalaver } from "./usePalaver";
 
 export const useUser = () => {
     const { setLoggedInUser, setAllUsers, setFutureBookSelector } =
@@ -118,6 +119,7 @@ export const useUser = () => {
                     [book.id]: newReview,
                 },
             });
+            await usePalaver().createPalaverEntryFromReview(newReview);
             showAlert(REVIEW_SUBMITTED_SUCCESS_ALERT);
             return updatedUser;
         } catch (error) {

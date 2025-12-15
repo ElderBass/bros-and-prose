@@ -4,6 +4,7 @@ import type {
     PalaverEntry,
     PalaverType,
     ReactionType,
+    Review,
 } from "@/types";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -52,6 +53,25 @@ export const buildPalaverEntry = ({
                 : undefined,
     };
     return entry;
+};
+
+export const buildPalaverEntryFromReview = (review: Review): PalaverEntry => {
+    const user = useUserStore().loggedInUser;
+
+    return {
+        id: uuidv4(),
+        type: "review",
+        text: review.reviewComment,
+        bookInfo: {
+            ...review.book,
+        },
+        rating: review.rating,
+        createdAt: new Date().toISOString(),
+        userInfo: getUserInfo(user),
+        likes: [],
+        dislikes: [],
+        comments: [],
+    };
 };
 
 export const buildPalaverComment = (commentText: string): Comment => {
@@ -108,17 +128,25 @@ export const buildPalaverEntryMetadata = (entry: PalaverEntry) => {
             return {
                 bookTitle: entry.bookInfo?.title ?? "",
                 username: entry.userInfo.username,
+                text: entry.text,
             };
         case "recommendation":
             return {
                 bookTitle: entry.recommendation?.title ?? "",
                 username: entry.userInfo.username,
+                text: entry.text,
+            };
+        case "review":
+            return {
+                bookTitle: entry.bookInfo?.title ?? "",
+                username: entry.userInfo.username,
+                text: `Score: ${entry.rating} / 10. Comment: ${entry.text}`,
             };
         case "suggestion":
         case "progress_note":
         case "misc":
         default:
-            return { username: entry.userInfo.username };
+            return { username: entry.userInfo.username, text: entry.text };
     }
 };
 
