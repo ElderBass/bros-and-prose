@@ -46,6 +46,7 @@ import PalaverModals from "../modal/PalaverModals/index.vue";
 import type { User } from "@/types";
 import { useUIStore } from "@/stores/ui";
 import { useUserStore } from "@/stores/user";
+import { getUserShelves } from "@/utils";
 
 const props = defineProps<{
     user: User;
@@ -55,22 +56,16 @@ const props = defineProps<{
 const { loggedInUser } = storeToRefs(useUserStore());
 const { isLoggedInUser } = toRefs(props);
 const user = ref(props.user);
-const wantToRead = ref(Object.values(props.user.wantToRead || []));
-const haveRead = ref(Object.values(props.user.haveRead || []));
+const wantToRead = ref(getUserShelves(props.user).wantToRead);
+const haveRead = ref(getUserShelves(props.user).haveRead);
 
 watch(
     [loggedInUser, isLoggedInUser],
     ([newLoggedInUser, isOwnProfile]) => {
         if (isOwnProfile && newLoggedInUser?.id) {
             user.value = newLoggedInUser;
-            const updatedWantToRead = Object.values(
-                newLoggedInUser.wantToRead || []
-            );
-            const updatedHaveRead = Object.values(
-                newLoggedInUser.haveRead || []
-            );
-            console.log("KERTWANG updatedWantToRead", updatedWantToRead);
-            console.log("KERTWANG updatedHaveRead", updatedHaveRead);
+            const { wantToRead: updatedWantToRead, haveRead: updatedHaveRead } =
+                getUserShelves(newLoggedInUser);
             wantToRead.value = updatedWantToRead;
             haveRead.value = updatedHaveRead;
         }

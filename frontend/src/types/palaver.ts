@@ -6,6 +6,7 @@ export type PalaverType =
     | "progress_note"
     | "suggestion"
     | "recommendation"
+    | "review"
     | "misc";
 
 export interface ItemTypeButtonProp {
@@ -37,6 +38,7 @@ export interface PalaverEntry {
     createdAt: string;
     userInfo: UserInfo;
     bookInfo?: BookInfo;
+    rating?: number;
     recommendation?: Recommendation;
     likes?: string[];
     dislikes?: string[];

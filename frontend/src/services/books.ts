@@ -1,4 +1,4 @@
-import type { Book } from "@/types/books";
+import type { Book, GoogleBooksResult } from "@/types/books";
 import { apiRequest } from "./api";
 
 export const currentBookId = "mans_search_for_meaning_frankl";
@@ -13,6 +13,12 @@ export interface BooksResponse {
     success: boolean;
     message: string;
     data: Book[];
+}
+
+export interface GoogleBooksResponse {
+    success: boolean;
+    message: string;
+    data: GoogleBooksResult[];
 }
 
 export const booksService = {
@@ -75,39 +81,14 @@ export const booksService = {
         const data = await response.json();
         return data.docs;
     },
-};
 
-// export const booksService = {
-//     getCurrentBook: async () => {
-//         const response = await fetch(
-//             `https://openlibrary.org/search.json?title=${currentBook}`
-//         );
-//         const data = await response.json();
-//         return data.docs[0];
-//     },
-//     searchByTitle: async (title: string) => {
-//         const response = await fetch(
-//             `https://openlibrary.org/search.json?title=${title}`
-//         );
-//         const data = await response.json();
-//         return data.docs[0];
-//     },
-//     getPastBooks: async () => {
-//         const response = await fetch(
-//             `https://openlibrary.org/search.json?title=${pastBooks.join(",")}`
-//         );
-//         const data = await response.json();
-//         return data.docs;
-//     },
-//     getBookImage: async (coverI: number) => {
-//         const url = await `https://covers.openlibrary.org/b/id/${coverI}-M.jpg`;
-//         return url;
-//     },
-//     getFutureBooks: async () => {
-//         const response = await fetch(
-//             `https://openlibrary.org/search.json?title=${futureBooks.join(",")}`
-//         );
-//         const data = await response.json();
-//         return data.docs;
-//     },
-// };
+    // GOOGLE BOOKS ROUTES
+    searchGoogleByTitle: async (title: string) => {
+        const response = await apiRequest<{ data: GoogleBooksResult[] }>(
+            "POST",
+            "/api/googleBooks/title",
+            { title }
+        );
+        return response.data;
+    },
+};

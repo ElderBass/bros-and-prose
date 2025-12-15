@@ -38,7 +38,7 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const props = withDefaults(
     defineProps<{
-        modelValue: string;
+        modelValue: string | number;
         label: string;
         placeholder: string;
         id: string;

@@ -26,6 +26,7 @@ import {
     updatePalaverEntry,
     deletePalaverEntry,
 } from "./palaver.js";
+import { searchGoogleBooks } from "./googleBooks.js";
 
 const router = express.Router();
 
@@ -53,6 +54,9 @@ router.get("/futureBooks/archived", getArchivedFutureBooks);
 router.post("/futureBooks/archived", archiveFutureBooks);
 router.get("/futureBooks/currentSelector", getCurrentSelector);
 router.post("/futureBooks/setSelector", setFutureBookSelector);
+
+// GOOGLE BOOKS ROUTES
+router.post("/googleBooks/title", searchGoogleBooks);
 
 // USER ROUTES
 router.get("/users/id/:userId", getUser);

@@ -45,7 +45,7 @@
             {{ currentlyReading.description }}
         </p>
 
-        <div class="actions">
+        <div v-if="showActions" class="actions">
             <BaseButton
                 variant="outline-secondary"
                 title="remove from currently reading"
@@ -69,6 +69,7 @@ import {
     faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { useShelfModalStore } from "@/stores/shelfModal";
+import { useRouter } from "vue-router";
 
 const { mobile } = useDisplay();
 
@@ -88,6 +89,11 @@ const buttonProps = computed(() => {
 const handleFinished = () => {
     openConfirmFinishCurrentBook(props.currentlyReading);
 };
+
+const showActions = computed(() => {
+    const router = useRouter();
+    return router.currentRoute.value.name === "profile-root";
+});
 </script>
 
 <style scoped>
