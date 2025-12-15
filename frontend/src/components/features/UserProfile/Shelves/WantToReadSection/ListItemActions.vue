@@ -21,14 +21,14 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
-import type { FutureBook } from "@/types";
+import type { BookshelfBook } from "@/types";
 import EditButton from "@/components/ui/EditButton.vue";
 import DeleteButton from "@/components/ui/DeleteButton.vue";
 import MoveButton from "@/components/ui/MoveButton.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
 
 const props = defineProps<{
-    book: FutureBook;
+    book: BookshelfBook;
 }>();
 
 const { mobile } = useDisplay();

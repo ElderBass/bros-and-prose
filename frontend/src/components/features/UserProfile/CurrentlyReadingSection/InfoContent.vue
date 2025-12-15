@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
-import type { FutureBook } from "@/types";
+import type { BookshelfBook } from "@/types";
 import BookTag from "@/components/ui/BookTag.vue";
 import {
     faBookOpenReader,
@@ -74,7 +74,7 @@ import { useRouter } from "vue-router";
 const { mobile } = useDisplay();
 
 const props = defineProps<{
-    currentlyReading: FutureBook;
+    currentlyReading: BookshelfBook;
 }>();
 
 const { openConfirmFinishCurrentBook } = useShelfModalStore();

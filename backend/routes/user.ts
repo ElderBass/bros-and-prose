@@ -49,11 +49,9 @@ export const getUserByUsername = async (req: express.Request, res: express.Respo
 
 export const getUsers = async (_: express.Request, res: express.Response) => {
     try {
-        console.log("KERTWANGING INCOMING getUsers");
         const usersRef = db.ref("users");
         const users = await usersRef.once("value");
         const usersArray = Object.values(users.val());
-        console.log("KERTWANGING OUTGOING usersArray in getUsers", usersArray);
         return res.json({
             success: true,
             message: "Users fetched successfully",
@@ -71,7 +69,6 @@ export const getUsers = async (_: express.Request, res: express.Response) => {
 
 export const updateUser = async (req: express.Request, res: express.Response) => {
     const { userId } = req.params;
-    console.log("KERTWANGING INCOMING userId in updateUser", userId);
     try {
         const userRef = db.ref(`users/${userId}`);
         await userRef.update(req.body);

@@ -22,14 +22,14 @@
 import { computed } from "vue";
 import UserContentPanel from "@/components/features/UserProfile/UserContentPanel.vue";
 import HaveReadListItem from "@/components/features/UserProfile/Shelves/HaveReadSection/HaveReadListItem.vue";
-import type { FutureBook } from "@/types";
+import type { BookshelfBook } from "@/types";
 
 defineOptions({
     name: "HaveReadSection",
 });
 
 const props = defineProps<{
-    haveRead: FutureBook[];
+    haveRead: BookshelfBook[];
     isLoggedInUser: boolean;
 }>();
 

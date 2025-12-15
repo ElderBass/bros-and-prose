@@ -77,12 +77,13 @@ export interface FutureBookSelectorRequest {
 export type Shelf = "currentlyReading" | "wantToRead" | "haveRead";
 
 export interface BookshelfBook {
+    id: string;
     title: string;
     author: string;
     imageSrc: string;
     description: string;
     yearPublished: number;
-    pages: number;
+    pages?: number;
     tags?: string[];
 }
 

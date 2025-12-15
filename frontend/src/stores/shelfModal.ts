@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import type { FutureBook, Shelf } from "@/types";
+import type { BookshelfBook, Shelf } from "@/types";
 
 export type ModalType =
     | "addBook"
@@ -14,7 +14,7 @@ export type ModalType =
 
 interface ModalState {
     modal: ModalType;
-    selectedBook: FutureBook | null;
+    selectedBook: BookshelfBook | null;
     selectedBookShelf: Shelf;
     message: string;
 }
@@ -35,33 +35,33 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.modal = "addBook";
             this.selectedBookShelf = shelf || "haveRead";
         },
-        openEditBook(book: FutureBook, shelf: Shelf) {
+        openEditBook(book: BookshelfBook, shelf: Shelf) {
             this.modal = "editBook";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
         },
-        openAddBookSuccess(book: FutureBook, shelf: Shelf, message: string) {
+        openAddBookSuccess(book: BookshelfBook, shelf: Shelf, message: string) {
             this.modal = "addBookSuccess";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
             this.message = message;
         },
-        openAddBookError(book: FutureBook, shelf: Shelf, message: string) {
+        openAddBookError(book: BookshelfBook, shelf: Shelf, message: string) {
             this.modal = "addBookError";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
             this.message = message;
         },
-        openConfirmRemove(book: FutureBook, shelf: Shelf) {
+        openConfirmRemove(book: BookshelfBook, shelf: Shelf) {
             this.modal = "removeBook";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
         },
-        openConfirmMove(book: FutureBook) {
+        openConfirmMove(book: BookshelfBook) {
             this.modal = "moveBook";
             this.selectedBook = book;
         },
-        openConfirmFinishCurrentBook(book: FutureBook) {
+        openConfirmFinishCurrentBook(book: BookshelfBook) {
             this.modal = "finishCurrentBook";
             this.selectedBook = book;
         },

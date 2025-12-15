@@ -1,19 +1,18 @@
 import { usersService } from "@/services/users";
 import { useUserStore } from "@/stores/user";
-import type { FutureBook, User } from "@/types";
+import type { BookshelfBook, User } from "@/types";
 import { useLog } from "./useLog";
 import { getUserShelves } from "@/utils/bookshelfUtils";
-import { EMPTY_CURRENT_BOOK } from "@/constants";
+import { EMPTY_SHELF_BOOK } from "@/constants";
 import { useShelfModalStore } from "@/stores/shelfModal";
 
 export const useUserShelves = () => {
     const { info, error: logError } = useLog();
 
     const updateCurrentlyReading = async (
-        book: FutureBook
+        book: BookshelfBook
     ): Promise<User | null> => {
         const loggedInUser = useUserStore().loggedInUser;
-        console.log("KERTWANGING updateCurrentlyReading", book);
         const updatedUser = await updateUser({
             ...loggedInUser,
             currentlyReading: book,
@@ -27,14 +26,14 @@ export const useUserShelves = () => {
 
         const updatedUser = await updateUser({
             ...loggedInUser,
-            currentlyReading: EMPTY_CURRENT_BOOK,
+            currentlyReading: EMPTY_SHELF_BOOK,
         });
 
         if (currentBook?.id) {
             await addToShelf("haveRead", currentBook);
         }
         useShelfModalStore().openAddBookSuccess(
-            currentBook as FutureBook,
+            currentBook as BookshelfBook,
             "haveRead",
             "the present has now shifted to the past"
         );
@@ -43,7 +42,7 @@ export const useUserShelves = () => {
 
     const addToShelf = async (
         shelf: "wantToRead" | "haveRead",
-        book: FutureBook
+        book: BookshelfBook
     ): Promise<User | null> => {
         try {
             const loggedInUser = useUserStore().loggedInUser;
@@ -90,7 +89,9 @@ export const useUserShelves = () => {
         }
     };
 
-    const addToWantToRead = async (book: FutureBook): Promise<User | null> => {
+    const addToWantToRead = async (
+        book: BookshelfBook
+    ): Promise<User | null> => {
         const updatedUser = await addToShelf("wantToRead", book);
         return updatedUser;
     };
@@ -102,7 +103,7 @@ export const useUserShelves = () => {
         return updatedUser;
     };
 
-    const addToHaveRead = async (book: FutureBook): Promise<User | null> => {
+    const addToHaveRead = async (book: BookshelfBook): Promise<User | null> => {
         const updatedUser = await addToShelf("haveRead", book);
         return updatedUser;
     };
@@ -113,7 +114,7 @@ export const useUserShelves = () => {
     };
 
     const moveFromWantToReadToHaveRead = async (
-        book: FutureBook
+        book: BookshelfBook
     ): Promise<User | null> => {
         await removeFromShelf("wantToRead", book.id);
         const updatedUser = await addToShelf("haveRead", book);
@@ -122,7 +123,7 @@ export const useUserShelves = () => {
 
     const updateWantToRead = async (
         bookId: string,
-        updatedBook: FutureBook
+        updatedBook: BookshelfBook
     ): Promise<User | null> => {
         try {
             const loggedInUser = useUserStore().loggedInUser;
@@ -149,7 +150,7 @@ export const useUserShelves = () => {
 
     const updateHaveRead = async (
         bookId: string,
-        updatedBook: FutureBook
+        updatedBook: BookshelfBook
     ): Promise<User | null> => {
         try {
             const loggedInUser = useUserStore().loggedInUser;

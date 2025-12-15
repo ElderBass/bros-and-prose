@@ -1,5 +1,11 @@
 import { usersService } from "@/services/users";
-import type { Book, FutureBook, SubmitReviewArgs, User } from "@/types";
+import type {
+    Book,
+    BookshelfBook,
+    FutureBook,
+    SubmitReviewArgs,
+    User,
+} from "@/types";
 import { useUserStore } from "@/stores/user";
 import {
     FINISHED_BOOK_PROGRESS,
@@ -53,10 +59,11 @@ export const useUser = () => {
 
     const updateUser = async (userId: string, user: User) => {
         const updatedUser = await usersService.updateUser(userId, user);
+        const sanitizedUser = sanitizeUser(updatedUser);
         if (userId === loggedInUser.value.id) {
-            setLoggedInUser(user);
+            setLoggedInUser(sanitizedUser);
         }
-        return updatedUser;
+        return sanitizedUser;
     };
 
     const updateUserProgress = async (userId: string, progress: number) => {
@@ -147,4 +154,23 @@ export const useUser = () => {
         addReview,
         updateUserProgress,
     };
+};
+
+const sanitizeUser = (user: User): User => {
+    return {
+        ...user,
+        haveRead: sanitizeBookshelfBooks(Object.values(user.haveRead || {})),
+        wantToRead: sanitizeBookshelfBooks(
+            Object.values(user.wantToRead || {})
+        ),
+    };
+};
+
+const sanitizeBookshelfBooks = (books: BookshelfBook[]) => {
+    return books
+        .filter((book) => book.id !== "placeholder")
+        .map((book) => ({
+            ...book,
+            tags: Object.values(book.tags || {}),
+        }));
 };
