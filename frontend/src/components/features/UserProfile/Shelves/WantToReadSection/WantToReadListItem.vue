@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FutureBook } from "@/types";
+import type { BookshelfBook } from "@/types";
 import { useDisplay } from "vuetify";
 import BookTag from "@/components/ui/BookTag.vue";
 import ListItemActions from "@/components/features/UserProfile/Shelves/WantToReadSection/ListItemActions.vue";
@@ -53,7 +53,7 @@ import { faBook } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 defineProps<{
-    book: FutureBook;
+    book: BookshelfBook;
     showActions: boolean;
 }>();
 

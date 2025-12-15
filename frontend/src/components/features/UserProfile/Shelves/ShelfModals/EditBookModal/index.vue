@@ -17,7 +17,7 @@
                 @selectShelf="selectedShelf = $event"
                 :disabled="true"
             />
-            <EditBookForm
+            <EditBookFormV2
                 v-if="selectedBook"
                 :book="selectedBook"
                 :selectedShelf="selectedShelf"
@@ -34,7 +34,7 @@ import { storeToRefs } from "pinia";
 import BaseModal from "@/components/ui/BaseModal.vue";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import ShelfSelector from "../ShelfSelector.vue";
-import EditBookForm from "./EditBookForm.vue";
+import EditBookFormV2 from "./EditBookFormV2.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { getShelfDisplayName, getShelfMessage } from "@/utils/bookshelfUtils";
 import type { Shelf } from "@/types";

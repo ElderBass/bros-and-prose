@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FutureBook } from "@/types";
+import type { BookshelfBook } from "@/types";
 import UserContentSection from "@/components/features/UserProfile/UserContentSection.vue";
 import NoBookContent from "@/components/features/UserProfile/CurrentlyReadingSection/NoBookContent.vue";
 import InfoContent from "@/components/features/UserProfile/CurrentlyReadingSection/InfoContent.vue";
@@ -21,7 +21,7 @@ import InfoContent from "@/components/features/UserProfile/CurrentlyReadingSecti
 defineOptions({ name: "CurrentlyReadingSection" });
 
 defineProps<{
-    currentlyReading?: FutureBook | null;
+    currentlyReading?: BookshelfBook | null;
     isLoggedInUser: boolean;
 }>();
 </script>

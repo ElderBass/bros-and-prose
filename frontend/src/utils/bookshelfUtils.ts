@@ -1,4 +1,9 @@
-import type { OpenLibraryBookResult, FutureBook, User, Shelf } from "@/types";
+import type {
+    OpenLibraryBookResult,
+    User,
+    Shelf,
+    BookshelfBook,
+} from "@/types";
 import { capitalizeBookTitle } from "./capitalizeBookTitle";
 import { v4 as uuid } from "uuid";
 import {
@@ -12,7 +17,7 @@ export const buildBookShelfEntry = (
     bookData: OpenLibraryBookResult,
     comment: string,
     tags: string[]
-): FutureBook => {
+): BookshelfBook => {
     const { title, subtitle, author_name, first_publish_year, cover_i } =
         bookData;
     let fullTitle = title.trim();
@@ -29,7 +34,6 @@ export const buildBookShelfEntry = (
             ? `https://covers.openlibrary.org/b/id/${cover_i}-M.jpg`
             : "",
         tags,
-        votes: [],
     };
 };
 
@@ -95,7 +99,8 @@ export const getShelfIcon = (shelf: Shelf) => {
 export const getUserShelves = (user: User) => {
     return {
         currentlyReading: user.currentlyReading || null,
-        wantToRead: user.wantToRead?.filter((b) => b?.id) || [],
-        haveRead: user.haveRead?.filter((b) => b?.id) || [],
+        wantToRead:
+            Object.values(user.wantToRead || {}).filter((b) => b?.id) || [],
+        haveRead: Object.values(user.haveRead || {}).filter((b) => b?.id) || [],
     };
 };

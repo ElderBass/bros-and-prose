@@ -15,11 +15,11 @@
 import UserContentSection from "@/components/features/UserProfile/UserContentSection.vue";
 import HaveReadSection from "./HaveReadSection/index.vue";
 import WantToReadSection from "@/components/features/UserProfile/Shelves/WantToReadSection/index.vue";
-import type { FutureBook } from "@/types";
+import type { BookshelfBook } from "@/types";
 
 defineProps<{
     isLoggedInUser: boolean;
-    wantToRead: FutureBook[];
-    haveRead: FutureBook[];
+    wantToRead: BookshelfBook[];
+    haveRead: BookshelfBook[];
 }>();
 </script>

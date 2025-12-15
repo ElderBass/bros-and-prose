@@ -125,13 +125,14 @@ import { useBooks } from "@/composables/useBooks";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { capitalizeBookTitle, getShelfSuccessMessage } from "@/utils";
-import type { FutureBook, BookshelfBook, Shelf } from "@/types/books";
+import type { BookshelfBook, Shelf } from "@/types/books";
 import { useLog } from "@/composables/useLog";
 import V2FormResult from "./V2FormResult.vue";
 import BookTagsSelector from "@/components/form/BookTagsSelector.vue";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import { v4 as uuid } from "uuid";
 import ClearSearchButton from "../FormStuff/ClearSearchButton.vue";
+import { EMPTY_SHELF_BOOK } from "@/constants";
 
 defineOptions({ name: "AddBookFormV2" });
 
@@ -240,7 +241,7 @@ const runSearch = async () => {
         console.error("error in runSearch for shelf form (google)", e);
         await useLog().error(`Error in google runSearch for shelf form: ${e}`);
         openAddBookError(
-            emptyBook.value,
+            EMPTY_SHELF_BOOK,
             props.selectedShelf,
             "oof bud, hit an error searching for that book..."
         );
@@ -257,7 +258,7 @@ const submit = async () => {
         loading.value = true;
 
         const year = Number.parseInt(yearPublished.value, 10);
-        const book: FutureBook = {
+        const book: BookshelfBook = {
             id: uuid(),
             title: capitalizeBookTitle(title.value),
             author: author.value.trim(),
@@ -265,12 +266,10 @@ const submit = async () => {
             imageSrc: selectedResult.value?.imageSrc || "",
             pages: pages.value,
             tags: tags.value,
-            // In this app, this field is effectively the user's comment.
             description:
                 comment.value.trim() ||
                 selectedResult.value?.description?.trim() ||
                 "",
-            votes: [],
         };
 
         if (props.selectedShelf === "wantToRead") {
@@ -288,7 +287,7 @@ const submit = async () => {
         resetForm();
     } catch (error) {
         openAddBookError(
-            emptyBook.value,
+            EMPTY_SHELF_BOOK,
             props.selectedShelf,
             "error adding book to shelf: " + (error as Error).message
         );
@@ -296,20 +295,6 @@ const submit = async () => {
         loading.value = false;
     }
 };
-
-const emptyBook = computed<FutureBook>(() => {
-    return {
-        id: "",
-        title: title.value,
-        author: "",
-        yearPublished: 0,
-        tags: [],
-        pages: undefined,
-        description: "",
-        imageSrc: "",
-        votes: [],
-    };
-});
 
 // Debounce search when the title changes
 let searchTimer: number | null = null;

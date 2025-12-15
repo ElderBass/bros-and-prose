@@ -4,7 +4,7 @@ import type {
     IconName,
 } from "@fortawesome/fontawesome-svg-core";
 import type { Review } from "./review";
-import type { FutureBook } from "./books";
+import type { BookshelfBook } from "./books";
 
 export interface User {
     id: string;
@@ -18,9 +18,9 @@ export interface User {
         [key: string]: Review;
     };
     role: "admin" | "user";
-    currentlyReading?: FutureBook;
-    wantToRead?: FutureBook[];
-    haveRead?: FutureBook[];
+    currentlyReading?: BookshelfBook;
+    wantToRead?: BookshelfBook[];
+    haveRead?: BookshelfBook[];
 }
 
 export interface UserInfo {
