@@ -95,7 +95,7 @@ export const getShelfIcon = (shelf: Shelf) => {
 export const getUserShelves = (user: User) => {
     return {
         currentlyReading: user.currentlyReading || null,
-        wantToRead: Object.values(user.wantToRead || []),
-        haveRead: Object.values(user.haveRead || []),
+        wantToRead: user.wantToRead?.filter((b) => b?.id) || [],
+        haveRead: user.haveRead?.filter((b) => b?.id) || [],
     };
 };
