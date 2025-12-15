@@ -24,24 +24,29 @@
                     :fontSize="mobile ? 'small' : 'medium'"
                 />
                 {{ stockMessage }}
-                <span v-if="entry.type === 'discussion_note'">
-                    <span class="book-title">{{
-                        entry.bookInfo?.title.toUpperCase()
-                    }}</span>
-                </span>
-                <span v-if="entry.type === 'recommendation'">
-                    <span class="book-title">{{
-                        entry.recommendation?.title.toUpperCase()
-                    }}</span>
-                    by
-                    <span class="book-author">{{
-                        entry.recommendation?.author
-                    }}</span>
-                </span>
+                <BookInfo
+                    v-if="showBookInfo"
+                    :title="
+                        entry.bookInfo?.title ||
+                        entry.recommendation?.title ||
+                        ''
+                    "
+                    :author="
+                        entry.bookInfo?.author ||
+                        entry.recommendation?.author ||
+                        ''
+                    "
+                />
             </p>
             <BookRecommendationDetails
                 v-if="entry.recommendation"
                 :recommendation="entry.recommendation"
+            />
+            <BookRatingInput
+                v-if="entry.rating"
+                :model-value="entry.rating"
+                :size="mobile ? 'xsmall' : 'medium'"
+                :readOnly="true"
             />
             <p class="text">{{ entry.text }}</p>
             <ReactionDetails
@@ -83,6 +88,8 @@ import type { PalaverEntry, PalaverType } from "@/types/palaver";
 import { AVATAR_ICON_LIST } from "@/constants";
 import { isGuestUser } from "@/utils";
 import CommentsSection from "./CommentsSection.vue";
+import BookInfo from "./BookInfo.vue";
+import BookRatingInput from "@/components/form/BookRatingInput.vue";
 
 defineOptions({ name: "PalaverListItem" });
 
@@ -116,6 +123,8 @@ const typeLabel = computed(() => {
             return "App Suggestion";
         case "recommendation":
             return "Book Rec";
+        case "review":
+            return "Book Review";
         case "misc":
         default:
             return "Some Bullshit";
@@ -135,10 +144,20 @@ const stockMessage = computed(() => {
             return props.entry.recommendation?.title
                 ? " recommended "
                 : " made a recommendation";
+        case "review":
+            return " reviewed ";
         case "misc":
         default:
             return " has thoughts...";
     }
+});
+
+const showBookInfo = computed(() => {
+    return (
+        props.entry.type === "recommendation" ||
+        props.entry.type === "review" ||
+        props.entry.type === "discussion_note"
+    );
 });
 
 // Mobile-aware date formatter: shorter on mobile, fuller on desktop
@@ -168,6 +187,7 @@ const formatDateForDevice = computed(() => {
 const themeVariant = computed(() => {
     switch (props.entry.type) {
         case "discussion_note":
+        case "review":
             return "lavender";
         case "progress_note":
             return "fuschia";
@@ -261,15 +281,6 @@ const themeColor = computed(() => {
     margin: 0;
     line-height: 1.4;
     opacity: 0.95;
-}
-
-.book-title {
-    font-weight: 600;
-    color: var(--accent-blue);
-}
-
-.book-author {
-    color: var(--accent-fuschia);
 }
 
 .toggle {

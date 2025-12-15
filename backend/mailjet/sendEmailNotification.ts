@@ -7,11 +7,12 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
             return {
                 title: "New Book Comment",
                 message: `<span style="font-weight: bold;color:##00bfff;">@${data.username}</span> said some shit about <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
+                text: data.text,
             };
         case "like":
             return {
                 title: "Item Update",
-                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> liked your palaver.`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> thinks your palaver is lit.`,
             };
         case "dislike":
             return {
@@ -22,26 +23,31 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
             return {
                 title: "Item Update",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> commented on your palaver.`,
+                text: data.text,
             };
         case "progress_note":
             return {
                 title: "New Progress Update",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> made progress on the current book.`,
+                text: data.text,
             };
         case "review":
             return {
                 title: "New Review",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> reviewed <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
+                text: data.text,
             };
         case "recommendation":
             return {
                 title: "New Recommendation",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> recommended <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
+                text: data.text,
             };
         case "suggestion":
             return {
                 title: "New Suggestion",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> suggested some shit for the app.`,
+                text: data.text,
             };
         case "future_book_added":
             return {
@@ -56,6 +62,7 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
             return {
                 title: "New Misc Item",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> said some bullshit...`,
+                text: data.text,
             };
     }
 };
@@ -71,17 +78,17 @@ const getEmailRecipients = (targetUserEmail?: string) => {
 };
 
 const getEmailInfo = (updateType: string, data: { [key: string]: string }) => {
-    const { title, message } = getEmailMessaging(updateType, data);
+    const { title, message, text } = getEmailMessaging(updateType, data);
     const emailRecipients = getEmailRecipients(data.targetUserEmail);
 
     return {
         subject: "Bros and Prose Update",
-        html: buildHtmlTemplate(title, message),
+        html: buildHtmlTemplate(title, message, text),
         emailRecipients,
     };
 };
 
-const buildHtmlTemplate = (title: string = "", message: string = "") => {
+const buildHtmlTemplate = (title: string = "", message: string = "", text: string = "") => {
     const endpoint = title.toLocaleLowerCase().includes("future") ? "future" : "palaver";
     return `<!DOCTYPE html>
 <html lang="en">
@@ -106,6 +113,9 @@ const buildHtmlTemplate = (title: string = "", message: string = "") => {
                                 }</h1>
                                 <p style="font-size:18px;line-height:1.6;margin:0 0 28px;">${
                                     message ?? ""
+                                }</p>
+                                <p style="font-size:12px;line-height:1.6;margin:0 0 20px;">${
+                                    text ?? ""
                                 }</p>
                                 <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0">
                                     <tr>

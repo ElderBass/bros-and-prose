@@ -2,8 +2,14 @@ import { ref, onValue, off, type DataSnapshot } from "firebase/database";
 import { getFirebase } from "@/setup/firebaseClient";
 import { palaverService } from "@/services";
 import { usePalaverStore } from "@/stores/palaver";
-import type { Comment, PalaverEntry, PalaverEntryMetadata } from "@/types";
+import type {
+    Comment,
+    PalaverEntry,
+    PalaverEntryMetadata,
+    Review,
+} from "@/types";
 import {
+    buildPalaverEntryFromReview,
     buildPalaverEntryMetadata,
     buildPalaverReactionMetadata,
     checkForUnreadEntries,
@@ -71,6 +77,12 @@ export const usePalaver = () => {
             useLog().info(`Palaver entry created: ${JSON.stringify(entry)}`);
         }
         return response.data;
+    };
+
+    const createPalaverEntryFromReview = async (review: Review) => {
+        const entry = buildPalaverEntryFromReview(review);
+        const response = await createPalaverEntry(entry);
+        return response;
     };
 
     const updatePalaverEntry = async (
@@ -186,6 +198,7 @@ export const usePalaver = () => {
     return {
         getPalaverEntries,
         createPalaverEntry,
+        createPalaverEntryFromReview,
         updatePalaverEntry,
         deletePalaverEntry,
         likePalaverEntry,
