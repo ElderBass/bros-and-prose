@@ -2,7 +2,7 @@
     <BaseModal
         :modelValue="addBookModalOpen"
         @close="closeModal"
-        title="add a book to your shelf"
+        title="stack those shelves"
         size="large"
         shadow-color="green"
     >
@@ -13,7 +13,7 @@
         />
         <div v-else class="shelf-form">
             <ShelfSelector />
-            <AddBookForm
+            <AddBookFormV2
                 :selectedShelf="selectedBookShelf"
                 :shelfMessage="shelfMessage"
                 :shelfDisplayName="shelfDisplayName"
@@ -27,7 +27,7 @@ import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import BaseModal from "@/components/ui/BaseModal.vue";
 import ShelfSelector from "../ShelfSelector.vue";
-import AddBookForm from "./AddBookForm.vue";
+import AddBookFormV2 from "./AddBookFormV2.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { getShelfDisplayName, getShelfMessage } from "@/utils/bookshelfUtils";
 

@@ -57,6 +57,7 @@ export interface FutureBook {
     author: string;
     yearPublished: number;
     imageSrc: string;
+    pages?: number;
     tags?: string[];
     description?: string;
     votes: string[];
@@ -73,3 +74,92 @@ export interface FutureBookSelectorRequest {
 }
 
 export type Shelf = "currentlyReading" | "wantToRead" | "haveRead";
+
+export interface BookshelfBook {
+    title: string;
+    author: string;
+    imageSrc: string;
+    description: string;
+    yearPublished: number;
+    pages: number;
+    tags?: string[];
+}
+
+export interface GoogleBooksResult {
+    kind: string;
+    id: string;
+    etag?: string;
+    selfLink?: string;
+    volumeInfo: GoogleBooksVolumeInfo;
+    saleInfo?: GoogleBooksSaleInfo;
+    accessInfo?: GoogleBooksAccessInfo;
+    searchInfo?: GoogleBooksSearchInfo;
+}
+
+export interface GoogleBooksVolumeInfo {
+    title?: string;
+    subtitle?: string;
+    authors?: string[];
+    publisher?: string;
+    publishedDate?: string;
+    description?: string;
+    industryIdentifiers?: GoogleBooksIndustryIdentifier[];
+    readingModes?: GoogleBooksReadingModes;
+    pageCount?: number;
+    printType?: string;
+    categories?: string[];
+    averageRating?: number;
+    ratingsCount?: number;
+    maturityRating?: string;
+    allowAnonLogging?: boolean;
+    contentVersion?: string;
+    panelizationSummary?: GoogleBooksPanelizationSummary;
+    imageLinks?: GoogleBooksImageLinks;
+    language?: string;
+    previewLink?: string;
+    infoLink?: string;
+    canonicalVolumeLink?: string;
+}
+
+export interface GoogleBooksIndustryIdentifier {
+    type: string;
+    identifier: string;
+}
+
+export interface GoogleBooksReadingModes {
+    text?: boolean;
+    image?: boolean;
+}
+
+export interface GoogleBooksPanelizationSummary {
+    containsEpubBubbles?: boolean;
+    containsImageBubbles?: boolean;
+}
+
+export interface GoogleBooksImageLinks {
+    smallThumbnail?: string;
+    thumbnail?: string;
+}
+
+export interface GoogleBooksSaleInfo {
+    country?: string;
+    saleability?: string;
+    isEbook?: boolean;
+}
+
+export interface GoogleBooksAccessInfo {
+    country?: string;
+    viewability?: string;
+    embeddable?: boolean;
+    publicDomain?: boolean;
+    textToSpeechPermission?: string;
+    epub?: { isAvailable?: boolean };
+    pdf?: { isAvailable?: boolean };
+    webReaderLink?: string;
+    accessViewStatus?: string;
+    quoteSharingAllowed?: boolean;
+}
+
+export interface GoogleBooksSearchInfo {
+    textSnippet?: string;
+}
