@@ -60,6 +60,7 @@ export const useUser = () => {
     const updateUser = async (userId: string, user: User) => {
         const updatedUser = await usersService.updateUser(userId, user);
         const sanitizedUser = sanitizeUser(updatedUser);
+
         if (userId === loggedInUser.value.id) {
             setLoggedInUser(sanitizedUser);
         }
@@ -159,6 +160,12 @@ export const useUser = () => {
 const sanitizeUser = (user: User): User => {
     return {
         ...user,
+        currentlyReading: user.currentlyReading
+            ? {
+                  ...user.currentlyReading,
+                  tags: Object.values(user.currentlyReading?.tags || {}),
+              }
+            : undefined,
         haveRead: sanitizeBookshelfBooks(Object.values(user.haveRead || {})),
         wantToRead: sanitizeBookshelfBooks(
             Object.values(user.wantToRead || {})
