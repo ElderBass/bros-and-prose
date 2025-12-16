@@ -63,10 +63,6 @@ watch(
     [loggedInUser, isLoggedInUser],
     ([newLoggedInUser, isOwnProfile]) => {
         if (isOwnProfile && newLoggedInUser?.id) {
-            console.log(
-                "KERTWANGING newLoggedInUser in watch",
-                newLoggedInUser
-            );
             user.value = newLoggedInUser;
             const { wantToRead: updatedWantToRead, haveRead: updatedHaveRead } =
                 getUserShelves(newLoggedInUser);
