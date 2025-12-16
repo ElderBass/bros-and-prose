@@ -1,4 +1,4 @@
-import { usersService } from "@/services/users";
+import { useUser } from "./useUser";
 import { useUserStore } from "@/stores/user";
 import type { BookshelfBook, User } from "@/types";
 import { useLog } from "./useLog";
@@ -8,12 +8,13 @@ import { useShelfModalStore } from "@/stores/shelfModal";
 
 export const useUserShelves = () => {
     const { info, error: logError } = useLog();
+    const { updateUser } = useUser();
 
     const updateCurrentlyReading = async (
         book: BookshelfBook
     ): Promise<User | null> => {
         const loggedInUser = useUserStore().loggedInUser;
-        const updatedUser = await updateUser({
+        const updatedUser = await updateUser(loggedInUser.id, {
             ...loggedInUser,
             currentlyReading: book,
         });
@@ -24,7 +25,7 @@ export const useUserShelves = () => {
         const loggedInUser = useUserStore().loggedInUser;
         const currentBook = loggedInUser.currentlyReading;
 
-        const updatedUser = await updateUser({
+        const updatedUser = await updateUser(loggedInUser.id, {
             ...loggedInUser,
             currentlyReading: EMPTY_SHELF_BOOK,
         });
@@ -49,7 +50,7 @@ export const useUserShelves = () => {
 
             const currentShelf = getUserShelves(loggedInUser)[shelf];
 
-            const updatedUser = await updateUser({
+            const updatedUser = await updateUser(loggedInUser.id, {
                 ...loggedInUser,
                 [shelf]: [...currentShelf, book],
             });
@@ -74,7 +75,7 @@ export const useUserShelves = () => {
             const currentShelf = getUserShelves(loggedInUser)[shelf];
             const updatedShelf = currentShelf.filter((b) => b.id !== bookId);
 
-            const updatedUser = await updateUser({
+            const updatedUser = await updateUser(loggedInUser.id, {
                 ...loggedInUser,
                 [shelf]: updatedShelf,
             });
@@ -132,7 +133,7 @@ export const useUserShelves = () => {
                 b.id === bookId ? updatedBook : b
             );
 
-            const updatedUser = await updateUser({
+            const updatedUser = await updateUser(loggedInUser.id, {
                 ...loggedInUser,
                 wantToRead: updatedWantToRead,
             });
@@ -159,7 +160,7 @@ export const useUserShelves = () => {
                 b.id === bookId ? updatedBook : b
             );
 
-            const updatedUser = await updateUser({
+            const updatedUser = await updateUser(loggedInUser.id, {
                 ...loggedInUser,
                 haveRead: updatedHaveRead,
             });
@@ -173,12 +174,6 @@ export const useUserShelves = () => {
             await logError(`Error updating haveRead: ${err}`);
             throw new Error(`Error updating haveRead: ${err}`);
         }
-    };
-
-    const updateUser = async (user: User) => {
-        const updatedUser = await usersService.updateUser(user.id, user);
-        useUserStore().setLoggedInUser(updatedUser);
-        return updatedUser;
     };
 
     return {

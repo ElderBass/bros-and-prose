@@ -28,9 +28,9 @@
                     </p>
                 </div>
 
-                <div v-if="currentlyReading.tags?.length" class="tags">
+                <div v-if="tags.length" class="tags">
                     <BookTag
-                        v-for="tag in currentlyReading.tags"
+                        v-for="tag in tags"
                         :key="tag"
                         :tag="tag"
                         :selected="true"
@@ -86,14 +86,18 @@ const buttonProps = computed(() => {
     };
 });
 
-const handleFinished = () => {
-    openConfirmFinishCurrentBook(props.currentlyReading);
-};
+const tags = computed(() => {
+    return Object.values(props.currentlyReading.tags || {});
+});
 
 const showActions = computed(() => {
     const router = useRouter();
     return router.currentRoute.value.name === "profile-root";
 });
+
+const handleFinished = () => {
+    openConfirmFinishCurrentBook(props.currentlyReading);
+};
 </script>
 
 <style scoped>

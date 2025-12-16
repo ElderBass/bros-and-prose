@@ -41,24 +41,14 @@ defineProps<{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 1rem;
     padding: 1rem;
-    border-radius: 1rem;
-    border: 2px dashed var(--accent-blue);
-    background: linear-gradient(
-        180deg,
-        rgba(0, 191, 255, 0.06),
-        rgba(0, 191, 255, 0.03)
-    );
-    box-shadow:
-        0 4px 12px rgba(0, 191, 255, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .empty-title {
     margin: 0;
     font-weight: 600;
-    color: var(--accent-blue);
+    color: var(--accent-fuschia);
 }
 
 .empty-subtitle {

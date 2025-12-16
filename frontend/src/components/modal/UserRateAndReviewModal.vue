@@ -17,13 +17,13 @@
 
 <script setup lang="ts">
 import RateAndReviewBookForm from "@/components/form/RateAndReviewBookForm.vue";
-import type { Book, FutureBook, SubmitReviewArgs } from "@/types";
+import type { Book, BookshelfBook, SubmitReviewArgs } from "@/types";
 import { DEFAULT_RATING, DEFAULT_REVIEW } from "@/constants";
 
 withDefaults(
     defineProps<{
         showReviewModal: boolean;
-        book: Book | FutureBook;
+        book: Book | BookshelfBook;
         bookReview: SubmitReviewArgs;
         onReviewSubmit: (args: SubmitReviewArgs) => Promise<void>;
         onClose: () => void;
