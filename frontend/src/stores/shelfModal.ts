@@ -16,6 +16,7 @@ interface ModalState {
     modal: ModalType;
     selectedBook: BookshelfBook | null;
     selectedBookShelf: Shelf;
+    moveTargetShelf: Shelf;
     message: string;
 }
 
@@ -24,6 +25,7 @@ export const useShelfModalStore = defineStore("shelfModal", {
         modal: null,
         selectedBook: null,
         selectedBookShelf: "haveRead",
+        moveTargetShelf: "haveRead",
         message: "",
     }),
 
@@ -60,6 +62,12 @@ export const useShelfModalStore = defineStore("shelfModal", {
         openConfirmMove(book: BookshelfBook) {
             this.modal = "moveBook";
             this.selectedBook = book;
+            this.moveTargetShelf = "haveRead";
+        },
+        openConfirmMoveTo(book: BookshelfBook, targetShelf: Shelf) {
+            this.modal = "moveBook";
+            this.selectedBook = book;
+            this.moveTargetShelf = targetShelf;
         },
         openConfirmFinishCurrentBook(book: BookshelfBook) {
             this.modal = "finishCurrentBook";
@@ -72,6 +80,7 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.modal = null;
             this.selectedBook = null;
             this.selectedBookShelf = "haveRead";
+            this.moveTargetShelf = "haveRead";
             this.message = "";
         },
     },

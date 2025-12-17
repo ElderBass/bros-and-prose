@@ -1,11 +1,5 @@
 import { usersService } from "@/services/users";
-import type {
-    Book,
-    BookshelfBook,
-    FutureBook,
-    SubmitReviewArgs,
-    User,
-} from "@/types";
+import type { Book, FutureBook, SubmitReviewArgs, User } from "@/types";
 import { useUserStore } from "@/stores/user";
 import {
     FINISHED_BOOK_PROGRESS,
@@ -15,7 +9,7 @@ import {
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "./useLog";
 import { useFutureBooks } from "./useFutureBooks";
-import { buildReview, getUserShelves, isReviewOfCurrentBook } from "@/utils";
+import { buildReview, isReviewOfCurrentBook, sanitizeUser } from "@/utils";
 import { storeToRefs } from "pinia";
 import { usePalaver } from "./usePalaver";
 
@@ -156,23 +150,4 @@ export const useUser = () => {
         addReview,
         updateUserProgress,
     };
-};
-
-const sanitizeUser = (user: User): User => {
-    const { currentlyReading, haveRead, wantToRead } = getUserShelves(user);
-    return {
-        ...user,
-        currentlyReading: sanitizeBookshelfBooks(currentlyReading),
-        haveRead: sanitizeBookshelfBooks(haveRead),
-        wantToRead: sanitizeBookshelfBooks(wantToRead),
-    };
-};
-
-const sanitizeBookshelfBooks = (books: BookshelfBook[]) => {
-    return books
-        .filter((book) => book?.id && book.id !== "placeholder")
-        .map((book) => ({
-            ...book,
-            tags: Object.values(book.tags || {}),
-        }));
 };

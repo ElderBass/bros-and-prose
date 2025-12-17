@@ -121,6 +121,29 @@ export const MOVED_BOOK_SUCCESS_ALERT: Alert = {
     dismissable: false,
 };
 
+export const movedBookSuccessAlert = (
+    targetShelf: "currentlyReading" | "haveRead"
+): Alert => {
+    const messages =
+        targetShelf === "currentlyReading"
+            ? [
+                  "locked and loaded. go read that shit.",
+                  "buckle up, buttercup, cuz you got some reading to do.",
+              ]
+            : [
+                  "hell yeah. another one bites the dust.",
+                  "that book is officially in the past tense.",
+              ];
+
+    return {
+        show: true,
+        messages,
+        type: "success",
+        duration: 5000,
+        dismissable: false,
+    };
+};
+
 export const REMOVED_BOOK_SUCCESS_ALERT: Alert = {
     show: true,
     messages: [

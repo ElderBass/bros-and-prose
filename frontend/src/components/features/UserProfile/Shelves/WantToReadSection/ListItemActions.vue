@@ -10,11 +10,27 @@
             :handleDelete="handleRemove"
             :buttonSize="buttonSize"
         />
-        <MoveButton
-            title="move to have read"
-            :handleMove="handleMove"
-            :buttonSize="buttonSize"
-        />
+        <BaseMenu
+            accentColor="green"
+            hoverColor="lavender"
+            location="bottom end"
+        >
+            <template #activator="{ props: menuProps }">
+                <MoveButton
+                    v-bind="menuProps"
+                    title="move this book"
+                    :buttonSize="buttonSize"
+                />
+            </template>
+            <template #items>
+                <v-list-item @click="handleMove('currentlyReading')">
+                    <v-list-item-title>currently reading</v-list-item-title>
+                </v-list-item>
+                <v-list-item @click="handleMove('haveRead')">
+                    <v-list-item-title>have read</v-list-item-title>
+                </v-list-item>
+            </template>
+        </BaseMenu>
     </div>
 </template>
 
@@ -26,6 +42,7 @@ import EditButton from "@/components/ui/EditButton.vue";
 import DeleteButton from "@/components/ui/DeleteButton.vue";
 import MoveButton from "@/components/ui/MoveButton.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
+import type { Shelf } from "@/types";
 
 const props = defineProps<{
     book: BookshelfBook;
@@ -34,7 +51,7 @@ const props = defineProps<{
 const { mobile } = useDisplay();
 
 const shelfModalStore = useShelfModalStore();
-const { openEditBook, openConfirmRemove, openConfirmMove } = shelfModalStore;
+const { openEditBook, openConfirmRemove, openConfirmMoveTo } = shelfModalStore;
 
 const handleEdit = () => {
     openEditBook(props.book, "wantToRead");
@@ -44,8 +61,8 @@ const handleRemove = () => {
     openConfirmRemove(props.book, "wantToRead");
 };
 
-const handleMove = () => {
-    openConfirmMove(props.book);
+const handleMove = (targetShelf: Shelf) => {
+    openConfirmMoveTo(props.book, targetShelf);
 };
 
 const buttonSize = computed(() => {
