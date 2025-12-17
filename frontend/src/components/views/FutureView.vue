@@ -136,7 +136,6 @@ const shouldRenderErrorModal = computed(
     () => resultModal.value?.status === "error"
 );
 const fabDisabled = computed(() => {
-    console.log("current future books.length", currentSelections.value.length);
     return currentSelections.value.length >= 3;
 });
 </script>

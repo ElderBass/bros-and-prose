@@ -259,8 +259,6 @@ const submit = async () => {
     try {
         loading.value = true;
 
-        console.log("KERTWANGING selected Result", props.selectedShelf);
-
         const year = Number.parseInt(yearPublished.value, 10);
         const book: BookshelfBook = {
             id: uuid(),
