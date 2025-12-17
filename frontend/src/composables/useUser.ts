@@ -159,7 +159,6 @@ export const useUser = () => {
 };
 
 const sanitizeUser = (user: User): User => {
-    console.log("KERTWANGING user in sanitizeUser", user);
     const { currentlyReading, haveRead, wantToRead } = getUserShelves(user);
     return {
         ...user,
