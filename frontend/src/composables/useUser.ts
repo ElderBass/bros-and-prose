@@ -29,10 +29,11 @@ export const useUser = () => {
 
     const getUser = async (userId: string) => {
         const user = await usersService.getUser(userId);
+        const sanitizedUser = sanitizeUser(user);
         if (userId === loggedInUser.value.id) {
-            setLoggedInUser(user);
+            setLoggedInUser(sanitizedUser);
         }
-        return user;
+        return sanitizedUser;
     };
 
     const getUserByUsername = async (username: string) => {
@@ -158,6 +159,7 @@ export const useUser = () => {
 };
 
 const sanitizeUser = (user: User): User => {
+    console.log("KERTWANGING user in sanitizeUser", user);
     const { currentlyReading, haveRead, wantToRead } = getUserShelves(user);
     return {
         ...user,
@@ -169,7 +171,7 @@ const sanitizeUser = (user: User): User => {
 
 const sanitizeBookshelfBooks = (books: BookshelfBook[]) => {
     return books
-        .filter((book) => book.id !== "placeholder")
+        .filter((book) => book?.id && book.id !== "placeholder")
         .map((book) => ({
             ...book,
             tags: Object.values(book.tags || {}),
