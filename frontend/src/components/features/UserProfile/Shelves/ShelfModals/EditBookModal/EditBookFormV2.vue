@@ -190,9 +190,9 @@ const submit = async () => {
         };
 
         if (props.selectedShelf === "wantToRead") {
-            await updateWantToRead(props.book.id, updatedBook);
+            await updateWantToRead(updatedBook);
         } else if (props.selectedShelf === "haveRead") {
-            await updateHaveRead(props.book.id, updatedBook);
+            await updateHaveRead(updatedBook);
         } else if (props.selectedShelf === "currentlyReading") {
             await updateCurrentlyReading(updatedBook);
         } else {

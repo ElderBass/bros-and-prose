@@ -88,6 +88,8 @@ export const useBooks = () => {
             return Number.isFinite(year) ? year : 0;
         };
 
+        console.log("KERTWANGING results", results);
+
         const data = results.map((item: GoogleBooksResult) => ({
             id: item.id,
             title: item.volumeInfo?.title ?? "",

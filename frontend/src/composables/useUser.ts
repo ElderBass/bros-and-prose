@@ -15,7 +15,7 @@ import {
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "./useLog";
 import { useFutureBooks } from "./useFutureBooks";
-import { buildReview, isReviewOfCurrentBook } from "@/utils";
+import { buildReview, getUserShelves, isReviewOfCurrentBook } from "@/utils";
 import { storeToRefs } from "pinia";
 import { usePalaver } from "./usePalaver";
 
@@ -158,18 +158,12 @@ export const useUser = () => {
 };
 
 const sanitizeUser = (user: User): User => {
+    const { currentlyReading, haveRead, wantToRead } = getUserShelves(user);
     return {
         ...user,
-        currentlyReading: user.currentlyReading
-            ? {
-                  ...user.currentlyReading,
-                  tags: Object.values(user.currentlyReading?.tags || {}),
-              }
-            : undefined,
-        haveRead: sanitizeBookshelfBooks(Object.values(user.haveRead || {})),
-        wantToRead: sanitizeBookshelfBooks(
-            Object.values(user.wantToRead || {})
-        ),
+        currentlyReading: sanitizeBookshelfBooks(currentlyReading),
+        haveRead: sanitizeBookshelfBooks(haveRead),
+        wantToRead: sanitizeBookshelfBooks(wantToRead),
     };
 };
 
