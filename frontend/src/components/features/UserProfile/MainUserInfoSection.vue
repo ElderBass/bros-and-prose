@@ -1,17 +1,12 @@
 <template>
     <div class="main-user-info-section" :class="{ column: mobile }">
         <UserInfoCard :isLoggedInUser="isLoggedInUser" :user="user" />
-        <CurrentlyReadingSection
-            :currentlyReading="user.currentlyReading"
-            :isLoggedInUser="isLoggedInUser"
-        />
     </div>
 </template>
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
 import UserInfoCard from "./UserInfoCard.vue";
-import CurrentlyReadingSection from "@/components/features/UserProfile/CurrentlyReadingSection/index.vue";
 import type { User } from "@/types";
 
 defineProps<{
@@ -28,11 +23,6 @@ const { mobile } = useDisplay();
     justify-content: space-between;
     gap: 0.5rem;
     width: 100%;
-}
-
-.main-user-info-section :deep(.user-info-section),
-.main-user-info-section :deep(.currently-reading-section) {
-    height: 100%;
 }
 
 .column {

@@ -1,11 +1,13 @@
 <template>
-    <ExpansionPanel :color="color">
+    <ExpansionPanel :color="color" :defaultOpen="defaultOpen">
         <template #title>
             <ExpansionPanelTitle :title="computedTitle" :color="color" />
         </template>
         <template #text>
             <div v-if="!hasContent" class="empty-state">
-                <p>{{ noContentMessage }}</p>
+                <slot name="empty">
+                    <p v-if="noContentMessage">{{ noContentMessage }}</p>
+                </slot>
             </div>
             <InfiniteScroll
                 v-else
@@ -26,15 +28,17 @@ import ExpansionPanelTitle from "@/components/ui/ExpansionPanelTitle.vue";
 const props = withDefaults(
     defineProps<{
         title: string;
-        noContentMessage: string;
+        noContentMessage?: string;
         contentCount: number;
-        color?: "blue" | "fuschia" | "green" | "lavender" | "red";
+        color?: "blue" | "fuschia" | "green" | "lavender" | "red" | "yellow";
         scrollDirection?: "vertical" | "horizontal";
+        defaultOpen?: boolean;
     }>(),
     {
-        color: "blue",
+        color: "yellow",
         scrollDirection: "horizontal",
         contentCount: 0,
+        defaultOpen: false,
     }
 );
 
