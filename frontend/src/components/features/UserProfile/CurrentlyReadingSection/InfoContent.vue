@@ -102,9 +102,21 @@ const handleFinished = () => {
 
 <style scoped>
 .book {
+    flex: 1 0 100%;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--accent-blue) 12%, transparent),
+        color-mix(in srgb, var(--accent-blue) 6%, transparent)
+    );
+    border: 2px solid var(--accent-blue);
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow:
+        0 4px 8px color-mix(in srgb, var(--accent-blue) 25%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .cover-and-info {

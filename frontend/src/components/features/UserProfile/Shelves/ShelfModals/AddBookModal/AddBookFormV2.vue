@@ -143,7 +143,7 @@ const props = defineProps<{
 }>();
 
 const { searchGoogleByTitle } = useBooks();
-const { addToWantToRead, addToHaveRead, updateCurrentlyReading } =
+const { addToWantToRead, addToHaveRead, addToCurrentlyReading } =
     useUserShelves();
 const { openAddBookSuccess, openAddBookError } = useShelfModalStore();
 
@@ -154,6 +154,7 @@ const bookSelected = ref(false);
 const loading = ref(false);
 const title = ref("");
 const author = ref("");
+const imageSrc = ref("");
 const yearPublished = ref("");
 const pages = ref<number | undefined>(undefined);
 const tags = ref<string[]>([]);
@@ -206,6 +207,7 @@ const selectResult = (result: BookshelfBook) => {
 
     title.value = result.title || title.value;
     author.value = result.author || "";
+    imageSrc.value = result.imageSrc || "";
     yearPublished.value = result.yearPublished
         ? String(result.yearPublished)
         : "";
@@ -263,7 +265,7 @@ const submit = async () => {
             title: capitalizeBookTitle(title.value),
             author: author.value.trim(),
             yearPublished: Number.isFinite(year) ? year : 0,
-            imageSrc: selectedResult.value?.imageSrc || "",
+            imageSrc: imageSrc.value || "",
             pages: pages.value,
             tags: tags.value,
             description:
@@ -277,7 +279,7 @@ const submit = async () => {
         } else if (props.selectedShelf === "haveRead") {
             await addToHaveRead(book);
         } else if (props.selectedShelf === "currentlyReading") {
-            await updateCurrentlyReading(book);
+            await addToCurrentlyReading(book);
         } else {
             throw new Error("Invalid shelf selected");
         }
