@@ -1,5 +1,6 @@
 <template>
     <v-expansion-panels
+        v-model="internalValue"
         :variant="variant"
         multiple
         class="expansions-panels"
@@ -26,17 +27,19 @@
 </template>
 
 <script setup lang="ts">
-import type { VExpansionPanel } from "vuetify/components";
+import { ref, watch } from "vue";
 import ExpandIcon from "../icons/ExpandIcon.vue";
 import CollapseIcon from "../icons/CollapseIcon.vue";
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         variant?: "accordion" | "default" | "inset" | "popout";
         elevation?: number;
         rounded?: string | number;
         multiple?: boolean;
-        color?: "blue" | "fuschia" | "green" | "lavender" | "red";
+        color?: "blue" | "fuschia" | "green" | "lavender" | "red" | "yellow";
+        modelValue?: number[];
+        defaultOpen?: boolean;
     }>(),
     {
         variant: "accordion",
@@ -44,8 +47,27 @@ withDefaults(
         rounded: "18px",
         multiple: false,
         color: "blue",
+        modelValue: undefined,
+        defaultOpen: false,
     }
 );
+
+const emit = defineEmits<{
+    "update:modelValue": [value: number[]];
+}>();
+
+const internalValue = ref<number[]>(
+    props.modelValue ?? (props.defaultOpen ? [0] : [])
+);
+
+watch(
+    () => props.modelValue,
+    (next) => {
+        if (next) internalValue.value = next;
+    }
+);
+
+watch(internalValue, (next) => emit("update:modelValue", next));
 </script>
 
 <style scoped>
@@ -79,6 +101,10 @@ withDefaults(
 
 :deep(.bro-expansion-panel.color-red) {
     border-color: var(--accent-red);
+}
+
+:deep(.bro-expansion-panel.color-yellow) {
+    border-color: var(--accent-yellow);
 }
 
 :deep(.bro-expansion-panel .v-expansion-panel-title__overlay) {

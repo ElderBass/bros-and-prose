@@ -4,7 +4,7 @@
         :contentCount="wantToRead.length"
         :noContentMessage="noContentMessage"
         scrollDirection="horizontal"
-        color="blue"
+        color="yellow"
     >
         <template #scroll-content>
             <WantToReadListItem

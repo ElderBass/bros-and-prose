@@ -22,6 +22,7 @@
             <div class="secondary-content">
                 <UserShelvesSection
                     :isLoggedInUser="isLoggedInUser"
+                    :currentlyReading="currentlyReading"
                     :wantToRead="wantToRead"
                     :haveRead="haveRead"
                 />
@@ -56,6 +57,7 @@ const props = defineProps<{
 const { loggedInUser } = storeToRefs(useUserStore());
 const { isLoggedInUser } = toRefs(props);
 const user = ref(props.user);
+const currentlyReading = ref(getUserShelves(props.user).currentlyReading);
 const wantToRead = ref(getUserShelves(props.user).wantToRead);
 const haveRead = ref(getUserShelves(props.user).haveRead);
 
@@ -64,8 +66,12 @@ watch(
     ([newLoggedInUser, isOwnProfile]) => {
         if (isOwnProfile && newLoggedInUser?.id) {
             user.value = newLoggedInUser;
-            const { wantToRead: updatedWantToRead, haveRead: updatedHaveRead } =
-                getUserShelves(newLoggedInUser);
+            const {
+                currentlyReading: updatedCurrentlyReading,
+                wantToRead: updatedWantToRead,
+                haveRead: updatedHaveRead,
+            } = getUserShelves(newLoggedInUser);
+            currentlyReading.value = updatedCurrentlyReading;
             wantToRead.value = updatedWantToRead;
             haveRead.value = updatedHaveRead;
         }
