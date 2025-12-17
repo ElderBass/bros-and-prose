@@ -49,7 +49,8 @@ import { getShelfDisplayName } from "@/utils/bookshelfUtils";
 import { QUICK_ERROR, REMOVED_BOOK_SUCCESS_ALERT } from "@/constants";
 
 const { mobile } = useDisplay();
-const { removeFromWantToRead, removeFromHaveRead } = useUserShelves();
+const { removeFromWantToRead, removeFromHaveRead, removeFromCurrentlyReading } =
+    useUserShelves();
 const { error: logError } = useLog();
 const { showAlert } = useUIStore();
 
@@ -86,6 +87,8 @@ const handleDelete = async () => {
         loading.value = true;
         if (selectedBookShelf.value === "wantToRead") {
             await removeFromWantToRead(selectedBook.value.id);
+        } else if (selectedBookShelf.value === "currentlyReading") {
+            await removeFromCurrentlyReading(selectedBook.value.id);
         } else {
             await removeFromHaveRead(selectedBook.value.id);
         }

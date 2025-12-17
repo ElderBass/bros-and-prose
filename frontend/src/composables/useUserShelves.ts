@@ -132,6 +132,13 @@ export const useUserShelves = () => {
         return updatedUser;
     };
 
+    const removeFromCurrentlyReading = async (
+        bookId: string
+    ): Promise<User | null> => {
+        const updatedUser = await removeFromShelf("currentlyReading", bookId);
+        return updatedUser;
+    };
+
     const addToHaveRead = async (book: BookshelfBook): Promise<User | null> => {
         const updatedUser = await addToShelf("haveRead", book);
         return updatedUser;
@@ -186,6 +193,7 @@ export const useUserShelves = () => {
         addToCurrentlyReading,
         finishCurrentlyReading,
         addToWantToRead,
+        removeFromCurrentlyReading,
         removeFromWantToRead,
         addToHaveRead,
         removeFromHaveRead,
