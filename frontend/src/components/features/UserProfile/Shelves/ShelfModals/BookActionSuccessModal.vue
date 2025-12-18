@@ -151,7 +151,7 @@ const buttonProps = computed(() => {
 
 .secondary-message {
     font-size: 1.25rem;
-    color: var(--accent-fuschia);
+    color: var(--accent-yellow);
     font-style: italic;
     margin: 0;
     opacity: 0.9;

@@ -250,7 +250,7 @@ const handleFinished = async () => {
 }
 
 .actions {
-    padding: 0 0.5rem 0.5rem 0.5rem;
+    padding: 0.5rem;
 }
 
 @media (min-width: 768px) {

@@ -4,7 +4,7 @@
         :size="computedButtonSize"
         :title="title"
         :handleClick="handleEdit"
-        color="fuschia"
+        color="blue"
     />
 </template>
 

@@ -96,7 +96,7 @@ const handleDelete = async () => {
             "remove",
             selectedBook.value,
             selectedBookShelf.value,
-            `removed from your ${getShelfDisplayName(selectedBookShelf.value)} shelf`
+            `sent that shit straight to oblivion #godsplan`
         );
     } catch (error) {
         console.error("Error deleting book from shelf:", error);
