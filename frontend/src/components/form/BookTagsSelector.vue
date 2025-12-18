@@ -6,7 +6,7 @@
             :tag="tag"
             :selected="tags.includes(tag)"
             :onClick="() => onClick(tag)"
-            :size="mobile ? 'small' : 'medium'"
+            :size="mobile ? 'xsmall' : 'small'"
         />
     </div>
 </template>
