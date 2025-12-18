@@ -82,10 +82,11 @@
             </div>
 
             <div class="form-container">
-                <label for="shelf-book-tags" class="label"
-                    >tags (optional)</label
-                >
-                <BookTagsSelector :tags="tags" :onClick="toggleTag" />
+                <InlineBookTagsPicker
+                    label="tags (optional)"
+                    v-model="tags"
+                    @update="toggleTag"
+                />
             </div>
 
             <div class="form-container">
@@ -128,7 +129,7 @@ import { capitalizeBookTitle, getShelfSuccessMessage } from "@/utils";
 import type { BookshelfBook, Shelf } from "@/types/books";
 import { useLog } from "@/composables/useLog";
 import V2FormResult from "./V2FormResult.vue";
-import BookTagsSelector from "@/components/form/BookTagsSelector.vue";
+import InlineBookTagsPicker from "@/components/form/InlineBookTagsPicker.vue";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import { v4 as uuid } from "uuid";
 import ClearSearchButton from "../FormStuff/ClearSearchButton.vue";

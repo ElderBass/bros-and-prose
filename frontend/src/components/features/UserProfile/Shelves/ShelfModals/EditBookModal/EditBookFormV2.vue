@@ -60,10 +60,11 @@
             </div>
 
             <div class="form-container">
-                <label for="edit-book-tags" class="label"
-                    >tags (optional)</label
-                >
-                <BookTagsSelector :tags="tags" :onClick="toggleTag" />
+                <InlineBookTagsPicker
+                    label="tags (optional)"
+                    v-model="tags"
+                    @update="toggleTag"
+                />
             </div>
 
             <div class="form-container">
@@ -96,11 +97,11 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from "vue";
-import BookTagsSelector from "@/components/form/BookTagsSelector.vue";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { getShelfSuccessMessage } from "@/utils";
 import type { BookshelfBook, Shelf } from "@/types";
+import InlineBookTagsPicker from "@/components/form/InlineBookTagsPicker.vue";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import ClearSearchButton from "../FormStuff/ClearSearchButton.vue";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
