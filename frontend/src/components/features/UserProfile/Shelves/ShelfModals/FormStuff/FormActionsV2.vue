@@ -3,23 +3,23 @@
         <BaseButton
             variant="outline-secondary"
             title="go back to search results"
-            @click="$emit('back')"
+            @click="$emit('cancel')"
             v-bind="buttonProps"
         >
-            back
+            {{ isEdit ? "cancel" : "back" }}
         </BaseButton>
         <BaseButton
             :disabled="!canSubmit"
             variant="success"
             type="submit"
             :title="
-                props.action === 'update'
+                isEdit
                     ? `update book in ${props.shelfDisplayName} shelf`
                     : `add to ${props.shelfDisplayName} shelf`
             "
             v-bind="buttonProps"
         >
-            {{ props.action === "update" ? "update book" : "add to shelf" }}
+            {{ isEdit ? "update book" : "add to shelf" }}
         </BaseButton>
     </div>
 </template>
@@ -40,7 +40,7 @@ const props = withDefaults(
 );
 
 defineEmits<{
-    back: [];
+    cancel: [];
 }>();
 
 const { mobile } = useDisplay();
@@ -50,6 +50,10 @@ const buttonProps = computed(() => {
         size: mobile.value ? "small" : "medium",
         style: mobile.value ? { width: "100%" } : {},
     };
+});
+
+const isEdit = computed(() => {
+    return props.action === "update";
 });
 </script>
 

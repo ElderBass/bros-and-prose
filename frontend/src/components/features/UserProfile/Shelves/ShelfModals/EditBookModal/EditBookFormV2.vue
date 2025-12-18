@@ -53,6 +53,7 @@
                             label="pages"
                             placeholder="pages"
                             size="medium"
+                            disabled
                         />
                     </div>
                 </div>
@@ -88,7 +89,7 @@
             :canSubmit="canSubmit"
             :shelfDisplayName="shelfDisplayName"
             action="update"
-            @back="resetForm"
+            @cancel="closeModal"
         />
     </form>
 </template>
@@ -115,7 +116,8 @@ const props = defineProps<{
 
 const { updateWantToRead, updateHaveRead, updateCurrentlyReading } =
     useUserShelves();
-const { openAddBookSuccess, openAddBookError } = useShelfModalStore();
+const { openBookActionSuccess, openAddBookError, closeModal } =
+    useShelfModalStore();
 
 const loading = ref(false);
 
@@ -200,7 +202,12 @@ const submit = async () => {
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);
-        openAddBookSuccess(updatedBook, props.selectedShelf, message);
+        openBookActionSuccess(
+            "update",
+            updatedBook,
+            props.selectedShelf,
+            message
+        );
         resetForm();
     } catch (error) {
         openAddBookError(

@@ -7,10 +7,12 @@ export type ModalType =
     | "removeBook"
     | "moveBook"
     | "finishCurrentBook"
-    | "addBookSuccess"
+    | "bookActionSuccess"
     | "addBookError"
     | "review"
     | null;
+
+export type BookActionType = "add" | "update" | "remove";
 
 interface ModalState {
     modal: ModalType;
@@ -18,6 +20,7 @@ interface ModalState {
     selectedBookShelf: Shelf;
     moveTargetShelf: Shelf;
     message: string;
+    bookActionType: BookActionType;
 }
 
 export const useShelfModalStore = defineStore("shelfModal", {
@@ -27,6 +30,7 @@ export const useShelfModalStore = defineStore("shelfModal", {
         selectedBookShelf: "haveRead",
         moveTargetShelf: "haveRead",
         message: "",
+        bookActionType: "add",
     }),
 
     actions: {
@@ -42,11 +46,17 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
         },
-        openAddBookSuccess(book: BookshelfBook, shelf: Shelf, message: string) {
-            this.modal = "addBookSuccess";
+        openBookActionSuccess(
+            action: BookActionType,
+            book: BookshelfBook,
+            shelf: Shelf,
+            message: string
+        ) {
+            this.modal = "bookActionSuccess";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
             this.message = message;
+            this.bookActionType = action;
         },
         openAddBookError(book: BookshelfBook, shelf: Shelf, message: string) {
             this.modal = "addBookError";
@@ -82,6 +92,7 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.selectedBookShelf = "haveRead";
             this.moveTargetShelf = "haveRead";
             this.message = "";
+            this.bookActionType = "add";
         },
     },
 
@@ -93,7 +104,8 @@ export const useShelfModalStore = defineStore("shelfModal", {
         confirmMoveModalOpen: (state) => state.modal === "moveBook",
         confirmFinishCurrentBookModalOpen: (state) =>
             state.modal === "finishCurrentBook",
-        addBookSuccessModalOpen: (state) => state.modal === "addBookSuccess",
+        bookActionSuccessModalOpen: (state) =>
+            state.modal === "bookActionSuccess",
         addBookErrorModalOpen: (state) => state.modal === "addBookError",
         reviewModalOpen: (state) => state.modal === "review",
     },

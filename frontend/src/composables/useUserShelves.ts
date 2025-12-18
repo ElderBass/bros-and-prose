@@ -110,7 +110,8 @@ export const useUserShelves = () => {
         if (currentBook?.id) {
             await addToShelf("haveRead", currentBook);
         }
-        useShelfModalStore().openAddBookSuccess(
+        useShelfModalStore().openBookActionSuccess(
+            "add",
             currentBook as BookshelfBook,
             "haveRead",
             "the present has now become past"

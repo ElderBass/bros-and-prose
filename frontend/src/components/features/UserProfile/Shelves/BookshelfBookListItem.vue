@@ -220,7 +220,8 @@ const handleFinished = async () => {
 }
 
 .no-tags {
-    max-width: 50%;
+    text-align: center;
+    max-width: 60%;
     border: 1px dashed var(--accent-blue);
     border-radius: 1rem;
     padding: 0.5rem;
