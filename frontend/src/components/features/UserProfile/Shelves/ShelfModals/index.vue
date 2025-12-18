@@ -1,7 +1,7 @@
 <template>
     <AddBookModal />
     <EditBookModal />
-    <BookAddedSuccessModal />
+    <BookActionSuccessModal />
     <ShelfErrorModal />
     <ConfirmDeleteBookModal />
     <ConfirmMoveBookModal />
@@ -20,7 +20,7 @@
 import { storeToRefs } from "pinia";
 import AddBookModal from "./AddBookModal/index.vue";
 import EditBookModal from "./EditBookModal/index.vue";
-import BookAddedSuccessModal from "./BookAddedSuccessModal.vue";
+import BookActionSuccessModal from "./BookActionSuccessModal.vue";
 import ShelfErrorModal from "./ShelfErrorModal.vue";
 import ConfirmDeleteBookModal from "./ConfirmRemoveModal.vue";
 import ConfirmMoveBookModal from "./ConfirmMoveModal.vue";

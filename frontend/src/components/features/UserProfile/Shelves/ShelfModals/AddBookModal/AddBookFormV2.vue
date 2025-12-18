@@ -114,7 +114,7 @@
             v-if="bookSelected && !loading"
             :canSubmit="canSubmit"
             :shelfDisplayName="shelfDisplayName"
-            @back="bookSelected = false"
+            @cancel="bookSelected = false"
         />
     </form>
 </template>
@@ -145,7 +145,7 @@ const props = defineProps<{
 const { searchGoogleByTitle } = useBooks();
 const { addToWantToRead, addToHaveRead, addToCurrentlyReading } =
     useUserShelves();
-const { openAddBookSuccess, openAddBookError } = useShelfModalStore();
+const { openBookActionSuccess, openAddBookError } = useShelfModalStore();
 
 const showBookDetails = ref(false);
 const noBookFound = ref(false);
@@ -285,7 +285,7 @@ const submit = async () => {
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);
-        openAddBookSuccess(book, props.selectedShelf, message);
+        openBookActionSuccess("add", book, props.selectedShelf, message);
         resetForm();
     } catch (error) {
         openAddBookError(

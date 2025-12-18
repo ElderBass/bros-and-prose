@@ -13,14 +13,14 @@
         />
         <div v-else class="shelf-form">
             <ShelfSelector
-                :selectedShelf="selectedShelf"
-                @selectShelf="selectedShelf = $event"
+                :selectedShelf="selectedBookShelf"
+                @selectShelf="selectedBookShelf = $event"
                 :disabled="true"
             />
             <EditBookFormV2
                 v-if="selectedBook"
                 :book="selectedBook"
-                :selectedShelf="selectedShelf"
+                :selectedShelf="selectedBookShelf"
                 :shelfMessage="shelfMessage"
                 :shelfDisplayName="shelfDisplayName"
             />
@@ -37,7 +37,6 @@ import ShelfSelector from "../ShelfSelector.vue";
 import EditBookFormV2 from "./EditBookFormV2.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { getShelfDisplayName, getShelfMessage } from "@/utils/bookshelfUtils";
-import type { Shelf } from "@/types";
 
 defineOptions({
     name: "EditBookModal",
@@ -49,18 +48,14 @@ const { editBookModalOpen, selectedBook, selectedBookShelf } =
 
 const { closeModal } = shelfModalStore;
 
-const selectedShelf = ref<Shelf>(
-    (selectedBookShelf.value as Shelf) || "wantToRead"
-);
-
 const loading = ref(false);
 
 const shelfMessage = computed(() => {
-    return getShelfMessage(selectedShelf.value);
+    return getShelfMessage(selectedBookShelf.value);
 });
 
 const shelfDisplayName = computed(() => {
-    return getShelfDisplayName(selectedShelf.value);
+    return getShelfDisplayName(selectedBookShelf.value);
 });
 </script>
 

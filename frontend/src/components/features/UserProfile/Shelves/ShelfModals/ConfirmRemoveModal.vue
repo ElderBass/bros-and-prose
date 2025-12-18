@@ -46,7 +46,7 @@ import { useLog } from "@/composables/useLog";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { useUIStore } from "@/stores/ui";
 import { getShelfDisplayName } from "@/utils/bookshelfUtils";
-import { QUICK_ERROR, REMOVED_BOOK_SUCCESS_ALERT } from "@/constants";
+import { QUICK_ERROR } from "@/constants";
 
 const { mobile } = useDisplay();
 const { removeFromWantToRead, removeFromHaveRead, removeFromCurrentlyReading } =
@@ -57,7 +57,7 @@ const { showAlert } = useUIStore();
 const shelfModalStore = useShelfModalStore();
 const { confirmRemoveModalOpen, selectedBook, selectedBookShelf } =
     storeToRefs(shelfModalStore);
-const { closeModal } = shelfModalStore;
+const { closeModal, openBookActionSuccess } = shelfModalStore;
 
 const loading = ref(false);
 
@@ -92,8 +92,12 @@ const handleDelete = async () => {
         } else {
             await removeFromHaveRead(selectedBook.value.id);
         }
-        closeModal();
-        showAlert(REMOVED_BOOK_SUCCESS_ALERT);
+        openBookActionSuccess(
+            "remove",
+            selectedBook.value,
+            selectedBookShelf.value,
+            `sent that shit straight to oblivion #godsplan`
+        );
     } catch (error) {
         console.error("Error deleting book from shelf:", error);
         await logError(`Error deleting book from shelf: ${error}`);

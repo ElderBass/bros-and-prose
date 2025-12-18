@@ -64,9 +64,9 @@ export const getShelfSuccessMessage = (shelf: Shelf) => {
         case "currentlyReading":
             return "just don't neglect the required prose, my dude";
         case "wantToRead":
-            return "that book's gunna get got.";
+            return "that book's gunna get got #godsplan";
         case "haveRead":
-            return "look at you, all reading and shit.";
+            return "look at you, all reading and shit #godsplan";
     }
 };
 
