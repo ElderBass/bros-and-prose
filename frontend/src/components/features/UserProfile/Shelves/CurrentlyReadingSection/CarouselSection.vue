@@ -4,7 +4,7 @@
         :items="currentlyReading"
         :cycle="bookCount > 1"
         :intervalMs="intervalMs"
-        :showArrows="mobile ? false : true"
+        :showArrows="showArrows"
         :showDelimiters="bookCount > 1"
     >
         <template #item="{ item }">
@@ -40,11 +40,12 @@ const props = withDefaults(
     }
 );
 
+const { mobile } = useDisplay();
+
 const bookCount = computed(() => props.currentlyReading.length);
 const currentlyReading = computed(() => props.currentlyReading);
 const intervalMs = computed(() => props.intervalMs);
-
-const { mobile } = useDisplay();
+const showArrows = computed(() => !mobile.value && bookCount.value > 1);
 </script>
 
 <style scoped>
