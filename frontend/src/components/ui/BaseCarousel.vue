@@ -227,7 +227,7 @@ const resetPointer = () => {
 
 .row {
     display: grid;
-    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-columns: 1fr 5fr 1fr;
     align-items: center; /* vertically center nav buttons with slide content */
     gap: 0.5rem;
     width: 100%;
@@ -240,6 +240,8 @@ const resetPointer = () => {
 }
 
 .viewport {
+    /* When nav columns are conditionally not rendered, ensure the viewport stays in the middle column */
+    grid-column: 2;
     width: 100%;
     overflow: hidden;
 }
