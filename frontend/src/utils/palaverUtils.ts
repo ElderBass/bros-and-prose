@@ -80,7 +80,7 @@ export const buildPalaverComment = (commentText: string): Comment => {
     return {
         id: uuidv4(),
         userInfo: getUserInfo(user),
-        comment: commentText,
+        text: commentText,
         createdAt: new Date().toISOString(),
     };
 };
@@ -160,6 +160,7 @@ export const buildPalaverReactionMetadata = (
         targetUsername: item.userInfo.username,
         targetUserEmail: item.userInfo.email,
         updateType: reactionType,
+        text: reactionType === "comment" ? item.text : undefined,
     };
 };
 

@@ -22,7 +22,7 @@
                         <BaseButton
                             title="check what the bros are saying"
                             variant="outline-tertiary"
-                            :size="isMobile ? 'medium' : 'large'"
+                            :size="mobile ? 'medium' : 'large'"
                         >
                             <FontAwesomeIcon :icon="faComments" />
                             <span>go to discussion</span>
@@ -41,6 +41,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
+import { useDisplay } from "vuetify";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import CurrentBookLayout from "@/components/layout/CurrentBookLayout.vue";
 import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.vue";
@@ -56,9 +57,7 @@ import { usePalaverStore } from "@/stores/palaver";
 import { getUserFromStorage, isGuestUser } from "@/utils";
 import { useUser } from "@/composables/useUser";
 import { useLog } from "@/composables/useLog";
-import { useUIStore } from "@/stores/ui";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
-import { storeToRefs } from "pinia";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
@@ -66,7 +65,7 @@ const { loggedInUser, setLoggedInUser } = useUserStore();
 const { getUser } = useUser();
 const { openItemModal } = usePalaverStore();
 
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const isLoading = ref(true);
 const book = ref<Book>(storedCurrentBook);

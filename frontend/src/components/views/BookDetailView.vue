@@ -81,7 +81,7 @@ const handleSubmitComment = async (comment: Comment) => {
     try {
         const entry = buildPalaverEntry({
             type: "discussion_note",
-            text: comment.comment,
+            text: comment.text,
             bookInfo: {
                 title: book.value.title,
                 id: book.value.id,
