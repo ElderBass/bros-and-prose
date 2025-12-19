@@ -7,18 +7,14 @@ export const getBookReview = (user: User, bookId: string) => {
 
 export const getReviewColor = (rating: number) => {
     const ratingValue = rating ?? 0;
-    if (ratingValue <= 2) return "red";
-    if (ratingValue <= 4) return "fuschia";
-    if (ratingValue <= 6) return "lavender";
-    if (ratingValue <= 8) return "blue";
+    if (ratingValue <= 4) return "red";
+    if (ratingValue <= 7) return "lavender";
     return "green";
 };
 
 export const getReviewThemeColor = (rating: number) => {
     const ratingValue = rating ?? 0;
-    if (ratingValue <= 2) return "var(--accent-red)";
-    if (ratingValue <= 4) return "var(--accent-fuschia)";
-    if (ratingValue <= 6) return "var(--accent-lavender)";
-    if (ratingValue <= 8) return "var(--accent-blue)";
+    if (ratingValue <= 4) return "var(--accent-red)";
+    if (ratingValue <= 7) return "var(--accent-lavender)";
     return "var(--accent-green)";
 };

@@ -30,12 +30,8 @@ import { useShelfModalStore } from "@/stores/shelfModal";
 import { useUIStore } from "@/stores/ui";
 import { useUser } from "@/composables/useUser";
 import { useLog } from "@/composables/useLog";
-import type { FutureBook, SubmitReviewArgs } from "@/types";
-import {
-    DEFAULT_REVIEW,
-    QUICK_ERROR,
-    REVIEW_SUBMITTED_SUCCESS_ALERT,
-} from "@/constants";
+import type { BookshelfBook, SubmitReviewArgs } from "@/types";
+import { DEFAULT_REVIEW, QUICK_ERROR } from "@/constants";
 
 defineOptions({
     name: "ShelfModals",
@@ -52,8 +48,7 @@ const { closeModal } = shelfModalStore;
 const onReviewSubmit = async (args: SubmitReviewArgs) => {
     try {
         isAppLoading.value = true;
-        await addReview(args, selectedBook.value as FutureBook);
-        showAlert(REVIEW_SUBMITTED_SUCCESS_ALERT);
+        await addReview(args, selectedBook.value as BookshelfBook);
     } catch (error) {
         console.error("Error submitting review:", error);
         await useLog().error(`Error in onReviewSubmit: ${error}`);

@@ -86,6 +86,11 @@ export const useShelfModalStore = defineStore("shelfModal", {
         openReview() {
             this.modal = "review";
         },
+        openReviewForBook(book: BookshelfBook, shelf: Shelf) {
+            this.selectedBook = book;
+            this.selectedBookShelf = shelf;
+            this.modal = "review";
+        },
         closeModal() {
             this.modal = null;
             this.selectedBook = null;

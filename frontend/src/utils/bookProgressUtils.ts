@@ -1,4 +1,10 @@
-import type { Book, FutureBook, SubmitReviewArgs, User } from "@/types";
+import type {
+    Book,
+    BookshelfBook,
+    FutureBook,
+    SubmitReviewArgs,
+    User,
+} from "@/types";
 import {
     BRO_NOT_STARTED,
     BRO_NOT_STARTED_MOBILE,
@@ -48,7 +54,7 @@ export const isReviewOfCurrentBook = (bookId: string) => {
 
 export const buildReview = (
     reviewArgs: SubmitReviewArgs,
-    book: Book | FutureBook
+    book: Book | FutureBook | BookshelfBook
 ) => {
     return {
         id: uuidv4(),
