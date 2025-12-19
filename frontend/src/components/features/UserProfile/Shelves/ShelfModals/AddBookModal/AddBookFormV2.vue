@@ -82,7 +82,14 @@
             </div>
 
             <div class="form-container">
+                <TagPickerTrigger
+                    v-if="USE_TAG_PICKER_TRIGGER"
+                    v-model="tags"
+                    label="tags (optional)"
+                    variant="drawer"
+                />
                 <InlineBookTagsPicker
+                    v-else
                     label="tags (optional)"
                     v-model="tags"
                     @update="toggleTag"
@@ -130,12 +137,15 @@ import type { BookshelfBook, Shelf } from "@/types/books";
 import { useLog } from "@/composables/useLog";
 import V2FormResult from "./V2FormResult.vue";
 import InlineBookTagsPicker from "@/components/form/InlineBookTagsPicker.vue";
+import TagPickerTrigger from "@/components/form/TagPicker/TagPickerTrigger.vue";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import { v4 as uuid } from "uuid";
 import ClearSearchButton from "../FormStuff/ClearSearchButton.vue";
 import { EMPTY_SHELF_BOOK } from "@/constants";
 
 defineOptions({ name: "AddBookFormV2" });
+
+const USE_TAG_PICKER_TRIGGER = true;
 
 const props = defineProps<{
     selectedShelf: Shelf;

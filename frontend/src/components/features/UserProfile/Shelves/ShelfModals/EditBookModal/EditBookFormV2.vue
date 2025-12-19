@@ -60,10 +60,11 @@
             </div>
 
             <div class="form-container">
-                <InlineBookTagsPicker
-                    label="tags (optional)"
+                <TagPickerTrigger
                     v-model="tags"
-                    @update="toggleTag"
+                    label="tags"
+                    variant="drawer"
+                    :isEdit="true"
                 />
             </div>
 
@@ -101,7 +102,7 @@ import { useUserShelves } from "@/composables/useUserShelves";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { getShelfSuccessMessage } from "@/utils";
 import type { BookshelfBook, Shelf } from "@/types";
-import InlineBookTagsPicker from "@/components/form/InlineBookTagsPicker.vue";
+import TagPickerTrigger from "@/components/form/TagPicker/TagPickerTrigger.vue";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import ClearSearchButton from "../FormStuff/ClearSearchButton.vue";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
@@ -157,14 +158,6 @@ const isDirty = computed(() => {
         pages.value !== originalPages
     );
 });
-
-const toggleTag = (tag: string) => {
-    if (tags.value.includes(tag)) {
-        tags.value = tags.value.filter((t) => t !== tag);
-    } else {
-        tags.value.push(tag);
-    }
-};
 
 const resetForm = () => {
     title.value = props.book.title || "";
