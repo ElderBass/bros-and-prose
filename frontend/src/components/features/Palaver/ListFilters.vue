@@ -31,6 +31,10 @@ const filters = [
         value: "recommendation",
     },
     {
+        label: "reviews",
+        value: "review",
+    },
+    {
         label: "updates",
         value: "progress_note",
     },
