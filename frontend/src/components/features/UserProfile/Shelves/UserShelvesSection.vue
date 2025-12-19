@@ -1,5 +1,9 @@
 <template>
     <UserContentSection sectionTitle="shelves">
+        <CurrentlyReadingSection
+            :currentlyReading="currentlyReading"
+            :isLoggedInUser="isLoggedInUser"
+        />
         <WantToReadSection
             :wantToRead="wantToRead"
             :isLoggedInUser="isLoggedInUser"
@@ -15,11 +19,13 @@
 import UserContentSection from "@/components/features/UserProfile/UserContentSection.vue";
 import HaveReadSection from "./HaveReadSection/index.vue";
 import WantToReadSection from "@/components/features/UserProfile/Shelves/WantToReadSection/index.vue";
-import type { FutureBook } from "@/types";
+import CurrentlyReadingSection from "@/components/features/UserProfile/Shelves/CurrentlyReadingSection/index.vue";
+import type { BookshelfBook } from "@/types";
 
 defineProps<{
     isLoggedInUser: boolean;
-    wantToRead: FutureBook[];
-    haveRead: FutureBook[];
+    currentlyReading: BookshelfBook[];
+    wantToRead: BookshelfBook[];
+    haveRead: BookshelfBook[];
 }>();
 </script>

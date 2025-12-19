@@ -50,14 +50,14 @@
 <script setup lang="ts">
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import { ref, computed } from "vue";
-import type { SubmitReviewArgs, Book, FutureBook } from "@/types";
+import type { SubmitReviewArgs, Book, BookshelfBook } from "@/types";
 import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
 
 const { isMobile } = storeToRefs(useUIStore());
 
 const props = defineProps<{
-    book: Book | FutureBook;
+    book: Book | BookshelfBook;
     rating: number;
     comment: string;
     handleCancel: () => void;

@@ -10,7 +10,11 @@
         <div class="content">
             <p>send</p>
             <p class="book-title">{{ selectedBook?.title.toUpperCase() }}</p>
-            <p>to your <span class="shelf-name">have read</span> shelf?</p>
+            <p>
+                to your
+                <span class="shelf-name">{{ targetShelfDisplayName }}</span>
+                shelf?
+            </p>
         </div>
         <template #footer>
             <div class="actions">
@@ -45,18 +49,27 @@ import { useLog } from "@/composables/useLog";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { useUIStore } from "@/stores/ui";
-import { MOVED_BOOK_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
+import { movedBookSuccessAlert, QUICK_ERROR } from "@/constants";
+import { getShelfDisplayName } from "@/utils/bookshelfUtils";
+import type { Shelf } from "@/types";
 
 const { mobile } = useDisplay();
-const { moveFromWantToReadToHaveRead } = useUserShelves();
+const { moveFromWantToReadToHaveRead, moveFromWantToReadToCurrentlyReading } =
+    useUserShelves();
 const { error: logError, info } = useLog();
 const { showAlert } = useUIStore();
 
 const shelfModalStore = useShelfModalStore();
-const { confirmMoveModalOpen, selectedBook } = storeToRefs(shelfModalStore);
+const { confirmMoveModalOpen, selectedBook, moveTargetShelf } =
+    storeToRefs(shelfModalStore);
 const { closeModal } = shelfModalStore;
 
 const loading = ref(false);
+
+const targetShelf = computed<Shelf>(() => moveTargetShelf.value);
+const targetShelfDisplayName = computed(() =>
+    getShelfDisplayName(targetShelf.value)
+);
 
 const buttonProps = computed(() => {
     return {
@@ -77,9 +90,24 @@ const handleMove = async () => {
 
     try {
         loading.value = true;
-        await moveFromWantToReadToHaveRead(selectedBook.value);
-        await info(`Moved ${selectedBook.value.title} to have read shelf`);
-        showAlert(MOVED_BOOK_SUCCESS_ALERT);
+        if (targetShelf.value === "haveRead") {
+            await moveFromWantToReadToHaveRead(selectedBook.value);
+        } else if (targetShelf.value === "currentlyReading") {
+            await moveFromWantToReadToCurrentlyReading(selectedBook.value);
+        } else {
+            throw new Error("Invalid move target");
+        }
+
+        await info(
+            `Moved ${selectedBook.value.title} to ${targetShelf.value} shelf`
+        );
+        showAlert(
+            movedBookSuccessAlert(
+                targetShelf.value === "currentlyReading"
+                    ? "currentlyReading"
+                    : "haveRead"
+            )
+        );
     } catch (error) {
         console.error("Error moving book:", error);
         await logError(`Error moving book: ${error}`);

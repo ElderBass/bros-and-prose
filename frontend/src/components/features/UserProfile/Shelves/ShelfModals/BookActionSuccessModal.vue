@@ -1,17 +1,21 @@
 <template>
     <BaseModal
-        :modelValue="addBookSuccessModalOpen"
+        :modelValue="bookActionSuccessModalOpen"
         @close="closeModal"
-        title="book added to shelf"
+        :title="modalTitle"
         :size="modalSize"
         shadow-color="green"
         :header-icon="faCheckCircle"
     >
         <div class="success-modal-content">
             <p class="success-message">
-                <span class="book-title">{{ bookTitle }}</span> has been added
-                to your
-                <span class="shelf-name">{{ shelfDisplayName }}</span> shelf!
+                <span class="book-title">{{ bookTitle }}</span>
+                {{ actionVerbPhrase }}
+                <span class="shelf-name">{{ shelfDisplayName }}</span>
+                shelf!
+            </p>
+            <p v-if="secondaryMessage" class="secondary-message">
+                {{ secondaryMessage }}
             </p>
             <BaseButton
                 v-if="showReviewButton"
@@ -33,6 +37,7 @@
                 close
             </BaseButton>
             <BaseButton
+                v-if="showAddAnotherButton"
                 variant="success"
                 title="add another book to your shelf"
                 @click="openAddBook(selectedBookShelf as Shelf)"
@@ -58,8 +63,13 @@ import { getShelfDisplayName } from "@/utils";
 import type { Shelf } from "@/types";
 
 const shelfModalStore = useShelfModalStore();
-const { addBookSuccessModalOpen, selectedBook, selectedBookShelf } =
-    storeToRefs(shelfModalStore);
+const {
+    bookActionSuccessModalOpen,
+    selectedBook,
+    selectedBookShelf,
+    bookActionType,
+    message,
+} = storeToRefs(shelfModalStore);
 
 const { closeModal, openAddBook, openReview } = shelfModalStore;
 
@@ -73,9 +83,29 @@ const shelfDisplayName = computed(() => {
     return getShelfDisplayName(selectedBookShelf.value as Shelf);
 });
 
-const showReviewButton = computed(() => {
-    return shelfDisplayName.value === HAVE_READ;
+const modalTitle = computed(() => {
+    if (bookActionType.value === "update") return "book updated";
+    if (bookActionType.value === "remove") return "book removed";
+    return "book added to shelf";
 });
+
+const actionVerbPhrase = computed(() => {
+    if (bookActionType.value === "update") return "has been updated in your ";
+    if (bookActionType.value === "remove") return "has been removed from your ";
+    return "has been added to your ";
+});
+
+const showReviewButton = computed(() => {
+    return (
+        bookActionType.value === "add" && shelfDisplayName.value === HAVE_READ
+    );
+});
+
+const showAddAnotherButton = computed(() => {
+    return bookActionType.value === "add";
+});
+
+const secondaryMessage = computed(() => message.value || "");
 
 const modalSize = computed(() => {
     return mobile.value ? "small" : "medium";
@@ -121,7 +151,7 @@ const buttonProps = computed(() => {
 
 .secondary-message {
     font-size: 1.25rem;
-    color: var(--accent-fuschia);
+    color: var(--accent-yellow);
     font-style: italic;
     margin: 0;
     opacity: 0.9;

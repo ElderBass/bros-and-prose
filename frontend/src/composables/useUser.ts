@@ -1,5 +1,11 @@
 import { usersService } from "@/services/users";
-import type { Book, FutureBook, SubmitReviewArgs, User } from "@/types";
+import type {
+    Book,
+    BookshelfBook,
+    FutureBook,
+    SubmitReviewArgs,
+    User,
+} from "@/types";
 import { useUserStore } from "@/stores/user";
 import {
     FINISHED_BOOK_PROGRESS,
@@ -9,7 +15,7 @@ import {
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "./useLog";
 import { useFutureBooks } from "./useFutureBooks";
-import { buildReview, isReviewOfCurrentBook } from "@/utils";
+import { buildReview, isReviewOfCurrentBook, sanitizeUser } from "@/utils";
 import { storeToRefs } from "pinia";
 import { usePalaver } from "./usePalaver";
 
@@ -23,10 +29,11 @@ export const useUser = () => {
 
     const getUser = async (userId: string) => {
         const user = await usersService.getUser(userId);
+        const sanitizedUser = sanitizeUser(user);
         if (userId === loggedInUser.value.id) {
-            setLoggedInUser(user);
+            setLoggedInUser(sanitizedUser);
         }
-        return user;
+        return sanitizedUser;
     };
 
     const getUserByUsername = async (username: string) => {
@@ -53,10 +60,12 @@ export const useUser = () => {
 
     const updateUser = async (userId: string, user: User) => {
         const updatedUser = await usersService.updateUser(userId, user);
+        const sanitizedUser = sanitizeUser(updatedUser);
+
         if (userId === loggedInUser.value.id) {
-            setLoggedInUser(user);
+            setLoggedInUser(sanitizedUser);
         }
-        return updatedUser;
+        return sanitizedUser;
     };
 
     const updateUserProgress = async (userId: string, progress: number) => {
@@ -99,10 +108,11 @@ export const useUser = () => {
 
     const addReview = async (
         reviewArgs: SubmitReviewArgs,
-        book: Book | FutureBook
+        book: Book | FutureBook | BookshelfBook
     ) => {
         try {
-            const newReview = buildReview(reviewArgs, book);
+            const existingReview = loggedInUser.value?.reviews?.[book.id];
+            const newReview = buildReview(reviewArgs, book, existingReview);
             await useLog().info(
                 `newReview in addReview: reviewer = ${loggedInUser.value.username} | review = ${newReview}`
             );

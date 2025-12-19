@@ -90,7 +90,7 @@ const handleFinish = async () => {
 
     try {
         loading.value = true;
-        await finishCurrentlyReading();
+        await finishCurrentlyReading(selectedBook.value.id);
         await info(`Finished ${selectedBook.value.title}`);
     } catch (error) {
         console.error("Error finishing current book:", error);

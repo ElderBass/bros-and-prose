@@ -1,46 +1,56 @@
 <template>
-    <ExpansionPanel :color="color">
+    <ExpansionPanel :color="color" :defaultOpen="defaultOpen">
         <template #title>
             <ExpansionPanelTitle :title="computedTitle" :color="color" />
         </template>
         <template #text>
             <div v-if="!hasContent" class="empty-state">
-                <p>{{ noContentMessage }}</p>
+                <slot name="empty">
+                    <p v-if="noContentMessage">{{ noContentMessage }}</p>
+                </slot>
             </div>
             <InfiniteScroll
-                v-else
+                v-else-if="!hasCustomContent"
                 class="scroll-content"
                 :class="{ pb: scrollDirection === 'horizontal' }"
                 :direction="scrollDirection"
             >
                 <slot name="scroll-content" />
             </InfiniteScroll>
+            <div v-else class="content">
+                <slot name="content" />
+            </div>
         </template>
     </ExpansionPanel>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, useSlots } from "vue";
 import ExpansionPanelTitle from "@/components/ui/ExpansionPanelTitle.vue";
 
 const props = withDefaults(
     defineProps<{
         title: string;
-        noContentMessage: string;
+        noContentMessage?: string;
         contentCount: number;
-        color?: "blue" | "fuschia" | "green" | "lavender" | "red";
+        color?: "blue" | "fuschia" | "green" | "lavender" | "red" | "yellow";
         scrollDirection?: "vertical" | "horizontal";
+        defaultOpen?: boolean;
     }>(),
     {
-        color: "blue",
+        color: "yellow",
         scrollDirection: "horizontal",
         contentCount: 0,
+        defaultOpen: false,
     }
 );
 
 const hasContent = computed(() => props.contentCount > 0);
 
 const computedTitle = computed(() => `${props.title} (${props.contentCount})`);
+
+const slots = useSlots();
+const hasCustomContent = computed(() => !!slots.content);
 </script>
 
 <style scoped>

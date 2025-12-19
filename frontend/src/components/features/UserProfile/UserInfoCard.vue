@@ -60,29 +60,12 @@ const currentProgress = computed(() => {
 </script>
 
 <style scoped>
-.section-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
-}
-
-h4 {
-    text-align: left;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.9rem;
-    color: var(--accent-blue);
-    margin: 0;
-    padding-left: 0.75rem;
-    font-family: "Libre Baskerville", serif;
-}
 .user-info-section {
+    width: 50%;
     min-height: 160px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: 1rem;
     background: linear-gradient(
         180deg,
         color-mix(in srgb, var(--accent-lavender) 12%, transparent),
@@ -135,6 +118,7 @@ h4 {
     .user-info-section {
         min-height: 120px;
         gap: 1rem;
+        width: 100%;
     }
     .name h2 {
         font-size: 1rem;

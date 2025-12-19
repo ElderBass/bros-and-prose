@@ -82,10 +82,11 @@
             </div>
 
             <div class="form-container">
-                <label for="shelf-book-tags" class="label"
-                    >tags (optional)</label
-                >
-                <BookTagsSelector :tags="tags" :onClick="toggleTag" />
+                <InlineBookTagsPicker
+                    label="tags (optional)"
+                    v-model="tags"
+                    @update="toggleTag"
+                />
             </div>
 
             <div class="form-container">
@@ -114,7 +115,7 @@
             v-if="bookSelected && !loading"
             :canSubmit="canSubmit"
             :shelfDisplayName="shelfDisplayName"
-            @back="bookSelected = false"
+            @cancel="bookSelected = false"
         />
     </form>
 </template>
@@ -125,13 +126,14 @@ import { useBooks } from "@/composables/useBooks";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { capitalizeBookTitle, getShelfSuccessMessage } from "@/utils";
-import type { FutureBook, BookshelfBook, Shelf } from "@/types/books";
+import type { BookshelfBook, Shelf } from "@/types/books";
 import { useLog } from "@/composables/useLog";
 import V2FormResult from "./V2FormResult.vue";
-import BookTagsSelector from "@/components/form/BookTagsSelector.vue";
+import InlineBookTagsPicker from "@/components/form/InlineBookTagsPicker.vue";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import { v4 as uuid } from "uuid";
 import ClearSearchButton from "../FormStuff/ClearSearchButton.vue";
+import { EMPTY_SHELF_BOOK } from "@/constants";
 
 defineOptions({ name: "AddBookFormV2" });
 
@@ -142,9 +144,9 @@ const props = defineProps<{
 }>();
 
 const { searchGoogleByTitle } = useBooks();
-const { addToWantToRead, addToHaveRead, updateCurrentlyReading } =
+const { addToWantToRead, addToHaveRead, addToCurrentlyReading } =
     useUserShelves();
-const { openAddBookSuccess, openAddBookError } = useShelfModalStore();
+const { openBookActionSuccess, openAddBookError } = useShelfModalStore();
 
 const showBookDetails = ref(false);
 const noBookFound = ref(false);
@@ -153,6 +155,7 @@ const bookSelected = ref(false);
 const loading = ref(false);
 const title = ref("");
 const author = ref("");
+const imageSrc = ref("");
 const yearPublished = ref("");
 const pages = ref<number | undefined>(undefined);
 const tags = ref<string[]>([]);
@@ -205,6 +208,7 @@ const selectResult = (result: BookshelfBook) => {
 
     title.value = result.title || title.value;
     author.value = result.author || "";
+    imageSrc.value = result.imageSrc || "";
     yearPublished.value = result.yearPublished
         ? String(result.yearPublished)
         : "";
@@ -240,7 +244,7 @@ const runSearch = async () => {
         console.error("error in runSearch for shelf form (google)", e);
         await useLog().error(`Error in google runSearch for shelf form: ${e}`);
         openAddBookError(
-            emptyBook.value,
+            EMPTY_SHELF_BOOK,
             props.selectedShelf,
             "oof bud, hit an error searching for that book..."
         );
@@ -257,20 +261,18 @@ const submit = async () => {
         loading.value = true;
 
         const year = Number.parseInt(yearPublished.value, 10);
-        const book: FutureBook = {
+        const book: BookshelfBook = {
             id: uuid(),
             title: capitalizeBookTitle(title.value),
             author: author.value.trim(),
             yearPublished: Number.isFinite(year) ? year : 0,
-            imageSrc: selectedResult.value?.imageSrc || "",
+            imageSrc: imageSrc.value || "",
             pages: pages.value,
             tags: tags.value,
-            // In this app, this field is effectively the user's comment.
             description:
                 comment.value.trim() ||
                 selectedResult.value?.description?.trim() ||
                 "",
-            votes: [],
         };
 
         if (props.selectedShelf === "wantToRead") {
@@ -278,17 +280,17 @@ const submit = async () => {
         } else if (props.selectedShelf === "haveRead") {
             await addToHaveRead(book);
         } else if (props.selectedShelf === "currentlyReading") {
-            await updateCurrentlyReading(book);
+            await addToCurrentlyReading(book);
         } else {
             throw new Error("Invalid shelf selected");
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);
-        openAddBookSuccess(book, props.selectedShelf, message);
+        openBookActionSuccess("add", book, props.selectedShelf, message);
         resetForm();
     } catch (error) {
         openAddBookError(
-            emptyBook.value,
+            EMPTY_SHELF_BOOK,
             props.selectedShelf,
             "error adding book to shelf: " + (error as Error).message
         );
@@ -296,20 +298,6 @@ const submit = async () => {
         loading.value = false;
     }
 };
-
-const emptyBook = computed<FutureBook>(() => {
-    return {
-        id: "",
-        title: title.value,
-        author: "",
-        yearPublished: 0,
-        tags: [],
-        pages: undefined,
-        description: "",
-        imageSrc: "",
-        votes: [],
-    };
-});
 
 // Debounce search when the title changes
 let searchTimer: number | null = null;

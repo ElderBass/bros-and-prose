@@ -1,4 +1,4 @@
-import type { Book, FutureBook, User } from "@/types";
+import type { Book, BookshelfBook, User } from "@/types";
 
 export const FINISHED_BOOK_PROGRESS = 69420;
 
@@ -94,7 +94,7 @@ export const COMMON_BOOK_TAGS = [
     "YA",
 ];
 
-export const EMPTY_CURRENT_BOOK: FutureBook = {
+export const EMPTY_SHELF_BOOK: BookshelfBook = {
     id: "",
     title: "",
     author: "",
@@ -102,5 +102,5 @@ export const EMPTY_CURRENT_BOOK: FutureBook = {
     tags: [],
     description: "",
     yearPublished: 0,
-    votes: [],
+    pages: undefined,
 };

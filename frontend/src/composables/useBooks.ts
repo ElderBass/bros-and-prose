@@ -89,6 +89,7 @@ export const useBooks = () => {
         };
 
         const data = results.map((item: GoogleBooksResult) => ({
+            id: item.id,
             title: item.volumeInfo?.title ?? "",
             author: item.volumeInfo?.authors?.[0] ?? "",
             imageSrc: item.volumeInfo?.imageLinks?.thumbnail ?? "",

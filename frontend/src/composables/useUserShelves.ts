@@ -1,56 +1,24 @@
-import { usersService } from "@/services/users";
+import { useUser } from "./useUser";
 import { useUserStore } from "@/stores/user";
-import type { FutureBook, User } from "@/types";
+import type { BookshelfBook, User, Shelf } from "@/types";
 import { useLog } from "./useLog";
 import { getUserShelves } from "@/utils/bookshelfUtils";
-import { EMPTY_CURRENT_BOOK } from "@/constants";
 import { useShelfModalStore } from "@/stores/shelfModal";
 
 export const useUserShelves = () => {
     const { info, error: logError } = useLog();
-
-    const updateCurrentlyReading = async (
-        book: FutureBook
-    ): Promise<User | null> => {
-        const loggedInUser = useUserStore().loggedInUser;
-        console.log("KERTWANGING updateCurrentlyReading", book);
-        const updatedUser = await updateUser({
-            ...loggedInUser,
-            currentlyReading: book,
-        });
-        return updatedUser;
-    };
-
-    const finishCurrentlyReading = async (): Promise<User | null> => {
-        const loggedInUser = useUserStore().loggedInUser;
-        const currentBook = loggedInUser.currentlyReading;
-
-        const updatedUser = await updateUser({
-            ...loggedInUser,
-            currentlyReading: EMPTY_CURRENT_BOOK,
-        });
-
-        if (currentBook?.id) {
-            await addToShelf("haveRead", currentBook);
-        }
-        useShelfModalStore().openAddBookSuccess(
-            currentBook as FutureBook,
-            "haveRead",
-            "the present has now shifted to the past"
-        );
-        return updatedUser;
-    };
+    const { updateUser } = useUser();
 
     const addToShelf = async (
-        shelf: "wantToRead" | "haveRead",
-        book: FutureBook
+        shelf: Shelf,
+        book: BookshelfBook
     ): Promise<User | null> => {
         try {
             const loggedInUser = useUserStore().loggedInUser;
 
             const currentShelf = getUserShelves(loggedInUser)[shelf];
 
-            const updatedUser = await updateUser({
+            const updatedUser = await updateUser(loggedInUser.id, {
                 ...loggedInUser,
                 [shelf]: [...currentShelf, book],
             });
@@ -66,8 +34,33 @@ export const useUserShelves = () => {
         }
     };
 
+    const updateBookOnShelf = async (
+        shelf: Shelf,
+        updatedBook: BookshelfBook
+    ): Promise<User | null> => {
+        try {
+            const loggedInUser = useUserStore().loggedInUser;
+            const currentShelf = getUserShelves(loggedInUser)[shelf];
+            const updatedShelf = currentShelf.map((b) =>
+                b.id === updatedBook.id ? updatedBook : b
+            );
+            const updatedUser = await updateUser(loggedInUser.id, {
+                ...loggedInUser,
+                [shelf]: updatedShelf,
+            });
+            await info(
+                `Updated book ${updatedBook.title} on ${shelf} for ${loggedInUser.username}`
+            );
+            return updatedUser;
+        } catch (err) {
+            console.error("error in updateBookOnShelf", err);
+            await logError(`Error updating book on ${shelf}: ${err}`);
+            throw new Error(`Error updating book on ${shelf}: ${err}`);
+        }
+    };
+
     const removeFromShelf = async (
-        shelf: "wantToRead" | "haveRead",
+        shelf: Shelf,
         bookId: string
     ): Promise<User | null> => {
         try {
@@ -75,7 +68,7 @@ export const useUserShelves = () => {
             const currentShelf = getUserShelves(loggedInUser)[shelf];
             const updatedShelf = currentShelf.filter((b) => b.id !== bookId);
 
-            const updatedUser = await updateUser({
+            const updatedUser = await updateUser(loggedInUser.id, {
                 ...loggedInUser,
                 [shelf]: updatedShelf,
             });
@@ -90,7 +83,45 @@ export const useUserShelves = () => {
         }
     };
 
-    const addToWantToRead = async (book: FutureBook): Promise<User | null> => {
+    const addToCurrentlyReading = async (
+        book: BookshelfBook
+    ): Promise<User | null> => {
+        const updatedUser = await addToShelf("currentlyReading", book);
+        return updatedUser;
+    };
+
+    const finishCurrentlyReading = async (
+        bookId: string
+    ): Promise<User | null> => {
+        const loggedInUser = useUserStore().loggedInUser;
+        const currentBook = loggedInUser.currentlyReading?.find(
+            (b) => b.id === bookId
+        );
+        if (!currentBook) {
+            console.error("Current book not found");
+            return null;
+        }
+
+        const updatedUser = await removeFromShelf(
+            "currentlyReading",
+            currentBook.id
+        );
+
+        if (currentBook?.id) {
+            await addToShelf("haveRead", currentBook);
+        }
+        useShelfModalStore().openBookActionSuccess(
+            "add",
+            currentBook as BookshelfBook,
+            "haveRead",
+            "the present has now become past"
+        );
+        return updatedUser;
+    };
+
+    const addToWantToRead = async (
+        book: BookshelfBook
+    ): Promise<User | null> => {
         const updatedUser = await addToShelf("wantToRead", book);
         return updatedUser;
     };
@@ -102,7 +133,14 @@ export const useUserShelves = () => {
         return updatedUser;
     };
 
-    const addToHaveRead = async (book: FutureBook): Promise<User | null> => {
+    const removeFromCurrentlyReading = async (
+        bookId: string
+    ): Promise<User | null> => {
+        const updatedUser = await removeFromShelf("currentlyReading", bookId);
+        return updatedUser;
+    };
+
+    const addToHaveRead = async (book: BookshelfBook): Promise<User | null> => {
         const updatedUser = await addToShelf("haveRead", book);
         return updatedUser;
     };
@@ -113,81 +151,56 @@ export const useUserShelves = () => {
     };
 
     const moveFromWantToReadToHaveRead = async (
-        book: FutureBook
+        book: BookshelfBook
     ): Promise<User | null> => {
         await removeFromShelf("wantToRead", book.id);
         const updatedUser = await addToShelf("haveRead", book);
         return updatedUser;
     };
 
-    const updateWantToRead = async (
-        bookId: string,
-        updatedBook: FutureBook
+    const moveFromWantToReadToCurrentlyReading = async (
+        book: BookshelfBook
     ): Promise<User | null> => {
-        try {
-            const loggedInUser = useUserStore().loggedInUser;
-            const currentWantToRead = getUserShelves(loggedInUser).wantToRead;
-            const updatedWantToRead = currentWantToRead.map((b) =>
-                b.id === bookId ? updatedBook : b
-            );
+        await removeFromShelf("wantToRead", book.id);
+        const updatedUser = await addToCurrentlyReading(book);
+        return updatedUser;
+    };
 
-            const updatedUser = await updateUser({
-                ...loggedInUser,
-                wantToRead: updatedWantToRead,
-            });
+    const updateCurrentlyReading = async (
+        updatedBook: BookshelfBook
+    ): Promise<User | null> => {
+        const updatedUser = await updateBookOnShelf(
+            "currentlyReading",
+            updatedBook
+        );
+        return updatedUser;
+    };
 
-            await info(
-                `Updated book ${updatedBook.title} in wantToRead for ${loggedInUser.username}`
-            );
-            return updatedUser;
-        } catch (err) {
-            console.error("error in updateWantToRead", err);
-            await logError(`Error updating wantToRead: ${err}`);
-            throw new Error(`Error updating wantToRead: ${err}`);
-        }
+    const updateWantToRead = async (
+        updatedBook: BookshelfBook
+    ): Promise<User | null> => {
+        const updatedUser = await updateBookOnShelf("wantToRead", updatedBook);
+        return updatedUser;
     };
 
     const updateHaveRead = async (
-        bookId: string,
-        updatedBook: FutureBook
+        updatedBook: BookshelfBook
     ): Promise<User | null> => {
-        try {
-            const loggedInUser = useUserStore().loggedInUser;
-            const currentHaveRead = getUserShelves(loggedInUser).haveRead;
-            const updatedHaveRead = currentHaveRead.map((b) =>
-                b.id === bookId ? updatedBook : b
-            );
-
-            const updatedUser = await updateUser({
-                ...loggedInUser,
-                haveRead: updatedHaveRead,
-            });
-
-            await info(
-                `Updated book ${updatedBook.title} in haveRead for ${loggedInUser.username}`
-            );
-            return updatedUser;
-        } catch (err) {
-            console.error("error in updateHaveRead", err);
-            await logError(`Error updating haveRead: ${err}`);
-            throw new Error(`Error updating haveRead: ${err}`);
-        }
-    };
-
-    const updateUser = async (user: User) => {
-        const updatedUser = await usersService.updateUser(user.id, user);
-        useUserStore().setLoggedInUser(updatedUser);
+        const updatedUser = await updateBookOnShelf("haveRead", updatedBook);
         return updatedUser;
     };
 
     return {
-        updateCurrentlyReading,
+        addToCurrentlyReading,
         finishCurrentlyReading,
         addToWantToRead,
+        removeFromCurrentlyReading,
         removeFromWantToRead,
         addToHaveRead,
         removeFromHaveRead,
         moveFromWantToReadToHaveRead,
+        moveFromWantToReadToCurrentlyReading,
+        updateCurrentlyReading,
         updateWantToRead,
         updateHaveRead,
     };

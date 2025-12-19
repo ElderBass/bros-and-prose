@@ -1,4 +1,9 @@
-import type { OpenLibraryBookResult, FutureBook, User, Shelf } from "@/types";
+import type {
+    OpenLibraryBookResult,
+    User,
+    Shelf,
+    BookshelfBook,
+} from "@/types";
 import { capitalizeBookTitle } from "./capitalizeBookTitle";
 import { v4 as uuid } from "uuid";
 import {
@@ -12,7 +17,7 @@ export const buildBookShelfEntry = (
     bookData: OpenLibraryBookResult,
     comment: string,
     tags: string[]
-): FutureBook => {
+): BookshelfBook => {
     const { title, subtitle, author_name, first_publish_year, cover_i } =
         bookData;
     let fullTitle = title.trim();
@@ -29,7 +34,6 @@ export const buildBookShelfEntry = (
             ? `https://covers.openlibrary.org/b/id/${cover_i}-M.jpg`
             : "",
         tags,
-        votes: [],
     };
 };
 
@@ -60,9 +64,9 @@ export const getShelfSuccessMessage = (shelf: Shelf) => {
         case "currentlyReading":
             return "just don't neglect the required prose, my dude";
         case "wantToRead":
-            return "that book's gunna get got.";
+            return "that book's gunna get got #godsplan";
         case "haveRead":
-            return "look at you, all reading and shit.";
+            return "look at you, all reading and shit #godsplan";
     }
 };
 
@@ -94,8 +98,11 @@ export const getShelfIcon = (shelf: Shelf) => {
 
 export const getUserShelves = (user: User) => {
     return {
-        currentlyReading: user.currentlyReading || null,
-        wantToRead: user.wantToRead?.filter((b) => b?.id) || [],
-        haveRead: user.haveRead?.filter((b) => b?.id) || [],
+        currentlyReading:
+            Object.values(user.currentlyReading || {}).filter((b) => b?.id) ||
+            [],
+        wantToRead:
+            Object.values(user.wantToRead || {}).filter((b) => b?.id) || [],
+        haveRead: Object.values(user.haveRead || {}).filter((b) => b?.id) || [],
     };
 };

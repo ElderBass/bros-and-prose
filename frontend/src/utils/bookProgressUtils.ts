@@ -1,4 +1,10 @@
-import type { Book, FutureBook, SubmitReviewArgs, User } from "@/types";
+import type {
+    Book,
+    BookshelfBook,
+    FutureBook,
+    SubmitReviewArgs,
+    User,
+} from "@/types";
 import {
     BRO_NOT_STARTED,
     BRO_NOT_STARTED_MOBILE,
@@ -48,11 +54,24 @@ export const isReviewOfCurrentBook = (bookId: string) => {
 
 export const buildReview = (
     reviewArgs: SubmitReviewArgs,
-    book: Book | FutureBook
+    book: Book | FutureBook | BookshelfBook,
+    existingReview?: Review
 ) => {
+    const now = new Date().toISOString();
+
+    // Edit semantics: preserve id/createdAt (and any other metadata), but set updatedAt.
+    if (existingReview) {
+        return {
+            ...existingReview,
+            rating: reviewArgs.rating,
+            reviewComment: reviewArgs.reviewComment,
+            updatedAt: now,
+        };
+    }
+
     return {
         id: uuidv4(),
-        createdAt: new Date().toISOString(),
+        createdAt: now,
         book: {
             id: book.id,
             title: book.title,

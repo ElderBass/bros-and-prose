@@ -4,7 +4,7 @@
         :contentCount="wantToRead.length"
         :noContentMessage="noContentMessage"
         scrollDirection="horizontal"
-        color="blue"
+        color="yellow"
     >
         <template #scroll-content>
             <WantToReadListItem
@@ -21,14 +21,14 @@
 import { computed } from "vue";
 import UserContentPanel from "@/components/features/UserProfile/UserContentPanel.vue";
 import WantToReadListItem from "@/components/features/UserProfile/Shelves/WantToReadSection/WantToReadListItem.vue";
-import type { FutureBook } from "@/types";
+import type { BookshelfBook } from "@/types";
 
 defineOptions({
     name: "WantToReadSection",
 });
 
 const props = defineProps<{
-    wantToRead: FutureBook[];
+    wantToRead: BookshelfBook[];
     isLoggedInUser: boolean;
 }>();
 

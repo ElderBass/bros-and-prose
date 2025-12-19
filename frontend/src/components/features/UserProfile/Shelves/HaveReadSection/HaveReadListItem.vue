@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import type { Review, FutureBook } from "@/types";
+import type { Review, BookshelfBook } from "@/types";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import { getBookReview } from "@/utils";
 import { useUserStore } from "@/stores/user";
@@ -33,7 +33,7 @@ import ReviewButton from "./ReviewButton.vue";
 const router = useRouter();
 
 const props = defineProps<{
-    book: FutureBook;
+    book: BookshelfBook;
 }>();
 
 const review = ref<Review | null>(null);

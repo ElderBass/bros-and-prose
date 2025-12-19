@@ -29,10 +29,8 @@ const buttonVariant = computed(() => {
     switch (getReviewColor(props.rating ?? 0)) {
         case "red":
             return "outline-error";
-        case "fuschia":
+        case "lavender":
             return "outline-secondary";
-        case "blue":
-            return "outline";
         case "green":
             return "outline-success";
         default:

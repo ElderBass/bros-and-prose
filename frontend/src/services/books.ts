@@ -50,7 +50,6 @@ export const booksService = {
             "GET",
             "/api/books/pastBooks"
         );
-        console.log("GET PAST BOOKS response in getPastBooks", response.data);
         const pastBooks: Book[] = response.data.sort(
             (a, b) =>
                 new Date(a.dateCompleted || "").getTime() -

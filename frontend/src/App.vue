@@ -91,6 +91,7 @@ onUnmounted(() => {
     --accent-lavender: #b388ff; /* neon lavender */
     --accent-green: #39ff14; /* neon green */
     --accent-fuschia: #ff4dff; /* hot pink-fuschia */
+    --accent-yellow: #ffff00; /* neon yellow */
     --accent-red: #ff0000; /* hot pink-fuschia */
     --slate-gray: #808080; /* slate gray */
 }
