@@ -95,7 +95,7 @@
                     size="small"
                     title="good call because this bro looks hella lame, my dude."
                     @click="closeModal"
-                    :style="{ width: isMobile ? '100%' : '50%' }"
+                    :style="{ width: mobile ? '100%' : '50%' }"
                 >
                     cancel
                 </BaseButton>
@@ -105,7 +105,7 @@
                     variant="primary"
                     type="submit"
                     title="I hope the bros don't shit on this too much, bro..."
-                    :style="{ width: isMobile ? '100%' : '50%' }"
+                    :style="{ width: mobile ? '100%' : '50%' }"
                 >
                     submit
                 </BaseButton>
@@ -116,6 +116,7 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref, watch, computed, onMounted } from "vue";
+import { useDisplay } from "vuetify";
 import type { FutureBook, OpenLibraryBookResult } from "@/types";
 import { QUICK_ERROR } from "@/constants";
 import { v4 as uuid } from "uuid";
@@ -129,7 +130,7 @@ import { storeToRefs } from "pinia";
 import { useFutureBooksStore } from "@/stores/futureBooks";
 
 const { showAlert } = useUIStore();
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 const { modal } = storeToRefs(useFutureBooksStore());
 
 const formModal = computed(() => {
