@@ -69,7 +69,7 @@
                 </div>
                 <div class="form-container">
                     <label for="future-book-description" class="label"
-                        >description</label
+                        >blurb</label
                     >
                     <BaseTextArea
                         v-model="description"
@@ -79,19 +79,12 @@
                         :style="{ height: '100%' }"
                     />
                 </div>
-                <div
+                <TagPickerTrigger
                     v-if="showBookDetails && !isLoading"
-                    class="tags-container"
-                >
-                    <BookTag
-                        v-for="tag in COMMON_BOOK_TAGS"
-                        :key="tag"
-                        :tag="tag"
-                        :selected="tags.includes(tag)"
-                        :onClick="() => toggleTag(tag)"
-                        :size="isMobile ? 'small' : 'medium'"
-                    />
-                </div>
+                    v-model="tags"
+                    label="tags (required)"
+                    variant="drawer"
+                />
             </template>
             <div v-if="!showBookDetails && !isLoading" class="no-book-details">
                 <p>enter a title and we'll find the rest</p>
@@ -124,10 +117,10 @@
 <script setup lang="ts">
 import { onBeforeUnmount, ref, watch, computed, onMounted } from "vue";
 import type { FutureBook, OpenLibraryBookResult } from "@/types";
-import { COMMON_BOOK_TAGS, QUICK_ERROR } from "@/constants";
+import { QUICK_ERROR } from "@/constants";
 import { v4 as uuid } from "uuid";
+import TagPickerTrigger from "@/components/form/TagPicker/TagPickerTrigger.vue";
 import { capitalizeBookTitle } from "@/utils";
-import BookTag from "@/components/ui/BookTag.vue";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
 import { useLog } from "@/composables/useLog";
 import { useBooks } from "@/composables/useBooks";
@@ -187,14 +180,6 @@ const submit = async () => {
         };
     }
     await props.onSubmit(futureBookToSubmit, isEdit.value);
-};
-
-const toggleTag = (tag: string) => {
-    if (tags.value.includes(tag)) {
-        tags.value = tags.value.filter((t) => t !== tag);
-    } else {
-        tags.value.push(tag);
-    }
 };
 
 const runSearch = async () => {

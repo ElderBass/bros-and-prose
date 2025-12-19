@@ -46,9 +46,7 @@
                             :size="mobile ? 'xsmall' : 'small'"
                         />
                     </div>
-                    <div v-else class="no-tags">
-                        <span class="italics">no tags like Hanes briefs</span>
-                    </div>
+                    <NoTags v-else :size="mobile ? 'small' : 'medium'" />
                 </div>
             </div>
 
@@ -78,6 +76,7 @@ import { computed } from "vue";
 import type { BookshelfBook, Shelf } from "@/types";
 import { useDisplay } from "vuetify";
 import BookTag from "@/components/ui/BookTag.vue";
+import NoTags from "@/components/features/common/NoTags.vue";
 import BookshelfBookListItemActions from "@/components/features/UserProfile/Shelves/BookshelfBookListItemActions.vue";
 import { faBook, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";

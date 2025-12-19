@@ -65,7 +65,7 @@
                             size="small"
                         />
                     </div>
-                    <p v-else class="empty-tags">no tags like Hanes briefs.</p>
+                    <NoTags v-else :size="mobile ? 'small' : 'medium'" />
                 </div>
             </div>
 
@@ -138,6 +138,7 @@
 import { computed } from "vue";
 import type { BookshelfBook, Review } from "@/types";
 import BookTag from "@/components/ui/BookTag.vue";
+import NoTags from "@/components/features/common/NoTags.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
     faBook,

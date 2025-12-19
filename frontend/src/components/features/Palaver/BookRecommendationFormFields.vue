@@ -18,29 +18,38 @@
                 :size="mobile ? 'small' : 'medium'"
             />
         </div>
-        <BookTagsSelector :tags="tags" :onClick="onTagClick" />
+        <TagPickerTrigger
+            v-model="tagsProxy"
+            label="tags (required)"
+            variant="drawer"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useDisplay } from "vuetify";
-import BookTagsSelector from "@/components/form/BookTagsSelector.vue";
+import TagPickerTrigger from "@/components/form/TagPicker/TagPickerTrigger.vue";
 
 const { mobile } = useDisplay();
 
-defineProps<{
-    tags: string[];
-    onTagClick: (tag: string) => void;
+const props = defineProps<{
+    modelValue: string[];
 }>();
 
 const emit = defineEmits<{
+    (e: "update:modelValue", value: string[]): void;
     (e: "update:recTitle", value: string): void;
     (e: "update:recAuthor", value: string): void;
 }>();
 
 const title = ref("");
 const author = ref("");
+
+const tagsProxy = computed<string[]>({
+    get: () => props.modelValue,
+    set: (value) => emit("update:modelValue", value),
+});
 
 const onRecTitleChange = (value: string) => {
     title.value = value;
