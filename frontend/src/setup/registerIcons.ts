@@ -1,7 +1,9 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
+    faArrowDown,
     faArrowRight,
     faArrowRightToBracket,
+    faArrowUp,
     faBaby,
     faBeerMugEmpty,
     faBomb,
@@ -47,8 +49,10 @@ import {
 
 export const registerIcons = () => {
     library.add(
+        faArrowDown,
         faArrowRight,
         faArrowRightToBracket,
+        faArrowUp,
         faBaby,
         faBeerMugEmpty,
         faBomb,
