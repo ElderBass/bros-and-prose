@@ -6,7 +6,7 @@
                 :icon="faMarker"
                 :handleClick="() => {}"
                 title="edit your dumbass details"
-                :size="mobile ? 'small' : 'medium'"
+                :size="mobile ? 'xsmall' : 'small'"
             />
         </template>
         <template #items>

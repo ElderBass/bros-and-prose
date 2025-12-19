@@ -1,13 +1,13 @@
 <template>
-    <div class="user-content-section" sectionTitle="{{ sectionTitle }}">
-        <h4 class="section-title">{{ sectionTitle }}</h4>
+    <div class="user-content-section">
+        <h4 v-if="sectionTitle" class="section-title">{{ sectionTitle }}</h4>
         <slot />
     </div>
 </template>
 
 <script setup lang="ts">
 defineProps<{
-    sectionTitle: string;
+    sectionTitle?: string;
 }>();
 </script>
 
