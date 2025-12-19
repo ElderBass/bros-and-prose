@@ -1,29 +1,31 @@
 <template>
     <UserContentSection sectionTitle="ABOUT">
-        <div class="user-info-section">
-            <div class="content">
-                <div class="user">
-                    <AvatarImage
-                        :icon="currentIcon"
-                        :size="mobile ? 'medium' : 'large'"
-                    />
-                    <div class="name">
-                        <h2>
-                            {{ user?.username }}
-                        </h2>
-                        <p>
-                            {{ user?.firstName?.toLowerCase() }}
-                            {{ user?.lastName?.toLowerCase() }}
-                        </p>
-                        <div class="current-progress">
-                            <p>current book progress:</p>
-                            <span class="current-progress-percentage">
-                                {{ currentProgress }}%
-                            </span>
+        <div class="section-wrapper">
+            <div class="user-info-section">
+                <div class="content">
+                    <div class="user">
+                        <AvatarImage
+                            :icon="currentIcon"
+                            :size="mobile ? 'medium' : 'large'"
+                        />
+                        <div class="name">
+                            <h2>
+                                {{ user?.username }}
+                            </h2>
+                            <p>
+                                {{ user?.firstName?.toLowerCase() }}
+                                {{ user?.lastName?.toLowerCase() }}
+                            </p>
+                            <div class="current-progress">
+                                <p>current book progress:</p>
+                                <span class="current-progress-percentage">
+                                    {{ currentProgress }}%
+                                </span>
+                            </div>
                         </div>
                     </div>
+                    <EditUserButton v-if="isLoggedInUser" />
                 </div>
-                <EditUserButton v-if="isLoggedInUser" />
             </div>
         </div>
     </UserContentSection>
@@ -61,26 +63,16 @@ const currentProgress = computed(() => {
 
 <style scoped>
 .section-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
     width: 100%;
-}
-
-h4 {
-    text-align: left;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    font-size: 0.9rem;
-    color: var(--accent-blue);
-    margin: 0;
-    padding-left: 0.75rem;
-    font-family: "Libre Baskerville", serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .user-info-section {
+    width: 70%;
     min-height: 160px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     gap: 1rem;
     background: linear-gradient(
@@ -135,6 +127,7 @@ h4 {
     .user-info-section {
         min-height: 120px;
         gap: 1rem;
+        width: 100%;
     }
     .name h2 {
         font-size: 1rem;

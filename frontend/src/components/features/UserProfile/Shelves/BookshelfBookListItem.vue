@@ -97,7 +97,7 @@ const { finishCurrentlyReading } = useUserShelves();
 
 const buttonProps = computed(() => {
     return {
-        size: mobile.value ? "small" : "medium",
+        size: mobile.value ? "xsmall" : "small",
         style: { width: "100%" },
     };
 });
@@ -250,7 +250,10 @@ const handleFinished = async () => {
 }
 
 .actions {
-    padding: 0.5rem;
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 @media (min-width: 768px) {

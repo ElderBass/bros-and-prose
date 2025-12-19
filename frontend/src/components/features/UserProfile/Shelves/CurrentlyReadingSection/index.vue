@@ -10,13 +10,10 @@
             <NoBookContent :isLoggedInUser="isLoggedInUser" />
         </template>
 
-        <template #scroll-content>
-            <BookshelfBookListItem
-                v-for="book in currentlyReading"
-                :key="book.id"
-                :book="book"
-                shelf="currentlyReading"
-                :showActions="isLoggedInUser"
+        <template #content>
+            <CarouselSection
+                :currentlyReading="currentlyReading"
+                :isLoggedInUser="isLoggedInUser"
             />
         </template>
     </UserContentPanel>
@@ -25,7 +22,7 @@
 <script setup lang="ts">
 import UserContentPanel from "@/components/features/UserProfile/UserContentPanel.vue";
 import NoBookContent from "@/components/features/UserProfile/Shelves/CurrentlyReadingSection/NoBookContent.vue";
-import BookshelfBookListItem from "@/components/features/UserProfile/Shelves/BookshelfBookListItem.vue";
+import CarouselSection from "@/components/features/UserProfile/Shelves/CurrentlyReadingSection/CarouselSection.vue";
 import type { BookshelfBook } from "@/types";
 
 defineOptions({ name: "CurrentlyReadingShelfSection" });

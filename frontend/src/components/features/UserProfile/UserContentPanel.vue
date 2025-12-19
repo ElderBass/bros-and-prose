@@ -10,19 +10,22 @@
                 </slot>
             </div>
             <InfiniteScroll
-                v-else
+                v-else-if="!hasCustomContent"
                 class="scroll-content"
                 :class="{ pb: scrollDirection === 'horizontal' }"
                 :direction="scrollDirection"
             >
                 <slot name="scroll-content" />
             </InfiniteScroll>
+            <div v-else class="content">
+                <slot name="content" />
+            </div>
         </template>
     </ExpansionPanel>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, useSlots } from "vue";
 import ExpansionPanelTitle from "@/components/ui/ExpansionPanelTitle.vue";
 
 const props = withDefaults(
@@ -45,6 +48,9 @@ const props = withDefaults(
 const hasContent = computed(() => props.contentCount > 0);
 
 const computedTitle = computed(() => `${props.title} (${props.contentCount})`);
+
+const slots = useSlots();
+const hasCustomContent = computed(() => !!slots.content);
 </script>
 
 <style scoped>
