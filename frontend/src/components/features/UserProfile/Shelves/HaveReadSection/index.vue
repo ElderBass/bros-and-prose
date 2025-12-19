@@ -20,6 +20,8 @@
                 :canReview="isLoggedInUser"
                 @close="closeDetails"
                 @review="startReview"
+                @editDetails="startEditDetails"
+                @editReview="startEditReview"
             />
         </template>
     </UserContentPanel>
@@ -84,6 +86,18 @@ const startReview = (book: BookshelfBook) => {
     if (!props.isLoggedInUser) return;
     closeDetails();
     // Ensure the review modal has a selectedBook to operate on
+    shelfModalStore.openReviewForBook(book, "haveRead");
+};
+
+const startEditDetails = (book: BookshelfBook) => {
+    if (!props.isLoggedInUser) return;
+    closeDetails();
+    shelfModalStore.openEditBook(book, "haveRead");
+};
+
+const startEditReview = (book: BookshelfBook) => {
+    if (!props.isLoggedInUser) return;
+    closeDetails();
     shelfModalStore.openReviewForBook(book, "haveRead");
 };
 
