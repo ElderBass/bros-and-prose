@@ -1,24 +1,22 @@
 <template>
-    <div class="carousel-shell">
-        <BaseCarousel
-            class="carousel"
-            :items="currentlyReading"
-            :cycle="bookCount > 1"
-            :intervalMs="intervalMs"
-            :showArrows="mobile ? false : true"
-            :showDelimiters="bookCount > 1"
-        >
-            <template #item="{ item }">
-                <div class="item-wrap">
-                    <BookshelfBookListItem
-                        :book="item as BookshelfBook"
-                        shelf="currentlyReading"
-                        :showActions="isLoggedInUser"
-                    />
-                </div>
-            </template>
-        </BaseCarousel>
-    </div>
+    <BaseCarousel
+        class="carousel"
+        :items="currentlyReading"
+        :cycle="bookCount > 1"
+        :intervalMs="intervalMs"
+        :showArrows="mobile ? false : true"
+        :showDelimiters="bookCount > 1"
+    >
+        <template #item="{ item }">
+            <div class="item-wrap">
+                <BookshelfBookListItem
+                    :book="item as BookshelfBook"
+                    shelf="currentlyReading"
+                    :showActions="isLoggedInUser"
+                />
+            </div>
+        </template>
+    </BaseCarousel>
 </template>
 
 <script setup lang="ts">
@@ -50,12 +48,6 @@ const { mobile } = useDisplay();
 </script>
 
 <style scoped>
-.carousel-shell {
-    width: 100%;
-    /* No bordered wrapper — let the carousel feel embedded in the page */
-    padding: 0;
-}
-
 .carousel {
     width: 100%;
 }
