@@ -10,13 +10,14 @@
         v-if="reviewModalOpen && selectedBook"
         :showReviewModal="reviewModalOpen"
         :book="selectedBook"
-        :bookReview="DEFAULT_REVIEW"
+        :bookReview="reviewPrefill"
         :onClose="closeModal"
         :onReviewSubmit="onReviewSubmit"
     />
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import AddBookModal from "./AddBookModal/index.vue";
 import EditBookModal from "./EditBookModal/index.vue";
@@ -32,6 +33,7 @@ import { useUser } from "@/composables/useUser";
 import { useLog } from "@/composables/useLog";
 import type { BookshelfBook, SubmitReviewArgs } from "@/types";
 import { DEFAULT_REVIEW, QUICK_ERROR } from "@/constants";
+import { useUserStore } from "@/stores/user";
 
 defineOptions({
     name: "ShelfModals",
@@ -40,10 +42,19 @@ defineOptions({
 const shelfModalStore = useShelfModalStore();
 const { reviewModalOpen, selectedBook } = storeToRefs(shelfModalStore);
 const { isAppLoading } = storeToRefs(useUIStore());
+const { loggedInUser } = storeToRefs(useUserStore());
 
 const { showAlert } = useUIStore();
 const { addReview } = useUser();
 const { closeModal } = shelfModalStore;
+
+const reviewPrefill = computed<SubmitReviewArgs>(() => {
+    const bookId = selectedBook.value?.id;
+    if (!bookId) return DEFAULT_REVIEW;
+    const existing = loggedInUser.value?.reviews?.[bookId];
+    if (!existing) return DEFAULT_REVIEW;
+    return { rating: existing.rating, reviewComment: existing.reviewComment };
+});
 
 const onReviewSubmit = async (args: SubmitReviewArgs) => {
     try {

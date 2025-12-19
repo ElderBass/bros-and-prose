@@ -4,7 +4,7 @@
         @close="emit('close')"
         @update:modelValue="(v: boolean) => !v && emit('close')"
         title="the past in present tense"
-        size="large"
+        size="medium"
         shadow-color="green"
         :header-icon="faBookOpen"
     >
@@ -23,7 +23,20 @@
                 </div>
 
                 <div class="headline">
-                    <h2 class="title">{{ book.title }}</h2>
+                    <div class="title-row">
+                        <h2 class="title">{{ book.title }}</h2>
+                        <IconButton
+                            v-if="canReview"
+                            :icon="faMarker"
+                            :size="editButtonSize"
+                            color="green"
+                            shadowColor="green"
+                            title="edit details (tags + blurb)"
+                            :handleClick="
+                                () => emit('editDetails', book as BookshelfBook)
+                            "
+                        />
+                    </div>
                     <p class="author">{{ book.author }}</p>
 
                     <div class="meta">
@@ -67,7 +80,20 @@
             </div>
 
             <div class="section review-section">
-                <h3 class="section-title">{{ possessiveLabel }} review</h3>
+                <div class="section-title-row">
+                    <h3 class="section-title">{{ possessiveLabel }} review</h3>
+                    <IconButton
+                        v-if="canReview && review"
+                        :icon="faMarker"
+                        :size="editButtonSize"
+                        color="green"
+                        shadowColor="green"
+                        title="edit review"
+                        :handleClick="
+                            () => emit('editReview', book as BookshelfBook)
+                        "
+                    />
+                </div>
                 <div v-if="review" class="review">
                     <div class="review-top">
                         <span class="rating">{{ review.rating }}/10</span>
@@ -113,7 +139,12 @@ import { computed } from "vue";
 import type { BookshelfBook, Review } from "@/types";
 import BookTag from "@/components/ui/BookTag.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faBook, faBookOpen } from "@fortawesome/free-solid-svg-icons";
+import {
+    faBook,
+    faBookOpen,
+    faMarker,
+} from "@fortawesome/free-solid-svg-icons";
+import { useDisplay } from "vuetify";
 
 const props = defineProps<{
     open: boolean;
@@ -125,9 +156,14 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: "close"): void;
     (e: "review", book: BookshelfBook): void;
+    (e: "editDetails", book: BookshelfBook): void;
+    (e: "editReview", book: BookshelfBook): void;
 }>();
 
 const possessiveLabel = computed(() => (props.canReview ? "your" : "bro's"));
+
+const { mobile } = useDisplay();
+const editButtonSize = computed(() => (mobile.value ? "xsmall" : "small"));
 
 const formatDate = (iso: string) => {
     try {
@@ -190,6 +226,13 @@ const formatDate = (iso: string) => {
     gap: 0.25rem;
 }
 
+.title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
 .title {
     margin: 0;
     font-size: 1.6rem;
@@ -244,6 +287,18 @@ const formatDate = (iso: string) => {
     color: var(--main-text);
     opacity: 0.9;
     text-transform: lowercase;
+}
+
+.section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.section-title-row .section-title {
+    margin: 0;
 }
 
 .tags {
