@@ -31,8 +31,6 @@ import { computed } from "vue";
 import type { BookshelfBook, Review, User } from "@/types";
 import HaveReadTableRow from "./HaveReadTableRow.vue";
 
-defineOptions({ name: "HaveReadTable" });
-
 const props = withDefaults(
     defineProps<{
         books: BookshelfBook[];
@@ -76,7 +74,6 @@ const getReviewForBook = (bookId: string): Review | null => {
     grid-template-columns: 2fr 1.4fr 0.6fr 0.6fr 1.2fr 0.8fr;
     gap: 0.5rem;
     padding: 0.65rem 0.75rem;
-    /* Darker header for contrast (leans blue/lavender) while keeping green header text readable */
     background: linear-gradient(
         180deg,
         color-mix(in srgb, var(--accent-blue) 62%, rgba(0, 0, 0, 0.6)),

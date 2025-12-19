@@ -115,8 +115,6 @@ import BookTag from "@/components/ui/BookTag.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faBook, faBookOpen } from "@fortawesome/free-solid-svg-icons";
 
-defineOptions({ name: "HaveReadBookDetailsModal" });
-
 const props = defineProps<{
     open: boolean;
     book: BookshelfBook | null;
@@ -237,8 +235,6 @@ const formatDate = (iso: string) => {
 }
 
 .section {
-    /* border-top: 1px solid
-        color-mix(in srgb, var(--accent-green) 35%, transparent); */
     padding-top: 0.75rem;
 }
 
