@@ -167,7 +167,7 @@ const onAddComment = async (comment: Comment) => {
     loadingMessage.value = "adding your comment...";
     const entry = buildPalaverEntry({
         type: "progress_note",
-        text: comment.comment,
+        text: comment.text,
         bookInfo: {
             title: props.book.title,
             author: props.book.author,

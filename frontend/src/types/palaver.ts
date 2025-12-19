@@ -24,7 +24,7 @@ export interface Recommendation {
 export interface Comment {
     id: string;
     userInfo: UserInfo;
-    comment: string;
+    text: string;
     createdAt: string;
     updatedAt?: string;
     likes?: string[];

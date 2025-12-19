@@ -50,14 +50,13 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from "vue";
+import { computed } from "vue";
+import { useDisplay } from "vuetify";
 import type { Review } from "@/types";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import ReviewComment from "../features/Review/ReviewComment.vue";
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
 
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const props = defineProps<{
     open: boolean;
@@ -74,7 +73,7 @@ const broReview = computed(() => {
 });
 
 const buttonSize = computed(() => {
-    return isMobile ? "small" : "medium";
+    return mobile.value ? "small" : "medium";
 });
 </script>
 
