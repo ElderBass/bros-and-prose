@@ -135,9 +135,6 @@ const isEditMode = computed(() => {
 
 const validationResolved = computed(() => {
     const defaults: Required<BookFormValidation> = {
-        requireTitle: true,
-        requireAuthor: true,
-        requireYearPublished: true,
         requireTags: props.mode === "future",
         requireDescription: props.mode === "future",
     };
@@ -181,9 +178,9 @@ const canSubmit = computed(() => {
     if (isEditMode.value) return !isDirty.value;
 
     const v = validationResolved.value;
-    if (v.requireTitle && !values.value.title) return false;
-    if (v.requireAuthor && !values.value.author) return false;
-    if (v.requireYearPublished && !values.value.yearPublished) return false;
+    if (!values.value.title) return false;
+    if (!values.value.author) return false;
+    if (!values.value.yearPublished) return false;
     if (v.requireTags && values.value.tags.length === 0) return false;
     if (v.requireDescription && !values.value.description.trim()) return false;
     return true;
@@ -225,8 +222,6 @@ const resetAll = (resetResults = true) => {
 };
 
 const onSelectResult = (result: BookFormSearchResult) => {
-    // Selecting a result will often update the title programmatically, which would
-    // otherwise trigger the title watcher + runSearch again. Avoid that.
     bookSelected.value = true;
     selectedResult.value = result;
     manualMode.value = false;
@@ -250,7 +245,7 @@ const onSelectResult = (result: BookFormSearchResult) => {
     pages.value =
         typeof mapped.pages !== "undefined" ? mapped.pages : pages.value;
     imageSrc.value = mapped.imageSrc ?? imageSrc.value;
-    // Only prefill description if it is currently empty.
+
     if (!description.value.trim() && mapped.description) {
         description.value = mapped.description;
     }
@@ -294,7 +289,6 @@ watch(
             return;
         }
 
-        // If user edits title after picking a result, reset the picked state.
         selectedResult.value = null;
         manualMode.value = false;
 
@@ -314,8 +308,7 @@ const handleSubmit = async () => {
     try {
         loading.value = true;
         const toSubmit = { ...values.value };
-        // Preserve the old AddBook behavior: if user didn't type a blurb/comment,
-        // fall back to the selected result's description (when available).
+
         if (
             !toSubmit.description?.trim() &&
             selectedResult.value?.description

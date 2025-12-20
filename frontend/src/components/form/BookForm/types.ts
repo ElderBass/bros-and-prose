@@ -13,9 +13,6 @@ export type BookFormValues = {
 };
 
 export type BookFormValidation = {
-    requireTitle?: boolean;
-    requireAuthor?: boolean;
-    requireYearPublished?: boolean;
     requireTags?: boolean;
     requireDescription?: boolean;
 };

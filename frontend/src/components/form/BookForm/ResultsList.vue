@@ -18,8 +18,6 @@
 import BookSearchResultRow from "./BookSearchResultRow.vue";
 import type { BookFormSearchResult } from "./types";
 
-defineOptions({ name: "BookFormResultsList" });
-
 const props = withDefaults(
     defineProps<{
         results: BookFormSearchResult[];

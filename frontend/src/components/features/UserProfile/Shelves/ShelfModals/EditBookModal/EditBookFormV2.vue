@@ -1,21 +1,9 @@
 <template>
     <BookForm
-        :key="formKey"
         mode="edit"
         :titleLabel="shelfMessage"
-        :titleDisabled="true"
-        :authorDisabled="true"
-        :yearPublishedDisabled="true"
-        :pagesDisabled="true"
-        :searchEnabled="false"
         :initialValues="initialValues"
-        :tagsLabel="'tags'"
-        :descriptionLabel="'comment (optional)'"
-        :descriptionPlaceholder="'add your thoughts about this book...'"
         :validation="{
-            requireTitle: true,
-            requireAuthor: true,
-            requireYearPublished: true,
             requireTags: false,
             requireDescription: false,
         }"

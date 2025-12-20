@@ -22,8 +22,6 @@
 import { computed } from "vue";
 import ClearSearchButton from "@/components/features/UserProfile/Shelves/ShelfModals/FormStuff/ClearSearchButton.vue";
 
-defineOptions({ name: "BookFormTitleSearchRow" });
-
 const props = withDefaults(
     defineProps<{
         modelValue: string;

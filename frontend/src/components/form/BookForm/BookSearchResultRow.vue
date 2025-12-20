@@ -35,8 +35,6 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
 import type { BookFormSearchResult } from "./types";
 
-defineOptions({ name: "BookSearchResultRow" });
-
 const emit = defineEmits<{
     (e: "select"): void;
 }>();
