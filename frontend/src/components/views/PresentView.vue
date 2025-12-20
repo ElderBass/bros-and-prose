@@ -9,11 +9,13 @@
         </div>
         <CurrentBookLayout v-else>
             <template v-slot:current-book>
+                <GuestSection v-if="guestMobile" />
                 <CurrentBookInfo :book="book" />
             </template>
             <template v-slot:user-progress>
                 <div class="discussion-container">
-                    <UserSection v-if="loggedInUser.id" :book="book" />
+                    <GuestSection v-if="isGuestUser() && !guestMobile" />
+                    <UserSection v-else-if="loggedInUser.id" :book="book" />
                     <RouterLink
                         v-if="book.completed"
                         class="router-link-wrapper"
@@ -40,12 +42,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useDisplay } from "vuetify";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import CurrentBookLayout from "@/components/layout/CurrentBookLayout.vue";
 import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.vue";
 import UserSection from "@/components/features/CurrentBook/UserSection.vue";
+import GuestSection from "@/components/features/CurrentBook/GuestSection/index.vue";
 import OtherBrosProgress from "@/components/features/CurrentBook/OtherBrosProgress.vue";
 import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
 import PalaverModals from "@/components/modal/PalaverModals/index.vue";
@@ -69,6 +72,8 @@ const { mobile } = useDisplay();
 
 const isLoading = ref(true);
 const book = ref<Book>(storedCurrentBook);
+
+const guestMobile = computed(() => isGuestUser() && mobile.value);
 
 watch(storedCurrentBook, (newBook) => {
     book.value = newBook;

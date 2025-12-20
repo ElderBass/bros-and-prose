@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRefs, ref, watch } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
@@ -51,33 +51,26 @@ import { getUserShelves } from "@/utils";
 
 const props = defineProps<{
     user: User;
-    isLoggedInUser: boolean;
 }>();
 
 const { loggedInUser } = storeToRefs(useUserStore());
-const { isLoggedInUser } = toRefs(props);
-const user = ref(props.user);
-const currentlyReading = ref(getUserShelves(props.user).currentlyReading);
-const wantToRead = ref(getUserShelves(props.user).wantToRead);
-const haveRead = ref(getUserShelves(props.user).haveRead);
 
-watch(
-    [loggedInUser, isLoggedInUser],
-    ([newLoggedInUser, isOwnProfile]) => {
-        if (isOwnProfile && newLoggedInUser?.id) {
-            user.value = newLoggedInUser;
-            const {
-                currentlyReading: updatedCurrentlyReading,
-                wantToRead: updatedWantToRead,
-                haveRead: updatedHaveRead,
-            } = getUserShelves(newLoggedInUser);
-            currentlyReading.value = updatedCurrentlyReading;
-            wantToRead.value = updatedWantToRead;
-            haveRead.value = updatedHaveRead;
-        }
-    },
-    { immediate: true }
-);
+const isLoggedInUser = computed(() => {
+    const viewedId = props.user?.id;
+    const loggedInId = loggedInUser.value?.id;
+    return Boolean(viewedId && loggedInId && viewedId === loggedInId);
+});
+
+const user = computed<User>(() => {
+    if (isLoggedInUser.value && loggedInUser.value?.id)
+        return loggedInUser.value;
+    return props.user;
+});
+
+const shelves = computed(() => getUserShelves(user.value));
+const currentlyReading = computed(() => shelves.value.currentlyReading);
+const wantToRead = computed(() => shelves.value.wantToRead);
+const haveRead = computed(() => shelves.value.haveRead);
 
 const { isAppLoading } = storeToRefs(useUIStore());
 </script>

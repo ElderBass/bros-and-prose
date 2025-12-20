@@ -1,3 +1,5 @@
+import { isGuestUser } from "./localStorageUtils";
+
 export const getMainLinks = () => {
     return [
         { path: "/past", label: "past" },
@@ -14,6 +16,9 @@ export const getOtherLinks = (isMobile = false) => {
     ];
     if (isMobile) {
         otherLinks = otherLinks.filter((l) => l.label !== "profile");
+    }
+    if (isGuestUser()) {
+        otherLinks = otherLinks.filter((l) => l.path !== "/profile");
     }
 
     return otherLinks;

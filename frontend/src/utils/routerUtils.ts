@@ -1,9 +1,8 @@
 import { useUser, useLog } from "@/composables";
 import { useUIStore } from "@/stores/ui";
-import { useUserStore } from "@/stores/user";
 import type { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
 
-export const beforeEnterProfileView = async (
+export const beforeEnterBrosView = async (
     to: RouteLocationNormalized,
     from: RouteLocationNormalized,
     next: NavigationGuardNext
@@ -16,7 +15,6 @@ export const beforeEnterProfileView = async (
             return next({ name: "four-oh-four" });
         }
         to.meta.user = user;
-        to.meta.isLoggedInUser = user.id === useUserStore().loggedInUser?.id;
         next();
     } catch (error) {
         console.error("Error fetching user", error);
