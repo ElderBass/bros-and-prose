@@ -56,25 +56,25 @@ const buttonSize = computed(() => {
 
 h1 {
     text-align: center;
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     color: var(--accent-fuschia);
 }
 
 h2 {
     color: var(--accent-blue);
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     text-align: left;
 }
 
 p {
     color: var(--main-text);
-    font-size: 1.25rem;
+    font-size: 1.125rem;
 }
 
 .purple {
     text-align: center;
-    font-size: 1.5rem;
-    color: var(--accent-lavender);
+    font-size: 1.25rem !important;
+    color: var(--accent-lavender) !important;
 }
 
 .prose-container {
@@ -102,11 +102,11 @@ p {
     }
 
     h1 {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
     }
 
     h2 {
-        font-size: 1.25rem;
+        font-size: 1.125rem;
     }
 
     p {
