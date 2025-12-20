@@ -57,7 +57,7 @@
                 <span v-else class="italics"> homeboy ain't said shit </span>
             </p>
         </div>
-        <div v-if="shelf === 'currentlyReading'" class="actions">
+        <div v-if="showFinishButton" class="actions">
             <BaseButton
                 title="finished (move to have read)"
                 variant="outline-success"
@@ -81,6 +81,7 @@ import BookshelfBookListItemActions from "@/components/features/UserProfile/Shel
 import { faBook, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useUserShelves } from "@/composables/useUserShelves";
+import { useRoute } from "vue-router";
 
 defineOptions({ name: "BookshelfBookListItem" });
 
@@ -99,6 +100,11 @@ const buttonProps = computed(() => {
         size: mobile.value ? "xsmall" : "small",
         style: { width: "100%" },
     };
+});
+
+const showFinishButton = computed(() => {
+    const isProfileView = useRoute().name === "profile-root";
+    return props.shelf === "currentlyReading" && props.book.id && isProfileView;
 });
 
 const handleFinished = async () => {

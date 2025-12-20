@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { beforeEnterProfileView } from "@/utils";
+import { beforeEnterBrosView, isGuestUser } from "@/utils";
 import { useUserStore } from "./stores/user";
 
 const router = createRouter({
@@ -7,10 +7,12 @@ const router = createRouter({
     routes: [
         {
             path: "/",
+            name: "landing",
             component: () => import("@/components/views/LandingView.vue"),
         },
         {
             path: "/present",
+            name: "present",
             component: () => import("@/components/views/PresentView.vue"),
         },
         {
@@ -31,8 +33,16 @@ const router = createRouter({
             component: () => import("@/components/views/ProfileView.vue"),
             props: () => ({
                 user: useUserStore().loggedInUser,
-                isLoggedInUser: true,
             }),
+            beforeEnter: (to, from, next) => {
+                if (isGuestUser()) {
+                    next({ name: "present" });
+                } else if (!useUserStore().loggedInUser.id) {
+                    next({ name: "landing" });
+                } else {
+                    next();
+                }
+            },
         },
         {
             path: "/bros",
@@ -44,10 +54,9 @@ const router = createRouter({
             component: () => import("@/components/views/ProfileView.vue"),
             props: (route) => ({
                 user: route.meta.user,
-                isLoggedInUser: route.meta.isLoggedInUser,
             }),
             beforeEnter: async (to, from, next) =>
-                await beforeEnterProfileView(to, from, next),
+                await beforeEnterBrosView(to, from, next),
         },
         {
             path: "/palaver",

@@ -3,7 +3,7 @@
         <LogoButton :handleClick="goToPresent" />
 
         <!-- Desktop Navigation -->
-        <div v-if="!isMobile" class="nav-links desktop-nav">
+        <div v-if="!mobile" class="nav-links desktop-nav">
             <RouterLink
                 v-for="link in getMainLinks()"
                 :key="link.path"
@@ -29,16 +29,22 @@
                 />
             </RouterLink>
         </div>
-        <RouterLink class="router-link-wrapper" to="/profile">
+        <RouterLink
+            v-if="!mobile && currentAvatar && !isGuest"
+            class="router-link-wrapper"
+            to="/profile"
+        >
             <ProfileButton
-                v-if="!isMobile && currentAvatar && !isGuest"
                 :handleClick="() => {}"
                 :currentAvatar="currentAvatar"
             />
         </RouterLink>
+        <RouterLink v-if="isGuest && !mobile" class="login-link" to="/">
+            login
+        </RouterLink>
 
         <button
-            v-if="isMobile"
+            v-if="mobile"
             class="hamburger mobile-nav"
             @click="toggleMobileMenu"
             :class="{ active: isMobileMenuOpen }"
@@ -50,7 +56,7 @@
 
         <!-- Mobile Menu Overlay -->
         <div
-            v-if="isMobile"
+            v-if="mobile"
             class="mobile-menu"
             :class="{ active: isMobileMenuOpen }"
         >
@@ -58,7 +64,9 @@
                 <RouterLink
                     v-for="link in getMobileLinks()"
                     :key="link.path"
-                    :class="{ 'router-link-active': activeLink === link.path }"
+                    :class="{
+                        'router-link-active': link.path.includes(activeLink),
+                    }"
                     :to="link.path"
                     @click="closeMobileMenu"
                 >
@@ -87,11 +95,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
+import { useDisplay } from "vuetify";
 import router from "@/router";
 import LogoButton from "@/components/layout/LogoButton.vue";
 import ProfileButton from "@/components/layout/ProfileButton.vue";
 import NotificationDot from "../ui/NotificationDot.vue";
-import { useUIStore } from "@/stores/ui";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user";
 import { AVATAR_ICON_LIST } from "@/constants";
@@ -105,9 +113,9 @@ import {
 import { usePalaverStore } from "@/stores/palaver";
 
 const route = useRoute();
+const { mobile } = useDisplay();
 
 const isMobileMenuOpen = ref(false);
-const isMobile = storeToRefs(useUIStore()).isMobile;
 const { loggedInUser } = storeToRefs(useUserStore());
 const { hasUnreadEntries } = storeToRefs(usePalaverStore());
 
@@ -116,6 +124,8 @@ const currentAvatar = ref<IconDefinition | null>(null);
 const isGuest = computed(() => {
     return isGuestUser() || loggedInUser.value.id === "guest";
 });
+
+console.log("isGuest", isGuest.value);
 
 watch(
     () => loggedInUser.value.avatar,
