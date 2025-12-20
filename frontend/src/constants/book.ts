@@ -69,6 +69,7 @@ export const COMMON_BOOK_TAGS = [
     "anthropology",
     "art",
     "atmospheric",
+    "avant-garde",
     "biography",
     "bleak",
     "business",
@@ -143,6 +144,7 @@ export const COMMON_BOOK_TAGS = [
     "travel",
     "true crime",
     "uplifting",
+    "western",
     "wholesome",
     "YA",
 ];
