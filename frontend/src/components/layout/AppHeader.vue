@@ -125,8 +125,6 @@ const isGuest = computed(() => {
     return isGuestUser() || loggedInUser.value.id === "guest";
 });
 
-console.log("isGuest", isGuest.value);
-
 watch(
     () => loggedInUser.value.avatar,
     (newAvatar) => {
