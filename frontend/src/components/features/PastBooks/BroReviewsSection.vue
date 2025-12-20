@@ -14,7 +14,7 @@
                 :bro-avatar="getAvatar(broReview.reviewer?.avatar)"
                 :has-finished="true"
                 :progress-string="
-                    getRatingReviewString(broReview.review, isMobile)
+                    getRatingReviewString(broReview.review, mobile)
                 "
                 :on-peep-review-click="() => onPeepReviewClick(broReview)"
                 :is-logged-in-user="
@@ -42,7 +42,8 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
+import { useDisplay } from "vuetify";
 import type { Book, BroReview, Review, SubmitReviewArgs } from "@/types";
 import BroProgressItem from "../common/BroProgressItem.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
@@ -52,11 +53,11 @@ import { useUserStore } from "@/stores/user";
 import { useUser } from "@/composables/useUser";
 import { DEFAULT_RATING } from "@/constants";
 import { storeToRefs } from "pinia";
-import { useUIStore } from "@/stores/ui";
 
 const { loggedInUser } = storeToRefs(useUserStore());
 const { addReview } = useUser();
-const { isMobile } = storeToRefs(useUIStore());
+
+const { mobile } = useDisplay();
 
 const props = defineProps<{
     book: Book;

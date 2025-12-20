@@ -9,8 +9,9 @@
     >
         <template #activator="{ props: tooltipProps }">
             <button v-bind="tooltipProps" class="logo" @click="handleClick">
+                <h1>b</h1>
                 <FontAwesomeIcon icon="fa-solid fa-book-open-reader" />
-                <h1>b&p</h1>
+                <h1>p</h1>
             </button>
         </template>
     </BaseTooltip>

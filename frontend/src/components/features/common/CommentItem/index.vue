@@ -24,7 +24,7 @@
                     :entryId="entryId"
                 />
             </div>
-            <p class="text">{{ comment.comment }}</p>
+            <p class="text">{{ comment.text }}</p>
         </div>
     </div>
 </template>

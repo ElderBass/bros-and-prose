@@ -9,11 +9,13 @@
         </div>
         <CurrentBookLayout v-else>
             <template v-slot:current-book>
+                <GuestSection v-if="guestMobile" />
                 <CurrentBookInfo :book="book" />
             </template>
             <template v-slot:user-progress>
                 <div class="discussion-container">
-                    <UserSection v-if="loggedInUser.id" :book="book" />
+                    <GuestSection v-if="isGuestUser() && !guestMobile" />
+                    <UserSection v-else-if="loggedInUser.id" :book="book" />
                     <RouterLink
                         v-if="book.completed"
                         class="router-link-wrapper"
@@ -22,7 +24,7 @@
                         <BaseButton
                             title="check what the bros are saying"
                             variant="outline-tertiary"
-                            :size="isMobile ? 'medium' : 'large'"
+                            :size="mobile ? 'medium' : 'large'"
                         >
                             <FontAwesomeIcon :icon="faComments" />
                             <span>go to discussion</span>
@@ -40,11 +42,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { useDisplay } from "vuetify";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import CurrentBookLayout from "@/components/layout/CurrentBookLayout.vue";
 import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.vue";
 import UserSection from "@/components/features/CurrentBook/UserSection.vue";
+import GuestSection from "@/components/features/CurrentBook/GuestSection/index.vue";
 import OtherBrosProgress from "@/components/features/CurrentBook/OtherBrosProgress.vue";
 import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
 import PalaverModals from "@/components/modal/PalaverModals/index.vue";
@@ -56,9 +60,7 @@ import { usePalaverStore } from "@/stores/palaver";
 import { getUserFromStorage, isGuestUser } from "@/utils";
 import { useUser } from "@/composables/useUser";
 import { useLog } from "@/composables/useLog";
-import { useUIStore } from "@/stores/ui";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
-import { storeToRefs } from "pinia";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();
@@ -66,10 +68,12 @@ const { loggedInUser, setLoggedInUser } = useUserStore();
 const { getUser } = useUser();
 const { openItemModal } = usePalaverStore();
 
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const isLoading = ref(true);
 const book = ref<Book>(storedCurrentBook);
+
+const guestMobile = computed(() => isGuestUser() && mobile.value);
 
 watch(storedCurrentBook, (newBook) => {
     book.value = newBook;

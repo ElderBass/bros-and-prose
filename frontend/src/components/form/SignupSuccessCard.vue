@@ -1,7 +1,7 @@
 <template>
     <div class="success-card-container">
         <h1>welcome to the club</h1>
-        <BaseCard size="large" shadowColor="blue">
+        <BaseCard size="medium" shadowColor="blue">
             <h2>real bros read prose</h2>
             <div class="prose-container">
                 <p>they said it couldn't be done.</p>
@@ -10,7 +10,7 @@
                 <p>they said all my friends are dead.</p>
             </div>
             <p class="purple">they were wrong.</p>
-            <div class="button-container">
+            <div v-if="!isGuestUser()" class="button-container">
                 <BaseButton
                     title="proceed with God's Plan"
                     variant="outline-secondary"
@@ -28,18 +28,18 @@
 </template>
 
 <script setup lang="ts">
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import { computed } from "vue";
+import { isGuestUser } from "@/utils";
 
 defineProps<{
-    onProceedClick: () => void;
+    onProceedClick?: () => void;
 }>();
 
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const buttonSize = computed(() => {
-    return isMobile ? "small" : "medium";
+    return mobile.value ? "small" : "medium";
 });
 </script>
 
@@ -51,31 +51,30 @@ const buttonSize = computed(() => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 4rem;
+    gap: 2rem;
 }
 
 h1 {
     text-align: center;
-    font-size: 1.75rem;
-    border-bottom: 2px solid var(--accent-blue);
-    padding-bottom: 0.5rem;
+    font-size: 1.5rem;
+    color: var(--accent-fuschia);
 }
 
 h2 {
     color: var(--accent-blue);
-    font-size: 1.55rem;
+    font-size: 1.25rem;
     text-align: left;
 }
 
 p {
     color: var(--main-text);
-    font-size: 1.25rem;
+    font-size: 1.125rem;
 }
 
 .purple {
     text-align: center;
-    font-size: 1.5rem;
-    color: var(--accent-lavender);
+    font-size: 1.25rem !important;
+    color: var(--accent-lavender) !important;
 }
 
 .prose-container {
@@ -95,5 +94,27 @@ p {
     align-items: center;
     gap: 1rem;
     justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .success-card-container {
+        gap: 1rem;
+    }
+
+    h1 {
+        font-size: 1.25rem;
+    }
+
+    h2 {
+        font-size: 1.125rem;
+    }
+
+    p {
+        font-size: 1rem;
+    }
+
+    .purple {
+        font-size: 1.125rem;
+    }
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
-    <UserContentSection sectionTitle="ABOUT">
+    <UserContentSection>
         <div class="user-info-section">
             <div class="content">
                 <div class="user">
                     <AvatarImage
                         :icon="currentIcon"
-                        :size="mobile ? 'medium' : 'large'"
+                        :size="mobile ? 'small' : 'medium'"
                     />
                     <div class="name">
                         <h2>
@@ -61,8 +61,8 @@ const currentProgress = computed(() => {
 
 <style scoped>
 .user-info-section {
-    width: 50%;
-    min-height: 160px;
+    width: 100%;
+    min-height: 140px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -84,31 +84,50 @@ const currentProgress = computed(() => {
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    gap: 1.5rem;
-    font-size: 1.25rem;
+    gap: 1rem;
+    font-size: 1.05rem;
+    min-width: 0; /* allow children to shrink instead of overflowing */
 }
 
 .user {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.85rem;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.name {
+    min-width: 0;
 }
 
 .name h2 {
     margin: 0;
     color: var(--accent-blue);
     font-family: "Libre Baskerville", serif;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.name p {
+    margin: 0.15rem 0 0;
+    opacity: 0.9;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .current-progress {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .current-progress-percentage {
-    font-size: 1.25rem;
+    font-size: 1.05rem;
     font-weight: 600;
     opacity: 0.8;
     color: var(--accent-blue);
@@ -116,21 +135,23 @@ const currentProgress = computed(() => {
 
 @media (max-width: 768px) {
     .user-info-section {
-        min-height: 120px;
+        min-height: 110px;
         gap: 1rem;
         width: 100%;
+        padding: 1rem 0.75rem;
     }
     .name h2 {
         font-size: 1rem;
     }
     .content {
-        font-size: 1rem;
+        font-size: 0.85rem;
+        gap: 0.75rem;
     }
     .current-progress {
         gap: 0.5rem;
     }
     .current-progress-percentage {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 }
 </style>

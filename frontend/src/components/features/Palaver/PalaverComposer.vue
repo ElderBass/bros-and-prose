@@ -21,8 +21,7 @@
             />
             <BookRecommendationFormFields
                 v-if="type === 'recommendation'"
-                :tags="tags"
-                :onTagClick="onTagClick"
+                v-model="tags"
                 @update:recTitle="recTitle = $event"
                 @update:recAuthor="recAuthor = $event"
             />
@@ -200,14 +199,6 @@ const submitDisabled = computed(() => {
     }
     return false;
 });
-
-const onTagClick = (tag: string) => {
-    if (tags.value.includes(tag)) {
-        tags.value = tags.value.filter((t) => t !== tag);
-    } else {
-        tags.value.push(tag);
-    }
-};
 
 const handleTypeSelect = (selectedType: PalaverType) => {
     if (isEditMode.value) return;

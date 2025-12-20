@@ -46,9 +46,7 @@
                             :size="mobile ? 'xsmall' : 'small'"
                         />
                     </div>
-                    <div v-else class="no-tags">
-                        <span class="italics">no tags like Hanes briefs</span>
-                    </div>
+                    <NoTags v-else :size="mobile ? 'small' : 'medium'" />
                 </div>
             </div>
 
@@ -59,7 +57,7 @@
                 <span v-else class="italics"> homeboy ain't said shit </span>
             </p>
         </div>
-        <div v-if="shelf === 'currentlyReading'" class="actions">
+        <div v-if="showFinishButton" class="actions">
             <BaseButton
                 title="finished (move to have read)"
                 variant="outline-success"
@@ -78,10 +76,12 @@ import { computed } from "vue";
 import type { BookshelfBook, Shelf } from "@/types";
 import { useDisplay } from "vuetify";
 import BookTag from "@/components/ui/BookTag.vue";
+import NoTags from "@/components/features/common/NoTags.vue";
 import BookshelfBookListItemActions from "@/components/features/UserProfile/Shelves/BookshelfBookListItemActions.vue";
 import { faBook, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useUserShelves } from "@/composables/useUserShelves";
+import { useRoute } from "vue-router";
 
 defineOptions({ name: "BookshelfBookListItem" });
 
@@ -100,6 +100,11 @@ const buttonProps = computed(() => {
         size: mobile.value ? "xsmall" : "small",
         style: { width: "100%" },
     };
+});
+
+const showFinishButton = computed(() => {
+    const isProfileView = useRoute().name === "profile-root";
+    return props.shelf === "currentlyReading" && props.book.id && isProfileView;
 });
 
 const handleFinished = async () => {
