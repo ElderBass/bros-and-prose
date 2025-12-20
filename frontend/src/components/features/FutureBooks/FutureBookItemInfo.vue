@@ -21,7 +21,7 @@
                         :tag="tag"
                         :selected="true"
                         color="blue"
-                        :size="isMobile ? 'small' : 'medium'"
+                        :size="mobile ? 'small' : 'medium'"
                     />
                 </div>
             </div>
@@ -31,18 +31,17 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from "vuetify";
 import type { FutureBook } from "@/types";
 import { computed } from "vue";
 import { faGlasses } from "@fortawesome/free-solid-svg-icons";
 import BookTag from "@/components/ui/BookTag.vue";
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
-
-const { isMobile } = storeToRefs(useUIStore());
 
 const props = defineProps<{
     book: FutureBook;
 }>();
+
+const { mobile } = useDisplay();
 
 const goodreadsUrl = computed(() => {
     const q = [props.book.title, props.book.author].filter(Boolean).join(" ");

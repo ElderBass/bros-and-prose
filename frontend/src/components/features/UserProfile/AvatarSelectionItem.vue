@@ -4,19 +4,15 @@
         :class="{ 'is-selected': props.isSelected }"
         @click="handleAvatarClick(props.icon.iconName)"
     >
-        <AvatarImage
-            :icon="props.icon"
-            :size="isMobile ? 'medium' : 'xlarge'"
-        />
+        <AvatarImage :icon="props.icon" :size="mobile ? 'medium' : 'xlarge'" />
         <p>{{ props.friendlyName }}</p>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from "vuetify";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
 
 const emit = defineEmits<{
     "update:avatar": [value: string];
@@ -28,7 +24,7 @@ const props = defineProps<{
     isSelected: boolean;
 }>();
 
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const handleAvatarClick = (icon: string) => {
     emit("update:avatar", icon);

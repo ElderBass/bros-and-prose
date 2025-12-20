@@ -14,7 +14,7 @@
                     label="username"
                     placeholder="enter a new handle"
                     type="text"
-                    :size="isMobile ? 'medium' : 'large'"
+                    :size="mobile ? 'medium' : 'large'"
                 />
                 <p class="hint" v-if="validationMessage">
                     {{ validationMessage }}
@@ -25,9 +25,8 @@
                 <BaseButton
                     variant="outline-secondary"
                     @click="onClose"
-                    :size="isMobile ? 'small' : 'medium'"
-                    :style="{ width: '100%' }"
                     title="fucking coward"
+                    v-bind="buttonProps"
                     >cancel</BaseButton
                 >
                 <BaseButton
@@ -35,8 +34,7 @@
                     type="submit"
                     :disabled="!canSubmit"
                     title="send that silly shit, bro"
-                    :size="isMobile ? 'small' : 'medium'"
-                    :style="{ width: '100%' }"
+                    v-bind="buttonProps"
                     >update</BaseButton
                 >
             </div>
@@ -46,8 +44,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 
 const emit = defineEmits<{
     (e: "close"): void;
@@ -59,9 +56,16 @@ const props = defineProps<{
     currentUsername: string;
 }>();
 
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const localUsername = ref(props.currentUsername);
+
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? "small" : "medium",
+        style: { width: "100%" },
+    };
+});
 
 watch(
     () => props.open,

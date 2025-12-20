@@ -48,13 +48,12 @@
 </template>
 
 <script setup lang="ts">
-import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import { ref, computed } from "vue";
+import { useDisplay } from "vuetify";
+import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import type { SubmitReviewArgs, Book, BookshelfBook } from "@/types";
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
 
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const props = defineProps<{
     book: Book | BookshelfBook;
@@ -74,7 +73,7 @@ const onSubmit = async () =>
     });
 
 const buttonSize = computed(() => {
-    return isMobile ? "small" : "medium";
+    return mobile.value ? "small" : "medium";
 });
 </script>
 

@@ -12,7 +12,7 @@
                         v-if="hasFinishedBook"
                         title="you can't fix stupid, but I suppose you can try"
                         :icon="faMarker"
-                        :size="isMobile ? 'small' : 'medium'"
+                        :size="mobile ? 'small' : 'medium'"
                         :handleClick="() => setShowReviewModal(true)"
                     />
                 </div>
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import CurrentUserProgress from "./UserProgress.vue";
 import CurrentBookUserReview from "./UserReview.vue";
 import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
@@ -82,9 +82,8 @@ const { loggedInUser } = useUserStore();
 const { addReview, updateUserProgress } = useUser();
 const { createPalaverEntry } = usePalaver();
 
-const uiStore = useUIStore();
-const { showAlert } = uiStore;
-const { isMobile } = storeToRefs(uiStore);
+const { mobile } = useDisplay();
+const { showAlert } = useUIStore();
 
 const loadingMessage = ref("");
 const showRateAndReviewModal = ref(false);
