@@ -25,25 +25,36 @@
             </div>
         </div>
 
-        <div v-if="loading" class="spinner-container">
-            <SkeletonLoader
-                :count="5"
-                type="list-item-avatar-two-line"
-                :height="76"
-                tone="blue"
-            />
-        </div>
+        <Transition name="fade-slide" mode="out-in">
+            <div v-if="loading" key="loading">
+                <SkeletonLoader
+                    :count="5"
+                    type="list-item-avatar-two-line"
+                    :height="76"
+                    tone="blue"
+                />
+            </div>
 
-        <div v-if="showResults && !loading" class="results">
-            <p class="results-title">pick the right prose for ya, bro:</p>
-            <V2FormResult
-                v-for="(result, index) in results"
-                :key="`${result.title}-${result.author}`"
-                :result="result"
-                :selected="selectedResultIndex === index"
-                @selectResult="selectResult(result)"
-            />
-        </div>
+            <div v-else-if="showResults" key="results" class="results">
+                <p class="results-title">pick the right prose for ya, bro:</p>
+                <V2FormResult
+                    v-for="(result, index) in results"
+                    :key="`${result.title}-${result.author}`"
+                    :result="result"
+                    :selected="selectedResultIndex === index"
+                    @selectResult="selectResult(result)"
+                />
+            </div>
+
+            <div
+                v-else-if="!showResults && !bookSelected"
+                key="empty"
+                class="no-book-details"
+            >
+                <p>enter a title and we’ll divine some books</p>
+                <span style="color: var(--accent-fuschia)">#godsplan</span>
+            </div>
+        </Transition>
 
         <template v-if="bookSelected && !loading">
             <div class="form-row">
@@ -114,14 +125,6 @@
                 />
             </div>
         </template>
-
-        <div
-            v-if="!showResults && !bookSelected && !loading"
-            class="no-book-details"
-        >
-            <p>enter a title and we’ll divine some books</p>
-            <span style="color: var(--accent-fuschia)">#godsplan</span>
-        </div>
 
         <FormActionsV2
             v-if="bookSelected && !loading"
@@ -374,14 +377,6 @@ onBeforeUnmount(() => {
     width: 100%;
 }
 
-.spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 200px;
-}
-
 .label {
     font-size: 1.25rem;
     font-weight: 400;
@@ -434,6 +429,19 @@ onBeforeUnmount(() => {
     color: var(--main-text);
     opacity: 0.85;
     font-style: italic;
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+    opacity: 0;
+    transform: translateY(8px);
 }
 
 @media (max-width: 768px) {
