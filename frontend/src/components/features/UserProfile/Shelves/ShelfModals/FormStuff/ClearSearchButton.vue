@@ -5,6 +5,7 @@
         :size="mobile ? 'small' : 'medium'"
         color="red"
         title="clear search"
+        type="button"
         :handleClick="onClick"
     />
 </template>
