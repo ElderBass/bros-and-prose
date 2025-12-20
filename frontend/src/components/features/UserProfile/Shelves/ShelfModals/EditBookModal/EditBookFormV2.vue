@@ -82,10 +82,13 @@
             </div>
         </template>
 
-        <div v-if="loading" class="spinner-container">
-            <LoadingSpinner size="medium" message="updating book..." />
-        </div>
-
+        <SkeletonLoader
+            v-if="loading"
+            :count="5"
+            type="list-item-avatar-two-line"
+            :height="76"
+            tone="blue"
+        />
         <FormActionsV2
             v-if="!loading"
             :canSubmit="canSubmit"
@@ -105,7 +108,7 @@ import type { BookshelfBook, Shelf } from "@/types";
 import TagPickerTrigger from "@/components/form/TagPicker/TagPickerTrigger.vue";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import ClearSearchButton from "../FormStuff/ClearSearchButton.vue";
-import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
+import SkeletonLoader from "@/components/ui/SkeletonLoader.vue";
 
 defineOptions({ name: "EditBookFormV2" });
 

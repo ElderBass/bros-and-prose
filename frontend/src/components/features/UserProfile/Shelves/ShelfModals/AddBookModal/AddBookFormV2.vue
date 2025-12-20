@@ -26,7 +26,12 @@
         </div>
 
         <div v-if="loading" class="spinner-container">
-            <LoadingSpinner size="medium" message="searching for book..." />
+            <SkeletonLoader
+                :count="5"
+                type="list-item-avatar-two-line"
+                :height="76"
+                tone="blue"
+            />
         </div>
 
         <div v-if="showResults && !loading" class="results">
@@ -142,6 +147,7 @@ import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import { v4 as uuid } from "uuid";
 import ClearSearchButton from "../FormStuff/ClearSearchButton.vue";
 import { EMPTY_SHELF_BOOK } from "@/constants";
+import SkeletonLoader from "@/components/ui/SkeletonLoader.vue";
 
 defineOptions({ name: "AddBookFormV2" });
 
