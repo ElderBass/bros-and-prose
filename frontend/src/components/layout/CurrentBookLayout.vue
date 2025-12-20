@@ -1,7 +1,7 @@
 <template>
     <div class="current-book-layout">
         <PageTitle title="current prose ferda bros" />
-        <div v-if="isMobile" class="layout-column">
+        <div v-if="mobile" class="layout-column">
             <slot name="current-book" />
             <slot name="user-progress" />
             <slot name="other-bros-progress" />
@@ -17,11 +17,10 @@
 </template>
 
 <script setup lang="ts">
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import PageTitle from "@/components/ui/PageTitle.vue";
 
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 </script>
 
 <style scoped>

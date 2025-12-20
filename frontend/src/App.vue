@@ -4,7 +4,6 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from "vue";
-import { useUIStore } from "./stores/ui";
 import ErrorBoundaryView from "./components/views/ErrorBoundaryView.vue";
 import { initApp } from "./setup";
 import { useLog } from "./composables/useLog";
@@ -74,8 +73,6 @@ onUnmounted(() => {
     window.removeEventListener("focus", onFocus);
     window.removeEventListener("pageshow", onPageShow);
     window.removeEventListener("online", onOnline);
-
-    useUIStore().cleanup();
 });
 </script>
 

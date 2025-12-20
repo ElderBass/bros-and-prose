@@ -16,16 +16,14 @@
                 <BaseButton
                     variant="outline-secondary"
                     @click="onClose"
-                    :size="isMobile ? 'small' : 'medium'"
-                    :style="{ width: isMobile ? '100%' : '75%' }"
+                    v-bind="buttonProps"
                     >cancel</BaseButton
                 >
                 <BaseButton
                     variant="outline"
                     @click="onConfirm"
                     :disabled="!localAvatar || localAvatar === currentAvatar"
-                    :size="isMobile ? 'small' : 'medium'"
-                    :style="{ width: isMobile ? '100%' : '75%' }"
+                    v-bind="buttonProps"
                     >update</BaseButton
                 >
             </div>
@@ -34,12 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
+import { useDisplay } from "vuetify";
 import AvatarSelector from "@/components/features/UserProfile/AvatarSelector.vue";
-import { useUIStore } from "@/stores/ui";
-import { storeToRefs } from "pinia";
-
-const { isMobile } = storeToRefs(useUIStore());
 
 const emit = defineEmits<{
     (e: "close"): void;
@@ -51,7 +46,16 @@ const props = defineProps<{
     currentAvatar: string;
 }>();
 
+const { mobile } = useDisplay();
+
 const localAvatar = ref(props.currentAvatar);
+
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? "small" : "medium",
+        style: { width: mobile.value ? "100%" : "75%" },
+    };
+});
 
 watch(
     () => props.open,

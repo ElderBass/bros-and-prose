@@ -15,7 +15,7 @@
                     v-model="updatedProgress"
                     id="manual-progress-input"
                     @update:modelValue="handleProgressChange"
-                    :size="isMobile ? 'small' : 'medium'"
+                    :size="mobile ? 'small' : 'medium'"
                     label="current page'"
                     :placeholder="updatedProgress"
                     type="number"
@@ -70,18 +70,17 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import ProgressSliderInput from "@/components/form/ProgressSliderInput.vue";
 import { useUserStore } from "@/stores/user";
 import { useBooksStore } from "@/stores/books";
-import { useUIStore } from "@/stores/ui";
 import { FINISHED_BOOK_PROGRESS } from "@/constants";
 import { convertToPercentage } from "@/utils";
 import ElementSwap from "@/components/transitions/ElementSwap.vue";
 
 const { loggedInUser } = useUserStore();
 const { currentBook } = useBooksStore();
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const updateModeEnabled = ref(false);
 const updatedProgress = ref(loggedInUser.currentBookProgress);
@@ -139,7 +138,7 @@ const updateButtonConfig = computed(() => {
 });
 
 const buttonSize = computed(() => {
-    return isMobile ? "small" : "medium";
+    return mobile.value ? "small" : "medium";
 });
 
 const userPercentage = computed(() => {
