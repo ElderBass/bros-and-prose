@@ -2,9 +2,7 @@
     <BookForm
         :mode="bookFormMode"
         titleLabel="gimme the title"
-        :searchDebounceMs="900"
         resultsTitle="beckon the future into the present..."
-        :tagsLabel="'tags (required)'"
         :validation="{
             requireTags: true,
             requireDescription: true,
@@ -47,7 +45,10 @@ import { capitalizeBookTitle } from "@/utils";
 import { storeToRefs } from "pinia";
 import { useFutureBooksStore } from "@/stores/futureBooks";
 import BookForm from "@/components/form/BookForm/index.vue";
-import type { BookFormMode } from "@/components/form/BookForm/types";
+import type {
+    BookFormMode,
+    BookFormValues,
+} from "@/components/form/BookForm/types";
 
 const { mobile } = useDisplay();
 const { modal } = storeToRefs(useFutureBooksStore());
@@ -90,16 +91,8 @@ const buttonProps = computed(() => ({
     style: mobile.value ? { width: "100%" } : {},
 }));
 
-const onSubmitInternal = async (values: {
-    title: string;
-    author: string;
-    yearPublished: string;
-    pages?: number;
-    tags: string[];
-    description: string;
-    imageSrc?: string;
-}) => {
-    const year = Number.parseInt(values.yearPublished, 10);
+const onSubmitInternal = async (values: BookFormValues) => {
+    const year = Number.parseInt(values.yearPublished.toString(), 10);
 
     let futureBookToSubmit: FutureBook;
     if (isEdit.value && formModal.value?.futureBook) {
@@ -113,6 +106,7 @@ const onSubmitInternal = async (values: {
             id: uuid(),
             title: capitalizeBookTitle(values.title),
             author: values.author,
+            pages: values.pages,
             description: values.description,
             yearPublished: Number.isFinite(year) ? year : 0,
             imageSrc: values.imageSrc || "",

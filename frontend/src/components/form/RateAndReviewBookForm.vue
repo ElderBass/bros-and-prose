@@ -1,5 +1,8 @@
 <template>
-    <form class="rate-and-review-book-form" @submit.prevent="onSubmit">
+    <form
+        class="rate-and-review-book-form"
+        @submit.prevent="$emit('submit', $event)"
+    >
         <div class="heading">
             <p class="heading-text">leave a review for</p>
             <div class="book-info">
@@ -8,38 +11,25 @@
                 <span class="book-author">{{ book?.author }}</span>
             </div>
         </div>
-        <div class="star-rating-container">
-            <BookRatingInput v-model="starRating" size="medium" />
-        </div>
-        <div class="review-comment-input-container">
-            <label for="review-comment-input">
-                got more to say? (optional)
-            </label>
-            <textarea
-                rows="8"
-                v-model="reviewComment"
-                id="review-comment-input"
-                class="review-comment-input"
-                placeholder="remember that brevity is the soul of wit, you twat..."
-                :disabled="false"
-            />
-        </div>
+        <ReviewFormInputs
+            :rating="rating"
+            :comment="comment"
+            @update="emit('update', $event)"
+        />
         <div class="form-actions">
             <BaseButton
-                :size="buttonSize"
-                @click="handleCancel"
+                @click="$emit('cancel', $event)"
                 variant="outline-secondary"
-                style="width: 100%"
                 title="back out of this shitty review"
+                v-bind="buttonProps"
             >
                 cancel
             </BaseButton>
             <BaseButton
-                :size="buttonSize"
                 type="submit"
                 variant="primary"
-                style="width: 100%"
                 title="fucking send that shit, bro"
+                v-bind="buttonProps"
             >
                 submit
             </BaseButton>
@@ -48,32 +38,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useDisplay } from "vuetify";
-import BookRatingInput from "@/components/form/BookRatingInput.vue";
-import type { SubmitReviewArgs, Book, BookshelfBook } from "@/types";
+import ReviewFormInputs from "@/components/form/ReviewFormInputs.vue";
+import type { Book, BookshelfBook, SubmitReviewArgs } from "@/types";
 
 const { mobile } = useDisplay();
 
-const props = defineProps<{
+defineProps<{
     book: Book | BookshelfBook;
     rating: number;
     comment: string;
-    handleCancel: () => void;
-    handleSubmit: (review: SubmitReviewArgs) => Promise<void>;
 }>();
 
-const starRating = ref(props.rating);
-const reviewComment = ref(props.comment);
+const emit = defineEmits<{
+    (e: "update", value: SubmitReviewArgs): void;
+    (e: "submit", value: Event): void;
+    (e: "cancel", value: Event): void;
+}>();
 
-const onSubmit = async () =>
-    await props.handleSubmit({
-        rating: starRating.value,
-        reviewComment: reviewComment.value,
-    });
-
-const buttonSize = computed(() => {
-    return mobile.value ? "small" : "medium";
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? "small" : "medium",
+        style: { width: "100%" },
+    };
 });
 </script>
 

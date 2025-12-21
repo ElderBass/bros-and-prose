@@ -8,11 +8,10 @@
     <ConfirmFinishCurrentBookModal />
     <UserRateAndReviewModal
         v-if="reviewModalOpen && selectedBook"
-        :showReviewModal="reviewModalOpen"
+        :open="reviewModalOpen"
         :book="selectedBook"
-        :bookReview="reviewPrefill"
-        :onClose="closeModal"
-        :onReviewSubmit="onReviewSubmit"
+        :reviewPrefill="reviewPrefill"
+        @close="closeModal"
     />
 </template>
 
@@ -28,11 +27,8 @@ import ConfirmMoveBookModal from "./ConfirmMoveModal.vue";
 import ConfirmFinishCurrentBookModal from "./ConfirmFinishCurrentBook.vue";
 import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
-import { useUIStore } from "@/stores/ui";
-import { useUser } from "@/composables/useUser";
-import { useLog } from "@/composables/useLog";
-import type { BookshelfBook, SubmitReviewArgs } from "@/types";
-import { DEFAULT_REVIEW, QUICK_ERROR } from "@/constants";
+import type { SubmitReviewArgs } from "@/types";
+import { DEFAULT_REVIEW } from "@/constants";
 import { useUserStore } from "@/stores/user";
 
 defineOptions({
@@ -41,11 +37,8 @@ defineOptions({
 
 const shelfModalStore = useShelfModalStore();
 const { reviewModalOpen, selectedBook } = storeToRefs(shelfModalStore);
-const { isAppLoading } = storeToRefs(useUIStore());
 const { loggedInUser } = storeToRefs(useUserStore());
 
-const { showAlert } = useUIStore();
-const { addReview } = useUser();
 const { closeModal } = shelfModalStore;
 
 const reviewPrefill = computed<SubmitReviewArgs>(() => {
@@ -55,23 +48,4 @@ const reviewPrefill = computed<SubmitReviewArgs>(() => {
     if (!existing) return DEFAULT_REVIEW;
     return { rating: existing.rating, reviewComment: existing.reviewComment };
 });
-
-const onReviewSubmit = async (args: SubmitReviewArgs) => {
-    try {
-        isAppLoading.value = true;
-        await addReview(args, selectedBook.value as BookshelfBook);
-    } catch (error) {
-        console.error("Error submitting review:", error);
-        await useLog().error(`Error in onReviewSubmit: ${error}`);
-        showAlert(
-            QUICK_ERROR([
-                "oof, bud, this error happend: ",
-                (error as Error).message,
-            ])
-        );
-    } finally {
-        closeModal();
-        isAppLoading.value = false;
-    }
-};
 </script>

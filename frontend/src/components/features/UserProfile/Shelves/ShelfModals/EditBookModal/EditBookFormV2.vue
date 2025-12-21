@@ -30,8 +30,7 @@ import { getShelfSuccessMessage } from "@/utils";
 import type { BookshelfBook, Shelf } from "@/types";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import BookForm from "@/components/form/BookForm/index.vue";
-
-defineOptions({ name: "EditBookFormV2" });
+import type { BookFormValues } from "@/components/form/BookForm/types";
 
 const props = defineProps<{
     book: BookshelfBook;
@@ -57,17 +56,9 @@ const initialValues = computed(() => ({
     imageSrc: props.book.imageSrc || "",
 }));
 
-const onSubmit = async (values: {
-    title: string;
-    author: string;
-    yearPublished: string;
-    pages?: number;
-    tags: string[];
-    description: string;
-    imageSrc?: string;
-}) => {
+const onSubmit = async (values: BookFormValues) => {
     try {
-        const year = Number.parseInt(values.yearPublished, 10);
+        const year = Number.parseInt(values.yearPublished.toString(), 10);
 
         const updatedBook: BookshelfBook = {
             id: props.book.id,
@@ -107,8 +98,3 @@ const onSubmit = async (values: {
     }
 };
 </script>
-
-<style scoped>
-@media (max-width: 768px) {
-}
-</style>

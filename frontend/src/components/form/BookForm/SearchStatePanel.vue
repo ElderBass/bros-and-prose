@@ -1,11 +1,14 @@
 <template>
     <Transition name="fade-slide" mode="out-in">
-        <div v-if="loading" key="loading">
-            <slot name="loading" />
-        </div>
+        <SearchSkeletonLoader v-if="loading" />
 
         <div v-else-if="showResults" key="results">
-            <slot name="results" />
+            <ResultsList
+                :results="results"
+                :selectedResultId="selectedResultId"
+                :title="title"
+                @select="emit('select', $event)"
+            />
         </div>
 
         <div v-else-if="showEmpty" class="empty-panel" key="empty">
@@ -18,16 +21,37 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(
+import { computed } from "vue";
+import SearchSkeletonLoader from "./SearchSkeletonLoader.vue";
+import ResultsList from "./ResultsList.vue";
+import type { BookFormSearchResult } from "./types";
+
+const props = withDefaults(
     defineProps<{
         loading: boolean;
-        showResults: boolean;
-        showEmpty: boolean;
+        results: BookFormSearchResult[];
+        selectedResultId: string | null;
+        manualMode: boolean;
+        title?: string;
     }>(),
     {
-        showEmpty: true,
+        manualMode: false,
+        title: "pick the right prose for ya, bro:",
     }
 );
+
+const emit = defineEmits<{
+    (e: "select", result: BookFormSearchResult): void;
+}>();
+
+const showResults = computed(() => {
+    return props.results.length > 0 && !props.selectedResultId;
+});
+
+const showEmpty = computed(() => {
+    // Show the empty panel only when we're not showing results and not in manual mode.
+    return !showResults.value && !props.manualMode && !props.selectedResultId;
+});
 </script>
 
 <style scoped>

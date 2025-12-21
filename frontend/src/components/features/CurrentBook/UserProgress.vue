@@ -17,9 +17,9 @@
                     @update:modelValue="handleProgressChange"
                     :size="mobile ? 'small' : 'medium'"
                     label="current page'"
-                    :placeholder="updatedProgress"
+                    :placeholder="updatedProgress.toString()"
                     type="number"
-                    style="text-align: right; min-width: 80px; max-width: 120px"
+                    :style="inputStyle"
                     containerStyle="width: auto"
                 />
             </ElementSwap>
@@ -86,6 +86,27 @@ const updateModeEnabled = ref(false);
 const updatedProgress = ref(loggedInUser.currentBookProgress);
 const initialProgress = ref(loggedInUser.currentBookProgress);
 
+const props = defineProps<{
+    totalPages: number;
+    setShowReviewModal: (show: boolean) => void;
+    handleUpdate: (updatedProgress: number) => Promise<void>;
+}>();
+
+const updateButtonConfig = computed(() => {
+    return {
+        label: updateModeEnabled.value ? "confirm" : "update",
+        variant: updateModeEnabled.value ? "outline-success" : "outline",
+    };
+});
+
+const buttonSize = computed(() => {
+    return mobile.value ? "small" : "medium";
+});
+
+const userPercentage = computed(() => {
+    return convertToPercentage(updatedProgress.value, props.totalPages);
+});
+
 // Watch for changes in the store and update local refs
 watch(
     () => loggedInUser.currentBookProgress,
@@ -100,11 +121,13 @@ watch(
     }
 );
 
-const props = defineProps<{
-    totalPages: number;
-    setShowReviewModal: (show: boolean) => void;
-    handleUpdate: (updatedProgress: number) => Promise<void>;
-}>();
+const inputStyle = computed(() => {
+    return {
+        textAlign: "right",
+        minWidth: "80px",
+        maxWidth: "120px",
+    };
+});
 
 const handleProgressChange = (value: number) => {
     if (value >= initialProgress.value) {
@@ -129,21 +152,6 @@ const onCancelClick = () => {
     setUpdateModeEnabled(false);
     updatedProgress.value = loggedInUser.currentBookProgress;
 };
-
-const updateButtonConfig = computed(() => {
-    return {
-        label: updateModeEnabled.value ? "confirm" : "update",
-        variant: updateModeEnabled.value ? "outline-success" : "outline",
-    };
-});
-
-const buttonSize = computed(() => {
-    return mobile.value ? "small" : "medium";
-});
-
-const userPercentage = computed(() => {
-    return convertToPercentage(updatedProgress.value, props.totalPages);
-});
 </script>
 
 <style scoped>
