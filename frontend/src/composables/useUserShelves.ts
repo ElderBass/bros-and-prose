@@ -1,6 +1,6 @@
 import { useUser } from "./useUser";
 import { useUserStore } from "@/stores/user";
-import type { BookshelfBook, User, Shelf } from "@/types";
+import type { BookshelfBook, User, Shelf, SubmitReviewArgs } from "@/types";
 import { useLog } from "./useLog";
 import { getUserShelves } from "@/utils/bookshelfUtils";
 import { useShelfModalStore } from "@/stores/shelfModal";
@@ -140,8 +140,14 @@ export const useUserShelves = () => {
         return updatedUser;
     };
 
-    const addToHaveRead = async (book: BookshelfBook): Promise<User | null> => {
+    const addToHaveRead = async (
+        book: BookshelfBook,
+        review?: SubmitReviewArgs
+    ): Promise<User | null> => {
         const updatedUser = await addToShelf("haveRead", book);
+        if (review) {
+            await useUser().addReview(review, book);
+        }
         return updatedUser;
     };
 

@@ -113,6 +113,7 @@ export const useUser = () => {
         try {
             const existingReview = loggedInUser.value?.reviews?.[book.id];
             const newReview = buildReview(reviewArgs, book, existingReview);
+
             await useLog().info(
                 `newReview in addReview: reviewer = ${loggedInUser.value.username} | review = ${newReview}`
             );

@@ -1,16 +1,8 @@
-import type { BookshelfBook } from "@/types";
+import type { BookshelfBook, FutureBook } from "@/types";
 
 export type BookFormMode = "add" | "edit" | "future" | "future-edit";
 
-export type BookFormValues = {
-    title: string;
-    author: string;
-    yearPublished: string;
-    pages?: number;
-    tags: string[];
-    description: string;
-    imageSrc?: string;
-};
+export type BookFormValues = BookshelfBook | FutureBook;
 
 export type BookFormValidation = {
     requireTags?: boolean;

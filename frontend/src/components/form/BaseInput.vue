@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, type CSSProperties } from "vue";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const props = withDefaults(
@@ -46,7 +46,7 @@ const props = withDefaults(
         disabled?: boolean;
         prependInnerIcon?: string;
         size?: "small" | "medium" | "large";
-        style?: string;
+        style?: string | CSSProperties;
         containerStyle?: string;
     }>(),
     {

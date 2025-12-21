@@ -1,11 +1,10 @@
 <template>
     <form class="form" @submit.prevent="handleSubmit">
         <TitleSearchRow
-            v-model="title"
-            :inputId="ids.title"
+            v-model="book.title"
+            :mode="mode"
             :titleLabel="titleLabel"
             :noResults="manualMode"
-            :placeholder="titlePlaceholder"
             :disabled="isEditMode"
             @clear="resetAll"
         />
@@ -13,43 +12,22 @@
         <SearchStatePanel
             v-if="showSearchStatePanel"
             :loading="loading"
-            :showResults="showResults"
-            :showEmpty="showEmptyPanel"
-        >
-            <template #loading>
-                <slot name="loading">
-                    <SearchSkeletonLoader />
-                </slot>
-            </template>
+            :results="results"
+            :selectedResultId="selectedResult?.id ?? null"
+            :title="resultsTitle"
+            :manualMode="manualMode"
+            @select="onSelectResult"
+        />
 
-            <template #results>
-                <ResultsList
-                    :results="results"
-                    :selectedResultId="selectedResult?.id ?? null"
-                    :title="resultsTitle"
-                    @select="onSelectResult"
-                />
-            </template>
-        </SearchStatePanel>
-
-        <template v-if="detailsVisible && !loading">
-            <BookDetailsFields
-                :mode="mode"
-                :isEdit="isEditMode"
-                :author="author"
-                :yearPublished="yearPublished"
-                :pages="pages"
-                :tags="tags"
-                :description="description"
-                :tagsLabel="tagsLabel"
-                :idPrefix="ids.prefix"
-                @update:author="author = $event"
-                @update:yearPublished="yearPublished = $event"
-                @update:pages="pages = $event"
-                @update:tags="tags = $event"
-                @update:description="description = $event"
-            />
-        </template>
+        <BookDetailsFields
+            v-if="detailsVisible && !loading"
+            :mode="mode"
+            :isEdit="isEditMode"
+            :book="book"
+            :review="review"
+            @update:review="review = $event"
+            @update:book="book = $event"
+        />
 
         <slot
             name="actions"
@@ -63,10 +41,8 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch } from "vue";
-import SearchSkeletonLoader from "./SearchSkeletonLoader.vue";
 import TitleSearchRow from "./TitleSearchRow.vue";
 import SearchStatePanel from "./SearchStatePanel.vue";
-import ResultsList from "./ResultsList.vue";
 import BookDetailsFields from "./BookDetailsFields.vue";
 import type {
     BookFormMode,
@@ -75,6 +51,9 @@ import type {
     BookFormValues,
 } from "./types";
 import { useBooks } from "@/composables/useBooks";
+import type { BookshelfBook, FutureBook, SubmitReviewArgs } from "@/types";
+import { DEFAULT_REVIEW } from "@/constants";
+import { getInitialBookValues, showReviewForm } from "./utils";
 
 defineOptions({ name: "BookForm" });
 
@@ -82,39 +61,29 @@ const props = withDefaults(
     defineProps<{
         mode: BookFormMode;
         titleLabel: string;
-        titlePlaceholder?: string;
         resultsTitle?: string;
-        tagsLabel?: string;
         initialValues?: Partial<BookFormValues>;
         validation?: BookFormValidation;
-        mapResultToValues?: (
-            r: BookFormSearchResult
-        ) => Partial<BookFormValues>;
-        onSubmit: (values: BookFormValues) => Promise<void>;
+        onSubmit: (
+            values: BookFormValues,
+            review?: SubmitReviewArgs
+        ) => Promise<void>;
         dirtyKeys?: Array<keyof BookFormValues>;
     }>(),
     {
-        titlePlaceholder: "book title",
-        tagsLabel: undefined,
         initialValues: () => ({}),
         validation: undefined,
-        mapResultToValues: undefined,
         dirtyKeys: () => ["tags", "description", "pages"],
     }
 );
 
-const emit = defineEmits<{
-    (e: "submitted"): void;
-}>();
+const initialValuesResolved = getInitialBookValues(props.initialValues);
 
 // Form state
-const title = ref(props.initialValues?.title ?? "");
-const author = ref(props.initialValues?.author ?? "");
-const yearPublished = ref(props.initialValues?.yearPublished ?? "");
-const pages = ref<number | undefined>(props.initialValues?.pages);
-const tags = ref<string[]>(props.initialValues?.tags ?? []);
-const description = ref(props.initialValues?.description ?? "");
-const imageSrc = ref<string | undefined>(props.initialValues?.imageSrc);
+const book = ref<BookshelfBook | FutureBook>(
+    initialValuesResolved as BookshelfBook | FutureBook
+);
+const review = ref(DEFAULT_REVIEW);
 
 const loading = ref(false);
 const results = ref<BookFormSearchResult[]>([]);
@@ -123,11 +92,6 @@ const manualMode = ref(false); // "no results" -> allow manual entry
 const bookSelected = ref(false);
 
 const { searchGoogleByTitle } = useBooks();
-
-const ids = computed(() => ({
-    prefix: `book-form-${props.mode}`,
-    title: `book-form-${props.mode}-title`,
-}));
 
 const isEditMode = computed(() => {
     return props.mode === "edit" || props.mode === "future-edit";
@@ -149,72 +113,42 @@ const detailsVisible = computed(() => {
     return Boolean(selectedResult.value) || manualMode.value;
 });
 
-const showResults = computed(() => {
-    return results.value.length > 0 && !selectedResult.value;
-});
-
-const showEmptyPanel = computed(() => {
-    // Show the empty panel only when we're not showing results and not in manual mode.
-    return !showResults.value && !manualMode.value && !selectedResult.value;
-});
-
 const showSearchStatePanel = computed(() => {
     if (props.mode === "edit" || props.mode === "future-edit") return false;
     if (bookSelected.value) return false;
     return true;
 });
 
-const values = computed<BookFormValues>(() => ({
-    title: title.value.trim(),
-    author: author.value.trim(),
-    yearPublished: yearPublished.value.trim(),
-    pages: pages.value,
-    tags: tags.value,
-    description: description.value,
-    imageSrc: imageSrc.value,
-}));
-
 const canSubmit = computed(() => {
     if (isEditMode.value) return !isDirty.value;
 
     const v = validationResolved.value;
-    if (!values.value.title) return false;
-    if (!values.value.author) return false;
-    if (!values.value.yearPublished) return false;
-    if (v.requireTags && values.value.tags.length === 0) return false;
-    if (v.requireDescription && !values.value.description.trim()) return false;
+    if (!book.value.title) return false;
+    if (!book.value.author) return false;
+    if (!book.value.yearPublished) return false;
+    if (v.requireTags && book.value.tags?.length === 0) return false;
+    if (v.requireDescription && !book.value.description?.trim()) return false;
     return true;
 });
 
 const isDirty = computed(() => {
-    const initial: BookFormValues = {
-        title: props.initialValues?.title ?? "",
-        author: props.initialValues?.author ?? "",
-        yearPublished: props.initialValues?.yearPublished ?? "",
-        pages: props.initialValues?.pages,
-        tags: props.initialValues?.tags ?? [],
-        description: props.initialValues?.description ?? "",
-        imageSrc: props.initialValues?.imageSrc,
-    };
     return props.dirtyKeys.some((k) => {
-        const a = (values.value as BookFormValues)[k];
-        const b = (initial as BookFormValues)[k];
+        const a = (book.value as BookFormValues)[k];
+        const b = (initialValuesResolved as BookFormValues)[k];
         return JSON.stringify(a) !== JSON.stringify(b);
     });
 });
 
 const resetAll = (resetResults = true) => {
     if (resetResults) {
-        title.value = props.initialValues?.title ?? "";
+        book.value.title = "";
         results.value = [];
     }
 
-    author.value = props.initialValues?.author ?? "";
-    yearPublished.value = props.initialValues?.yearPublished ?? "";
-    pages.value = props.initialValues?.pages;
-    tags.value = props.initialValues?.tags ?? [];
-    description.value = props.initialValues?.description ?? "";
-    imageSrc.value = props.initialValues?.imageSrc;
+    book.value = {
+        ...initialValuesResolved,
+        title: book.value.title,
+    };
 
     selectedResult.value = null;
     manualMode.value = false;
@@ -226,35 +160,22 @@ const onSelectResult = (result: BookFormSearchResult) => {
     selectedResult.value = result;
     manualMode.value = false;
 
-    const mapped: Partial<BookFormValues> = props.mapResultToValues
-        ? props.mapResultToValues(result)
-        : {
-              title: result.title || "",
-              author: result.author || "",
-              yearPublished: result.yearPublished
-                  ? String(result.yearPublished)
-                  : "",
-              pages: result.pages,
-              imageSrc: result.imageSrc || "",
-              description: result.description || "",
-          };
+    const mapped: Partial<BookFormValues> = {
+        title: result.title || "",
+        author: result.author || "",
+        yearPublished: result.yearPublished,
+        pages: result.pages,
+        imageSrc: result.imageSrc,
+        description: result.description,
+    };
 
-    title.value = mapped.title ?? title.value;
-    author.value = mapped.author ?? author.value;
-    yearPublished.value = mapped.yearPublished ?? yearPublished.value;
-    pages.value =
-        typeof mapped.pages !== "undefined" ? mapped.pages : pages.value;
-    imageSrc.value = mapped.imageSrc ?? imageSrc.value;
-
-    if (!description.value.trim() && mapped.description) {
-        description.value = mapped.description;
-    }
+    book.value = { ...book.value, ...mapped };
 };
 
 const runSearch = async () => {
     if (isEditMode.value || Boolean(selectedResult.value)) return;
 
-    const query = title.value.trim();
+    const query = book.value.title.trim();
     if (!query) {
         results.value = [];
         selectedResult.value = null;
@@ -281,7 +202,7 @@ const runSearch = async () => {
 let searchTimer: number | null = null;
 
 watch(
-    title,
+    () => book.value.title,
     () => {
         if (isEditMode.value) return;
 
@@ -307,7 +228,7 @@ onBeforeUnmount(() => {
 const handleSubmit = async () => {
     try {
         loading.value = true;
-        const toSubmit = { ...values.value };
+        const toSubmit = { ...book.value };
 
         if (
             !toSubmit.description?.trim() &&
@@ -315,10 +236,13 @@ const handleSubmit = async () => {
         ) {
             toSubmit.description = selectedResult.value.description;
         }
-        await props.onSubmit(toSubmit);
-        emit("submitted");
-    } finally {
-        loading.value = false;
+        if (showReviewForm(props.mode)) {
+            await props.onSubmit(toSubmit, review.value);
+        } else {
+            await props.onSubmit(toSubmit, undefined);
+        }
+    } catch (error) {
+        console.error("error in handleSubmit", error);
     }
 };
 </script>

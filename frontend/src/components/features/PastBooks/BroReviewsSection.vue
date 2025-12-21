@@ -1,10 +1,5 @@
 <template>
-    <LoadingSpinner
-        v-if="loadingMessage.length"
-        size="medium"
-        :message="loadingMessage"
-    />
-    <BaseCard v-else shadowColor="green" size="medium">
+    <BaseCard shadowColor="green" size="medium">
         <h3>what the bros thought</h3>
         <div class="bro-reviews-container">
             <BroProgressItem
@@ -33,33 +28,29 @@
     />
     <UserReviewModal
         v-if="showUserReviewModal"
-        :showReviewModal="showUserReviewModal"
+        :open="showUserReviewModal"
         :book="book"
-        :bookReview="selectedBroReview"
-        :onReviewSubmit="onReviewSubmit"
-        :onClose="() => setShowUserReviewModal(false)"
+        :reviewPrefill="selectedBroReview"
+        @lose="() => setShowUserReviewModal(false)"
     />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
+import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
-import type { Book, BroReview, Review, SubmitReviewArgs } from "@/types";
+import type { Book, BroReview, Review } from "@/types";
 import BroProgressItem from "../common/BroProgressItem.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import UserReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
 import { getRatingReviewString, getAvatar } from "@/utils";
 import { useUserStore } from "@/stores/user";
-import { useUser } from "@/composables/useUser";
-import { DEFAULT_RATING } from "@/constants";
-import { storeToRefs } from "pinia";
 
 const { loggedInUser } = storeToRefs(useUserStore());
-const { addReview } = useUser();
 
 const { mobile } = useDisplay();
 
-const props = defineProps<{
+defineProps<{
     book: Book;
     broReviews: BroReview[];
 }>();
@@ -68,11 +59,6 @@ const showOtherBroReviewModal = ref(false);
 const selectedBroName = ref("");
 const selectedBroReview = ref({} as Review);
 const showUserReviewModal = ref(false);
-const loadingMessage = ref("");
-const bookReview = ref({
-    rating: DEFAULT_RATING,
-    reviewComment: "",
-});
 const loggedInUserName = ref("");
 
 const setShowOtherBroReviewModal = (value: boolean) => {
@@ -92,17 +78,6 @@ const onPeepReviewClick = (broReview: BroReview) => {
         selectedBroReview.value = broReview.review;
         setShowOtherBroReviewModal(true);
     }
-};
-
-const onReviewSubmit = async ({ rating, reviewComment }: SubmitReviewArgs) => {
-    setShowUserReviewModal(false);
-    loadingMessage.value = "updating your shitty review...";
-    const udpatedUser = await addReview({ rating, reviewComment }, props.book);
-
-    if (udpatedUser) {
-        bookReview.value = udpatedUser.reviews[props.book.id];
-    }
-    loadingMessage.value = "";
 };
 
 onMounted(() => {

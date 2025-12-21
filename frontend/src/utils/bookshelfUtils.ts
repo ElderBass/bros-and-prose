@@ -12,6 +12,7 @@ import {
     faBookOpenReader,
 } from "@fortawesome/free-solid-svg-icons";
 import type { ModalType } from "@/stores/shelfModal";
+import { useShelfModalStore } from "@/stores/shelfModal";
 
 export const buildBookShelfEntry = (
     bookData: OpenLibraryBookResult,
@@ -105,4 +106,20 @@ export const getUserShelves = (user: User) => {
             Object.values(user.wantToRead || {}).filter((b) => b?.id) || [],
         haveRead: Object.values(user.haveRead || {}).filter((b) => b?.id) || [],
     };
+};
+
+export const getCurrentShelf = () => {
+    return useShelfModalStore().selectedBookShelf;
+};
+
+export const isHaveReadShelf = () => {
+    return getCurrentShelf() === "haveRead";
+};
+
+export const isWantToReadShelf = () => {
+    return getCurrentShelf() === "wantToRead";
+};
+
+export const isCurrentlyReadingShelf = () => {
+    return getCurrentShelf() === "currentlyReading";
 };

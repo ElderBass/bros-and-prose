@@ -1,12 +1,12 @@
 <template>
     <div class="form-container">
-        <label :for="inputId" class="title-label">
+        <label :for="`book-form-${mode}-title`" class="title-label">
             {{ resolvedTitleLabel }}
         </label>
         <div class="search-row">
             <BaseInput
                 :modelValue="modelValue"
-                :id="inputId"
+                :id="`book-form-${mode}-title`"
                 label="title"
                 size="medium"
                 :placeholder="placeholder"
@@ -21,11 +21,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ClearSearchButton from "@/components/features/UserProfile/Shelves/ShelfModals/FormStuff/ClearSearchButton.vue";
+import type { BookFormMode } from "./types";
 
 const props = withDefaults(
     defineProps<{
         modelValue: string;
-        inputId: string;
+        mode: BookFormMode;
         titleLabel: string;
         noResults?: boolean;
         placeholder?: string;
@@ -47,7 +48,7 @@ const emit = defineEmits<{
 
 const resolvedTitleLabel = computed(() => {
     if (props.noResults) return "book not found; you're on your own";
-    return props.titleLabel;
+    return "search by title";
 });
 
 const emitClear = () => emit("clear");

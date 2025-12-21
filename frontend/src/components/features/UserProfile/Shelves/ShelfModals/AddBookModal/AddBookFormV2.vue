@@ -4,9 +4,6 @@
         :titleLabel="shelfMessage"
         :searchByTitle="searchGoogleByTitle"
         :resultsTitle="'pick the right prose for ya, bro:'"
-        :tagsLabel="'tags (optional)'"
-        :descriptionLabel="'comment (optional)'"
-        :descriptionPlaceholder="'add your thoughts about this book...'"
         :validation="{
             requireTags: false,
             requireDescription: false,
@@ -30,8 +27,9 @@ import { useBooks } from "@/composables/useBooks";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { capitalizeBookTitle, getShelfSuccessMessage } from "@/utils";
-import type { BookshelfBook, Shelf } from "@/types/books";
+import type { BookshelfBook, Shelf, SubmitReviewArgs } from "@/types";
 import { useLog } from "@/composables/useLog";
+import type { BookFormValues } from "@/components/form/BookForm/types";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import { v4 as uuid } from "uuid";
 import { EMPTY_SHELF_BOOK } from "@/constants";
@@ -52,32 +50,27 @@ const { openBookActionSuccess, openAddBookError } = useShelfModalStore();
 
 const formKey = ref(0);
 
-const onSubmit = async (values: {
-    title: string;
-    author: string;
-    yearPublished: string;
-    pages?: number;
-    tags: string[];
-    description: string;
-    imageSrc?: string;
-}) => {
+const onSubmit = async (
+    bookValues: BookFormValues,
+    review?: SubmitReviewArgs
+) => {
     try {
-        const year = Number.parseInt(values.yearPublished, 10);
+        const year = Number.parseInt(bookValues.yearPublished.toString(), 10);
         const book: BookshelfBook = {
             id: uuid(),
-            title: capitalizeBookTitle(values.title),
-            author: values.author.trim(),
+            title: capitalizeBookTitle(bookValues.title),
+            author: bookValues.author.trim(),
             yearPublished: Number.isFinite(year) ? year : 0,
-            imageSrc: values.imageSrc || "",
-            pages: values.pages,
-            tags: values.tags,
-            description: values.description.trim(),
+            imageSrc: bookValues.imageSrc || "",
+            pages: bookValues.pages,
+            tags: bookValues.tags || [],
+            description: bookValues.description.trim(),
         };
 
         if (props.selectedShelf === "wantToRead") {
             await addToWantToRead(book);
         } else if (props.selectedShelf === "haveRead") {
-            await addToHaveRead(book);
+            await addToHaveRead(book, review);
         } else if (props.selectedShelf === "currentlyReading") {
             await addToCurrentlyReading(book);
         } else {
@@ -98,5 +91,3 @@ const onSubmit = async (values: {
     }
 };
 </script>
-
-<style scoped></style>
