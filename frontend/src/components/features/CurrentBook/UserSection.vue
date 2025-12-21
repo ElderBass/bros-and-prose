@@ -97,10 +97,6 @@ const setShowAddCommentModal = (show: boolean) => {
 };
 
 const hasFinishedBook = computed(() => {
-    console.log(
-        "KERTWANGING hasFinishedBook",
-        loggedInUser.value.currentBookProgress
-    );
     return loggedInUser.value.currentBookProgress === FINISHED_BOOK_PROGRESS;
 });
 const bookReview = computed(() => {
