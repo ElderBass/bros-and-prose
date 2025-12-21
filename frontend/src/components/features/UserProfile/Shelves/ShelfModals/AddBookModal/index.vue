@@ -6,7 +6,7 @@
         size="large"
         shadow-color="green"
     >
-        <LoadingSpinner
+        <LoadingSpinnerContainer
             v-if="loading"
             size="large"
             message="adding book to shelf..."
@@ -17,6 +17,7 @@
                 :selectedShelf="selectedBookShelf"
                 :shelfMessage="shelfMessage"
                 :shelfDisplayName="shelfDisplayName"
+                @submitting="loading = $event"
             />
         </div>
     </BaseModal>

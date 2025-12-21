@@ -39,6 +39,10 @@ const props = defineProps<{
     shelfDisplayName: string;
 }>();
 
+const emit = defineEmits<{
+    (e: "submitting", submitting: boolean): void;
+}>();
+
 const { updateWantToRead, updateHaveRead, updateCurrentlyReading } =
     useUserShelves();
 const { openBookActionSuccess, openAddBookError, closeModal } =
@@ -58,6 +62,7 @@ const initialValues = computed(() => ({
 
 const onSubmit = async (values: BookFormValues) => {
     try {
+        emit("submitting", true);
         const year = Number.parseInt(values.yearPublished.toString(), 10);
 
         const updatedBook: BookshelfBook = {
@@ -95,6 +100,8 @@ const onSubmit = async (values: BookFormValues) => {
             props.selectedShelf,
             "error updating book: " + (error as Error).message
         );
+    } finally {
+        emit("submitting", false);
     }
 };
 </script>
