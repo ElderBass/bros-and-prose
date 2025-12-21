@@ -6,7 +6,7 @@
         size="large"
         shadow-color="blue"
     >
-        <LoadingSpinner
+        <LoadingSpinnerContainer
             v-if="loading"
             size="large"
             message="updating book..."
@@ -23,6 +23,7 @@
                 :selectedShelf="selectedBookShelf"
                 :shelfMessage="shelfMessage"
                 :shelfDisplayName="shelfDisplayName"
+                @submitting="loading = $event"
             />
         </div>
     </BaseModal>
@@ -32,7 +33,6 @@
 import { ref, computed } from "vue";
 import { storeToRefs } from "pinia";
 import BaseModal from "@/components/ui/BaseModal.vue";
-import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import ShelfSelector from "../ShelfSelector.vue";
 import EditBookFormV2 from "./EditBookFormV2.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";

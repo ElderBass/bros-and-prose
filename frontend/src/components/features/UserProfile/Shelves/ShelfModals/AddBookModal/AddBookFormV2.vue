@@ -43,6 +43,10 @@ const props = defineProps<{
     shelfDisplayName: string;
 }>();
 
+const emit = defineEmits<{
+    (e: "submitting", submitting: boolean): void;
+}>();
+
 const { searchGoogleByTitle } = useBooks();
 const { addToWantToRead, addToHaveRead, addToCurrentlyReading } =
     useUserShelves();
@@ -55,6 +59,7 @@ const onSubmit = async (
     review?: SubmitReviewArgs
 ) => {
     try {
+        emit("submitting", true);
         const year = Number.parseInt(bookValues.yearPublished.toString(), 10);
         const book: BookshelfBook = {
             id: uuid(),
@@ -88,6 +93,8 @@ const onSubmit = async (
             props.selectedShelf,
             "error adding book to shelf: " + (error as Error).message
         );
+    } finally {
+        emit("submitting", false);
     }
 };
 </script>
