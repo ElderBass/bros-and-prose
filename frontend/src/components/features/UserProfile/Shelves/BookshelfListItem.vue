@@ -50,12 +50,10 @@
                 </div>
             </div>
 
-            <p class="description">
-                <span v-if="book.description">
-                    {{ book.description }}
-                </span>
-                <span v-else class="italics"> homeboy ain't said shit </span>
-            </p>
+            <ExpandableText
+                :text="book.description || EMPTY_TEXT"
+                :truncateLength="100"
+            />
         </div>
         <div v-if="showFinishButton" class="actions">
             <BaseButton
@@ -77,13 +75,13 @@ import type { BookshelfBook, Shelf } from "@/types";
 import { useDisplay } from "vuetify";
 import BookTag from "@/components/ui/BookTag.vue";
 import NoTags from "@/components/features/common/NoTags.vue";
-import BookshelfBookListItemActions from "@/components/features/UserProfile/Shelves/BookshelfBookListItemActions.vue";
+import BookshelfBookListItemActions from "@/components/features/UserProfile/Shelves/BookshelfListItemActions.vue";
+import ExpandableText from "@/components/features/common/ExpandableText.vue";
 import { faBook, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { useRoute } from "vue-router";
-
-defineOptions({ name: "BookshelfBookListItem" });
+import { EMPTY_TEXT } from "@/constants";
 
 const props = defineProps<{
     book: BookshelfBook;
