@@ -230,12 +230,6 @@ const handleSubmit = async () => {
         loading.value = true;
         const toSubmit = { ...book.value };
 
-        if (
-            !toSubmit.description?.trim() &&
-            selectedResult.value?.description
-        ) {
-            toSubmit.description = selectedResult.value.description;
-        }
         if (showReviewForm(props.mode)) {
             await props.onSubmit(toSubmit, review.value);
         } else {

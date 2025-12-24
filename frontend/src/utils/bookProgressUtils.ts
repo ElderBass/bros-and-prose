@@ -43,11 +43,6 @@ export const getRatingReviewString = (broReview: Review, isMobile: boolean) => {
     return ratingReviewString;
 };
 
-export const hasFinishedBook = (bro: User, totalPages: number) => {
-    const broProgress = bro.currentBookProgress;
-    return broProgress === FINISHED_BOOK_PROGRESS || broProgress === totalPages;
-};
-
 export const isReviewOfCurrentBook = (bookId: string) => {
     return bookId === useBooksStore().currentBook.id;
 };
