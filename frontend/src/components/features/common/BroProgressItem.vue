@@ -22,6 +22,7 @@
                 size="xsmall"
                 :variant="isLoggedInUser ? 'outline' : 'outline-tertiary'"
                 :title="buttonTitle"
+                :disabled="!hasFinishedCurrentBook()"
             >
                 <div class="button-content">
                     <FontAwesomeIcon v-if="isLoggedInUser" :icon="faMarker" />
@@ -34,12 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, withDefaults, computed } from "vue";
+import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import { faGlasses, faMarker } from "@fortawesome/free-solid-svg-icons";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import UsernameLink from "@/components/ui/UsernameLink.vue";
+import { hasFinishedCurrentBook } from "@/utils";
 
 const props = withDefaults(
     defineProps<{
