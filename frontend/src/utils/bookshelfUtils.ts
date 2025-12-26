@@ -13,6 +13,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import type { ModalType } from "@/stores/shelfModal";
 import { useShelfModalStore } from "@/stores/shelfModal";
+import { usePalaverStore } from "@/stores/palaver";
+import { buildRecommendationFromBookshelfBook } from "./palaverUtils";
 
 export const buildBookShelfEntry = (
     bookData: OpenLibraryBookResult,
@@ -122,4 +124,10 @@ export const isWantToReadShelf = () => {
 
 export const isCurrentlyReadingShelf = () => {
     return getCurrentShelf() === "currentlyReading";
+};
+
+export const recommendBook = (book: BookshelfBook): void => {
+    console.log("KERWANGING RECOMMENDING BOOK", book);
+    const { openItemModal } = usePalaverStore();
+    openItemModal("create", buildRecommendationFromBookshelfBook(book));
 };

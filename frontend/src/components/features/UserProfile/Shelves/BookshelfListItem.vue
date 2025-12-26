@@ -55,17 +55,10 @@
                 :truncateLength="100"
             />
         </div>
-        <div v-if="showFinishButton" class="actions">
-            <BaseButton
-                title="finished (move to have read)"
-                variant="outline-success"
-                v-bind="buttonProps"
-                @click="handleFinished"
-            >
-                <FontAwesomeIcon :icon="faCircleCheck" />
-                finished
-            </BaseButton>
-        </div>
+        <CurrentlyReadingItemUserActions
+            v-if="showCurrentlyReadingActions"
+            :book="book"
+        />
     </div>
 </template>
 
@@ -76,10 +69,10 @@ import { useDisplay } from "vuetify";
 import BookTag from "@/components/ui/BookTag.vue";
 import NoTags from "@/components/features/common/NoTags.vue";
 import BookshelfBookListItemActions from "@/components/features/UserProfile/Shelves/BookshelfListItemActions.vue";
+import CurrentlyReadingItemUserActions from "@/components/features/UserProfile/Shelves/CurrentlyReadingItemUserActions.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
-import { faBook, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faBook } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { useUserShelves } from "@/composables/useUserShelves";
 import { useRoute } from "vue-router";
 import { EMPTY_TEXT } from "@/constants";
 
@@ -91,23 +84,10 @@ const props = defineProps<{
 
 const { mobile } = useDisplay();
 
-const { finishCurrentlyReading } = useUserShelves();
-
-const buttonProps = computed(() => {
-    return {
-        size: mobile.value ? "xsmall" : "small",
-        style: { width: "100%" },
-    };
-});
-
-const showFinishButton = computed(() => {
+const showCurrentlyReadingActions = computed(() => {
     const isProfileView = useRoute().name === "profile-root";
     return props.shelf === "currentlyReading" && props.book.id && isProfileView;
 });
-
-const handleFinished = async () => {
-    await finishCurrentlyReading(props.book.id);
-};
 </script>
 
 <style scoped>
@@ -250,13 +230,6 @@ const handleFinished = async () => {
 
 .italics {
     font-style: italic;
-}
-
-.actions {
-    padding: 0.5rem 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 @media (min-width: 768px) {

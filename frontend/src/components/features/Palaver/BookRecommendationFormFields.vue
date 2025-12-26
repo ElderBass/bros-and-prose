@@ -35,6 +35,8 @@ const { mobile } = useDisplay();
 
 const props = defineProps<{
     modelValue: string[];
+    recTitle: string;
+    recAuthor: string;
 }>();
 
 const emit = defineEmits<{
@@ -43,8 +45,8 @@ const emit = defineEmits<{
     (e: "update:recAuthor", value: string): void;
 }>();
 
-const title = ref("");
-const author = ref("");
+const title = ref(props.recTitle);
+const author = ref(props.recAuthor);
 
 const tagsProxy = computed<string[]>({
     get: () => props.modelValue,

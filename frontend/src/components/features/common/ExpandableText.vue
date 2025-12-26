@@ -25,9 +25,11 @@ const props = withDefaults(
     defineProps<{
         text: string;
         truncateLength?: number;
+        isLoggedInUser?: boolean;
     }>(),
     {
         truncateLength: 300,
+        isLoggedInUser: false,
     }
 );
 
@@ -40,6 +42,9 @@ const isLongText = computed(() => {
 const displayText = computed(() => {
     if (!isLongText.value || showFullText.value) {
         return props.text;
+    }
+    if (props.isLoggedInUser && props.text === EMPTY_TEXT) {
+        return EMPTY_TEXT.replace("homeboy", "you");
     }
     return props.text.substring(0, props.truncateLength) + "...";
 });
@@ -55,7 +60,7 @@ const toggleText = () => {
 
 <style scoped>
 .text-container {
-    background: var(--surface-color);
+    background: inherit;
     padding-bottom: 0;
     position: relative;
 }
