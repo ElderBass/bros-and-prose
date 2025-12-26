@@ -10,17 +10,7 @@
     >
         <div v-if="book" class="content">
             <div class="top">
-                <div class="cover-wrap">
-                    <img
-                        v-if="book.imageSrc"
-                        class="cover"
-                        :src="book.imageSrc"
-                        :alt="book.title"
-                    />
-                    <div v-else class="cover-placeholder">
-                        <FontAwesomeIcon :icon="faBook" />
-                    </div>
-                </div>
+                <BookCover :book="book" />
 
                 <div class="headline">
                     <div class="title-row">
@@ -55,81 +45,30 @@
                         </span>
                     </div>
 
-                    <div v-if="book.tags?.length" class="tags">
-                        <BookTag
-                            v-for="tag in book.tags"
-                            :key="tag"
-                            :tag="tag"
-                            :selected="true"
-                            color="green"
-                            size="small"
-                        />
-                    </div>
-                    <NoTags v-else :size="mobile ? 'small' : 'medium'" />
+                    <TagsSection :book="book" />
                 </div>
             </div>
 
-            <div class="section">
-                <h3 class="section-title">{{ possessiveLabel }} blurb</h3>
-                <p v-if="book.description" class="description">
-                    {{ book.description }}
-                </p>
-                <p v-else class="empty italics">
-                    {{ canReview ? "you" : "homeboy" }} ain't said shit.
-                </p>
-            </div>
+            <BlurbSection :book="book" :canReview="canReview" />
 
-            <div class="section review-section">
-                <div class="section-title-row">
-                    <h3 class="section-title">{{ possessiveLabel }} review</h3>
-                    <IconButton
-                        v-if="canReview && review"
-                        :icon="faMarker"
-                        :size="editButtonSize"
-                        color="green"
-                        shadowColor="green"
-                        title="edit review"
-                        :handleClick="
-                            () => emit('editReview', book as BookshelfBook)
-                        "
-                    />
-                </div>
-                <div v-if="review" class="review">
-                    <div class="review-top">
-                        <span class="rating">{{ review.rating }}/10</span>
-                        <span class="review-date">{{
-                            formatDate(review.createdAt)
-                        }}</span>
-                    </div>
-                    <p class="review-comment">{{ review.reviewComment }}</p>
-                </div>
-                <div v-else class="empty-row">
-                    <p class="empty italics">
-                        unreviewed - no thoughts, no vibes.
-                    </p>
-                    <BaseButton
-                        v-if="canReview"
-                        variant="success"
-                        title="leave a review"
-                        @click="emit('review', book)"
-                    >
-                        leave a review
-                    </BaseButton>
-                </div>
-            </div>
+            <ReviewSection
+                :book="book"
+                :review="review"
+                :canReview="canReview"
+                @editReview="emit('editReview', book as BookshelfBook)"
+                @review="emit('review', book as BookshelfBook)"
+            />
         </div>
         <div v-else class="content">
             <p class="empty italics">no book selected.</p>
         </div>
 
         <template #footer>
-            <BaseButton
-                variant="outline-secondary"
-                title="close"
-                @click="emit('close')"
-            >
-                close
-            </BaseButton>
+            <ActionButtons
+                :showRecommend="canReview"
+                @recommend="emit('recommend', book as BookshelfBook)"
+                @close="emit('close')"
+            />
         </template>
     </BaseModal>
 </template>
@@ -137,17 +76,15 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { BookshelfBook, Review } from "@/types";
-import BookTag from "@/components/ui/BookTag.vue";
-import NoTags from "@/components/features/common/NoTags.vue";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import {
-    faBook,
-    faBookOpen,
-    faMarker,
-} from "@fortawesome/free-solid-svg-icons";
+import BookCover from "./BookDetailsComponents/BookCover.vue";
+import BlurbSection from "./BookDetailsComponents/BlurbSection.vue";
+import ReviewSection from "./BookDetailsComponents/ReviewSection.vue";
+import TagsSection from "./BookDetailsComponents/TagsSection.vue";
+import ActionButtons from "./BookDetailsComponents/ActionButtons.vue";
+import { faBookOpen, faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useDisplay } from "vuetify";
 
-const props = defineProps<{
+defineProps<{
     open: boolean;
     book: BookshelfBook | null;
     review: Review | null;
@@ -159,20 +96,11 @@ const emit = defineEmits<{
     (e: "review", book: BookshelfBook): void;
     (e: "editDetails", book: BookshelfBook): void;
     (e: "editReview", book: BookshelfBook): void;
+    (e: "recommend", book: BookshelfBook): void;
 }>();
-
-const possessiveLabel = computed(() => (props.canReview ? "your" : "bro's"));
 
 const { mobile } = useDisplay();
 const editButtonSize = computed(() => (mobile.value ? "xsmall" : "small"));
-
-const formatDate = (iso: string) => {
-    try {
-        return new Date(iso).toLocaleDateString();
-    } catch {
-        return "";
-    }
-};
 </script>
 
 <style scoped>
@@ -188,35 +116,6 @@ const formatDate = (iso: string) => {
     display: flex;
     gap: 1rem;
     align-items: flex-start;
-}
-
-.cover-wrap {
-    flex: 0 0 auto;
-}
-
-.cover {
-    width: 110px;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 0.75rem;
-    border: 1px solid var(--accent-green);
-}
-
-.cover-placeholder {
-    width: 110px;
-    height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.75rem;
-    border: 2px dashed var(--accent-green);
-    background: linear-gradient(
-        180deg,
-        color-mix(in srgb, var(--accent-green) 12%, transparent),
-        color-mix(in srgb, var(--accent-green) 6%, transparent)
-    );
-    color: var(--accent-green);
-    font-size: 2rem;
 }
 
 .headline {
@@ -302,75 +201,10 @@ const formatDate = (iso: string) => {
     margin: 0;
 }
 
-.tags {
-    margin-top: 0.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-}
-
-.description,
-.review-comment {
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    color: var(--main-text);
-    opacity: 0.92;
-    border-top: 1px solid var(--accent-green);
-    border-left: 1px solid var(--accent-green);
-    border-top-left-radius: 0.5rem;
-    padding-left: 0.5rem;
-    padding-top: 0.25rem;
-}
-
-.review {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.review-top {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 1rem;
-}
-
-.rating {
-    font-weight: 700;
-    color: var(--accent-green);
-}
-
-.review-date {
-    font-size: 0.85rem;
-    opacity: 0.7;
-    font-style: italic;
-}
-
-.empty-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
 .empty {
     margin: 0;
     opacity: 0.75;
     color: var(--main-text);
-}
-
-.empty-tags {
-    border: 1px dashed var(--accent-green);
-    border-radius: 1rem;
-    padding: 0.5rem;
-    font-size: 0.85rem;
-    font-style: italic;
-    color: var(--main-text);
-    opacity: 0.75;
-    text-align: center;
-    margin-top: 0.5rem;
 }
 
 .italics {
@@ -380,11 +214,6 @@ const formatDate = (iso: string) => {
 @media (max-width: 768px) {
     .top {
         gap: 0.75rem;
-    }
-    .cover,
-    .cover-placeholder {
-        width: 84px;
-        height: 122px;
     }
     .title {
         font-size: 1.35rem;
