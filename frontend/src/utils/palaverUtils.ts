@@ -13,6 +13,7 @@ import {
     capitalizeBookTitle,
     getLastUnreadPalaverEntry,
     setLastUnreadPalaverEntry,
+    maybeShowCurrentBookReview,
 } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { usePalaverStore, type PalaverFilter } from "@/stores/palaver";
@@ -118,7 +119,8 @@ export const filterPalaverEntries = (
     return entries.filter(
         (e) =>
             filters.includes(e.type as PalaverFilter) &&
-            e.userInfo.id === filteredBro
+            e.userInfo.id === filteredBro &&
+            maybeShowCurrentBookReview(e)
     );
 };
 
