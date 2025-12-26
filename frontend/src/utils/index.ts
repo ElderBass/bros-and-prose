@@ -3,6 +3,7 @@ export * from "./bookshelfUtils";
 export * from "./capitalizeAuthorName";
 export * from "./capitalizeBookTitle";
 export * from "./convertToPercentage";
+export * from "./currentBookUtils";
 export * from "./getAvatar";
 export * from "./getBookByIdFromStore";
 export * from "./getHeaderLinks";
