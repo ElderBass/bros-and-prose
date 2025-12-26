@@ -15,11 +15,11 @@
                     v-model="updatedProgress"
                     id="manual-progress-input"
                     @update:modelValue="handleProgressChange"
-                    :size="isMobile ? 'small' : 'medium'"
+                    :size="mobile ? 'small' : 'medium'"
                     label="current page'"
-                    :placeholder="updatedProgress"
+                    :placeholder="updatedProgress.toString()"
                     type="number"
-                    style="text-align: right; min-width: 80px; max-width: 120px"
+                    :style="inputStyle"
                     containerStyle="width: auto"
                 />
             </ElementSwap>
@@ -70,22 +70,42 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import ProgressSliderInput from "@/components/form/ProgressSliderInput.vue";
 import { useUserStore } from "@/stores/user";
 import { useBooksStore } from "@/stores/books";
-import { useUIStore } from "@/stores/ui";
 import { FINISHED_BOOK_PROGRESS } from "@/constants";
 import { convertToPercentage } from "@/utils";
 import ElementSwap from "@/components/transitions/ElementSwap.vue";
 
 const { loggedInUser } = useUserStore();
 const { currentBook } = useBooksStore();
-const { isMobile } = storeToRefs(useUIStore());
+const { mobile } = useDisplay();
 
 const updateModeEnabled = ref(false);
 const updatedProgress = ref(loggedInUser.currentBookProgress);
 const initialProgress = ref(loggedInUser.currentBookProgress);
+
+const props = defineProps<{
+    totalPages: number;
+    setShowReviewModal: (show: boolean) => void;
+    handleUpdate: (updatedProgress: number) => Promise<void>;
+}>();
+
+const updateButtonConfig = computed(() => {
+    return {
+        label: updateModeEnabled.value ? "confirm" : "update",
+        variant: updateModeEnabled.value ? "outline-success" : "outline",
+    };
+});
+
+const buttonSize = computed(() => {
+    return mobile.value ? "small" : "medium";
+});
+
+const userPercentage = computed(() => {
+    return convertToPercentage(updatedProgress.value, props.totalPages);
+});
 
 // Watch for changes in the store and update local refs
 watch(
@@ -101,11 +121,13 @@ watch(
     }
 );
 
-const props = defineProps<{
-    totalPages: number;
-    setShowReviewModal: (show: boolean) => void;
-    handleUpdate: (updatedProgress: number) => Promise<void>;
-}>();
+const inputStyle = computed(() => {
+    return {
+        textAlign: "right",
+        minWidth: "80px",
+        maxWidth: "120px",
+    };
+});
 
 const handleProgressChange = (value: number) => {
     if (value >= initialProgress.value) {
@@ -130,21 +152,6 @@ const onCancelClick = () => {
     setUpdateModeEnabled(false);
     updatedProgress.value = loggedInUser.currentBookProgress;
 };
-
-const updateButtonConfig = computed(() => {
-    return {
-        label: updateModeEnabled.value ? "confirm" : "update",
-        variant: updateModeEnabled.value ? "outline-success" : "outline",
-    };
-});
-
-const buttonSize = computed(() => {
-    return isMobile ? "small" : "medium";
-});
-
-const userPercentage = computed(() => {
-    return convertToPercentage(updatedProgress.value, props.totalPages);
-});
 </script>
 
 <style scoped>

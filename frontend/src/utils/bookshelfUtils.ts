@@ -12,6 +12,9 @@ import {
     faBookOpenReader,
 } from "@fortawesome/free-solid-svg-icons";
 import type { ModalType } from "@/stores/shelfModal";
+import { useShelfModalStore } from "@/stores/shelfModal";
+import { usePalaverStore } from "@/stores/palaver";
+import { buildRecommendationFromBookshelfBook } from "./palaverUtils";
 
 export const buildBookShelfEntry = (
     bookData: OpenLibraryBookResult,
@@ -105,4 +108,26 @@ export const getUserShelves = (user: User) => {
             Object.values(user.wantToRead || {}).filter((b) => b?.id) || [],
         haveRead: Object.values(user.haveRead || {}).filter((b) => b?.id) || [],
     };
+};
+
+export const getCurrentShelf = () => {
+    return useShelfModalStore().selectedBookShelf;
+};
+
+export const isHaveReadShelf = () => {
+    return getCurrentShelf() === "haveRead";
+};
+
+export const isWantToReadShelf = () => {
+    return getCurrentShelf() === "wantToRead";
+};
+
+export const isCurrentlyReadingShelf = () => {
+    return getCurrentShelf() === "currentlyReading";
+};
+
+export const recommendBook = (book: BookshelfBook): void => {
+    console.log("KERWANGING RECOMMENDING BOOK", book);
+    const { openItemModal } = usePalaverStore();
+    openItemModal("create", buildRecommendationFromBookshelfBook(book));
 };

@@ -1,5 +1,6 @@
 import type {
     BookInfo,
+    BookshelfBook,
     Comment,
     PalaverEntry,
     PalaverType,
@@ -13,6 +14,7 @@ import {
     capitalizeBookTitle,
     getLastUnreadPalaverEntry,
     setLastUnreadPalaverEntry,
+    maybeShowCurrentBookReview,
 } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { usePalaverStore, type PalaverFilter } from "@/stores/palaver";
@@ -118,7 +120,8 @@ export const filterPalaverEntries = (
     return entries.filter(
         (e) =>
             filters.includes(e.type as PalaverFilter) &&
-            e.userInfo.id === filteredBro
+            e.userInfo.id === filteredBro &&
+            maybeShowCurrentBookReview(e)
     );
 };
 
@@ -203,4 +206,50 @@ export const updatePalaverLikesDislikes = (
 
 export const getUserContent = (userId: string) => {
     return usePalaverStore().entries.filter((e) => e.userInfo.id === userId);
+};
+
+export const isUnsumbittedRecommendation = (entry: PalaverEntry) => {
+    return (
+        entry.type === "recommendation" &&
+        entry?.recommendation?.title &&
+        entry?.recommendation?.author &&
+        !entry?.id
+    );
+};
+
+export const buildRecommendationFromBookshelfBook = (
+    book: BookshelfBook
+): PalaverEntry => {
+    return {
+        id: "",
+        type: "recommendation",
+        bookInfo: buildBookInfoFromBookshelfBook(book),
+        recommendation: {
+            title: book.title,
+            author: book.author,
+            tags: book.tags,
+        },
+        text: book.description,
+        createdAt: new Date().toISOString(),
+        userInfo: getUserInfo(useUserStore().loggedInUser),
+        likes: [],
+        dislikes: [],
+        comments: [],
+    };
+};
+
+export const buildBookInfoFromBookshelfBook = (
+    book: BookshelfBook
+): BookInfo => {
+    return {
+        id: book.id,
+        title: book.title,
+        author: book.author,
+    };
+};
+
+export const getRecommendationForBook = (bookId: string) => {
+    return usePalaverStore().entries.find(
+        (e) => e.type === "recommendation" && e.bookInfo?.id === bookId
+    );
 };

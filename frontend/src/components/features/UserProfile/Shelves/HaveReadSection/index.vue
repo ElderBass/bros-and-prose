@@ -22,6 +22,7 @@
                 @review="startReview"
                 @editDetails="startEditDetails"
                 @editReview="startEditReview"
+                @recommend="startRecommend"
             />
         </template>
     </UserContentPanel>
@@ -38,6 +39,7 @@ import type { BookshelfBook, Review, User } from "@/types";
 import { useUserStore } from "@/stores/user";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { useDisplay } from "vuetify";
+import { recommendBook } from "@/utils";
 
 defineOptions({
     name: "HaveReadSection",
@@ -101,6 +103,11 @@ const startEditReview = (book: BookshelfBook) => {
     shelfModalStore.openReviewForBook(book, "haveRead");
 };
 
+const startRecommend = (book: BookshelfBook) => {
+    if (!props.isLoggedInUser) return;
+    closeDetails();
+    recommendBook(book);
+};
 const { mobile } = useDisplay();
 const tableHeightPx = computed(() => (mobile.value ? 400 : 540));
 

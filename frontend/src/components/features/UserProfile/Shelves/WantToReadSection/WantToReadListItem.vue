@@ -1,5 +1,5 @@
 <template>
-    <BookshelfBookListItem
+    <BookshelfListItem
         :book="book"
         shelf="wantToRead"
         :showActions="showActions"
@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import type { BookshelfBook } from "@/types";
-import BookshelfBookListItem from "@/components/features/UserProfile/Shelves/BookshelfBookListItem.vue";
+import BookshelfListItem from "@/components/features/UserProfile/Shelves/BookshelfListItem.vue";
 
 defineProps<{
     book: BookshelfBook;

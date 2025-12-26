@@ -48,7 +48,7 @@
                 :size="mobile ? 'xsmall' : 'medium'"
                 :readOnly="true"
             />
-            <p class="text">{{ entry.text }}</p>
+            <ExpandableText :text="entry.text" />
             <ReactionDetails
                 v-if="entry.likes || entry.dislikes"
                 :likes="entry.likes || []"
@@ -90,6 +90,7 @@ import { isGuestUser } from "@/utils";
 import CommentsSection from "./CommentsSection.vue";
 import BookInfo from "./BookInfo.vue";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
+import ExpandableText from "@/components/features/common/ExpandableText.vue";
 
 defineOptions({ name: "PalaverListItem" });
 

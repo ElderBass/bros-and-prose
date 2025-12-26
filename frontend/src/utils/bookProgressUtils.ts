@@ -15,19 +15,19 @@ import {
 } from "@/constants";
 import { convertToPercentage } from "./convertToPercentage";
 import type { Review } from "@/types";
-import { useUIStore } from "@/stores/ui";
+import { useDisplay } from "vuetify";
 import { useBooksStore } from "@/stores/books";
 import { v4 as uuidv4 } from "uuid";
 
 export const getProgressString = (bro: User, totalPages: number) => {
-    const { isMobile } = useUIStore();
+    const { mobile } = useDisplay();
     const broProgress = bro.currentBookProgress;
     if (broProgress === FINISHED_BOOK_PROGRESS || broProgress === totalPages) {
-        return isMobile ? FINISHED_MOBILE : FINISHED;
+        return mobile.value ? FINISHED_MOBILE : FINISHED;
     } else if (broProgress === 0) {
-        return isMobile ? BRO_NOT_STARTED_MOBILE : BRO_NOT_STARTED;
+        return mobile.value ? BRO_NOT_STARTED_MOBILE : BRO_NOT_STARTED;
     }
-    return `${!isMobile ? "page" : ""} ${broProgress} / ${totalPages} (${convertToPercentage(broProgress, totalPages)}%)`;
+    return `${!mobile.value ? "page" : ""} ${broProgress} / ${totalPages} (${convertToPercentage(broProgress, totalPages)}%)`;
 };
 
 export const getProgressPercentage = (current: number) => {
@@ -41,11 +41,6 @@ export const getRatingReviewString = (broReview: Review, isMobile: boolean) => {
         ratingReviewString += ` - "${RATING_MAP[broReview.rating as keyof typeof RATING_MAP]}"`;
     }
     return ratingReviewString;
-};
-
-export const hasFinishedBook = (bro: User, totalPages: number) => {
-    const broProgress = bro.currentBookProgress;
-    return broProgress === FINISHED_BOOK_PROGRESS || broProgress === totalPages;
 };
 
 export const isReviewOfCurrentBook = (bookId: string) => {

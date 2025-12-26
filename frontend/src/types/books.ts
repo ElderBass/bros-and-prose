@@ -59,8 +59,8 @@ export interface FutureBook {
     yearPublished: number;
     imageSrc: string;
     pages?: number;
-    tags?: string[];
-    description?: string;
+    tags: string[];
+    description: string;
     votes: string[];
 }
 
@@ -82,9 +82,9 @@ export interface BookshelfBook {
     author: string;
     imageSrc: string;
     description: string;
-    yearPublished: number;
+    yearPublished: number | string;
+    tags: string[];
     pages?: number;
-    tags?: string[];
 }
 
 export interface GoogleBooksResult {

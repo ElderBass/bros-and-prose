@@ -3,7 +3,7 @@
         <div class="content">
             <div class="type-selector">
                 <ItemTypeButton
-                    v-for="buttonConfig in itemTypeButtons"
+                    v-for="buttonConfig in COMPOSER_ITEM_TYPE_BUTTONS"
                     :key="buttonConfig.type"
                     :config="buttonConfig"
                     :selected="type === buttonConfig.type"
@@ -22,6 +22,8 @@
             <BookRecommendationFormFields
                 v-if="type === 'recommendation'"
                 v-model="tags"
+                :recTitle="recTitle"
+                :recAuthor="recAuthor"
                 @update:recTitle="recTitle = $event"
                 @update:recAuthor="recAuthor = $event"
             />
@@ -36,19 +38,17 @@
         <div class="actions">
             <BaseButton
                 variant="outline"
-                :size="mobile ? 'small' : 'medium'"
                 @click="closeModal"
-                :style="{ width: mobile ? '100%' : 'auto' }"
+                v-bind="buttonProps"
                 >cancel</BaseButton
             >
             <BaseButton
                 :disabled="submitDisabled"
                 variant="success"
-                :size="mobile ? 'small' : 'medium'"
-                :style="{ width: mobile ? '100%' : 'auto' }"
+                v-bind="buttonProps"
                 @click="submit"
             >
-                {{ isEditMode ? "update" : "send it" }}
+                {{ submitButtonLabel }}
             </BaseButton>
         </div>
     </div>
@@ -61,40 +61,17 @@ import ItemTypeButton from "./ItemTypeButton.vue";
 import BookSelect from "@/components/form/BookSelect.vue";
 import BookRecommendationFormFields from "./BookRecommendationFormFields.vue";
 import { usePalaver } from "@/composables";
-import type { ItemTypeButtonProp, PalaverType, PalaverEntry } from "@/types";
-import { buildPalaverEntry } from "@/utils";
+import type { PalaverType, PalaverEntry } from "@/types";
+import { buildPalaverEntry, isUnsumbittedRecommendation } from "@/utils";
 import { useLog } from "@/composables";
 import { usePalaverStore } from "@/stores/palaver";
 import { useUserStore } from "@/stores/user";
-import { EMPTY_BOOK_INFO } from "@/constants";
+import { EMPTY_BOOK_INFO, COMPOSER_ITEM_TYPE_BUTTONS } from "@/constants";
 
 const props = defineProps<{
     entry: PalaverEntry;
     setLoading: (loading: boolean) => void;
 }>();
-
-const itemTypeButtons: ItemTypeButtonProp[] = [
-    {
-        type: "discussion_note",
-        label: "comment",
-        title: "comment on a book",
-    },
-    {
-        type: "recommendation",
-        label: "recommend",
-        title: "recommend a book",
-    },
-    {
-        type: "suggestion",
-        label: "suggest",
-        title: "suggest an idea for the app",
-    },
-    {
-        type: "misc",
-        label: "misc",
-        title: "speak into the void",
-    },
-];
 
 const { mobile } = useDisplay();
 const { createPalaverEntry, updatePalaverEntry } = usePalaver();
@@ -107,7 +84,23 @@ const recTitle = ref("");
 const recAuthor = ref("");
 const tags = ref<string[]>([]);
 
-const isEditMode = computed(() => Boolean(props.entry?.id));
+const isRecommendation = computed(() => {
+    return isUnsumbittedRecommendation(props.entry);
+});
+
+const isEditMode = computed(() => {
+    if (isRecommendation.value) {
+        return true;
+    }
+    return Boolean(props.entry?.id);
+});
+
+const submitButtonLabel = computed(() => {
+    if (isRecommendation.value) {
+        return "rec it like ralph";
+    }
+    return isEditMode.value ? "update" : "send it";
+});
 const shouldShowBookSelect = computed(() =>
     ["discussion_note", "progress_note"].includes(type.value)
 );
@@ -122,11 +115,6 @@ const resetForm = () => {
 };
 
 const syncFormWithEntry = (entry: PalaverEntry) => {
-    if (!entry?.id) {
-        resetForm();
-        return;
-    }
-
     type.value = entry.type;
     text.value = entry.text ?? "";
     bookInfo.value = entry.bookInfo ? { ...entry.bookInfo } : EMPTY_BOOK_INFO;
@@ -140,7 +128,7 @@ const syncFormWithEntry = (entry: PalaverEntry) => {
 watch(
     () => props.entry,
     (entry) => {
-        if (entry?.id) {
+        if (entry?.id || isUnsumbittedRecommendation(entry)) {
             syncFormWithEntry(entry);
         } else {
             resetForm();
@@ -200,6 +188,13 @@ const submitDisabled = computed(() => {
     return false;
 });
 
+const buttonProps = computed(() => {
+    return {
+        size: mobile.value ? "small" : "medium",
+        style: mobile.value ? { width: "100%" } : {},
+    };
+});
+
 const handleTypeSelect = (selectedType: PalaverType) => {
     if (isEditMode.value) return;
     type.value = selectedType;
@@ -220,7 +215,7 @@ const submit = async () => {
         props.setLoading(true);
         const normalizedEntry = buildEntryPayload();
 
-        if (isEditMode.value) {
+        if (isEditMode.value && !isUnsumbittedRecommendation(props.entry)) {
             const updatedEntry: PalaverEntry = {
                 ...props.entry,
                 type: normalizedEntry.type,

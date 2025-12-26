@@ -31,6 +31,9 @@
                     <v-list-item @click="handleMove('haveRead')">
                         <v-list-item-title>have read</v-list-item-title>
                     </v-list-item>
+                    <v-list-item @click="handleRecommend">
+                        <v-list-item-title>recommend</v-list-item-title>
+                    </v-list-item>
                 </template>
             </BaseMenu>
         </template>
@@ -45,6 +48,7 @@ import EditButton from "@/components/ui/EditButton.vue";
 import DeleteButton from "@/components/ui/DeleteButton.vue";
 import MoveButton from "@/components/ui/MoveButton.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
+import { recommendBook } from "@/utils";
 
 const props = defineProps<{
     book: BookshelfBook;
@@ -67,6 +71,8 @@ const handleRemove = () => {
 const handleMove = (targetShelf: Shelf) => {
     openConfirmMoveTo(props.book, targetShelf);
 };
+
+const handleRecommend = () => recommendBook(props.book);
 
 const buttonSize = computed(() => (mobile.value ? "supersmall" : "small"));
 

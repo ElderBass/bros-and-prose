@@ -12,8 +12,8 @@
                         v-if="hasFinishedBook"
                         title="you can't fix stupid, but I suppose you can try"
                         :icon="faMarker"
-                        :size="isMobile ? 'small' : 'medium'"
-                        :handleClick="() => setShowReviewModal(true)"
+                        :size="mobile ? 'small' : 'medium'"
+                        :handleClick="openReviewModal"
                     />
                 </div>
                 <LoadingSpinner
@@ -31,18 +31,16 @@
                     v-if="hasFinishedBook && !loadingMessage.length"
                     :rating="bookReview?.rating"
                     :comment="bookReview?.reviewComment"
-                    :showReviewModal="() => setShowReviewModal(true)"
+                    :showReviewModal="openReviewModal"
                 />
             </BaseCard>
         </Transition>
     </div>
     <UserRateAndReviewModal
-        v-if="showRateAndReviewModal"
-        :showReviewModal="showRateAndReviewModal"
+        :open="showReviewModal"
         :book="book"
-        :bookReview="bookReview"
-        :onReviewSubmit="onReviewSubmit"
-        :onClose="() => setShowReviewModal(false)"
+        :reviewPrefill="bookReview"
+        @close="closeReviewModal"
     />
     <AddCommentModal
         v-if="showAddCommentModal"
@@ -54,109 +52,64 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import CurrentUserProgress from "./UserProgress.vue";
 import CurrentBookUserReview from "./UserReview.vue";
 import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useUserStore } from "@/stores/user";
-import { watch, ref, computed, onMounted } from "vue";
+import { ref, computed } from "vue";
 import {
     DEFAULT_REVIEW,
-    DEFAULT_RATING,
     FINISHED_BOOK_PROGRESS,
     UPDATE_PROGRESS_SUCCESS_ALERT,
 } from "@/constants";
-import type { Book, Comment, SubmitReviewArgs } from "@/types";
+import type { Book, Comment } from "@/types";
 import { useUser } from "@/composables/useUser";
 import { usePalaver } from "@/composables/usePalaver";
 import { useUIStore } from "@/stores/ui";
 import { buildPalaverEntry } from "@/utils";
+import { storeToRefs } from "pinia";
 
 const props = defineProps<{
     book: Book;
 }>();
 
-const { loggedInUser } = useUserStore();
-const { addReview, updateUserProgress } = useUser();
+const { loggedInUser } = storeToRefs(useUserStore());
+const { updateUserProgress } = useUser();
 const { createPalaverEntry } = usePalaver();
 
-const uiStore = useUIStore();
-const { showAlert } = uiStore;
-const { isMobile } = storeToRefs(uiStore);
+const { mobile } = useDisplay();
+const { showAlert } = useUIStore();
 
 const loadingMessage = ref("");
-const showRateAndReviewModal = ref(false);
 const showAddCommentModal = ref(false);
-const hasFinishedBook = ref(
-    loggedInUser.currentBookProgress === FINISHED_BOOK_PROGRESS
-);
-const bookReview = ref({
-    rating: DEFAULT_RATING,
-    reviewComment: "",
-});
-
-watch(
-    () => loggedInUser.currentBookProgress,
-    (newProgress) => {
-        hasFinishedBook.value = newProgress === FINISHED_BOOK_PROGRESS;
-    }
-);
-
-watch(
-    () => loggedInUser?.reviews[props.book?.id],
-    (newReview) => {
-        if (newReview) {
-            bookReview.value = {
-                rating: newReview?.rating || DEFAULT_RATING,
-                reviewComment: newReview?.reviewComment || "",
-            };
-        } else {
-            bookReview.value = DEFAULT_REVIEW;
-        }
-    },
-    { deep: true, immediate: true }
-);
-
-onMounted(() => {
-    bookReview.value = loggedInUser?.reviews[props.book?.id] || DEFAULT_REVIEW;
-});
+const showReviewModal = ref(false);
 
 const setShowReviewModal = (show: boolean) => {
-    showRateAndReviewModal.value = show;
+    showReviewModal.value = show;
 };
-
+const closeReviewModal = () => (showReviewModal.value = false);
+const openReviewModal = () => (showReviewModal.value = true);
 const setShowAddCommentModal = (show: boolean) => {
     showAddCommentModal.value = show;
 };
 
-const onReviewSubmit = async ({ rating, reviewComment }: SubmitReviewArgs) => {
-    setShowReviewModal(false);
-    loadingMessage.value = "submitting your shitty review...";
-    const udpatedUser = await addReview({ rating, reviewComment }, props.book);
-
-    if (udpatedUser) {
-        bookReview.value = udpatedUser.reviews[props.book.id];
-    }
-    loadingMessage.value = "";
-    hasFinishedBook.value = true;
-};
+const hasFinishedBook = computed(() => {
+    return loggedInUser.value.currentBookProgress === FINISHED_BOOK_PROGRESS;
+});
+const bookReview = computed(() => {
+    return loggedInUser.value?.reviews[props.book?.id] || DEFAULT_REVIEW;
+});
 
 const onUpdateProgress = async (updatedProgress: number) => {
     loadingMessage.value = "updating your measly progress...";
-    const udpatedUser = await updateUserProgress(
-        loggedInUser.id,
-        updatedProgress
-    );
+    await updateUserProgress(loggedInUser.value.id, updatedProgress);
     loadingMessage.value = "";
 
-    if (udpatedUser) {
-        bookReview.value = udpatedUser.reviews[props.book.id];
-    }
-
     if (updatedProgress === props.book.totalPages) {
-        setShowReviewModal(true);
+        openReviewModal();
     } else {
         setShowAddCommentModal(true);
     }

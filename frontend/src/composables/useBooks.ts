@@ -96,6 +96,7 @@ export const useBooks = () => {
             description: item.volumeInfo?.description ?? "",
             yearPublished: parsePublishedYear(item.volumeInfo?.publishedDate),
             pages: item.volumeInfo?.pageCount ?? 0,
+            tags: [],
         }));
         return data;
     };

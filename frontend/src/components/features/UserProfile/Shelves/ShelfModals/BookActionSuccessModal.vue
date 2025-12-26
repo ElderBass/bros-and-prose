@@ -17,15 +17,6 @@
             <p v-if="secondaryMessage" class="secondary-message">
                 {{ secondaryMessage }}
             </p>
-            <BaseButton
-                v-if="showReviewButton"
-                variant="tertiary"
-                title="review that shit"
-                @click="openReview"
-                :size="mobile ? 'small' : 'medium'"
-            >
-                leave a review
-            </BaseButton>
         </div>
         <template #footer>
             <BaseButton
@@ -58,7 +49,6 @@ import BaseModal from "@/components/ui/BaseModal.vue";
 import BaseButton from "@/components/ui/BaseButton.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import type { ButtonSize } from "@/types";
-import { HAVE_READ } from "@/constants";
 import { getShelfDisplayName } from "@/utils";
 import type { Shelf } from "@/types";
 
@@ -71,7 +61,7 @@ const {
     message,
 } = storeToRefs(shelfModalStore);
 
-const { closeModal, openAddBook, openReview } = shelfModalStore;
+const { closeModal, openAddBook } = shelfModalStore;
 
 const { mobile } = useDisplay();
 
@@ -93,12 +83,6 @@ const actionVerbPhrase = computed(() => {
     if (bookActionType.value === "update") return "has been updated in your ";
     if (bookActionType.value === "remove") return "has been removed from your ";
     return "has been added to your ";
-});
-
-const showReviewButton = computed(() => {
-    return (
-        bookActionType.value === "add" && shelfDisplayName.value === HAVE_READ
-    );
 });
 
 const showAddAnotherButton = computed(() => {
