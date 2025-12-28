@@ -16,7 +16,7 @@
                     <div class="title-container">
                         <h3 class="title">{{ book.title }}</h3>
                         <BookshelfBookListItemActions
-                            :isLoggedInUser="isProfilePage"
+                            :isLoggedInUser="isLoggedInUser"
                             :book="book"
                             :shelf="shelf"
                         />
@@ -79,6 +79,7 @@ import { EMPTY_TEXT } from "@/constants";
 const props = defineProps<{
     book: BookshelfBook;
     shelf: Shelf;
+    isLoggedInUser: boolean;
 }>();
 
 const { mobile } = useDisplay();

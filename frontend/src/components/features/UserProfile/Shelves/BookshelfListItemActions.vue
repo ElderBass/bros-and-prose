@@ -12,15 +12,12 @@
             :handleDelete="handleRemove"
             :buttonSize="buttonSize"
         />
-
-        <template v-if="shelf === 'wantToRead'">
-            <MoveBookMenuButton
-                :useIconButton="true"
-                :isLoggedInUser="isLoggedInUser"
-                :book="book"
-                :buttonSize="buttonSize"
-            />
-        </template>
+        <MoveBookMenuButton
+            :useIconButton="true"
+            :isLoggedInUser="isLoggedInUser"
+            :book="book"
+            :buttonSize="buttonSize"
+        />
     </div>
 </template>
 
