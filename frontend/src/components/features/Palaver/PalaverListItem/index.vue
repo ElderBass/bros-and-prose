@@ -48,7 +48,7 @@
                 :size="mobile ? 'xsmall' : 'medium'"
                 :readOnly="true"
             />
-            <ExpandableText :text="entry.text" />
+            <ExpandableText :text="entry.text || EMPTY_TEXT" />
             <ReactionDetails
                 v-if="entry.likes || entry.dislikes"
                 :likes="entry.likes || []"
@@ -85,7 +85,7 @@ import ListItemActions from "@/components/features/Palaver/PalaverListItem/ListI
 import ReactionDetails from "@/components/features/Palaver/PalaverListItem/ReactionDetails.vue";
 import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
-import { AVATAR_ICON_LIST } from "@/constants";
+import { AVATAR_ICON_LIST, EMPTY_TEXT } from "@/constants";
 import { isGuestUser } from "@/utils";
 import CommentsSection from "./CommentsSection.vue";
 import BookInfo from "./BookInfo.vue";
