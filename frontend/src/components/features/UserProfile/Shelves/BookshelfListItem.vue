@@ -16,7 +16,7 @@
                     <div class="title-container">
                         <h3 class="title">{{ book.title }}</h3>
                         <BookshelfBookListItemActions
-                            v-if="showActions"
+                            :isLoggedInUser="isProfilePage"
                             :book="book"
                             :shelf="shelf"
                         />
@@ -79,14 +79,18 @@ import { EMPTY_TEXT } from "@/constants";
 const props = defineProps<{
     book: BookshelfBook;
     shelf: Shelf;
-    showActions: boolean;
 }>();
 
 const { mobile } = useDisplay();
 
+const isProfilePage = computed(() => useRoute().name === "profile-root");
+
 const showCurrentlyReadingActions = computed(() => {
-    const isProfileView = useRoute().name === "profile-root";
-    return props.shelf === "currentlyReading" && props.book.id && isProfileView;
+    return (
+        props.shelf === "currentlyReading" &&
+        props.book.id &&
+        isProfilePage.value
+    );
 });
 </script>
 

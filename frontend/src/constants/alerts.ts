@@ -1,4 +1,4 @@
-import type { Alert } from "@/types";
+import type { Alert, Shelf } from "@/types";
 
 export const DEFAULT_ALERT: Alert = {
     show: false,
@@ -121,19 +121,22 @@ export const MOVED_BOOK_SUCCESS_ALERT: Alert = {
     dismissable: false,
 };
 
-export const movedBookSuccessAlert = (
-    targetShelf: "currentlyReading" | "haveRead"
-): Alert => {
-    const messages =
-        targetShelf === "currentlyReading"
-            ? [
-                  "locked and loaded. go read that shit.",
-                  "buckle up, buttercup, cuz you got some reading to do.",
-              ]
-            : [
-                  "hell yeah. another one bites the dust.",
-                  "that book is officially in the past tense.",
-              ];
+export const movedBookSuccessAlert = (targetShelf: Shelf): Alert => {
+    const messagesMap = {
+        currentlyReading: [
+            "locked and loaded. go read that shit.",
+            "buckle up, buttercup, cuz you got some reading to do.",
+        ],
+        haveRead: [
+            "hell yeah. another one bites the dust.",
+            "that book is officially in the past tense.",
+        ],
+        wantToRead: [
+            "that book is now on your want to read list.",
+            "you'll get to it eventually, my dude.",
+        ],
+    };
+    const messages = messagesMap[targetShelf];
 
     return {
         show: true,

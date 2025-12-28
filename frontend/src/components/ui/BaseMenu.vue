@@ -50,7 +50,7 @@ const menuContentClass = computed(
     background-color: var(--background-color) !important;
     border: 2px solid var(--accent-blue) !important;
     border-radius: 1rem !important;
-    z-index: 10;
+    z-index: 2000;
     overflow: hidden;
 }
 

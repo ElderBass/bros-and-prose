@@ -11,7 +11,7 @@
                 v-for="book in wantToRead"
                 :key="book.id"
                 :book="book"
-                :showActions="isLoggedInUser"
+                :isLoggedInUser="isLoggedInUser"
             />
         </template>
     </UserContentPanel>
