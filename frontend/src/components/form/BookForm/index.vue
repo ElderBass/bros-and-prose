@@ -9,6 +9,12 @@
             @clear="resetAll"
         />
 
+        <ManualModeSuggestion
+            v-if="showManualModeSuggestion"
+            :latestQuery="book.title"
+            @manualMode="onManualModeClick"
+        />
+
         <SearchStatePanel
             v-if="showSearchStatePanel"
             :loading="loading"
@@ -44,6 +50,7 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import TitleSearchRow from "./TitleSearchRow.vue";
 import SearchStatePanel from "./SearchStatePanel.vue";
 import BookDetailsFields from "./BookDetailsFields.vue";
+import ManualModeSuggestion from "./ManualModeSuggestion.vue";
 import type {
     BookFormMode,
     BookFormSearchResult,
@@ -52,7 +59,7 @@ import type {
 } from "./types";
 import { useBooks } from "@/composables/useBooks";
 import type { BookshelfBook, FutureBook, SubmitReviewArgs } from "@/types";
-import { DEFAULT_REVIEW } from "@/constants";
+import { DEFAULT_REVIEW, EMPTY_SHELF_BOOK } from "@/constants";
 import { getInitialBookValues, showReviewForm } from "./utils";
 
 defineOptions({ name: "BookForm" });
@@ -71,7 +78,7 @@ const props = withDefaults(
         dirtyKeys?: Array<keyof BookFormValues>;
     }>(),
     {
-        initialValues: () => ({}),
+        initialValues: () => ({ ...EMPTY_SHELF_BOOK }),
         validation: undefined,
         dirtyKeys: () => ["tags", "description", "pages"],
     }
@@ -90,6 +97,7 @@ const results = ref<BookFormSearchResult[]>([]);
 const selectedResult = ref<BookFormSearchResult | null>(null);
 const manualMode = ref(false); // "no results" -> allow manual entry
 const bookSelected = ref(false);
+const searchCount = ref(0);
 
 const { searchGoogleByTitle } = useBooks();
 
@@ -114,9 +122,18 @@ const detailsVisible = computed(() => {
 });
 
 const showSearchStatePanel = computed(() => {
-    if (props.mode === "edit" || props.mode === "future-edit") return false;
+    if (
+        manualMode.value ||
+        props.mode === "edit" ||
+        props.mode === "future-edit"
+    )
+        return false;
     if (bookSelected.value) return false;
     return true;
+});
+
+const showManualModeSuggestion = computed(() => {
+    return searchCount.value >= 2;
 });
 
 const canSubmit = computed(() => {
@@ -151,7 +168,6 @@ const resetAll = (resetResults = true) => {
     };
 
     selectedResult.value = null;
-    manualMode.value = false;
     bookSelected.value = false;
 };
 
@@ -159,6 +175,7 @@ const onSelectResult = (result: BookFormSearchResult) => {
     bookSelected.value = true;
     selectedResult.value = result;
     manualMode.value = false;
+    searchCount.value = 0;
 
     const mapped: Partial<BookFormValues> = {
         title: result.title || "",
@@ -172,8 +189,15 @@ const onSelectResult = (result: BookFormSearchResult) => {
     book.value = { ...book.value, ...mapped };
 };
 
+const onManualModeClick = () => {
+    resetAll(false);
+    manualMode.value = true;
+    searchCount.value = 0;
+};
+
 const runSearch = async () => {
-    if (isEditMode.value || Boolean(selectedResult.value)) return;
+    if (isEditMode.value || manualMode.value || Boolean(selectedResult.value))
+        return;
 
     const query = book.value.title.trim();
     if (!query) {
@@ -188,8 +212,7 @@ const runSearch = async () => {
         const found = await searchGoogleByTitle(query);
         results.value = found || [];
         selectedResult.value = null;
-
-        manualMode.value = results.value.length === 0;
+        searchCount.value++;
     } catch {
         results.value = [];
         selectedResult.value = null;
@@ -211,7 +234,6 @@ watch(
         }
 
         selectedResult.value = null;
-        manualMode.value = false;
 
         if (searchTimer) window.clearTimeout(searchTimer);
         searchTimer = window.setTimeout(() => {
