@@ -117,7 +117,6 @@ const validationResolved = computed(() => {
 });
 
 const detailsVisible = computed(() => {
-    console.log("KERWANGING detailsVisible", manualMode.value);
     if (isEditMode.value) return true;
     return Boolean(selectedResult.value) || manualMode.value;
 });
@@ -194,11 +193,9 @@ const onManualModeClick = () => {
     resetAll(false);
     manualMode.value = true;
     searchCount.value = 0;
-    console.log("KERWANGING onManualModeClick", manualMode.value);
 };
 
 const runSearch = async () => {
-    console.log("KERWANGING runSearch", manualMode.value);
     if (isEditMode.value || manualMode.value || Boolean(selectedResult.value))
         return;
 
