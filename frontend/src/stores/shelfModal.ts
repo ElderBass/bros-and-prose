@@ -10,6 +10,7 @@ export type ModalType =
     | "bookActionSuccess"
     | "addBookError"
     | "review"
+    | "bookDetails"
     | null;
 
 export type BookActionType = "add" | "update" | "remove";
@@ -91,6 +92,11 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.selectedBookShelf = shelf;
             this.modal = "review";
         },
+        openBookDetails(book: BookshelfBook, shelf: Shelf) {
+            this.modal = "bookDetails";
+            this.selectedBook = book;
+            this.selectedBookShelf = shelf;
+        },
         closeModal() {
             this.modal = null;
             this.selectedBook = null;
@@ -113,5 +119,6 @@ export const useShelfModalStore = defineStore("shelfModal", {
             state.modal === "bookActionSuccess",
         addBookErrorModalOpen: (state) => state.modal === "addBookError",
         reviewModalOpen: (state) => state.modal === "review",
+        bookDetailsModalOpen: (state) => state.modal === "bookDetails",
     },
 });

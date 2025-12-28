@@ -2,7 +2,7 @@
     <BookshelfListItem
         :book="book"
         shelf="wantToRead"
-        :showActions="showActions"
+        :isLoggedInUser="isLoggedInUser"
     />
 </template>
 
@@ -12,8 +12,6 @@ import BookshelfListItem from "@/components/features/UserProfile/Shelves/Bookshe
 
 defineProps<{
     book: BookshelfBook;
-    showActions: boolean;
+    isLoggedInUser: boolean;
 }>();
 </script>
-
-<style scoped></style>

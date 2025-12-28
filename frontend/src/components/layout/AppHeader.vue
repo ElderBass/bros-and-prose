@@ -80,11 +80,17 @@
                     to="/profile"
                     class="mobile-profile-btn"
                     style="color: var(--accent-blue)"
+                    @click="closeMobileMenu"
                 >
                     <FontAwesomeIcon :icon="currentAvatar" />
                     <span>Profile</span>
                 </RouterLink>
-                <RouterLink v-if="isGuest" class="login-link" to="/">
+                <RouterLink
+                    v-if="isGuest"
+                    class="login-link"
+                    to="/"
+                    @click="closeMobileMenu"
+                >
                     login
                 </RouterLink>
             </div>

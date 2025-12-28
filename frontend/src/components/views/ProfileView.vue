@@ -31,6 +31,7 @@
         </div>
         <ProfileFab v-if="isLoggedInUser" />
         <PalaverModals v-if="isLoggedInUser" />
+        <ShelfModals />
     </AppLayout>
 </template>
 
@@ -44,35 +45,22 @@ import ProfileFab from "../features/UserProfile/ProfileFab.vue";
 import UserActivitySection from "../features/UserProfile/UserActivitySection.vue";
 import UserShelvesSection from "../features/UserProfile/Shelves/UserShelvesSection.vue";
 import PalaverModals from "../modal/PalaverModals/index.vue";
+import ShelfModals from "../features/UserProfile/Shelves/ShelfModals/index.vue";
 import type { User } from "@/types";
 import { useUIStore } from "@/stores/ui";
-import { useUserStore } from "@/stores/user";
 import { getUserShelves } from "@/utils";
 
 const props = defineProps<{
     user: User;
+    isLoggedInUser: boolean;
 }>();
 
-const { loggedInUser } = storeToRefs(useUserStore());
+const { isAppLoading } = storeToRefs(useUIStore());
 
-const isLoggedInUser = computed(() => {
-    const viewedId = props.user?.id;
-    const loggedInId = loggedInUser.value?.id;
-    return Boolean(viewedId && loggedInId && viewedId === loggedInId);
-});
-
-const user = computed<User>(() => {
-    if (isLoggedInUser.value && loggedInUser.value?.id)
-        return loggedInUser.value;
-    return props.user;
-});
-
-const shelves = computed(() => getUserShelves(user.value));
+const shelves = computed(() => getUserShelves(props.user));
 const currentlyReading = computed(() => shelves.value.currentlyReading);
 const wantToRead = computed(() => shelves.value.wantToRead);
 const haveRead = computed(() => shelves.value.haveRead);
-
-const { isAppLoading } = storeToRefs(useUIStore());
 </script>
 
 <style scoped>

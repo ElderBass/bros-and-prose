@@ -15,6 +15,7 @@ import type { ModalType } from "@/stores/shelfModal";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { usePalaverStore } from "@/stores/palaver";
 import { buildRecommendationFromBookshelfBook } from "./palaverUtils";
+import { useUserStore } from "@/stores/user";
 
 export const buildBookShelfEntry = (
     bookData: OpenLibraryBookResult,
@@ -127,7 +128,17 @@ export const isCurrentlyReadingShelf = () => {
 };
 
 export const recommendBook = (book: BookshelfBook): void => {
-    console.log("KERWANGING RECOMMENDING BOOK", book);
     const { openItemModal } = usePalaverStore();
     openItemModal("create", buildRecommendationFromBookshelfBook(book));
+};
+
+export const getShelfBookIsOn = (book: BookshelfBook) => {
+    const loggedInUser = useUserStore().loggedInUser;
+    const shelves = getUserShelves(loggedInUser);
+    for (const shelf in shelves) {
+        if (shelves[shelf as Shelf].some((b) => b.id === book.id)) {
+            return shelf;
+        }
+    }
+    return null;
 };

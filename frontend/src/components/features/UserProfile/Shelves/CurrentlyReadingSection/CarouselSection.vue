@@ -12,7 +12,7 @@
                 <BookshelfListItem
                     :book="item as BookshelfBook"
                     shelf="currentlyReading"
-                    :showActions="isLoggedInUser"
+                    :isLoggedInUser="isLoggedInUser"
                 />
             </div>
         </template>

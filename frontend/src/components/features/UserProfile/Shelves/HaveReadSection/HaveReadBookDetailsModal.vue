@@ -1,8 +1,8 @@
 <template>
     <BaseModal
         :modelValue="open"
-        @close="emit('close')"
-        @update:modelValue="(v: boolean) => !v && emit('close')"
+        @close="closeModal"
+        @update:modelValue="(v: boolean) => !v && closeModal"
         title="the past in present tense"
         size="medium"
         shadow-color="green"
@@ -23,7 +23,7 @@
                             shadowColor="green"
                             title="edit details (tags + blurb)"
                             :handleClick="
-                                () => emit('editDetails', book as BookshelfBook)
+                                startEditDetails(book as BookshelfBook)
                             "
                         />
                     </div>
@@ -55,8 +55,8 @@
                 :book="book"
                 :review="review"
                 :canReview="canReview"
-                @editReview="emit('editReview', book as BookshelfBook)"
-                @review="emit('review', book as BookshelfBook)"
+                @editReview="startEditReview(book as BookshelfBook)"
+                @review="startReview(book as BookshelfBook)"
             />
         </div>
         <div v-else class="content">
@@ -65,9 +65,10 @@
 
         <template #footer>
             <ActionButtons
-                :showRecommend="canReview"
-                @recommend="emit('recommend', book as BookshelfBook)"
-                @close="emit('close')"
+                :book="book"
+                :isLoggedInUser="canReview"
+                @recommend="startRecommend(book as BookshelfBook)"
+                @close="closeModal"
             />
         </template>
     </BaseModal>
@@ -75,6 +76,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useDisplay } from "vuetify";
 import type { BookshelfBook, Review } from "@/types";
 import BookCover from "./BookDetailsComponents/BookCover.vue";
 import BlurbSection from "./BookDetailsComponents/BlurbSection.vue";
@@ -82,25 +84,36 @@ import ReviewSection from "./BookDetailsComponents/ReviewSection.vue";
 import TagsSection from "./BookDetailsComponents/TagsSection.vue";
 import ActionButtons from "./BookDetailsComponents/ActionButtons.vue";
 import { faBookOpen, faMarker } from "@fortawesome/free-solid-svg-icons";
-import { useDisplay } from "vuetify";
+import { useShelfModalStore } from "@/stores/shelfModal";
+import { recommendBook } from "@/utils";
 
 defineProps<{
     open: boolean;
-    book: BookshelfBook | null;
+    book: BookshelfBook;
     review: Review | null;
     canReview: boolean;
 }>();
 
-const emit = defineEmits<{
-    (e: "close"): void;
-    (e: "review", book: BookshelfBook): void;
-    (e: "editDetails", book: BookshelfBook): void;
-    (e: "editReview", book: BookshelfBook): void;
-    (e: "recommend", book: BookshelfBook): void;
-}>();
-
 const { mobile } = useDisplay();
+const { openReviewForBook, openEditBook, closeModal } = useShelfModalStore();
+
 const editButtonSize = computed(() => (mobile.value ? "xsmall" : "small"));
+
+const startReview = (book: BookshelfBook) => {
+    openReviewForBook(book, "haveRead");
+};
+
+const startEditDetails = (book: BookshelfBook) => {
+    openEditBook(book, "haveRead");
+};
+
+const startEditReview = (book: BookshelfBook) => {
+    openReviewForBook(book, "haveRead");
+};
+
+const startRecommend = (book: BookshelfBook) => {
+    recommendBook(book);
+};
 </script>
 
 <style scoped>
