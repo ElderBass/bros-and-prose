@@ -1,5 +1,5 @@
 <template>
-    <BaseMenu accentColor="blue" hoverColor="lavender">
+    <BaseMenu accentColor="blue" hoverColor="lavender" location="top start">
         <template #activator="{ props: menuProps }">
             <IconButton
                 v-if="useIconButton"
@@ -60,9 +60,14 @@ import {
 import { useUIStore } from "@/stores/ui";
 import { useUserStore } from "@/stores/user";
 
-defineProps<{
-    useIconButton: boolean;
-}>();
+withDefaults(
+    defineProps<{
+        useIconButton?: boolean;
+    }>(),
+    {
+        useIconButton: true,
+    }
+);
 
 const { mobile } = useDisplay();
 const { updateUserAvatar, updateUserUsername } = useUser();
