@@ -1,6 +1,6 @@
 <template>
     <div class="user">
-        <div class="header">
+        <div class="avatar-and-name">
             <AvatarImage
                 :icon="currentIcon"
                 :size="mobile ? 'small' : 'medium'"
@@ -13,16 +13,16 @@
                 </p>
             </div>
         </div>
-
-        <div class="details">
+        <div class="progress-and-edit">
+            <EditUserButton v-if="isLoggedInUser && mobile" />
             <div class="current-progress">
-                <p>current book progress:</p>
+                <span class="progress-label">current book progress:</span>
                 <span class="current-progress-percentage">
                     {{ currentProgress }}%
                 </span>
             </div>
+            <EditUserButton v-if="isLoggedInUser && !mobile" />
         </div>
-        <EditUserButton v-if="isLoggedInUser" :useIconButton="false" />
     </div>
 </template>
 
@@ -57,34 +57,27 @@ const currentProgress = computed(() => {
 
 <style scoped>
 .user {
-    height: 100%;
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
     align-items: center;
-    gap: 0.5rem;
-    min-width: 0; /* allow children to shrink instead of overflowing */
+    justify-content: space-evenly;
+    padding: 0 0.5rem;
 }
 
-.header {
+.avatar-and-name {
+    flex: 1 0 50%;
     display: flex;
     align-items: center;
-    width: 100%;
-    gap: 0.5rem;
+    gap: 0.75rem;
 }
 
 .user-name {
     display: flex;
     flex-direction: column;
-}
-
-.details {
     min-width: 0;
-    display: flex;
-    flex-direction: column;
 }
 
-.header h2 {
+.user-name h2 {
     margin: 0;
     color: var(--accent-blue);
     font-family: "Libre Baskerville", serif;
@@ -94,39 +87,64 @@ const currentProgress = computed(() => {
     white-space: nowrap;
 }
 
-.details p {
+.user-name p {
+    margin: 0;
     opacity: 0.9;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+.progress-and-edit {
+    flex: 1 0 50%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: space-evenly;
+}
+
 .current-progress {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.35rem;
+}
+
+.progress-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
 }
 
 .current-progress-percentage {
     font-size: 1.05rem;
     font-weight: 600;
-    opacity: 0.8;
     color: var(--accent-blue);
 }
 
 @media (max-width: 768px) {
-    .user-info-section {
-        min-height: 110px;
-        gap: 1rem;
+    .user-header {
+        align-items: flex-start;
+    }
+
+    .avatar-and-name {
         width: 100%;
-        padding: 1rem 0.75rem;
     }
-    .header h2 {
-        font-size: 1rem;
-    }
-    .current-progress {
+
+    .progress-and-edit {
+        flex-direction: column;
+        width: 100%;
+        justify-content: space-between;
+        align-items: flex-end;
         gap: 0.5rem;
     }
+
+    .user-name h2 {
+        font-size: 1.1rem;
+    }
+
+    .progress-label {
+        font-size: 0.85rem;
+    }
+
     .current-progress-percentage {
         font-size: 0.95rem;
     }

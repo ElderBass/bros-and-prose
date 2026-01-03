@@ -1,45 +1,36 @@
 <template>
     <div class="favorites-section">
-        <h4 v-if="favorites">favorites</h4>
-        <FavoriteRow
-            v-for="fav in favoriteTypes"
-            :key="fav"
-            :label="fav"
-            :items="getRowItems(fav)"
-            @addItem="addItem(fav)"
+        <FavoritesTabs
+            :favorites="favorites"
+            :isLoggedInUser="isLoggedInUser"
+            @addItem="addItem"
+            @editItem="editItem"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-import FavoriteRow from "./FavoriteRow.vue";
+import FavoritesTabs from "./FavoritesTabs.vue";
 import type { UserFavorites, FavoriteType } from "@/types";
 
 const { favorites } = defineProps<{
     favorites: UserFavorites | undefined;
+    isLoggedInUser: boolean;
 }>();
-
-const favoriteTypes: FavoriteType[] = ["authors", "genres", "books"];
-
-const getRowItems = (type: FavoriteType) => {
-    if (type === "books") {
-        return favorites?.books.map((book) => book.title) ?? [];
-    }
-    return favorites?.[type] ?? [];
-};
 
 const addItem = (type: FavoriteType) => {
     console.log("addItem", type);
+};
+
+const editItem = (type: FavoriteType, index: number) => {
+    console.log("editItem", type, index);
 };
 </script>
 
 <style scoped>
 .favorites-section {
-    flex: 1 0 50%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 0.5rem;
 }
 </style>

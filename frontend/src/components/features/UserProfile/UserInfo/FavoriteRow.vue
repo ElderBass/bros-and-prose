@@ -3,6 +3,7 @@
         <div class="header">
             <span class="fav-label">{{ label }}:</span>
             <IconButton
+                v-if="isLoggedInUser"
                 :size="buttonSize"
                 :color="hasItems ? 'fuschia' : 'green'"
                 :icon="hasItems ? faMarker : faPlus"
@@ -21,9 +22,10 @@ import { useDisplay } from "vuetify";
 import type { FavoriteType } from "@/types/user";
 import { faMarker, faPlus } from "@fortawesome/free-solid-svg-icons";
 
-const { label, items } = defineProps<{
+const { label, items, isLoggedInUser } = defineProps<{
     label: FavoriteType;
     items: string[];
+    isLoggedInUser: boolean;
 }>();
 
 const emit = defineEmits<{
