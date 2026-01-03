@@ -19,8 +19,6 @@
                 :type="activeTab"
                 :items="getCurrentItems"
                 :isLoggedInUser="isLoggedInUser"
-                @addItem="handleAddItem"
-                @editItem="handleEditItem"
             />
         </div>
     </div>
@@ -36,11 +34,6 @@ const { favorites, isLoggedInUser } = defineProps<{
     isLoggedInUser: boolean;
 }>();
 
-const emit = defineEmits<{
-    (e: "addItem", type: FavoriteType): void;
-    (e: "editItem", type: FavoriteType, index: number): void;
-}>();
-
 const tabs: FavoriteType[] = ["authors", "genres", "books"];
 const activeTab = ref<FavoriteType>("authors");
 
@@ -50,14 +43,6 @@ const getCurrentItems = computed(() => {
     }
     return favorites?.[activeTab.value] ?? [];
 });
-
-const handleAddItem = (type: FavoriteType) => {
-    emit("addItem", type);
-};
-
-const handleEditItem = (type: FavoriteType, index: number) => {
-    emit("editItem", type, index);
-};
 </script>
 
 <style scoped>
