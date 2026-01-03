@@ -14,7 +14,7 @@
                         :size="buttonSize"
                         color="fuschia"
                         :title="`edit ${item}`"
-                        :handleClick="() => handleEdit(index)"
+                        :handleClick="handleEdit"
                         class="edit-icon"
                     />
                 </div>
@@ -41,16 +41,12 @@ import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import type { FavoriteType } from "@/types";
 import { faMarker, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { useFavoritesModalStore } from "@/stores/favoritesModal";
 
 const { type, items, isLoggedInUser } = defineProps<{
     type: FavoriteType;
     items: string[];
     isLoggedInUser: boolean;
-}>();
-
-const emit = defineEmits<{
-    (e: "addItem", type: FavoriteType): void;
-    (e: "editItem", type: FavoriteType, index: number): void;
 }>();
 
 const { mobile } = useDisplay();
@@ -70,11 +66,11 @@ const singularType = computed(() => {
 });
 
 const handleAdd = () => {
-    emit("addItem", type);
+    useFavoritesModalStore().openAddModal(type);
 };
 
-const handleEdit = (index: number) => {
-    emit("editItem", type, index);
+const handleEdit = () => {
+    useFavoritesModalStore().openEditModal(type);
 };
 </script>
 
