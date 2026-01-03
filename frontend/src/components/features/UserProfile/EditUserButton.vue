@@ -15,7 +15,7 @@
                 variant="outline"
                 :size="buttonSize"
                 title="edit your dumbass details"
-                @click="openModal('avatar')"
+                @click="() => {}"
                 >edit your dumb ass</BaseButton
             >
         </template>
