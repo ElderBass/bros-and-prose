@@ -2,12 +2,22 @@
     <BaseMenu accentColor="blue" hoverColor="lavender">
         <template #activator="{ props: menuProps }">
             <IconButton
+                v-if="useIconButton"
                 v-bind="menuProps"
                 :icon="faMarker"
                 :handleClick="() => {}"
                 title="edit your dumbass details"
-                :size="mobile ? 'xsmall' : 'small'"
+                :size="buttonSize"
             />
+            <BaseButton
+                v-else
+                v-bind="menuProps"
+                variant="outline"
+                :size="buttonSize"
+                title="edit your dumbass details"
+                @click="() => {}"
+                >edit your dumb ass</BaseButton
+            >
         </template>
         <template #items>
             <v-list-item @click="openModal('avatar')">
@@ -50,6 +60,10 @@ import {
 import { useUIStore } from "@/stores/ui";
 import { useUserStore } from "@/stores/user";
 
+defineProps<{
+    useIconButton: boolean;
+}>();
+
 const { mobile } = useDisplay();
 const { updateUserAvatar, updateUserUsername } = useUser();
 const { loggedInUser } = storeToRefs(useUserStore());
@@ -64,6 +78,10 @@ const openModal = (modal: "avatar" | "username") => {
 const closeModal = () => {
     activeModal.value = "";
 };
+
+const buttonSize = computed(() => {
+    return mobile.value ? "xsmall" : "small";
+});
 
 const isAvatarModalOpen = computed(() => {
     return activeModal.value === "avatar";
