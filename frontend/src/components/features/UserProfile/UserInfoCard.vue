@@ -30,7 +30,6 @@ const { isLoggedInUser, user } = defineProps<{
     flex-direction: column;
     gap: 1.5rem;
     background: var(--background-color);
-    padding: 0 1.5rem;
     border-radius: 1rem;
 }
 
@@ -39,7 +38,6 @@ const { isLoggedInUser, user } = defineProps<{
         min-height: auto;
         gap: 1.25rem;
         width: 100%;
-        padding: 0 1rem;
     }
 }
 </style>
