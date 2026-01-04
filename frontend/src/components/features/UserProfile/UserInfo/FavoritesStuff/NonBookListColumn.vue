@@ -14,16 +14,18 @@ defineProps<{
 
 <style scoped>
 .non-book-list-column {
+    flex: 1 0 auto;
+    height: 100%;
+    min-height: 164px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    min-width: 200px;
 }
 
 @media (max-width: 768px) {
     .non-book-list-column {
-        min-width: 150px;
+        min-height: 100px;
     }
 }
 </style>

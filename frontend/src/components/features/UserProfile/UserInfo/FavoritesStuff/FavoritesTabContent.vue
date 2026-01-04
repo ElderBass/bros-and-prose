@@ -1,7 +1,12 @@
 <template>
     <div class="tab-content">
         <transition name="fade" mode="out-in">
-            <component v-if="hasItems" :is="componentName" :items="items" />
+            <component
+                v-if="hasItems"
+                :is="componentName"
+                :items="items"
+                :type="type"
+            />
             <div v-else class="empty-state" :key="`${type}-empty`">
                 <p class="empty-text">no {{ type }} added yet</p>
                 <BaseButton
@@ -55,7 +60,7 @@ const handleAdd = () => {
 <style scoped>
 .tab-content {
     padding: 1.25rem;
-    min-height: 150px;
+    min-height: 200px;
     display: flex;
     flex-direction: column;
 }

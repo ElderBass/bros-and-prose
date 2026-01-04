@@ -35,24 +35,29 @@ const emit = defineEmits<{
 .items-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    padding: 1rem;
+    justify-content: flex-start;
+    align-content: flex-start;
+    gap: 0.35rem;
+    padding: 0.75rem;
     background: rgba(0, 0, 0, 0.2);
-    border-radius: 0.75rem;
-    min-height: 80px;
+    border: 1px solid var(--accent-blue);
+    border-radius: 1rem;
+    min-height: 180px;
 }
 
 .item-chip {
+    flex: 0 1 auto;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    gap: 0.3rem;
+    padding: 0.3rem 0.6rem;
     background: var(--surface-color);
-    border: 2px solid var(--accent-lavender);
+    border: 1px solid var(--accent-lavender);
     border-radius: 2rem;
     color: var(--accent-lavender);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 36px;
 }
 
 .item-chip:hover {
@@ -106,13 +111,14 @@ const emit = defineEmits<{
 
 @media (max-width: 768px) {
     .items-list {
-        gap: 0.5rem;
-        padding: 0.75rem;
+        gap: 0.4rem;
+        padding: 0.5rem;
     }
 
     .item-chip {
-        padding: 0.4rem 0.75rem;
-        font-size: 0.85rem;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+        gap: 0.3rem;
     }
 
     .empty-state {
