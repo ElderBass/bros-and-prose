@@ -90,7 +90,6 @@ const handleSubmit = async (items: string[]) => {
             selectedFavoriteType.value,
             items
         );
-        console.log("KERTWANGING updatedFavorites", updatedFavorites);
         await useUserFavorites().updateUserFavorites(updatedFavorites);
         useUIStore().showAlert(FAVORITES_UPDATED_SUCCESS_ALERT);
     } catch (error) {

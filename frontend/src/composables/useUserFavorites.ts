@@ -8,7 +8,6 @@ export const useUserFavorites = () => {
     const { info } = useLog();
 
     const updateUserFavorites = async (favorites: UserFavorites) => {
-        console.log("KERTWANGING updateUserFavorites", favorites);
         const loggedInUser = useUserStore().loggedInUser;
         const updatedUser = await updateUser(loggedInUser.id, {
             ...loggedInUser,
