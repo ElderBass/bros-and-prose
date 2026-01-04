@@ -11,21 +11,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import NonBookListColumn from "./NonBookListColumn.vue";
+import { getNonBookItemColumns } from "@/utils/userFavoritesUtils";
 
 const props = defineProps<{
     items: string[];
 }>();
 
-const columns = computed(() => {
-    const itemsPerColumn = 3;
-    const cols: string[][] = [];
-
-    for (let i = 0; i < props.items.length; i += itemsPerColumn) {
-        cols.push(props.items.slice(i, i + itemsPerColumn));
-    }
-
-    return cols;
-});
+const columns = computed(() => getNonBookItemColumns(props.items));
 </script>
 
 <style scoped>
