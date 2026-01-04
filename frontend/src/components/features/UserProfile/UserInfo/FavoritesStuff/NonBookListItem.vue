@@ -47,4 +47,11 @@ const href = computed(() => {
         0 2px 8px rgba(179, 136, 255, 0.3),
         0 0 15px rgba(179, 136, 255, 0.15);
 }
+
+@media (max-width: 768px) {
+    .non-book-list-item {
+        font-size: 0.875rem;
+        padding: 0.33rem 0.5rem;
+    }
+}
 </style>

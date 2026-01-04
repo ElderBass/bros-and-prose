@@ -23,7 +23,7 @@ const columns = computed(() => getNonBookItemColumns(props.items));
 <style scoped>
 .non-book-list {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: flex-start;
     gap: 1.5rem;
     flex-wrap: wrap;

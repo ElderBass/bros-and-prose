@@ -128,8 +128,8 @@ const getCurrentItems = computed(() => {
     background: var(--background-color);
     border: 1px solid var(--accent-green);
     border-radius: 1rem;
-    min-height: 150px;
     width: 100%;
+    height: 172px;
 }
 
 @media (max-width: 768px) {
@@ -142,7 +142,7 @@ const getCurrentItems = computed(() => {
     }
 
     .tabs-content {
-        min-height: 120px;
+        height: 133px;
     }
 }
 </style>
