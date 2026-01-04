@@ -139,7 +139,7 @@ const handleAdd = () => {
 
 @media (max-width: 768px) {
     .tab-content {
-        padding: 1rem;
+        padding: 0.75rem;
         min-height: 120px;
     }
 
