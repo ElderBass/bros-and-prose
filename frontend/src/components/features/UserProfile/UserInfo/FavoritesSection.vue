@@ -9,8 +9,8 @@
 </template>
 
 <script setup lang="ts">
-import FavoritesTabs from "./FavoritesTabs.vue";
-import FavoritesModal from "./FavoritesModal/index.vue";
+import FavoritesTabs from "./FavoritesStuff/FavoritesTabs.vue";
+import FavoritesModal from "./FavoritesStuff/FavoritesModal/index.vue";
 import type { UserFavorites } from "@/types";
 
 const { favorites } = defineProps<{
