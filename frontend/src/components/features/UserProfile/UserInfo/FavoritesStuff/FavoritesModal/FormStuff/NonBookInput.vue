@@ -1,9 +1,11 @@
 <template>
     <div class="input-section">
         <BaseInput
+            id="non-book-favorite-input"
             v-model="currentInput"
             :label="label"
             :placeholder="placeholder"
+            size="small"
             @keyup.enter="onAddItem"
         />
         <IconButton

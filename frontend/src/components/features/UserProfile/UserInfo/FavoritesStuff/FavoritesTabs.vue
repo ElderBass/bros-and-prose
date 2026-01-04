@@ -129,7 +129,7 @@ const getCurrentItems = computed(() => {
     border: 1px solid var(--accent-green);
     border-radius: 1rem;
     width: 100%;
-    height: 172px;
+    height: 200px;
 }
 
 @media (max-width: 768px) {

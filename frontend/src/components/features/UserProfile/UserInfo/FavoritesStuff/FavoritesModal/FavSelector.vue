@@ -99,8 +99,8 @@ const getIcon = (type: FavoriteType) => {
     }
 
     .fav-button {
-        padding: 0.6rem 1.25rem;
-        font-size: 0.85rem;
+        padding: 0.35rem 0.75rem;
+        font-size: 0.75rem;
     }
 }
 </style>

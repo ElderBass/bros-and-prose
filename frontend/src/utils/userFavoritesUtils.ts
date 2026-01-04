@@ -8,7 +8,7 @@ export const getUpdatedFavorites = (
     const user = useUserStore().loggedInUser;
     const updatedFavorites = {
         ...user.favorites,
-        [selectedFavoriteType]: items,
+        [selectedFavoriteType]: Array.from(new Set(items)),
     };
     return updatedFavorites;
 };
