@@ -28,5 +28,23 @@ const href = computed(() => {
     font-weight: 400;
     font-family: "Crimson Text", serif;
     line-height: 1.3;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.non-book-list-item:hover {
+    background-color: var(--accent-lavender);
+    color: var(--background-color);
+    border-color: var(--accent-lavender);
+    transform: translateY(-2px);
+    box-shadow:
+        0 4px 12px rgba(179, 136, 255, 0.4),
+        0 0 20px rgba(179, 136, 255, 0.2);
+}
+
+.non-book-list-item:active {
+    transform: translateY(0);
+    box-shadow:
+        0 2px 8px rgba(179, 136, 255, 0.3),
+        0 0 15px rgba(179, 136, 255, 0.15);
 }
 </style>
