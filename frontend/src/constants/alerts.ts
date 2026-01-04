@@ -174,6 +174,17 @@ export const futureBookVotedSuccessAlert = (hasVoted: boolean): Alert => {
     };
 };
 
+export const FAVORITES_UPDATED_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "favorites updated successfully.",
+        "one bro's trash is another bro's treasure I guess",
+    ],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
 // Error Alerts
 export const VALIDATION_ERROR_ALERT: Alert = {
     show: true,

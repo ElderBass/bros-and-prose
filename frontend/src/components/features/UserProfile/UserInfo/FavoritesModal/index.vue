@@ -34,8 +34,13 @@ import FavSelector from "./FavSelector.vue";
 import AuthorForm from "./AuthorForm.vue";
 import GenreForm from "./GenreForm.vue";
 import BookForm from "./BookForm.vue";
-import type { FavoriteType, BookshelfBook } from "@/types";
+import type { FavoriteType } from "@/types";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
+import { useUIStore } from "@/stores/ui";
+import { useLog, useUserFavorites } from "@/composables";
+import { getUpdatedFavorites } from "@/utils";
+import { FAVORITES_UPDATED_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
+import { useUserStore } from "@/stores/user";
 
 defineOptions({
     name: "FavoritesModal",
@@ -43,8 +48,7 @@ defineOptions({
 
 const favoritesModalStore = useFavoritesModalStore();
 const { closeModal } = favoritesModalStore;
-const { open, selectedFavoriteType, existingFavorites } =
-    storeToRefs(favoritesModalStore);
+const { open, selectedFavoriteType } = storeToRefs(favoritesModalStore);
 
 const loading = ref(false);
 
@@ -62,17 +66,16 @@ const currentFormComponent = computed(() => {
 });
 
 const getCurrentFavorites = computed(() => {
-    if (!existingFavorites.value) {
+    const userFavorites = useUserStore().loggedInUser.favorites;
+    if (!userFavorites) {
         return selectedFavoriteType.value === "books" ? [] : [];
     }
 
     if (selectedFavoriteType.value === "books") {
-        return existingFavorites.value.books.map((book) =>
-            JSON.stringify(book)
-        );
+        return userFavorites.books?.map((book) => JSON.stringify(book)) || [];
     }
 
-    const favorites = existingFavorites.value[selectedFavoriteType.value];
+    const favorites = userFavorites[selectedFavoriteType.value];
     return favorites || [];
 });
 
@@ -80,13 +83,28 @@ const handleFavoriteTypeChange = (type: FavoriteType) => {
     selectedFavoriteType.value = type;
 };
 
-const handleSubmit = (items: string[] | BookshelfBook[]) => {
-    console.log("Submitting favorites:", selectedFavoriteType.value, items);
-    loading.value = true;
-    setTimeout(() => {
+const handleSubmit = async (items: string[]) => {
+    try {
+        loading.value = true;
+        const updatedFavorites = getUpdatedFavorites(
+            selectedFavoriteType.value,
+            items
+        );
+        await useUserFavorites().updateUserFavorites(updatedFavorites);
+        useUIStore().showAlert(FAVORITES_UPDATED_SUCCESS_ALERT);
+    } catch (error) {
+        console.error("Error submitting favorites:", error);
+        await useLog().error(`Error submitting favorites: ${error}`);
+        useUIStore().showAlert(
+            QUICK_ERROR([
+                "Error submitting favorites",
+                "probably got rejected because your shit's so weak",
+            ])
+        );
+    } finally {
         loading.value = false;
         closeModal();
-    }, 500);
+    }
 };
 </script>
 

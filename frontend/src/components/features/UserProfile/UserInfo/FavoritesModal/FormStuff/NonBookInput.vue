@@ -4,7 +4,7 @@
             v-model="currentInput"
             :label="label"
             :placeholder="placeholder"
-            @keyup.enter="addItem"
+            @keyup.enter="onAddItem"
         />
         <IconButton
             :icon="faPlus"
