@@ -21,18 +21,14 @@ export interface User {
     currentlyReading?: BookshelfBook[];
     wantToRead?: BookshelfBook[];
     haveRead?: BookshelfBook[];
-    favorites?: {
-        authors: string[];
-        genres: string[];
-        books: BookshelfBook[];
-    };
+    favorites?: UserFavorites;
     yearReadingGoal?: number;
 }
 
 export interface UserFavorites {
-    authors: string[];
-    genres: string[];
-    books: BookshelfBook[];
+    authors?: string[];
+    genres?: string[];
+    books?: BookshelfBook[];
 }
 
 export type FavoriteType = "authors" | "genres" | "books";

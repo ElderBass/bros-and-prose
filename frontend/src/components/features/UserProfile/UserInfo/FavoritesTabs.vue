@@ -39,9 +39,12 @@ const activeTab = ref<FavoriteType>("authors");
 
 const getCurrentItems = computed(() => {
     if (activeTab.value === "books") {
-        return favorites?.books.map((book) => book.title) ?? [];
+        return (
+            Object.values(favorites?.books ?? []).map((book) => book.title) ??
+            []
+        );
     }
-    return favorites?.[activeTab.value] ?? [];
+    return Object.values(favorites?.[activeTab.value] ?? []);
 });
 </script>
 
