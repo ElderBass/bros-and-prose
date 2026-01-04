@@ -29,24 +29,8 @@ export const useUserFavorites = () => {
         await info(`Updated '${favoriteType}' for ${loggedInUser.username}`);
         return updatedUser;
     };
-
-    const updateAuthors = async (authors: string[]) => {
-        return updateFavorite("authors", authors);
-    };
-
-    const updateGenres = async (genres: string[]) => {
-        return updateFavorite("genres", genres);
-    };
-
-    const updateBooks = async (books: BookshelfBook[]) => {
-        return updateFavorite("books", books);
-    };
-
     return {
         updateUserFavorites,
         updateFavorite,
-        updateAuthors,
-        updateGenres,
-        updateBooks,
     };
 };

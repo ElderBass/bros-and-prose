@@ -90,9 +90,7 @@ const handleSubmit = async (items: string[]) => {
             selectedFavoriteType.value,
             items
         );
-        const updatedUser =
-            await useUserFavorites().updateUserFavorites(updatedFavorites);
-        console.log("Updated user:", updatedUser);
+        await useUserFavorites().updateUserFavorites(updatedFavorites);
         useUIStore().showAlert(FAVORITES_UPDATED_SUCCESS_ALERT);
     } catch (error) {
         console.error("Error submitting favorites:", error);
