@@ -12,3 +12,14 @@ export const getUpdatedFavorites = (
     };
     return updatedFavorites;
 };
+
+export const getNonBookItemColumns = (items: string[]) => {
+    const itemsPerColumn = 3;
+    const columns: string[][] = [];
+
+    for (let i = 0; i < items.length; i += itemsPerColumn) {
+        columns.push(items.slice(i, i + itemsPerColumn));
+    }
+
+    return columns;
+};

@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import FavoritesTabContent from "@/components/features/UserProfile/UserInfo/FavoritesTabContent.vue";
+import FavoritesTabContent from "@/components/features/UserProfile/UserInfo/FavoritesStuff/FavoritesTabContent.vue";
 import type { UserFavorites, FavoriteType } from "@/types";
 
 const { favorites, isLoggedInUser } = defineProps<{

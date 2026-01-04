@@ -1,24 +1,7 @@
 <template>
     <div class="tab-content">
         <transition name="fade" mode="out-in">
-            <div v-if="hasItems" class="items-list" :key="type">
-                <div
-                    v-for="(item, index) in items"
-                    :key="`${type}-${index}`"
-                    class="item-row"
-                >
-                    <span class="item-text">{{ item }}</span>
-                    <IconButton
-                        v-if="isLoggedInUser"
-                        :icon="faMarker"
-                        :size="buttonSize"
-                        color="fuschia"
-                        :title="`edit ${item}`"
-                        :handleClick="handleEdit"
-                        class="edit-icon"
-                    />
-                </div>
-            </div>
+            <component v-if="hasItems" :is="componentName" :items="items" />
             <div v-else class="empty-state" :key="`${type}-empty`">
                 <p class="empty-text">no {{ type }} added yet</p>
                 <BaseButton
@@ -38,22 +21,17 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useDisplay } from "vuetify";
 import type { FavoriteType } from "@/types";
-import { faMarker, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
+import NonBookList from "./NonBookList.vue";
+import BookList from "./BookList.vue";
 
 const { type, items, isLoggedInUser } = defineProps<{
     type: FavoriteType;
     items: string[];
     isLoggedInUser: boolean;
 }>();
-
-const { mobile } = useDisplay();
-
-const buttonSize = computed(() => {
-    return mobile.value ? "supersmall" : "xsmall";
-});
 
 const hasItems = computed(() => {
     return items.length > 0;
@@ -65,12 +43,12 @@ const singularType = computed(() => {
     return "book";
 });
 
+const componentName = computed(() => {
+    return type === "books" ? BookList : NonBookList;
+});
+
 const handleAdd = () => {
     useFavoritesModalStore().openAddModal(type);
-};
-
-const handleEdit = () => {
-    useFavoritesModalStore().openEditModal(type);
 };
 </script>
 
@@ -84,7 +62,9 @@ const handleEdit = () => {
 
 .items-list {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
     gap: 0.75rem;
 }
 
