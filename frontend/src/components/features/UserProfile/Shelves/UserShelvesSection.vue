@@ -1,25 +1,16 @@
 <template>
-    <UserContentSection sectionTitle="shelves">
-        <CurrentlyReadingSection
+    <div class="shelves-section">
+        <ShelfTabs
             :currentlyReading="currentlyReading"
-            :isLoggedInUser="isLoggedInUser"
-        />
-        <WantToReadSection
             :wantToRead="wantToRead"
-            :isLoggedInUser="isLoggedInUser"
-        />
-        <HaveReadSection
             :haveRead="haveRead || []"
             :isLoggedInUser="isLoggedInUser"
         />
-    </UserContentSection>
+    </div>
 </template>
 
 <script setup lang="ts">
-import UserContentSection from "@/components/features/UserProfile/UserContentSection.vue";
-import HaveReadSection from "./HaveReadSection/index.vue";
-import WantToReadSection from "@/components/features/UserProfile/Shelves/WantToReadSection/index.vue";
-import CurrentlyReadingSection from "@/components/features/UserProfile/Shelves/CurrentlyReadingSection/index.vue";
+import ShelfTabs from "./ShelfTabs.vue";
 import type { BookshelfBook } from "@/types";
 
 defineProps<{
@@ -29,3 +20,12 @@ defineProps<{
     haveRead: BookshelfBook[];
 }>();
 </script>
+
+<style scoped>
+.shelves-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+</style>
