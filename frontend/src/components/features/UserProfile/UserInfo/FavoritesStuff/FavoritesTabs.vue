@@ -14,7 +14,10 @@
                 </button>
             </div>
         </div>
-        <div class="tabs-content">
+        <div
+            class="tabs-content"
+            :class="{ 'books-active': activeTab === 'books' }"
+        >
             <FavoritesTabContent
                 :type="activeTab"
                 :items="getCurrentItems"
@@ -40,8 +43,9 @@ const activeTab = ref<FavoriteType>("authors");
 const getCurrentItems = computed(() => {
     if (activeTab.value === "books") {
         return (
-            Object.values(favorites?.books ?? []).map((book) => book.title) ??
-            []
+            Object.values(favorites?.books ?? []).map((book) =>
+                JSON.stringify(book)
+            ) ?? []
         );
     }
     return Object.values(favorites?.[activeTab.value] ?? []);
@@ -129,7 +133,12 @@ const getCurrentItems = computed(() => {
     border: 1px solid var(--accent-green);
     border-radius: 1rem;
     width: 100%;
-    height: 200px;
+    height: 220px;
+}
+
+.tabs-content.books-active {
+    height: auto;
+    min-height: 180px;
 }
 
 @media (max-width: 768px) {
@@ -142,7 +151,11 @@ const getCurrentItems = computed(() => {
     }
 
     .tabs-content {
-        height: 133px;
+        height: 160px;
+    }
+
+    .tabs-content.books-active {
+        min-height: 140px;
     }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="tab-content">
+    <div class="tab-content" :class="{ 'books-content': type === 'books' }">
         <transition name="fade" mode="out-in">
             <component
                 v-if="hasItems"
@@ -60,9 +60,14 @@ const handleAdd = () => {
 <style scoped>
 .tab-content {
     padding: 1.25rem;
-    min-height: 200px;
+    min-height: 220px;
     display: flex;
     flex-direction: column;
+}
+
+.tab-content.books-content {
+    min-height: auto;
+    padding: 0.5rem;
 }
 
 .items-list {
@@ -145,7 +150,11 @@ const handleAdd = () => {
 @media (max-width: 768px) {
     .tab-content {
         padding: 0.75rem;
-        min-height: 120px;
+        min-height: 160px;
+    }
+
+    .tab-content.books-content {
+        padding: 0.4rem;
     }
 
     .edit-icon {
