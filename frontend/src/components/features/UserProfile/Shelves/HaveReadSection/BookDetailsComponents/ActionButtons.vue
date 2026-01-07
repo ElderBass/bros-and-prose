@@ -8,6 +8,7 @@
         close
     </BaseButton>
     <BaseButton
+        v-if="isLoggedInUser"
         variant="outline"
         title="recommend"
         @click="emit('recommend')"
@@ -15,15 +16,25 @@
     >
         recommend
     </BaseButton>
+    <MoveBookMenuButton
+        v-else
+        :book="book"
+        :useIconButton="false"
+        :buttonSize="buttonSize"
+        :isLoggedInUser="isLoggedInUser"
+    />
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import BaseButton from "@/components/ui/BaseButton.vue";
+import MoveBookMenuButton from "../../MoveBookMenuButton.vue";
+import type { BookshelfBook } from "@/types";
 
 defineProps<{
-    showRecommend: boolean;
+    book: BookshelfBook;
+    isLoggedInUser: boolean;
 }>();
 
 const emit = defineEmits<{

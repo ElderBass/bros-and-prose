@@ -54,15 +54,14 @@ import { getShelfDisplayName } from "@/utils/bookshelfUtils";
 import type { Shelf } from "@/types";
 
 const { mobile } = useDisplay();
-const { moveFromWantToReadToHaveRead, moveFromWantToReadToCurrentlyReading } =
-    useUserShelves();
 const { error: logError, info } = useLog();
 const { showAlert } = useUIStore();
-
 const shelfModalStore = useShelfModalStore();
+
+const { closeModal } = shelfModalStore;
+
 const { confirmMoveModalOpen, selectedBook, moveTargetShelf } =
     storeToRefs(shelfModalStore);
-const { closeModal } = shelfModalStore;
 
 const loading = ref(false);
 
@@ -90,24 +89,23 @@ const handleMove = async () => {
 
     try {
         loading.value = true;
-        if (targetShelf.value === "haveRead") {
-            await moveFromWantToReadToHaveRead(selectedBook.value);
-        } else if (targetShelf.value === "currentlyReading") {
-            await moveFromWantToReadToCurrentlyReading(selectedBook.value);
-        } else {
+
+        const actionMap = {
+            haveRead: useUserShelves().moveFromWantToReadToHaveRead,
+            currentlyReading:
+                useUserShelves().moveFromWantToReadToCurrentlyReading,
+            wantToRead: useUserShelves().addToWantToRead,
+        };
+
+        if (!actionMap[targetShelf.value]) {
             throw new Error("Invalid move target");
         }
+        await actionMap[targetShelf.value](selectedBook.value);
 
         await info(
-            `Moved ${selectedBook.value.title} to ${targetShelf.value} shelf`
+            `Moved ${selectedBook.value.title} to ${getShelfDisplayName(targetShelf.value)} shelf`
         );
-        showAlert(
-            movedBookSuccessAlert(
-                targetShelf.value === "currentlyReading"
-                    ? "currentlyReading"
-                    : "haveRead"
-            )
-        );
+        showAlert(movedBookSuccessAlert(targetShelf.value));
     } catch (error) {
         console.error("Error moving book:", error);
         await logError(`Error moving book: ${error}`);

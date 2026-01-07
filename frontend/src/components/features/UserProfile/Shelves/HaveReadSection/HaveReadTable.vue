@@ -56,7 +56,7 @@
                             :review="
                                 getReviewForBook((item as BookshelfBook).id)
                             "
-                            @open="emit('open', $event)"
+                            @open="openBookDetails(item as BookshelfBook)"
                         />
                     </template>
                 </v-virtual-scroll>
@@ -72,6 +72,7 @@ import HaveReadTableRow from "./HaveReadTableRow.vue";
 import TableSearchInput from "./TableSearchInput.vue";
 import NoSearchMatches from "./NoSearchMatches.vue";
 import HeaderSortButton from "./HeaderSortButton.vue";
+import { useShelfModalStore } from "@/stores/shelfModal";
 
 const props = withDefaults(
     defineProps<{
@@ -86,10 +87,6 @@ const props = withDefaults(
     }
 );
 
-const emit = defineEmits<{
-    (e: "open", book: BookshelfBook): void;
-}>();
-
 const rowHeightPx = 44;
 const heightPx = computed(() => props.heightPx);
 
@@ -99,6 +96,10 @@ type SortDir = "asc" | "desc";
 const query = ref("");
 const sortKey = ref<SortKey>("title");
 const sortDir = ref<SortDir>("asc");
+
+const openBookDetails = (book: BookshelfBook) => {
+    useShelfModalStore().openBookDetails(book, "haveRead");
+};
 
 const getReviewForBook = (bookId: string): Review | null => {
     if (!props.reviewUser) return null;

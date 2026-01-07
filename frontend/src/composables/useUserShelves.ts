@@ -2,7 +2,7 @@ import { useUser } from "./useUser";
 import { useUserStore } from "@/stores/user";
 import type { BookshelfBook, User, Shelf, SubmitReviewArgs } from "@/types";
 import { useLog } from "./useLog";
-import { getUserShelves } from "@/utils/bookshelfUtils";
+import { getShelfBookIsOn, getUserShelves } from "@/utils/bookshelfUtils";
 import { useShelfModalStore } from "@/stores/shelfModal";
 
 export const useUserShelves = () => {
@@ -122,6 +122,10 @@ export const useUserShelves = () => {
     const addToWantToRead = async (
         book: BookshelfBook
     ): Promise<User | null> => {
+        const shelf = getShelfBookIsOn(book);
+        if (shelf && shelf !== "wantToRead") {
+            await removeFromShelf(shelf as Shelf, book.id);
+        }
         const updatedUser = await addToShelf("wantToRead", book);
         return updatedUser;
     };

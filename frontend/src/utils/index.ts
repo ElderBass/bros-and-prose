@@ -17,4 +17,5 @@ export * from "./pastBookUtils";
 export * from "./sanitizeUser";
 export * from "./reviewUtils";
 export * from "./routerUtils";
+export * from "./userFavoritesUtils";
 export * from "./userUtils";

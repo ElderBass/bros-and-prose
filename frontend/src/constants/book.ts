@@ -53,8 +53,8 @@ export const EMPTY_SHELF_BOOK: BookshelfBook = {
     imageSrc: "",
     tags: [],
     description: "",
-    yearPublished: 0,
-    pages: undefined,
+    yearPublished: 1969,
+    pages: 0,
 };
 
 export const ON_DECK_BOOK_SELECTOR = "chris_dub";

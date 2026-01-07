@@ -35,8 +35,6 @@
             </v-speed-dial>
         </v-fab>
     </div>
-
-    <ShelfModals />
 </template>
 
 <script setup lang="ts">
@@ -49,7 +47,6 @@ import {
     faPlus,
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import ShelfModals from "@/components/features/UserProfile/Shelves/ShelfModals/index.vue";
 import { usePalaverStore } from "@/stores/palaver";
 import { useShelfModalStore } from "@/stores/shelfModal";
 

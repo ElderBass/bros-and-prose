@@ -1,8 +1,8 @@
 <template>
     <BaseModal
         :modelValue="open"
-        @close="emit('close')"
-        @update:modelValue="(v: boolean) => !v && emit('close')"
+        @close="closeModal"
+        @update:modelValue="(v: boolean) => !v && closeModal"
         title="the past in present tense"
         size="medium"
         shadow-color="green"
@@ -10,42 +10,51 @@
     >
         <div v-if="book" class="content">
             <div class="top">
-                <BookCover :book="book" />
+                <div class="top-info">
+                    <BookCover :book="book" />
 
-                <div class="headline">
-                    <div class="title-row">
-                        <h2 class="title">{{ book.title }}</h2>
-                        <IconButton
-                            v-if="canReview"
-                            :icon="faMarker"
-                            :size="editButtonSize"
-                            color="green"
-                            shadowColor="green"
-                            title="edit details (tags + blurb)"
-                            :handleClick="
-                                () => emit('editDetails', book as BookshelfBook)
-                            "
-                        />
+                    <div class="headline">
+                        <div class="title-row">
+                            <h2 class="title">{{ book.title }}</h2>
+                        </div>
+                        <p class="author">{{ book.author }}</p>
+
+                        <div class="meta">
+                            <span class="meta-item">
+                                <span class="meta-label">year</span>
+                                <span class="meta-value">{{
+                                    book.yearPublished || "—"
+                                }}</span>
+                            </span>
+                            <span class="meta-sep">|</span>
+                            <span class="meta-item">
+                                <span class="meta-label">pages</span>
+                                <span class="meta-value">{{
+                                    book.pages || "—"
+                                }}</span>
+                            </span>
+                        </div>
+                        <TagsSection :book="book" />
                     </div>
-                    <p class="author">{{ book.author }}</p>
-
-                    <div class="meta">
-                        <span class="meta-item">
-                            <span class="meta-label">year</span>
-                            <span class="meta-value">{{
-                                book.yearPublished || "—"
-                            }}</span>
-                        </span>
-                        <span class="meta-sep">|</span>
-                        <span class="meta-item">
-                            <span class="meta-label">pages</span>
-                            <span class="meta-value">{{
-                                book.pages || "—"
-                            }}</span>
-                        </span>
-                    </div>
-
-                    <TagsSection :book="book" />
+                </div>
+                <div class="headline-actions">
+                    <IconButton
+                        v-if="canReview"
+                        :icon="faMarker"
+                        :size="editButtonSize"
+                        color="green"
+                        shadowColor="green"
+                        title="edit details (tags + blurb)"
+                        :handleClick="
+                            () => startEditDetails(book as BookshelfBook)
+                        "
+                    />
+                    <FavoriteButton
+                        :isBookOwner="canReview"
+                        :size="editButtonSize"
+                        :book="book"
+                        :useIconButton="true"
+                    />
                 </div>
             </div>
 
@@ -55,8 +64,8 @@
                 :book="book"
                 :review="review"
                 :canReview="canReview"
-                @editReview="emit('editReview', book as BookshelfBook)"
-                @review="emit('review', book as BookshelfBook)"
+                @editReview="startEditReview(book as BookshelfBook)"
+                @review="startReview(book as BookshelfBook)"
             />
         </div>
         <div v-else class="content">
@@ -65,9 +74,10 @@
 
         <template #footer>
             <ActionButtons
-                :showRecommend="canReview"
-                @recommend="emit('recommend', book as BookshelfBook)"
-                @close="emit('close')"
+                :book="book"
+                :isLoggedInUser="canReview"
+                @recommend="startRecommend(book as BookshelfBook)"
+                @close="closeModal"
             />
         </template>
     </BaseModal>
@@ -75,32 +85,49 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useDisplay } from "vuetify";
+import { useRouter } from "vue-router";
 import type { BookshelfBook, Review } from "@/types";
 import BookCover from "./BookDetailsComponents/BookCover.vue";
 import BlurbSection from "./BookDetailsComponents/BlurbSection.vue";
 import ReviewSection from "./BookDetailsComponents/ReviewSection.vue";
 import TagsSection from "./BookDetailsComponents/TagsSection.vue";
 import ActionButtons from "./BookDetailsComponents/ActionButtons.vue";
+import FavoriteButton from "./BookDetailsComponents/FavoriteButton.vue";
 import { faBookOpen, faMarker } from "@fortawesome/free-solid-svg-icons";
-import { useDisplay } from "vuetify";
+import { useShelfModalStore } from "@/stores/shelfModal";
+import { recommendBook } from "@/utils";
 
 defineProps<{
     open: boolean;
-    book: BookshelfBook | null;
+    book: BookshelfBook;
     review: Review | null;
-    canReview: boolean;
 }>();
 
-const emit = defineEmits<{
-    (e: "close"): void;
-    (e: "review", book: BookshelfBook): void;
-    (e: "editDetails", book: BookshelfBook): void;
-    (e: "editReview", book: BookshelfBook): void;
-    (e: "recommend", book: BookshelfBook): void;
-}>();
-
+const router = useRouter();
 const { mobile } = useDisplay();
-const editButtonSize = computed(() => (mobile.value ? "xsmall" : "small"));
+const { openReviewForBook, openEditBook, closeModal } = useShelfModalStore();
+
+const editButtonSize = computed(() => (mobile.value ? "small" : "medium"));
+const canReview = computed(() => {
+    return router.currentRoute.value.name === "profile-root";
+});
+
+const startReview = (book: BookshelfBook) => {
+    openReviewForBook(book, "haveRead");
+};
+
+const startEditDetails = (book: BookshelfBook) => {
+    openEditBook(book, "haveRead");
+};
+
+const startEditReview = (book: BookshelfBook) => {
+    openReviewForBook(book, "haveRead");
+};
+
+const startRecommend = (book: BookshelfBook) => {
+    recommendBook(book);
+};
 </script>
 
 <style scoped>
@@ -113,6 +140,13 @@ const editButtonSize = computed(() => (mobile.value ? "xsmall" : "small"));
 }
 
 .top {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.top-info {
     display: flex;
     gap: 1rem;
     align-items: flex-start;
@@ -142,6 +176,13 @@ const editButtonSize = computed(() => (mobile.value ? "xsmall" : "small"));
     line-height: 1.15;
 }
 
+.headline-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .author {
     margin: 0;
     color: var(--accent-green);
@@ -154,6 +195,7 @@ const editButtonSize = computed(() => (mobile.value ? "xsmall" : "small"));
     align-items: center;
     gap: 0.5rem;
     margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
     font-size: 0.95rem;
     color: var(--main-text);
     opacity: 0.9;

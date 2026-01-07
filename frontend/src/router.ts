@@ -30,10 +30,7 @@ const router = createRouter({
         {
             path: "/profile",
             name: "profile-root",
-            component: () => import("@/components/views/ProfileView.vue"),
-            props: () => ({
-                user: useUserStore().loggedInUser,
-            }),
+            component: () => import("@/components/views/UserProfileView.vue"),
             beforeEnter: (to, from, next) => {
                 if (isGuestUser()) {
                     next({ name: "present" });
@@ -51,7 +48,8 @@ const router = createRouter({
         {
             path: "/bros/:username",
             name: "bro-user",
-            component: () => import("@/components/views/ProfileView.vue"),
+            component: () =>
+                import("@/components/views/OtherBroProfileView.vue"),
             props: (route) => ({
                 user: route.meta.user,
             }),
