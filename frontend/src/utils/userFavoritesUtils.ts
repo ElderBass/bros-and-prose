@@ -39,3 +39,25 @@ export const getBookItemColumns = (items: string[]) => {
 
     return columns;
 };
+
+export const getUserFavorites = () => {
+    const user = useUserStore().loggedInUser;
+    return user.favorites;
+};
+
+export const getUserFavorite = (favoriteType: FavoriteType) => {
+    const targetFavs = getUserFavorites()?.[favoriteType];
+    return targetFavs ? Object.values(targetFavs) : [];
+};
+
+export const getFavoriteAuthors = () => getUserFavorite("authors");
+export const getFavoriteGenres = () => getUserFavorite("genres");
+export const getFavoriteBooks = () => getUserFavorite("books");
+
+export const getFavoriteBookById = (bookId: string) => {
+    return getFavoriteBooks().find((book) => book.id === bookId);
+};
+
+export const isBookFavorite = (bookId: string) => {
+    return getFavoriteBookById(bookId) !== undefined;
+};

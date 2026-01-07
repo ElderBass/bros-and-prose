@@ -31,8 +31,8 @@ withDefaults(
         icon: IconDefinition;
         size: "supersmall" | "xsmall" | "small" | "medium" | "large";
         title: string;
-        color?: "blue" | "fuschia" | "green" | "lavender" | "red";
-        shadowColor?: "lavender" | "fuschia" | "green" | "blue";
+        color?: "blue" | "fuschia" | "green" | "lavender" | "red" | "pink";
+        shadowColor?: "lavender" | "fuschia" | "green" | "blue" | "pink";
         disabled?: boolean;
         style?: CSSProperties;
         handleClick: (event?: MouseEvent) => void;
@@ -82,6 +82,12 @@ defineOptions({ inheritAttrs: false });
     border-color: var(--accent-green);
 }
 
+.icon-button.color-pink {
+    color: var(--accent-pink);
+    background-color: rgba(255, 110, 199, 0.15);
+    border-color: var(--accent-pink);
+}
+
 .icon-button:hover {
     color: var(--accent-fuschia);
     background-color: rgba(255, 77, 255, 0.1);
@@ -106,6 +112,11 @@ defineOptions({ inheritAttrs: false });
         color: #cc0000; /* darker than #ff0000 */
         background-color: rgba(204, 0, 0, 0.18);
         border-color: #cc0000;
+    }
+    &.color-pink {
+        color: var(--accent-pink);
+        background-color: rgba(255, 110, 199, 0.1);
+        border-color: var(--accent-pink);
     }
 }
 

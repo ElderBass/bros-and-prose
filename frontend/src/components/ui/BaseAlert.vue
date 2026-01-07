@@ -114,7 +114,7 @@ const alertProperties = computed((): AlertProperties => {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    z-index: 1000;
+    z-index: 3000;
     width: 100%;
     max-width: 400px;
     min-width: 300px;

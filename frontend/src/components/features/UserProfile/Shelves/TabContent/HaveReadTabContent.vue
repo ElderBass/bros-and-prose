@@ -14,7 +14,6 @@
                 :open="bookDetailsModalOpen"
                 :book="selectedBook"
                 :review="selectedReview"
-                :canReview="isLoggedInUser"
             />
         </div>
     </div>
@@ -33,22 +32,19 @@ import { useShelfModalStore } from "@/stores/shelfModal";
 
 const props = defineProps<{
     haveRead: BookshelfBook[];
-    isLoggedInUser: boolean;
 }>();
 
 const route = useRoute();
 const userStore = useUserStore();
 
-const { loggedInUser } = storeToRefs(userStore);
-const { bookDetailsModalOpen, selectedBook } =
-    storeToRefs(useShelfModalStore());
+const { selectedBook } = storeToRefs(useShelfModalStore());
+const { bookDetailsModalOpen } = storeToRefs(useShelfModalStore());
 
 const viewedUsername = computed(
     () => route.params.username as string | undefined
 );
 
 const reviewUser = computed<User | null>(() => {
-    if (props.isLoggedInUser) return loggedInUser.value;
     if (!viewedUsername.value) return null;
     return userStore.getUserByUsername(viewedUsername.value) ?? null;
 });
@@ -65,9 +61,9 @@ const tableHeightPx = computed(() => (mobile.value ? 400 : 540));
 const hasContent = computed(() => props.haveRead.length > 0);
 
 const noContentMessage = computed(() =>
-    props.isLoggedInUser
-        ? "no books on your have read list yet — add some books to get started."
-        : "no books on this user's have read list yet — they probably don't want to read anything anyway."
+    viewedUsername.value
+        ? "no books on this user's have read list yet — they probably don't want to read anything anyway."
+        : "no books on your have read list yet — add some books to get started."
 );
 </script>
 

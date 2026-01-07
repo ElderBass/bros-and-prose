@@ -32,7 +32,6 @@ const handleClick = (book: BookshelfBook) => {
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 0.5rem;
 }
 </style>

@@ -68,6 +68,9 @@ const handleClick = () => {
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+    max-width: 300px;
+    min-width: 200px;
+    min-height: 72px;
 }
 
 .book-badge:hover {
@@ -86,11 +89,15 @@ const handleClick = () => {
     position: relative;
     overflow: hidden;
     align-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .thumbnail-image {
     width: 100%;
     object-fit: cover;
+    border-radius: 0.5rem;
 }
 
 .thumbnail-placeholder {
@@ -149,6 +156,11 @@ const handleClick = () => {
 }
 
 @media (max-width: 768px) {
+    .book-badge {
+        max-width: 225px;
+        min-width: 150px;
+    }
+
     .badge-content {
         padding: 0.4rem;
     }
