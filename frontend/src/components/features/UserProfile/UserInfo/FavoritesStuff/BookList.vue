@@ -10,6 +10,7 @@
         </InfiniteScroll>
         <div class="button-wrapper">
             <IconButton
+                v-if="!isGuestUser()"
                 :icon="faMarker"
                 title="edit list"
                 size="small"
@@ -20,6 +21,7 @@
     </div>
 
     <BookDetailsModal
+        v-if="!isGuestUser()"
         :open="detailsModalOpen"
         :book="selectedBook"
         @close="closeBookModal"
@@ -35,6 +37,7 @@ import type { BookshelfBook, FavoriteType } from "@/types";
 import { getBookItemColumns } from "@/utils";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
+import { isGuestUser } from "@/utils";
 
 const { items, type } = defineProps<{
     items: string[];
