@@ -9,6 +9,7 @@
         </InfiniteScroll>
         <div class="button-wrapper">
             <IconButton
+                v-if="!isGuestUser()"
                 :icon="faMarker"
                 title="edit list"
                 size="small"
@@ -27,6 +28,7 @@ import { getNonBookItemColumns } from "@/utils/userFavoritesUtils";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
 import type { FavoriteType } from "@/types";
+import { isGuestUser } from "@/utils";
 
 const props = defineProps<{
     items: string[];
