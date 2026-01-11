@@ -7,6 +7,8 @@
             requireTags: false,
             requireDescription: false,
         }"
+        :selectedShelf="selectedShelf"
+        :initialIsFavorited="initialIsFavorited"
         :onSubmit="onSubmit"
         :dirtyKeys="['tags', 'description', 'pages']"
     >
@@ -25,9 +27,14 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useUserShelves } from "@/composables/useUserShelves";
+import { useUserFavorites } from "@/composables/useUserFavorites";
 import { useShelfModalStore } from "@/stores/shelfModal";
-import { getShelfSuccessMessage } from "@/utils";
-import type { BookshelfBook, Shelf } from "@/types";
+import {
+    getShelfSuccessMessage,
+    getFavoriteBooks,
+    isBookFavorite,
+} from "@/utils";
+import type { BookshelfBook, Shelf, SubmitReviewArgs } from "@/types";
 import FormActionsV2 from "../FormStuff/FormActionsV2.vue";
 import BookForm from "@/components/form/BookForm/index.vue";
 import type { BookFormValues } from "@/components/form/BookForm/types";
@@ -60,7 +67,16 @@ const initialValues = computed(() => ({
     imageSrc: props.book.imageSrc || "",
 }));
 
-const onSubmit = async (values: BookFormValues) => {
+const initialIsFavorited = computed(() => {
+    if (props.selectedShelf !== "haveRead") return false;
+    return isBookFavorite(props.book.id);
+});
+
+const onSubmit = async (
+    values: BookFormValues,
+    _review?: SubmitReviewArgs,
+    isFavorited?: boolean
+) => {
     try {
         emit("submitting", true);
         const year = Number.parseInt(values.yearPublished.toString(), 10);
@@ -76,6 +92,7 @@ const onSubmit = async (values: BookFormValues) => {
             description: values.description,
         };
 
+        // Update shelf
         if (props.selectedShelf === "wantToRead") {
             await updateWantToRead(updatedBook);
         } else if (props.selectedShelf === "haveRead") {
@@ -84,6 +101,24 @@ const onSubmit = async (values: BookFormValues) => {
             await updateCurrentlyReading(updatedBook);
         } else {
             throw new Error("Invalid shelf selected");
+        }
+
+        // Handle favorites update for haveRead
+        if (props.selectedShelf === "haveRead") {
+            const currentFavorites = getFavoriteBooks();
+            const wasAlreadyFavorited = isBookFavorite(props.book.id);
+
+            if (isFavorited && !wasAlreadyFavorited) {
+                // Add to favorites
+                const updatedBooks = [...currentFavorites, updatedBook];
+                await useUserFavorites().updateFavorite("books", updatedBooks);
+            } else if (!isFavorited && wasAlreadyFavorited) {
+                // Remove from favorites
+                const updatedBooks = currentFavorites.filter(
+                    (b) => b.id !== props.book.id
+                );
+                await useUserFavorites().updateFavorite("books", updatedBooks);
+            }
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);

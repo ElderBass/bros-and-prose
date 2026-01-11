@@ -1,6 +1,13 @@
 <template>
-    <div class="star-rating-container">
-        <BookRatingInput v-model="starRating" size="medium" />
+    <div class="rating-and-favorite-container">
+        <div class="star-rating-container">
+            <BookRatingInput v-model="starRating" size="medium" />
+        </div>
+        <FavoriteToggle
+            v-if="showFavoriteToggle"
+            :isFavorited="isFavorited"
+            @toggle="emit('update:isFavorited')"
+        />
     </div>
     <div class="review-comment-input-container">
         <label for="review-comment-input"> got more to say? (optional) </label>
@@ -18,15 +25,25 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
+import FavoriteToggle from "@/components/form/BookForm/FavoriteToggle.vue";
 import type { SubmitReviewArgs } from "@/types";
 
-const props = defineProps<{
-    rating: number;
-    comment: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        rating: number;
+        comment: string;
+        isFavorited?: boolean;
+        showFavoriteToggle?: boolean;
+    }>(),
+    {
+        isFavorited: false,
+        showFavoriteToggle: false,
+    }
+);
 
 const emit = defineEmits<{
     (e: "update", value: SubmitReviewArgs): void;
+    (e: "update:isFavorited"): void;
 }>();
 
 const starRating = ref(props.rating);
@@ -48,11 +65,19 @@ watch(reviewComment, () => {
 </script>
 
 <style scoped>
+.rating-and-favorite-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+}
+
 .star-rating-container {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
 }
 
 .review-comment-input-container {
@@ -82,6 +107,11 @@ label {
 }
 
 @media (max-width: 768px) {
+    .rating-and-favorite-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
     .review-comment-input {
         font-size: 1rem;
     }

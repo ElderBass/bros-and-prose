@@ -8,6 +8,7 @@
             requireTags: false,
             requireDescription: false,
         }"
+        :selectedShelf="selectedShelf"
         :onSubmit="onSubmit"
     >
         <template #actions="{ canSubmit, loading, detailsVisible, back }">
@@ -25,8 +26,13 @@
 import { ref } from "vue";
 import { useBooks } from "@/composables/useBooks";
 import { useUserShelves } from "@/composables/useUserShelves";
+import { useUserFavorites } from "@/composables/useUserFavorites";
 import { useShelfModalStore } from "@/stores/shelfModal";
-import { capitalizeBookTitle, getShelfSuccessMessage } from "@/utils";
+import {
+    capitalizeBookTitle,
+    getShelfSuccessMessage,
+    getFavoriteBooks,
+} from "@/utils";
 import type { BookshelfBook, Shelf, SubmitReviewArgs } from "@/types";
 import { useLog } from "@/composables/useLog";
 import type { BookFormValues } from "@/components/form/BookForm/types";
@@ -56,7 +62,8 @@ const formKey = ref(0);
 
 const onSubmit = async (
     bookValues: BookFormValues,
-    review?: SubmitReviewArgs
+    review?: SubmitReviewArgs,
+    isFavorited?: boolean
 ) => {
     try {
         emit("submitting", true);
@@ -72,6 +79,7 @@ const onSubmit = async (
             description: bookValues.description.trim(),
         };
 
+        // Add to shelf first
         if (props.selectedShelf === "wantToRead") {
             await addToWantToRead(book);
         } else if (props.selectedShelf === "haveRead") {
@@ -80,6 +88,13 @@ const onSubmit = async (
             await addToCurrentlyReading(book);
         } else {
             throw new Error("Invalid shelf selected");
+        }
+
+        // If favorited and haveRead, add to favorites
+        if (isFavorited && props.selectedShelf === "haveRead") {
+            const currentFavorites = getFavoriteBooks();
+            const updatedBooks = [...currentFavorites, book];
+            await useUserFavorites().updateFavorite("books", updatedBooks);
         }
 
         const message = getShelfSuccessMessage(props.selectedShelf);
