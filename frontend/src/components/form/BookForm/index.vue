@@ -31,8 +31,11 @@
             :isEdit="isEditMode"
             :book="book"
             :review="review"
+            :selectedShelf="selectedShelf"
+            :isFavorited="isFavorited"
             @update:review="review = $event"
             @update:book="book = $event"
+            @update:isFavorited="isFavorited = $event"
         />
 
         <slot
@@ -58,7 +61,12 @@ import type {
     BookFormValues,
 } from "./types";
 import { useBooks } from "@/composables/useBooks";
-import type { BookshelfBook, FutureBook, SubmitReviewArgs } from "@/types";
+import type {
+    BookshelfBook,
+    FutureBook,
+    SubmitReviewArgs,
+    Shelf,
+} from "@/types";
 import { DEFAULT_REVIEW, EMPTY_SHELF_BOOK } from "@/constants";
 import { getInitialBookValues, showReviewForm } from "./utils";
 
@@ -73,14 +81,19 @@ const props = withDefaults(
         validation?: BookFormValidation;
         onSubmit: (
             values: BookFormValues,
-            review?: SubmitReviewArgs
+            review?: SubmitReviewArgs,
+            isFavorited?: boolean
         ) => Promise<void>;
         dirtyKeys?: Array<keyof BookFormValues>;
+        selectedShelf?: Shelf;
+        initialIsFavorited?: boolean;
     }>(),
     {
         initialValues: () => ({ ...EMPTY_SHELF_BOOK }),
         validation: undefined,
         dirtyKeys: () => ["tags", "description", "pages"],
+        selectedShelf: undefined,
+        initialIsFavorited: false,
     }
 );
 
@@ -91,6 +104,7 @@ const book = ref<BookshelfBook | FutureBook>(
     initialValuesResolved as BookshelfBook | FutureBook
 );
 const review = ref(DEFAULT_REVIEW);
+const isFavorited = ref(props.initialIsFavorited);
 
 const loading = ref(false);
 const results = ref<BookFormSearchResult[]>([]);
@@ -253,14 +267,21 @@ const handleSubmit = async () => {
         const toSubmit = { ...book.value };
 
         if (showReviewForm(props.mode)) {
-            await props.onSubmit(toSubmit, review.value);
+            await props.onSubmit(toSubmit, review.value, isFavorited.value);
         } else {
-            await props.onSubmit(toSubmit, undefined);
+            await props.onSubmit(toSubmit, undefined, isFavorited.value);
         }
     } catch (error) {
         console.error("error in handleSubmit", error);
     }
 };
+
+watch(
+    () => props.initialIsFavorited,
+    (newVal) => {
+        isFavorited.value = newVal;
+    }
+);
 </script>
 
 <style scoped>

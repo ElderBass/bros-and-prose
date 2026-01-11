@@ -58,7 +58,10 @@
             v-if="showReviewForm(mode)"
             :rating="review.rating"
             :comment="review.reviewComment"
+            :isFavorited="isFavorited"
+            :showFavoriteToggle="showFavoriteToggle"
             @update="emit('update:review', $event)"
+            @update:isFavorited="handleFavoriteToggle"
         />
 
         <div v-else class="form-container">
@@ -84,7 +87,12 @@ import TagPickerTrigger from "@/components/form/TagPicker/TagPickerTrigger.vue";
 import ReviewFormInputs from "@/components/form/ReviewFormInputs.vue";
 import type { BookFormMode, BookFormValues } from "./types";
 import { showReviewForm } from "./utils";
-import type { BookshelfBook, FutureBook, SubmitReviewArgs } from "@/types";
+import type {
+    BookshelfBook,
+    FutureBook,
+    SubmitReviewArgs,
+    Shelf,
+} from "@/types";
 import { DEFAULT_REVIEW } from "@/constants";
 
 const props = withDefaults(
@@ -93,16 +101,21 @@ const props = withDefaults(
         book: BookshelfBook | FutureBook;
         idPrefix?: string;
         review?: SubmitReviewArgs;
+        selectedShelf?: Shelf;
+        isFavorited?: boolean;
     }>(),
     {
         idPrefix: "book-form",
         review: () => DEFAULT_REVIEW,
+        selectedShelf: undefined,
+        isFavorited: false,
     }
 );
 
 const emit = defineEmits<{
     (e: "update:book", value: BookFormValues): void;
     (e: "update:review", value: SubmitReviewArgs): void;
+    (e: "update:isFavorited", value: boolean): void;
 }>();
 
 const isEdit = computed(
@@ -125,6 +138,14 @@ const bookProxy = computed({
     get: () => props.book,
     set: (v: BookFormValues) => emit("update:book", v),
 });
+
+const showFavoriteToggle = computed(() => {
+    return props.selectedShelf === "haveRead";
+});
+
+const handleFavoriteToggle = () => {
+    emit("update:isFavorited", !props.isFavorited);
+};
 </script>
 
 <style scoped>
