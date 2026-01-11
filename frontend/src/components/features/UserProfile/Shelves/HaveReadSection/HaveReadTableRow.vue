@@ -22,7 +22,22 @@
             <span v-if="review" class="rating-pill" :style="ratingPillStyle">
                 {{ review.rating }}/10
             </span>
-            <span v-else class="muted italics">unreviewed</span>
+            <span v-else class="muted italics">nunya</span>
+        </div>
+
+        <!-- Favorite column -->
+        <div class="cell favorite" @click.stop>
+            <IconButton
+                v-if="isLoggedInUser"
+                :icon="isFavorited ? faHeartSolid : faHeartRegular"
+                size="xsmall"
+                color="pink"
+                shadow-color="pink"
+                :title="
+                    isFavorited ? 'Remove from favorites' : 'Add to favorites'
+                "
+                :handleClick="handleFavoriteToggle"
+            />
         </div>
     </div>
 </template>
@@ -30,16 +45,25 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { BookshelfBook, Review } from "@/types";
-import { getReviewThemeColor } from "@/utils";
+import { getReviewThemeColor, isBookFavorite, getFavoriteBooks } from "@/utils";
+import { useUserFavorites } from "@/composables/useUserFavorites";
+import { useUIStore } from "@/stores/ui";
+import { QUICK_SUCCESS, QUICK_ERROR } from "@/constants/alerts";
+import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
+import IconButton from "@/components/ui/IconButton.vue";
 
 const props = defineProps<{
     book: BookshelfBook;
     review: Review | null;
+    isLoggedInUser?: boolean;
 }>();
 
 const emit = defineEmits<{
     (e: "open", book: BookshelfBook): void;
 }>();
+
+const isFavorited = computed(() => isBookFavorite(props.book.id));
 
 const tagSummary = computed(() => {
     const tags = props.book.tags || [];
@@ -58,12 +82,56 @@ const ratingPillStyle = computed(() => {
         color: theme,
     };
 });
+
+const handleFavoriteToggle = async () => {
+    if (!props.isLoggedInUser) return;
+
+    try {
+        const currentFavorites = getFavoriteBooks();
+        const wasFavorited = isBookFavorite(props.book.id);
+
+        let updatedBooks;
+        if (wasFavorited) {
+            // Remove from favorites
+            updatedBooks = currentFavorites.filter(
+                (b) => b.id !== props.book.id
+            );
+            await useUserFavorites().updateFavorite("books", updatedBooks);
+
+            useUIStore().showAlert(
+                QUICK_SUCCESS([
+                    `${props.book.title} removed from favorites`,
+                    "tough crowd, huh?",
+                ])
+            );
+        } else {
+            // Add to favorites
+            updatedBooks = [...currentFavorites, props.book];
+            await useUserFavorites().updateFavorite("books", updatedBooks);
+
+            useUIStore().showAlert(
+                QUICK_SUCCESS([
+                    `${props.book.title} added to favorites`,
+                    "look at you, all cultured and shit",
+                ])
+            );
+        }
+    } catch (error) {
+        console.error("Error toggling favorite:", error);
+        useUIStore().showAlert(
+            QUICK_ERROR([
+                "couldn't update favorites",
+                "try again or just give up, idk",
+            ])
+        );
+    }
+};
 </script>
 
 <style scoped>
 .row {
     display: grid;
-    grid-template-columns: 2fr 1.4fr 0.6fr 0.6fr 1.2fr 0.8fr;
+    grid-template-columns: 2fr 1.4fr 0.6fr 0.6fr 1.2fr 0.8fr 0.5fr;
     gap: 0.5rem;
     padding: 0.55rem 0.75rem;
     border-bottom: 1px solid
@@ -129,16 +197,68 @@ const ratingPillStyle = computed(() => {
     font-style: italic;
 }
 
+.cell.favorite {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 @media (max-width: 768px) {
     .row {
-        grid-template-columns: 1fr;
-        gap: 0.25rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
         padding: 0.75rem;
+        align-items: flex-start;
+        justify-content: space-between;
     }
 
     .cell {
         font-size: 0.95rem;
         white-space: normal;
+    }
+
+    /* Title and favorite on same row - centered vertically, space between */
+    .cell.title {
+        flex: 1 1 auto;
+        min-width: 0;
+        max-width: calc(100% - 3rem);
+        order: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    .cell.favorite {
+        flex: 0 0 auto;
+        order: 2;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Rest of the cells below - full width */
+    .cell.author {
+        flex: 1 1 100%;
+        order: 3;
+    }
+
+    .cell.year {
+        flex: 0 1 50%;
+        order: 4;
+    }
+
+    .cell.pages {
+        flex: 0 1 50%;
+        order: 5;
+    }
+
+    .cell.tags {
+        flex: 1 1 100%;
+        order: 6;
+    }
+
+    .cell.review {
+        flex: 1 1 100%;
+        order: 7;
     }
 
     .review,

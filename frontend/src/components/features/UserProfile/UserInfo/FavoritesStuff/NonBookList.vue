@@ -1,6 +1,10 @@
 <template>
     <div class="non-book-list">
-        <InfiniteScroll direction="horizontal" height="100%">
+        <InfiniteScroll
+            direction="horizontal"
+            height="100%"
+            :addTopPadding="true"
+        >
             <NonBookListColumn
                 v-for="(column, index) in columns"
                 :key="index"

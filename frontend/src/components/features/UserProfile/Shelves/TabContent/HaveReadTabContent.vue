@@ -8,6 +8,7 @@
                 :books="haveRead"
                 :reviewUser="reviewUser"
                 :heightPx="tableHeightPx"
+                :isLoggedInUser="isLoggedInUser"
             />
             <HaveReadBookDetailsModal
                 v-if="selectedBook"
@@ -32,6 +33,7 @@ import { useShelfModalStore } from "@/stores/shelfModal";
 
 const props = defineProps<{
     haveRead: BookshelfBook[];
+    isLoggedInUser: boolean;
 }>();
 
 const route = useRoute();
