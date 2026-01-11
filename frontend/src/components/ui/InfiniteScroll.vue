@@ -1,7 +1,10 @@
 <template>
     <v-infinite-scroll
         class="infinite-scroll"
-        :class="{ column: direction === 'vertical' }"
+        :class="{
+            column: direction === 'vertical',
+            'padding-top': addTopPadding,
+        }"
         :direction="direction"
         :height="height"
         :mode="mode"
@@ -31,11 +34,13 @@ withDefaults(
         direction?: "vertical" | "horizontal";
         height?: string | number;
         mode?: NonNullable<VInfiniteScroll["$props"]["mode"]>;
+        addTopPadding?: boolean;
     }>(),
     {
         direction: "vertical",
         height: "100%",
         mode: "intersect",
+        addTopPadding: false,
     }
 );
 
@@ -68,6 +73,10 @@ const handleLoad = (event: InfiniteScrollLoadEvent) => {
     text-transform: lowercase;
     color: var(--accent-blue);
     opacity: 0.75;
+}
+
+.padding-top {
+    padding-top: 0.5rem;
 }
 
 :deep(.v-infinite-scroll__side) {

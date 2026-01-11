@@ -9,7 +9,7 @@
             />
         </div>
         <div v-else class="no-review">
-            <span class="no-review-text">unreviewed</span>
+            <span class="no-review-text">nunya</span>
         </div>
     </div>
     <OtherBroReviewModal

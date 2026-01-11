@@ -20,7 +20,10 @@
         </template>
 
         <template #haveRead>
-            <HaveReadTabContent :haveRead="haveRead" />
+            <HaveReadTabContent
+                :haveRead="haveRead"
+                :isLoggedInUser="isLoggedInUser"
+            />
         </template>
     </TabsContainer>
 </template>
