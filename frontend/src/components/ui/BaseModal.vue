@@ -57,7 +57,13 @@ const props = withDefaults(
         modelValue: boolean;
         title?: string;
         size?: "small" | "medium" | "large";
-        shadowColor?: "lavender" | "fuschia" | "green" | "blue" | "red";
+        shadowColor?:
+            | "lavender"
+            | "fuschia"
+            | "green"
+            | "blue"
+            | "red"
+            | "pink";
         hideCloseButton?: boolean;
         closeOnBackdrop?: boolean;
         closeButtonTitle?: string;
@@ -159,6 +165,15 @@ const handleBackdropClick = () => {
         0 0 60px var(--accent-red),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
+
+.modal-container.shadow-pink {
+    border: 2px solid var(--accent-pink);
+    box-shadow:
+        0 8px 32px var(--accent-pink),
+        0 0 60px var(--accent-pink),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
 /* Add subtle gradient overlay for depth - matching BaseCard */
 .modal-container::before {
     content: "";
@@ -210,6 +225,10 @@ const handleBackdropClick = () => {
 
 .icon-header-red {
     color: var(--accent-red);
+}
+
+.icon-header-pink {
+    color: var(--accent-pink);
 }
 
 .modal-title {

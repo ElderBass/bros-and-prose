@@ -45,9 +45,9 @@ const { favorites, isLoggedInUser } = defineProps<{
 }>();
 
 const favoriteTabs: TabConfig[] = [
+    { id: "books", label: "books", color: "fuschia" },
     { id: "authors", label: "authors", color: "fuschia" },
     { id: "genres", label: "genres", color: "fuschia" },
-    { id: "books", label: "books", color: "fuschia" },
 ];
 
 const activeTab = ref<string>("authors");
