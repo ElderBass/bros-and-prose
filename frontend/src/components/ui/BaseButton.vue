@@ -47,13 +47,21 @@ type ButtonVariant =
     | "tertiary"
     | "success"
     | "error"
+    | "warning"
     | "outline"
     | "outline-secondary"
     | "outline-tertiary"
     | "outline-success"
-    | "outline-error";
+    | "outline-error"
+    | "outline-warning";
 
-type TooltipShadowColor = "lavender" | "fuschia" | "green" | "blue" | "red";
+type TooltipShadowColor =
+    | "lavender"
+    | "fuschia"
+    | "green"
+    | "blue"
+    | "red"
+    | "yellow";
 
 const props = withDefaults(
     defineProps<{
@@ -97,6 +105,9 @@ const tooltipShadowColor = computed((): TooltipShadowColor => {
         case "error":
         case "outline-error":
             return "red";
+        case "warning":
+        case "outline-warning":
+            return "yellow";
         case "outline-tertiary":
             return "lavender";
         default:
@@ -267,6 +278,39 @@ const showTooltip = computed(() => {
 
 .base-button[variant="error"]:disabled {
     background-color: var(--accent-red);
+    opacity: 0.75;
+}
+
+.base-button[variant="warning"] {
+    background-color: var(--accent-yellow);
+    border: 2px solid var(--accent-yellow);
+}
+
+.base-button[variant="warning"]:hover {
+    background-color: var(--accent-fuschia);
+    border: 2px solid var(--accent-fuschia);
+}
+
+.base-button[variant="warning"]:disabled {
+    background-color: var(--accent-yellow);
+    opacity: 0.75;
+}
+
+.base-button[variant="outline-warning"] {
+    background-color: transparent;
+    border: 2px solid var(--accent-yellow);
+    color: var(--accent-yellow);
+}
+
+.base-button[variant="outline-warning"]:hover {
+    background-color: var(--accent-yellow);
+    color: var(--background-color);
+}
+
+.base-button[variant="outline-warning"]:disabled {
+    background-color: transparent;
+    border: 2px solid var(--slate-gray);
+    color: var(--slate-gray);
     opacity: 0.75;
 }
 

@@ -43,7 +43,7 @@ type TooltipLocation =
     | "bottom start"
     | "bottom end";
 
-type ShadowColor = "lavender" | "fuschia" | "green" | "blue";
+type ShadowColor = "lavender" | "fuschia" | "green" | "blue" | "red" | "yellow";
 
 const props = withDefaults(
     defineProps<{
@@ -149,6 +149,20 @@ const handleTouchStart = () => {
     box-shadow:
         0 4px 16px var(--accent-blue),
         0 0 24px rgba(0, 191, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.tooltip-shadow-red .base-tooltip-content {
+    box-shadow:
+        0 4px 16px var(--accent-red),
+        0 0 24px rgba(255, 0, 127, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.tooltip-shadow-yellow .base-tooltip-content {
+    box-shadow:
+        0 4px 16px var(--accent-yellow),
+        0 0 24px rgba(255, 215, 0, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
 }
 
