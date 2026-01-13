@@ -140,6 +140,25 @@ export const useFutureBooks = () => {
         await updateCurrentSelection({ ...book, votes });
     };
 
+    const toggleAlreadyRead = async (bookId: string, userId: string) => {
+        const book = futureBooksStore.currentSelections.find(
+            (b) => b.id === bookId
+        );
+        if (!book) {
+            await useLog().error(`Future book not found: ${bookId}`);
+            return;
+        }
+        const hasMarkedAsRead = book.alreadyRead?.includes(userId);
+        const updatedAlreadyRead = hasMarkedAsRead
+            ? book.alreadyRead?.filter((id) => id !== userId) || []
+            : [...(book.alreadyRead || []), userId];
+        const updatedSelection = await updateCurrentSelection({
+            ...book,
+            alreadyRead: updatedAlreadyRead,
+        });
+        return updatedSelection;
+    };
+
     const getArchivedSelections = async () => {
         const selections = await futureBooksService.getArchivedSelections();
         const sanitizedSelections = selections.map((selection) => ({
@@ -189,6 +208,7 @@ export const useFutureBooks = () => {
         deleteCurrentSelection,
         voteForFutureBook,
         removeVoteForFutureBook,
+        toggleAlreadyRead,
         getArchivedSelections,
         archiveSelections,
         setCurrentSelector,

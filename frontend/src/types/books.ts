@@ -62,6 +62,7 @@ export interface FutureBook {
     tags: string[];
     description: string;
     votes: string[];
+    alreadyRead?: string[];
 }
 
 export interface ArchivedBooksEntry {
