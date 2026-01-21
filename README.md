@@ -118,7 +118,7 @@ Plus email notifications for all activity, because FOMO is real.
 ![Palaver Feed](./screenshots/palaver-feed-top.png)
 _The social feed for book talk_
 
-![Palaver Details](./screenshots/paxlaver-feed-detail.png)
+![Palaver Details](./screenshots/palaver-feed-detail.png)
 _Just look at that juicy discussion, oh my_
 
 ![Like Notification](./screenshots/palaver-like-noti.png)
