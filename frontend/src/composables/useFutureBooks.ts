@@ -6,6 +6,7 @@ import type { ArchivedBooksEntry, FutureBook } from "@/types/books";
 import { useLog } from "./useLog";
 import {
     buildArchiveEntry,
+    buildFutureBookUpdateMetadata,
     getMostVotedFutureBookId,
     getUsersFutureBookVoteId,
     sanitizeFutureBookVotes,
@@ -81,9 +82,15 @@ export const useFutureBooks = () => {
         return updatedSelections;
     };
 
-    const updateCurrentSelection = async (selection: FutureBook) => {
+    const updateCurrentSelection = async (
+        selection: FutureBook,
+        metadata?: { updateType: string; bookTitle: string; username: string }
+    ) => {
         const updatedSelection =
-            await futureBooksService.updateCurrentSelection(selection);
+            await futureBooksService.updateCurrentSelection(
+                selection,
+                metadata
+            );
         await info(`Updated future book selection: ${selection.title}`);
 
         const updatedSelections = futureBooksStore.currentSelections.map((b) =>
@@ -121,10 +128,19 @@ export const useFutureBooks = () => {
         const updatedVotes = hasVotedForCurrentBook
             ? book.votes?.filter((v) => v !== userId)
             : [...(book.votes || []), userId];
-        const updatedSelection = await updateCurrentSelection({
-            ...book,
-            votes: updatedVotes,
-        });
+
+        const metadata = buildFutureBookUpdateMetadata(
+            book,
+            hasVotedForCurrentBook ? "unvote" : "vote"
+        );
+
+        const updatedSelection = await updateCurrentSelection(
+            {
+                ...book,
+                votes: updatedVotes,
+            },
+            metadata
+        );
         return updatedSelection;
     };
 
@@ -152,10 +168,19 @@ export const useFutureBooks = () => {
         const updatedAlreadyRead = hasMarkedAsRead
             ? book.alreadyRead?.filter((id) => id !== userId) || []
             : [...(book.alreadyRead || []), userId];
-        const updatedSelection = await updateCurrentSelection({
-            ...book,
-            alreadyRead: updatedAlreadyRead,
-        });
+
+        const metadata = buildFutureBookUpdateMetadata(
+            book,
+            hasMarkedAsRead ? "unmark_read" : "mark_read"
+        );
+
+        const updatedSelection = await updateCurrentSelection(
+            {
+                ...book,
+                alreadyRead: updatedAlreadyRead,
+            },
+            metadata
+        );
         return updatedSelection;
     };
 
