@@ -58,6 +58,26 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
                     data.bookTitle?.toUpperCase() ?? ""
                 }</span> as a future book.`,
             };
+        case "future_book_voted":
+            return {
+                title: "Future Book Vote",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> voted for future book nom <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
+            };
+        case "future_book_unvoted":
+            return {
+                title: "Future Book Vote Removed",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> removed their vote for future book nom <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
+            };
+        case "future_book_marked_read":
+            return {
+                title: "Future Book Already Read",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> has, allegedly, already read the future book nom <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>. Cheeky fuck.`,
+            };
+        case "future_book_unmarked_read":
+            return {
+                title: "Future Book Read Status Updated",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> is an idiot and remembered he hasn't read the future book nom <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
+            };
         default:
             return {
                 title: "New Misc Item",

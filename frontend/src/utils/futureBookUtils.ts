@@ -54,6 +54,26 @@ export const getBookInfoFromFutureBook = (futureBook: FutureBook) => {
     };
 };
 
+export const buildFutureBookUpdateMetadata = (
+    book: FutureBook,
+    updateType: "vote" | "unvote" | "mark_read" | "unmark_read"
+): { updateType: string; bookTitle: string; username: string } => {
+    const username = useUserStore().loggedInUser.username;
+
+    const updateTypeMap = {
+        vote: "future_book_voted",
+        unvote: "future_book_unvoted",
+        mark_read: "future_book_marked_read",
+        unmark_read: "future_book_unmarked_read",
+    };
+
+    return {
+        updateType: updateTypeMap[updateType],
+        bookTitle: book.title,
+        username,
+    };
+};
+
 /**
  * Check if a user has marked a book as already read
  * @param book - The future book to check
