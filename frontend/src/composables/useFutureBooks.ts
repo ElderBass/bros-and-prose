@@ -6,6 +6,7 @@ import type { ArchivedBooksEntry, FutureBook } from "@/types/books";
 import { useLog } from "./useLog";
 import {
     buildArchiveEntry,
+    buildFutureBookUpdateMetadata,
     getMostVotedFutureBookId,
     getUsersFutureBookVoteId,
     sanitizeFutureBookVotes,
@@ -81,9 +82,15 @@ export const useFutureBooks = () => {
         return updatedSelections;
     };
 
-    const updateCurrentSelection = async (selection: FutureBook) => {
+    const updateCurrentSelection = async (
+        selection: FutureBook,
+        metadata?: { updateType: string; bookTitle: string; username: string }
+    ) => {
         const updatedSelection =
-            await futureBooksService.updateCurrentSelection(selection);
+            await futureBooksService.updateCurrentSelection(
+                selection,
+                metadata
+            );
         await info(`Updated future book selection: ${selection.title}`);
 
         const updatedSelections = futureBooksStore.currentSelections.map((b) =>
@@ -121,10 +128,19 @@ export const useFutureBooks = () => {
         const updatedVotes = hasVotedForCurrentBook
             ? book.votes?.filter((v) => v !== userId)
             : [...(book.votes || []), userId];
-        const updatedSelection = await updateCurrentSelection({
-            ...book,
-            votes: updatedVotes,
-        });
+
+        const metadata = buildFutureBookUpdateMetadata(
+            book,
+            hasVotedForCurrentBook ? "unvote" : "vote"
+        );
+
+        const updatedSelection = await updateCurrentSelection(
+            {
+                ...book,
+                votes: updatedVotes,
+            },
+            metadata
+        );
         return updatedSelection;
     };
 
@@ -138,6 +154,34 @@ export const useFutureBooks = () => {
         }
         const votes = book.votes?.filter((v) => v !== userId) || [];
         await updateCurrentSelection({ ...book, votes });
+    };
+
+    const toggleAlreadyRead = async (bookId: string, userId: string) => {
+        const book = futureBooksStore.currentSelections.find(
+            (b) => b.id === bookId
+        );
+        if (!book) {
+            await useLog().error(`Future book not found: ${bookId}`);
+            return;
+        }
+        const hasMarkedAsRead = book.alreadyRead?.includes(userId);
+        const updatedAlreadyRead = hasMarkedAsRead
+            ? book.alreadyRead?.filter((id) => id !== userId) || []
+            : [...(book.alreadyRead || []), userId];
+
+        const metadata = buildFutureBookUpdateMetadata(
+            book,
+            hasMarkedAsRead ? "unmark_read" : "mark_read"
+        );
+
+        const updatedSelection = await updateCurrentSelection(
+            {
+                ...book,
+                alreadyRead: updatedAlreadyRead,
+            },
+            metadata
+        );
+        return updatedSelection;
     };
 
     const getArchivedSelections = async () => {
@@ -189,6 +233,7 @@ export const useFutureBooks = () => {
         deleteCurrentSelection,
         voteForFutureBook,
         removeVoteForFutureBook,
+        toggleAlreadyRead,
         getArchivedSelections,
         archiveSelections,
         setCurrentSelector,

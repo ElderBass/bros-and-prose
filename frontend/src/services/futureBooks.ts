@@ -73,11 +73,15 @@ export const futureBooksService = {
         );
         return response.data;
     },
-    updateCurrentSelection: async (selection: FutureBook) => {
+    updateCurrentSelection: async (
+        selection: FutureBook,
+        metadata?: FutureBookMetadata
+    ) => {
+        const payload = metadata ? { selection, metadata } : selection;
         const response = await apiRequest<FutureBookResponse>(
             "PUT",
             `/api/futureBooks/current/${selection.id}`,
-            selection
+            payload
         );
         return response.data;
     },

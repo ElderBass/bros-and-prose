@@ -33,6 +33,10 @@
                 :ariaSort="ariaSort('rating')"
                 @click="toggleSort('rating')"
             />
+
+            <div class="cell favorite-header">
+                <FontAwesomeIcon :icon="faHeart" class="header-heart" />
+            </div>
         </div>
 
         <Transition name="table-results" mode="out-in">
@@ -56,6 +60,7 @@
                             :review="
                                 getReviewForBook((item as BookshelfBook).id)
                             "
+                            :isLoggedInUser="isLoggedInUser"
                             @open="openBookDetails(item as BookshelfBook)"
                         />
                     </template>
@@ -73,17 +78,20 @@ import TableSearchInput from "./TableSearchInput.vue";
 import NoSearchMatches from "./NoSearchMatches.vue";
 import HeaderSortButton from "./HeaderSortButton.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
 const props = withDefaults(
     defineProps<{
         books: BookshelfBook[];
         reviewUser?: User | null;
         heightPx?: number;
+        isLoggedInUser?: boolean;
     }>(),
     {
         books: () => [],
         reviewUser: null,
         heightPx: 400,
+        isLoggedInUser: false,
     }
 );
 
@@ -193,7 +201,7 @@ const resultsKey = computed(() => {
     top: 0; /* stays below controls because controls are outside sticky header */
     z-index: 2;
     display: grid;
-    grid-template-columns: 2fr 1.4fr 0.6fr 0.6fr 1.2fr 0.8fr;
+    grid-template-columns: 2fr 1.4fr 0.6fr 0.6fr 1.2fr 0.8fr 0.5fr;
     gap: 0.5rem;
     padding: 0.65rem 0.75rem;
     background: linear-gradient(
@@ -217,6 +225,18 @@ const resultsKey = computed(() => {
     text-overflow: ellipsis;
     white-space: nowrap;
     color: inherit;
+}
+
+.cell.favorite-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-heart {
+    font-size: 0.9rem;
+    color: var(--accent-pink);
+    opacity: 0.8;
 }
 
 .rows {

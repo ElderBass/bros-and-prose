@@ -167,7 +167,7 @@ const updateTab = (tabId: string) => {
     font-size: 0.8rem;
     padding: 0.5rem 1rem;
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 0.5;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid transparent;
     border-radius: 0.75rem;
@@ -215,6 +215,7 @@ const updateTab = (tabId: string) => {
     border-bottom-color: var(--accent-blue);
     color: var(--accent-blue);
     text-shadow: 0 0 10px var(--accent-blue);
+    box-shadow: 0 0 12px rgba(0, 191, 255, 0.6);
 }
 
 .tab-button.active.tab-green {
@@ -222,6 +223,7 @@ const updateTab = (tabId: string) => {
     border-bottom-color: var(--accent-green);
     color: var(--accent-green);
     text-shadow: 0 0 10px var(--accent-green);
+    box-shadow: 0 0 12px rgba(0, 255, 159, 0.6);
 }
 
 .tab-button.active.tab-yellow {
@@ -229,6 +231,7 @@ const updateTab = (tabId: string) => {
     border-bottom-color: var(--accent-yellow);
     color: var(--accent-yellow);
     text-shadow: 0 0 10px var(--accent-yellow);
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
 }
 
 .tab-button.active.tab-fuschia {
@@ -236,6 +239,7 @@ const updateTab = (tabId: string) => {
     border-bottom-color: var(--accent-fuschia);
     color: var(--accent-fuschia);
     text-shadow: 0 0 10px var(--accent-fuschia);
+    box-shadow: 0 0 12px rgba(255, 0, 255, 0.6);
 }
 
 .tab-button.active.tab-lavender {
@@ -243,6 +247,7 @@ const updateTab = (tabId: string) => {
     border-bottom-color: var(--accent-lavender);
     color: var(--accent-lavender);
     text-shadow: 0 0 10px var(--accent-lavender);
+    box-shadow: 0 0 12px rgba(167, 139, 250, 0.6);
 }
 
 .tab-button.active.tab-red {
@@ -250,6 +255,7 @@ const updateTab = (tabId: string) => {
     border-bottom-color: var(--accent-red);
     color: var(--accent-red);
     text-shadow: 0 0 10px var(--accent-red);
+    box-shadow: 0 0 12px rgba(255, 77, 77, 0.6);
 }
 
 /* Content area */
@@ -269,26 +275,32 @@ const updateTab = (tabId: string) => {
 /* Container border colors */
 .tabs-content.content-border-blue {
     border-color: var(--accent-blue);
+    box-shadow: 0 0 16px rgba(0, 191, 255, 0.4);
 }
 
 .tabs-content.content-border-green {
     border-color: var(--accent-green);
+    box-shadow: 0 0 16px rgba(0, 255, 159, 0.4);
 }
 
 .tabs-content.content-border-yellow {
     border-color: var(--accent-yellow);
+    box-shadow: 0 0 16px rgba(255, 215, 0, 0.4);
 }
 
 .tabs-content.content-border-fuschia {
     border-color: var(--accent-fuschia);
+    box-shadow: 0 0 16px rgba(255, 0, 255, 0.4);
 }
 
 .tabs-content.content-border-lavender {
     border-color: var(--accent-lavender);
+    box-shadow: 0 0 16px rgba(167, 139, 250, 0.4);
 }
 
 .tabs-content.content-border-red {
     border-color: var(--accent-red);
+    box-shadow: 0 0 16px rgba(255, 77, 77, 0.4);
 }
 
 @media (max-width: 768px) {

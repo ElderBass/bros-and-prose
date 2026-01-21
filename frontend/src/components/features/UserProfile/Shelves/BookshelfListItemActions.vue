@@ -13,6 +13,7 @@
             :buttonSize="buttonSize"
         />
         <MoveBookMenuButton
+            v-if="!isGuestUser()"
             :useIconButton="true"
             :isLoggedInUser="isLoggedInUser"
             :book="book"
@@ -29,6 +30,7 @@ import EditButton from "@/components/ui/EditButton.vue";
 import DeleteButton from "@/components/ui/DeleteButton.vue";
 import MoveBookMenuButton from "@/components/features/UserProfile/Shelves/MoveBookMenuButton.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
+import { isGuestUser } from "@/utils";
 
 const props = defineProps<{
     book: BookshelfBook;

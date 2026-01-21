@@ -32,11 +32,22 @@
         <ProfileFab v-if="isLoggedInUser" />
         <PalaverModals v-if="isLoggedInUser" />
         <ShelfModals />
+        <FavoritesIntroModal
+            :open="showIntroModal"
+            @accept="handleIntroAccept"
+            @dismiss="handleIntroDismiss"
+            @remindLater="handleIntroRemindLater"
+        />
+        <FavoritesWizard
+            :open="showWizard"
+            @complete="handleWizardComplete"
+            @close="handleWizardClose"
+        />
     </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "../ui/PageTitle.vue";
@@ -46,9 +57,12 @@ import UserActivitySection from "../features/UserProfile/UserActivitySection.vue
 import UserShelvesSection from "../features/UserProfile/Shelves/UserShelvesSection.vue";
 import PalaverModals from "../modal/PalaverModals/index.vue";
 import ShelfModals from "../features/UserProfile/Shelves/ShelfModals/index.vue";
+import FavoritesIntroModal from "../features/UserProfile/UserInfo/FavoritesStuff/FavoritesIntroModal.vue";
+import FavoritesWizard from "../features/UserProfile/UserInfo/FavoritesStuff/FavoritesWizard/index.vue";
 import type { User } from "@/types";
 import { useUIStore } from "@/stores/ui";
 import { getUserShelves } from "@/utils";
+import { shouldShowFavoritesIntro } from "@/utils/favoritesIntroUtils";
 
 const props = defineProps<{
     user: User;
@@ -61,6 +75,46 @@ const shelves = computed(() => getUserShelves(props.user));
 const currentlyReading = computed(() => shelves.value.currentlyReading);
 const wantToRead = computed(() => shelves.value.wantToRead);
 const haveRead = computed(() => shelves.value.haveRead);
+
+// Favorites intro modal state
+const showIntroModal = ref(false);
+const showWizard = ref(false);
+
+onMounted(() => {
+    // Check if we should show intro on mount
+    if (
+        props.isLoggedInUser &&
+        shouldShowFavoritesIntro(props.isLoggedInUser)
+    ) {
+        // Delay slightly for smooth transition
+        setTimeout(() => {
+            showIntroModal.value = true;
+        }, 500);
+    }
+});
+
+const handleIntroAccept = () => {
+    showIntroModal.value = false;
+    showWizard.value = true;
+};
+
+const handleIntroDismiss = () => {
+    // Permanent dismissal handled in modal
+    showIntroModal.value = false;
+};
+
+const handleIntroRemindLater = () => {
+    // Timestamp set in modal
+    showIntroModal.value = false;
+};
+
+const handleWizardComplete = () => {
+    showWizard.value = false;
+};
+
+const handleWizardClose = () => {
+    showWizard.value = false;
+};
 </script>
 
 <style scoped>

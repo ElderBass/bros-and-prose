@@ -27,7 +27,6 @@ withDefaults(
 
 .count {
     font-weight: 700;
-    color: var(--accent-fuschia);
 }
 
 .label {

@@ -115,10 +115,11 @@ export const addCurrentSelection = async (req: express.Request, res: express.Res
 
 export const updateCurrentSelection = async (req: express.Request, res: express.Response) => {
     const { bookId } = req.params;
+    const { selection, metadata } = req.body;
     console.log("UPDATE CURRENT SELECTION bookId in updateCurrentSelection", bookId);
     try {
         const futureBookRef = db.ref(`books/futureBooks/current/${bookId}`);
-        await futureBookRef.set(req.body);
+        await futureBookRef.set(selection || req.body);
         const updatedSelection = await futureBookRef.once("value");
         console.log(
             "UPDATE CURRENT SELECTION kertwanged in updateCurrentSelection",
@@ -129,6 +130,11 @@ export const updateCurrentSelection = async (req: express.Request, res: express.
             message: "Future book updated successfully",
             data: updatedSelection.val(),
         });
+        
+        // Send email notification only if metadata with updateType provided
+        if (metadata?.updateType) {
+            sendEmailNotification(metadata.updateType, metadata);
+        }
     } catch (error) {
         console.log("UPDATE CURRENT SELECTION ERROR in updateCurrentSelection", error);
         res.status(500).json({

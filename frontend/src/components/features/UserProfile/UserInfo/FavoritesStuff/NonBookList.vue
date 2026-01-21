@@ -1,6 +1,10 @@
 <template>
     <div class="non-book-list">
-        <InfiniteScroll direction="horizontal" height="100%">
+        <InfiniteScroll
+            direction="horizontal"
+            height="100%"
+            :addTopPadding="true"
+        >
             <NonBookListColumn
                 v-for="(column, index) in columns"
                 :key="index"
@@ -9,6 +13,7 @@
         </InfiniteScroll>
         <div class="button-wrapper">
             <IconButton
+                v-if="!isGuestUser()"
                 :icon="faMarker"
                 title="edit list"
                 size="small"
@@ -27,6 +32,7 @@ import { getNonBookItemColumns } from "@/utils/userFavoritesUtils";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
 import type { FavoriteType } from "@/types";
+import { isGuestUser } from "@/utils";
 
 const props = defineProps<{
     items: string[];
