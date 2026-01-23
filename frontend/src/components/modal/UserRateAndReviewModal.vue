@@ -77,7 +77,10 @@ const onReviewSubmit = async () => {
             showAlert({
                 show: true,
                 type: "success",
-                messages: ["review submitted!", "book added to your shelf"],
+                messages: [
+                    "your silly review was saved",
+                    "went ahead and added it to your past shelf. you're welcome.",
+                ],
                 duration: 3000,
                 dismissable: false,
             });
