@@ -74,7 +74,6 @@ watch(reviewComment, () => {
 }
 
 .star-rating-container {
-    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -97,6 +96,7 @@ watch(reviewComment, () => {
     font-size: 1.125rem;
     color: var(--main-text);
     background-color: var(--background-color);
+    font-style: italic;
 }
 
 label {

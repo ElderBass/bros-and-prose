@@ -3,6 +3,7 @@ import type {
     User,
     Shelf,
     BookshelfBook,
+    Book,
 } from "@/types";
 import { capitalizeBookTitle } from "./capitalizeBookTitle";
 import { v4 as uuid } from "uuid";
@@ -141,4 +142,20 @@ export const getShelfBookIsOn = (book: BookshelfBook) => {
         }
     }
     return null;
+};
+
+export const convertBookToBookshelfBook = (
+    book: Book,
+    tags?: string[]
+): BookshelfBook => {
+    return {
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        imageSrc: book.imageSrc,
+        yearPublished: book.yearPublished,
+        pages: book.totalPages,
+        tags: tags || [],
+        description: "",
+    };
 };
