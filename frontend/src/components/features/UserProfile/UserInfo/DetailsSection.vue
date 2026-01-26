@@ -2,7 +2,8 @@
     <div class="user">
         <div class="avatar-and-name">
             <AvatarImage
-                :icon="currentIcon"
+                :avatar="user.avatar"
+                :avatarType="user.avatarType || 'icon'"
                 :size="mobile ? 'small' : 'medium'"
             />
             <div class="user-name">
@@ -31,10 +32,8 @@ import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import EditUserButton from "@/components/features/UserProfile/EditUserButton.vue";
-import { AVATAR_ICON_LIST } from "@/constants";
 import type { User } from "@/types";
 import { getProgressPercentage } from "@/utils";
-import { faUserAstronaut } from "@fortawesome/free-solid-svg-icons";
 
 const { user, isLoggedInUser } = defineProps<{
     user: User;
@@ -42,13 +41,6 @@ const { user, isLoggedInUser } = defineProps<{
 }>();
 
 const { mobile } = useDisplay();
-
-const currentIcon = computed(() => {
-    return (
-        AVATAR_ICON_LIST.find((icon) => icon.iconName === user.avatar) ??
-        faUserAstronaut
-    );
-});
 
 const currentProgress = computed(() => {
     return getProgressPercentage(user.currentBookProgress);

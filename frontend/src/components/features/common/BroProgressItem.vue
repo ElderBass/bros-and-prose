@@ -2,7 +2,8 @@
     <div class="other-bro-progress-item">
         <div class="bro-avatar-container">
             <AvatarImage
-                :icon="props.broAvatar"
+                :avatar="props.broAvatar"
+                :avatarType="props.broAvatarType || 'icon'"
                 :size="mobile ? 'xsmall' : 'small'"
             />
             <p v-if="isLoggedInUser" class="isLoggedInUser">you</p>
@@ -39,14 +40,14 @@ import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import { faGlasses, faMarker } from "@fortawesome/free-solid-svg-icons";
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import UsernameLink from "@/components/ui/UsernameLink.vue";
 import { hasFinishedCurrentBook } from "@/utils";
 
 const props = withDefaults(
     defineProps<{
         broName: string;
-        broAvatar: IconDefinition;
+        broAvatar: string;
+        broAvatarType?: "icon" | "image";
         hasFinished: boolean;
         progressString: string;
         onPeepReviewClick: () => void;
@@ -54,6 +55,7 @@ const props = withDefaults(
     }>(),
     {
         isLoggedInUser: false,
+        broAvatarType: "icon",
     }
 );
 

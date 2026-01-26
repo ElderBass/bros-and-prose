@@ -12,7 +12,8 @@
         >
             <div class="bro-content">
                 <AvatarImage
-                    :icon="currentIcon"
+                    :avatar="user.avatar"
+                    :avatarType="user.avatarType || 'icon'"
                     :size="mobile ? 'medium' : 'large'"
                 />
                 <div class="bro-info">
@@ -37,8 +38,6 @@ import { storeToRefs } from "pinia";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import BaseCard from "@/components/ui/BaseCard.vue";
 import { useUserStore } from "@/stores/user";
-import { AVATAR_ICON_LIST } from "@/constants";
-import { faUserAstronaut } from "@fortawesome/free-solid-svg-icons";
 import type { User } from "@/types";
 
 const props = defineProps<{
@@ -50,13 +49,6 @@ const { loggedInUser } = storeToRefs(useUserStore());
 
 const isLoggedInUser = computed(() => {
     return loggedInUser.value?.id === props.user.id;
-});
-
-const currentIcon = computed(() => {
-    return (
-        AVATAR_ICON_LIST.find((icon) => icon.iconName === props.user.avatar) ??
-        faUserAstronaut
-    );
 });
 
 const profileLink = computed(() => {
