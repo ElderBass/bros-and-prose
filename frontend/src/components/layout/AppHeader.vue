@@ -30,13 +30,14 @@
             </RouterLink>
         </div>
         <RouterLink
-            v-if="!mobile && currentAvatar && !isGuest"
+            v-if="!mobile && !isGuest"
             class="router-link-wrapper"
             to="/profile"
         >
             <ProfileButton
                 :handleClick="() => {}"
-                :currentAvatar="currentAvatar"
+                :avatar="loggedInUser.avatar"
+                :avatarType="loggedInUser.avatarType || 'icon'"
             />
         </RouterLink>
         <RouterLink v-if="isGuest && !mobile" class="login-link" to="/">
@@ -76,13 +77,17 @@
                     />
                 </RouterLink>
                 <RouterLink
-                    v-if="currentAvatar && !isGuest"
+                    v-if="!isGuest"
                     to="/profile"
                     class="mobile-profile-btn"
                     style="color: var(--accent-blue)"
                     @click="closeMobileMenu"
                 >
-                    <FontAwesomeIcon :icon="currentAvatar" />
+                    <AvatarImage
+                        :avatar="loggedInUser.avatar"
+                        :avatarType="loggedInUser.avatarType || 'icon'"
+                        size="small"
+                    />
                     <span>Profile</span>
                 </RouterLink>
                 <RouterLink
@@ -99,17 +104,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { useDisplay } from "vuetify";
 import router from "@/router";
 import LogoButton from "@/components/layout/LogoButton.vue";
 import ProfileButton from "@/components/layout/ProfileButton.vue";
+import AvatarImage from "@/components/ui/AvatarImage.vue";
 import NotificationDot from "../ui/NotificationDot.vue";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@/stores/user";
-import { AVATAR_ICON_LIST } from "@/constants";
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
     isGuestUser,
     getMainLinks,
@@ -125,20 +129,9 @@ const isMobileMenuOpen = ref(false);
 const { loggedInUser } = storeToRefs(useUserStore());
 const { hasUnreadEntries } = storeToRefs(usePalaverStore());
 
-const currentAvatar = ref<IconDefinition | null>(null);
-
 const isGuest = computed(() => {
     return isGuestUser() || loggedInUser.value.id === "guest";
 });
-
-watch(
-    () => loggedInUser.value.avatar,
-    (newAvatar) => {
-        currentAvatar.value =
-            AVATAR_ICON_LIST.find((icon) => icon.iconName === newAvatar) ??
-            null;
-    }
-);
 
 const activeLink = computed(() => {
     return route.path;
@@ -155,13 +148,6 @@ const toggleMobileMenu = () => {
 const closeMobileMenu = () => {
     isMobileMenuOpen.value = false;
 };
-
-onMounted(() => {
-    currentAvatar.value =
-        AVATAR_ICON_LIST.find(
-            (icon) => icon.iconName === loggedInUser.value.avatar
-        ) ?? null;
-});
 </script>
 
 <style scoped>

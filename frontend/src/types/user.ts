@@ -39,6 +39,7 @@ export interface UserInfo {
     username: string;
     email: string;
     avatar: string;
+    avatarType?: "icon" | "image";
 }
 
 export interface UserResponse {

@@ -2,7 +2,8 @@
     <div class="palaver-item" :style="{ '--theme-color': themeColor }">
         <div class="avatar">
             <AvatarImage
-                :icon="iconFor(entry.userInfo.avatar)"
+                :avatar="entry.userInfo.avatar"
+                :avatarType="entry.userInfo.avatarType || 'icon'"
                 :size="mobile ? 'small' : 'medium'"
             />
         </div>
@@ -85,7 +86,7 @@ import ListItemActions from "@/components/features/Palaver/PalaverListItem/ListI
 import ReactionDetails from "@/components/features/Palaver/PalaverListItem/ReactionDetails.vue";
 import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
-import { AVATAR_ICON_LIST, EMPTY_TEXT } from "@/constants";
+import { EMPTY_TEXT } from "@/constants";
 import { isGuestUser } from "@/utils";
 import CommentsSection from "./CommentsSection.vue";
 import BookInfo from "./BookInfo.vue";
@@ -106,13 +107,6 @@ const props = withDefaults(
 const { mobile } = useDisplay();
 
 const showComments = ref(false);
-
-const iconFor = (iconName: string) => {
-    return (
-        AVATAR_ICON_LIST.find((i) => i.iconName === iconName) ??
-        AVATAR_ICON_LIST.find((i) => i.iconName === "user-astronaut")!
-    );
-};
 
 const typeLabel = computed(() => {
     switch (props.entry.type) {
