@@ -1,5 +1,6 @@
 export * from "./alert";
 export * from "./api";
+export * from "./avatar";
 export * from "./books";
 export * from "./log";
 export * from "./palaver";

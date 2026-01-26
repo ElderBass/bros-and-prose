@@ -1,5 +1,15 @@
 import express from "express";
+import multer from "multer";
 import { db } from "../db/index.js";
+import { uploadAvatar, deleteAvatar } from "../services/avatarUpload.js";
+
+// Configure multer for memory storage
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 1024 * 1024, // 1MB
+    },
+});
 
 export const getUser = async (req: express.Request, res: express.Response) => {
     const { userId } = req.params;
@@ -7,7 +17,6 @@ export const getUser = async (req: express.Request, res: express.Response) => {
     try {
         const userRef = db.ref(`users/${userId}`);
         const user = await userRef.once("value");
-        console.log("KERTWANGING OUTGOING user in getUser", user.val());
         return res.json({
             success: true,
             message: "User fetched successfully",
@@ -74,7 +83,6 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
         await userRef.update(req.body);
         console.log("KERTWANGING OUTGOING req.body in updateUser", req.body);
         const updatedUser = await userRef.once("value");
-        console.log("KERTWANGING OUTGOING updatedUser in updateUser", updatedUser.val());
         return res.json({
             success: true,
             message: "User updated successfully",
@@ -89,3 +97,58 @@ export const updateUser = async (req: express.Request, res: express.Response) =>
         });
     }
 };
+
+export const uploadUserAvatar = [
+    upload.single("avatar"),
+    async (req: express.Request, res: express.Response) => {
+        const { userId } = req.params;
+
+        console.log(
+            "KERTWANGING INCOMING userId in uploadUserAvatar",
+            userId,
+            "and req.file",
+            req.file?.filename
+        );
+
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message: "No file uploaded",
+            });
+        }
+
+        try {
+            // Delete old avatar first
+            await deleteAvatar(userId);
+
+            // Upload to Firebase Storage
+            const avatarUrl = await uploadAvatar(userId, req.file.buffer, req.file.mimetype);
+
+            const userRef = db.ref(`users/${userId}`);
+
+            // Update user record with new avatar
+            await userRef.update({
+                avatar: avatarUrl,
+                avatarType: "image",
+            });
+
+            const updatedUser = await db.ref(`users/${userId}`).once("value");
+
+            return res.json({
+                success: true,
+                message: "Avatar uploaded successfully",
+                data: {
+                    avatarUrl,
+                    user: updatedUser.val(),
+                },
+            });
+        } catch (error: any) {
+            console.error("Error uploading avatar:", error);
+            return res.status(500).json({
+                success: false,
+                message: error.message || "Failed to upload avatar",
+                error: error,
+            });
+        }
+    },
+];

@@ -4,7 +4,7 @@ import { useUIStore } from "@/stores/ui";
 import { useBooks } from "@/composables/useBooks";
 import { useFutureBooks } from "@/composables/useFutureBooks";
 import { useUser } from "@/composables/useUser";
-import { getUserFromStorage, isGuestUser } from "@/utils";
+import { getUserFromStorage, getUserInfo, isGuestUser } from "@/utils";
 import { usePalaver } from "@/composables/usePalaver";
 
 export const initApp = async () => {
@@ -23,7 +23,7 @@ export const initApp = async () => {
                 `Fetching user from storage in app: ${userFromStorage.id}`
             );
             const user = await useUser().getUser(userFromStorage.id);
-            console.log("KERTWANGING user in initApp", user);
+            console.log("KERTWANGING user in initApp", getUserInfo(user));
         } else if (isGuestUser()) {
             useLog().info("Guest user found, redirecting to present page...");
             router.push("/present");

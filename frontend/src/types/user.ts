@@ -14,6 +14,7 @@ export interface User {
     email: string;
     currentBookProgress: number;
     avatar: string;
+    avatarType?: "icon" | "image"; // Type of avatar: icon (FontAwesome) or image (uploaded file)
     reviews: {
         [key: string]: Review;
     };

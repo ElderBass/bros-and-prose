@@ -5,6 +5,7 @@ export const sanitizeUser = (user: User): User => {
     const { currentlyReading, haveRead, wantToRead } = getUserShelves(user);
     return {
         ...user,
+        avatarType: user.avatarType || "icon", // Default to icon for existing users
         currentlyReading: sanitizeBookshelfBooks(currentlyReading),
         haveRead: sanitizeBookshelfBooks(haveRead),
         wantToRead: sanitizeBookshelfBooks(wantToRead),

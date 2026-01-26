@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { LoginCredentials, SignupCredentials } from "./auth";
 import type {
+    Avatar,
     Review,
     User,
     Book,
@@ -9,6 +10,7 @@ import type {
     ArchivedBooksEntry,
     FutureBookSelectorRequest,
     PalaverEntryRequest,
+    AvatarRequest,
 } from "@/types";
 import type { FutureBookRequest } from "./futureBooks";
 
@@ -51,6 +53,8 @@ export const apiRequest = async <T>(
         | ArchivedBooksEntry
         | FutureBookSelectorRequest
         | FutureBookRequest
+        | Avatar
+        | AvatarRequest
         | { title: string }
 ): Promise<T> => {
     try {

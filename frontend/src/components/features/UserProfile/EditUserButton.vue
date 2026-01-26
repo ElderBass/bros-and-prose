@@ -96,8 +96,8 @@ const isUsernameModalOpen = computed(() => {
     return activeModal.value === "username";
 });
 
-const handleConfirmAvatar = (newAvatar: string) => {
-    updateUserAvatar(loggedInUser.value.id, newAvatar);
+const handleConfirmAvatar = async (newAvatar: string) => {
+    await updateUserAvatar(loggedInUser.value.id, newAvatar);
     showAlert(PROFILE_UPDATED_SUCCESS_ALERT);
     closeModal();
 };
