@@ -1,4 +1,4 @@
-const MAX_FILE_SIZE = 1024 * 1024; // 1MB in bytes
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const ALLOWED_TYPES = ["image/jpeg", "image/png"];
 
 export interface ValidationResult {

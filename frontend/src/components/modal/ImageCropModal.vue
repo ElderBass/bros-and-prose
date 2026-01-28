@@ -91,7 +91,7 @@ const dragStart = ref({ x: 0, y: 0 });
 const isProcessing = ref(false);
 const imageLoaded = ref(false);
 
-const minScale = 0.5;
+const minScale = 0.25;
 const maxScale = 3;
 const scaleStep = 0.05;
 
@@ -100,8 +100,10 @@ const buttonProps = computed(() => ({
 }));
 
 const imageStyle = computed(() => ({
-    transform: `translate(${position.value.x}px, ${position.value.y}px) scale(${scale.value})`,
-    transformOrigin: "center",
+    top: `${position.value.y}px`,
+    left: `${position.value.x}px`,
+    transform: `scale(${scale.value})`,
+    transformOrigin: "top left",
     cursor: isDragging.value ? "grabbing" : "grab",
 }));
 
@@ -283,8 +285,8 @@ watch(
 
 .crop-frame {
     position: relative;
-    width: 400px;
-    height: 400px;
+    width: 500px;
+    height: 500px;
     margin: 0 auto;
     overflow: hidden;
     border: 2px solid var(--accent-blue);
@@ -294,9 +296,8 @@ watch(
 
 .draggable-image {
     position: absolute;
-    /* top: 50%;
-    left: 50%; */
-    transform-origin: center;
+    top: 0;
+    left: 0;
     user-select: none;
     -webkit-user-drag: none;
     max-width: none;
