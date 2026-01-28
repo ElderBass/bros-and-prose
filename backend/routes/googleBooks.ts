@@ -9,6 +9,14 @@ export const searchGoogleBooks = async (req: express.Request, res: express.Respo
         const rawData: unknown = await response.json();
 
         console.log("KERTWANGING RAW DATA in searchGoogleBooks", rawData);
+        console.log(
+            "KERTWANGING RAW DATA type in searchGoogleBooks",
+            (rawData as any).error.details
+        );
+        console.log(
+            "KERTWANGING RAW DATA error in searchGoogleBooks",
+            (rawData as any).error.errors
+        );
         if (
             typeof rawData !== "object" ||
             rawData === null ||
