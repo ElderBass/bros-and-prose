@@ -23,7 +23,7 @@
             >
                 <FontAwesomeIcon :icon="faCloudUpload" class="upload-icon" />
                 <p class="main-text">click to select an image</p>
-                <p class="hint-text">JPG or PNG, max 1MB</p>
+                <p class="hint-text">JPG or PNG, max 5MB</p>
             </div>
 
             <!-- Preview (after file selected) -->

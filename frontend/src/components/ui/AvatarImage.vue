@@ -1,7 +1,10 @@
 <template>
     <div
         class="avatar-item"
-        :class="[sizeClass, { 'is-hoverable': hoverable }]"
+        :class="[
+            sizeClass,
+            { 'is-hoverable': hoverable, 'no-padding': !isIconAvatar },
+        ]"
         @click="props.onClick"
     >
         <!-- Icon Avatar -->
@@ -133,6 +136,10 @@ const sizeClass = computed(() => `size-${props.size}`);
     width: 8rem;
     height: 8rem;
     font-size: 3.5rem;
+}
+
+.avatar-item.no-padding {
+    padding: 0;
 }
 
 .avatar-image {
