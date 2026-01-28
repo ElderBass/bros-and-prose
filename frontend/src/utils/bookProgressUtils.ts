@@ -31,6 +31,9 @@ export const getProgressString = (bro: User, totalPages: number) => {
 };
 
 export const getProgressPercentage = (current: number) => {
+    if (current === FINISHED_BOOK_PROGRESS) {
+        return 100;
+    }
     const currentBook = useBooksStore().currentBook;
     return convertToPercentage(current, currentBook.totalPages);
 };

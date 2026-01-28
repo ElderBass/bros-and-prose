@@ -1,21 +1,38 @@
 <template>
     <div
         class="avatar-item"
-        :class="[sizeClass, { 'is-hoverable': hoverable }]"
+        :class="[
+            sizeClass,
+            { 'is-hoverable': hoverable, 'no-padding': !isIconAvatar },
+        ]"
         @click="props.onClick"
     >
-        <FontAwesomeIcon :icon="icon" />
+        <!-- Icon Avatar -->
+        <FontAwesomeIcon v-if="isIconAvatar" :icon="iconDefinition" />
+
+        <!-- Image Avatar -->
+        <img
+            v-else
+            :src="avatarSrc"
+            :alt="altText"
+            class="avatar-image"
+            @error="handleImageError"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import { avatarIcons } from "@/constants";
+import { faUserAstronaut } from "@fortawesome/free-solid-svg-icons";
 
 const props = withDefaults(
     defineProps<{
-        icon: IconDefinition;
+        icon?: IconDefinition; // For backwards compatibility
+        avatar?: string; // Avatar URL or icon name
+        avatarType?: "icon" | "image";
         hoverable?: boolean;
         size?: "xsmall" | "small" | "medium" | "large" | "xlarge";
         onClick?: () => void;
@@ -24,8 +41,49 @@ const props = withDefaults(
         hoverable: false,
         size: "medium",
         onClick: () => {},
+        avatarType: "icon",
     }
 );
+
+const imageError = ref(false);
+
+const isIconAvatar = computed(() => {
+    // If explicit icon prop is provided (backwards compat), use it
+    if (props.icon) return true;
+
+    // If image failed to load, fallback to icon
+    if (imageError.value) return true;
+
+    // Otherwise check avatarType
+    return props.avatarType === "icon" || !props.avatarType;
+});
+
+const iconDefinition = computed(() => {
+    // If explicit icon prop provided, use it
+    if (props.icon) return props.icon;
+
+    // Otherwise look up icon by name from avatar prop
+    if (props.avatar && isIconAvatar.value) {
+        const iconConfig = avatarIcons.find(
+            (config) => config.icon.iconName === props.avatar
+        );
+        return iconConfig?.icon ?? faUserAstronaut;
+    }
+
+    // Fallback to first icon if nothing found
+    return avatarIcons[0].icon;
+});
+
+const avatarSrc = computed(() => {
+    return props.avatar || "";
+});
+
+const altText = "Avatar";
+
+const handleImageError = () => {
+    console.error("Failed to load avatar image, falling back to icon");
+    imageError.value = true;
+};
 
 const sizeClass = computed(() => `size-${props.size}`);
 </script>
@@ -78,5 +136,16 @@ const sizeClass = computed(() => `size-${props.size}`);
     width: 8rem;
     height: 8rem;
     font-size: 3.5rem;
+}
+
+.avatar-item.no-padding {
+    padding: 0;
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
 }
 </style>

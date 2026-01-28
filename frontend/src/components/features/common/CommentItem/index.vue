@@ -2,7 +2,8 @@
     <div class="comment-item" :class="[`variant-${variant}`, `size-${size}`]">
         <div class="avatar">
             <AvatarImage
-                :icon="iconFor(comment.userInfo.avatar)"
+                :avatar="comment.userInfo.avatar"
+                :avatarType="comment.userInfo.avatarType || 'icon'"
                 :size="avatarSize"
             />
         </div>
@@ -35,7 +36,6 @@ import { useDisplay } from "vuetify";
 import type { Comment } from "@/types";
 import ReactionActions from "./ReactionActions.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
-import { AVATAR_ICON_LIST } from "@/constants";
 import { isGuestUser } from "@/utils";
 import { useUserStore } from "@/stores/user";
 
@@ -55,13 +55,6 @@ const props = withDefaults(
 );
 
 const { mobile } = useDisplay();
-
-const iconFor = (iconName: string) => {
-    return (
-        AVATAR_ICON_LIST.find((i) => i.iconName === iconName) ??
-        AVATAR_ICON_LIST.find((i) => i.iconName === "user-astronaut")!
-    );
-};
 
 const avatarSize = computed(() => {
     if (props.size === "compact") {

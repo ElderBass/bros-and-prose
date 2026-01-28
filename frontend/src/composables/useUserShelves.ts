@@ -1,8 +1,18 @@
 import { useUser } from "./useUser";
 import { useUserStore } from "@/stores/user";
-import type { BookshelfBook, User, Shelf, SubmitReviewArgs } from "@/types";
+import type {
+    BookshelfBook,
+    User,
+    Shelf,
+    SubmitReviewArgs,
+    Book,
+} from "@/types";
 import { useLog } from "./useLog";
-import { getShelfBookIsOn, getUserShelves } from "@/utils/bookshelfUtils";
+import {
+    getShelfBookIsOn,
+    getUserShelves,
+    convertBookToBookshelfBook,
+} from "@/utils/bookshelfUtils";
 import { useShelfModalStore } from "@/stores/shelfModal";
 
 export const useUserShelves = () => {
@@ -200,6 +210,58 @@ export const useUserShelves = () => {
         return updatedUser;
     };
 
+    const addCurrentBookClubBookToHaveRead = async (
+        book: Book,
+        tags?: string[]
+    ): Promise<User | null> => {
+        try {
+            const loggedInUser = useUserStore().loggedInUser;
+            const bookshelfBook = convertBookToBookshelfBook(book, tags);
+
+            // Check if book exists on other shelves
+            const existsOnCurrentlyReading =
+                loggedInUser.currentlyReading?.some(
+                    (b) => b.id === bookshelfBook.id
+                );
+            const existsOnWantToRead = loggedInUser.wantToRead?.some(
+                (b) => b.id === bookshelfBook.id
+            );
+
+            // Remove from Currently Reading if present
+            if (existsOnCurrentlyReading) {
+                await removeFromShelf("currentlyReading", bookshelfBook.id);
+            }
+
+            // Remove from Want to Read if present
+            if (existsOnWantToRead) {
+                await removeFromShelf("wantToRead", bookshelfBook.id);
+            }
+
+            // Check if already on Have Read to avoid duplicates
+            const existsOnHaveRead = loggedInUser.haveRead?.some(
+                (b) => b.id === bookshelfBook.id
+            );
+
+            if (!existsOnHaveRead) {
+                await addToShelf("haveRead", bookshelfBook);
+            }
+
+            await info(
+                `Added current book club book "${book.title}" to Have Read for ${loggedInUser.username}`
+            );
+
+            return loggedInUser;
+        } catch (err) {
+            console.error("error in addCurrentBookClubBookToHaveRead", err);
+            await logError(
+                `Error adding current book club book to Have Read: ${err}`
+            );
+            throw new Error(
+                `Error adding current book club book to Have Read: ${err}`
+            );
+        }
+    };
+
     return {
         addToCurrentlyReading,
         finishCurrentlyReading,
@@ -213,5 +275,6 @@ export const useUserShelves = () => {
         updateCurrentlyReading,
         updateWantToRead,
         updateHaveRead,
+        addCurrentBookClubBookToHaveRead,
     };
 };

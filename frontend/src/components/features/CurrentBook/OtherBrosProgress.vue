@@ -18,7 +18,8 @@
                 v-for="bro in bros"
                 :key="bro.id"
                 :bro-name="bro.username"
-                :bro-avatar="getAvatar(bro.avatar)"
+                :bro-avatar="bro.avatar"
+                :bro-avatar-type="bro.avatarType || 'icon'"
                 :has-finished="hasFinishedCurrentBook(bro)"
                 :progress-string="getProgressString(bro, book?.totalPages)"
                 :on-peep-review-click="() => onPeepReviewClick(bro)"
@@ -46,7 +47,7 @@ import BroProgressItem from "../common/BroProgressItem.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import { useUser } from "@/composables/useUser";
 import type { User, Book } from "@/types";
-import { hasFinishedCurrentBook, getAvatar, getProgressString } from "@/utils";
+import { hasFinishedCurrentBook, getProgressString } from "@/utils";
 
 defineProps<{
     book: Book;

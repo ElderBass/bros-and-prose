@@ -14,6 +14,7 @@
         <ReviewFormInputs
             :rating="rating"
             :comment="comment"
+            :showFavoriteToggle="showFavoriteToggle"
             @update="emit('update', $event)"
         />
         <div class="form-actions">
@@ -49,10 +50,13 @@ defineProps<{
     book: Book | BookshelfBook;
     rating: number;
     comment: string;
+    tags: string[];
+    showFavoriteToggle: boolean;
 }>();
 
 const emit = defineEmits<{
     (e: "update", value: SubmitReviewArgs): void;
+    (e: "update:tags", value: string[]): void;
     (e: "submit", value: Event): void;
     (e: "cancel", value: Event): void;
 }>();

@@ -50,7 +50,7 @@ const favoriteTabs: TabConfig[] = [
     { id: "genres", label: "genres", color: "fuschia" },
 ];
 
-const activeTab = ref<string>("authors");
+const activeTab = ref<string>("books");
 
 const getItemsForTab = (tab: FavoriteType): string[] => {
     if (tab === "books") {

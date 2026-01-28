@@ -6,7 +6,8 @@
                 v-for="broReview in broReviews"
                 :key="broReview.reviewer?.username"
                 :bro-name="broReview.reviewer?.username || 'oofda'"
-                :bro-avatar="getAvatar(broReview.reviewer?.avatar)"
+                :bro-avatar="broReview.reviewer?.avatar"
+                :bro-avatar-type="broReview.reviewer?.avatarType || 'icon'"
                 :has-finished="true"
                 :progress-string="
                     getRatingReviewString(broReview.review, mobile)
@@ -43,7 +44,7 @@ import type { Book, BroReview, Review } from "@/types";
 import BroProgressItem from "../common/BroProgressItem.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import UserReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
-import { getRatingReviewString, getAvatar } from "@/utils";
+import { getRatingReviewString } from "@/utils";
 import { useUserStore } from "@/stores/user";
 
 const { loggedInUser } = storeToRefs(useUserStore());

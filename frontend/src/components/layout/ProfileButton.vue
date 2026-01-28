@@ -14,18 +14,22 @@
                 class="user-actions desktop-nav"
                 @click="handleClick"
             >
-                <FontAwesomeIcon :icon="currentAvatar" />
+                <AvatarImage
+                    :avatar="avatar"
+                    :avatarType="avatarType"
+                    size="medium"
+                />
             </button>
         </template>
     </BaseTooltip>
 </template>
 
 <script setup lang="ts">
-import type { AvatarProp } from "@/types";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import AvatarImage from "@/components/ui/AvatarImage.vue";
 
 defineProps<{
-    currentAvatar: AvatarProp;
+    avatar: string;
+    avatarType: "icon" | "image";
     handleClick: () => void;
 }>();
 </script>
@@ -37,31 +41,28 @@ defineProps<{
     justify-content: center;
     gap: 0.5rem;
     font-size: 1.5rem;
-    border: 2px solid var(--accent-blue);
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background-color: var(--background-color);
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .user-actions:hover {
-    background-color: var(--accent-blue);
-    color: var(--background-color);
-}
-
-.user-actions:hover {
-    background-color: var(--accent-blue);
-    color: var(--background-color);
+    background-color: rgba(77, 77, 255, 0.1);
+    transform: scale(1.1);
 }
 
 .user-actions:active {
-    background-color: var(--accent-blue);
-    color: var(--background-color);
+    transform: scale(1.05);
 }
 
 .user-actions:focus {
-    background-color: var(--accent-blue);
-    color: var(--background-color);
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
 }
 
 .desktop-nav {
