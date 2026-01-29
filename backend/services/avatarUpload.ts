@@ -13,8 +13,6 @@ export const validateAvatarFile = (
     fileBuffer: Buffer,
     mimeType: string
 ): { valid: boolean; error?: string } => {
-    console.log("KERTWANGING INCOMING fileBuffer in validateAvatarFile", fileBuffer);
-    console.log("KERTWANGING INCOMING mimeType in validateAvatarFile", mimeType);
     // Check MIME type
     if (!ALLOWED_MIME_TYPES.includes(mimeType)) {
         return {
@@ -65,8 +63,6 @@ export const uploadAvatar = async (
 ): Promise<string> => {
     try {
         // Validate file
-        console.log("KERTWANGING INCOMING fileBuffer in uploadAvatar", fileBuffer);
-        console.log("KERTWANGING INCOMING mimeType in uploadAvatar", mimeType);
         const validation = validateAvatarFile(fileBuffer, mimeType);
         if (!validation.valid) {
             throw new Error(validation.error);

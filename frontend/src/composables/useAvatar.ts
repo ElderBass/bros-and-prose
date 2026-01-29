@@ -28,13 +28,7 @@ export const useAvatar = () => {
             }
 
             // Upload to backend
-            const { avatarUrl, user } = await uploadAvatarImage(userId, file);
-
-            console.log(
-                "KERTWANGING INCOMING avatarUrl in uploadAvatar",
-                avatarUrl
-            );
-            console.log("KERTWANGING INCOMING user in uploadAvatar", user);
+            const { user } = await uploadAvatarImage(userId, file);
 
             // Update user store
             setLoggedInUser(user);
