@@ -18,14 +18,13 @@
                 :handleClick="onEditList"
             />
         </div>
+        <BookDetailsModal
+            v-if="!isGuestUser()"
+            :open="detailsModalOpen"
+            :book="selectedBook"
+            @close="closeBookModal"
+        />
     </div>
-
-    <BookDetailsModal
-        v-if="!isGuestUser()"
-        :open="detailsModalOpen"
-        :book="selectedBook"
-        @close="closeBookModal"
-    />
 </template>
 
 <script setup lang="ts">

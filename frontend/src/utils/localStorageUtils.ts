@@ -32,7 +32,7 @@ export const isGuestUser = () => {
 
 export const getLastUnreadPalaverEntry = () => {
     const lastUnreadEntry = localStorage.getItem(last_unread_palaver_entry_key);
-    return lastUnreadEntry ? JSON.parse(lastUnreadEntry) : null;
+    return lastUnreadEntry ? JSON.parse(lastUnreadEntry) : {};
 };
 
 export const setLastUnreadPalaverEntry = (entryId: string, date: string) => {
