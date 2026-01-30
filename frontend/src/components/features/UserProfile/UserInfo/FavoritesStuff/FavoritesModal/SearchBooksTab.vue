@@ -1,7 +1,7 @@
 <template>
     <div class="search-books-tab">
         <BaseInput
-            :modelValue="searchQuery"
+            v-model="searchQuery"
             label="Search for books by title or author..."
             placeholder="Search for books by title or author..."
             id="search-books-tab-input"
@@ -87,19 +87,21 @@ const handleToggle = (book: BookshelfBook) => {
 };
 
 const performSearch = async () => {
+    console.log("KERTWANGING Performing search BEFORE", searchQuery.value);
     if (!searchQuery.value.trim()) {
         searchResults.value = [];
         hasSearched.value = false;
         error.value = "";
         return;
     }
-
+    console.log("KERTWANGING Performing search AFTER", searchQuery.value);
     try {
         searching.value = true;
         error.value = "";
         const results = await booksService.searchGoogleBooksForFavorites(
             searchQuery.value.trim()
         );
+        console.log("KERTWANGING Results from Google Books", results);
         searchResults.value = results;
         hasSearched.value = true;
     } catch (err) {
@@ -203,7 +205,7 @@ const handleSearchInput = () => {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
-    padding: 0.5rem 0;
+    padding: 0.5rem 0.75rem;
     max-height: 400px;
     overflow-y: auto;
 }

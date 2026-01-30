@@ -2,9 +2,9 @@
     <div class="my-books-tab">
         <div v-if="!haveReadBooks.length" class="empty-state">
             <FontAwesomeIcon :icon="faBook" class="empty-icon" />
-            <p class="empty-title">you haven't read shit, my man, sheeeeesh</p>
+            <p class="empty-title">{{ emptyStateTitle }}</p>
             <p class="empty-hint">
-                fuckin' read something fer chrissakes, you degenerate wastoid
+                {{ emptyStateHint }}
             </p>
         </div>
         <div v-else class="books-grid">
@@ -14,7 +14,6 @@
                 :book="book"
                 :selectable="true"
                 :selected="isSelected(book)"
-                :disabled="isAlreadyFavorited(book)"
                 @click="handleToggle"
             />
         </div>
@@ -41,15 +40,31 @@ const emit = defineEmits<{
 const { loggedInUser } = useUserStore();
 
 const haveReadBooks = computed(() => {
-    return loggedInUser.haveRead || [];
+    const allBooks = loggedInUser.haveRead || [];
+    // Filter out books that are already favorited
+    return allBooks.filter(
+        (book) => !props.currentFavorites.some((fav) => fav.id === book.id)
+    );
+});
+
+const emptyStateTitle = computed(() => {
+    const totalBooks = loggedInUser.haveRead?.length || 0;
+    if (totalBooks === 0) {
+        return "you haven't read shit, my man, sheeeeesh";
+    }
+    return "all your books are already favorites, bro";
+});
+
+const emptyStateHint = computed(() => {
+    const totalBooks = loggedInUser.haveRead?.length || 0;
+    if (totalBooks === 0) {
+        return "fuckin' read something fer chrissakes, you degenerate wastoid";
+    }
+    return "try searching for more books or go read another one";
 });
 
 const isSelected = (book: BookshelfBook) => {
     return props.selectedBooks.some((b) => b.id === book.id);
-};
-
-const isAlreadyFavorited = (book: BookshelfBook) => {
-    return props.currentFavorites.some((b) => b.id === book.id);
 };
 
 const handleToggle = (book: BookshelfBook) => {

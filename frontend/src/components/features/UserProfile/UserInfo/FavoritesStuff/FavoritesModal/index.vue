@@ -21,6 +21,7 @@
                 :is="currentFormComponent"
                 :currentFavorites="getCurrentFavorites"
                 @submit="handleSubmit"
+                @cancel="closeModal"
             />
         </div>
     </BaseModal>

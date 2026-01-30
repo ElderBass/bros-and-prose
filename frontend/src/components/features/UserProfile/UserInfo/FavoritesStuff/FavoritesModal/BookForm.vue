@@ -77,6 +77,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: "submit", items: BookshelfBook[]): void;
+    (e: "cancel"): void;
 }>();
 
 const activeTab = ref<"myBooks" | "search">("myBooks");
@@ -121,6 +122,7 @@ const handleBookRemove = (book: BookshelfBook) => {
 
 const handleCancel = () => {
     selectedBooks.value = [];
+    emit("cancel");
 };
 
 const handleSubmit = () => {

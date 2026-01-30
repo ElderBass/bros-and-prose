@@ -3,6 +3,7 @@
         type="genre"
         :currentFavorites="currentFavorites"
         @submit="submit"
+        @cancel="cancel"
     />
 </template>
 
@@ -15,9 +16,13 @@ defineProps<{
 
 const emit = defineEmits<{
     (e: "submit", items: string[]): void;
+    (e: "cancel"): void;
 }>();
 
 const submit = (items: string[]) => {
     emit("submit", items);
+};
+const cancel = () => {
+    emit("cancel");
 };
 </script>
