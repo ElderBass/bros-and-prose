@@ -1,107 +1,202 @@
 <template>
     <div class="book-fav-form">
-        <div class="coming-soon-container">
-            <FontAwesomeIcon :icon="faBook" class="book-icon" />
-            <p class="coming-soon">book favorites coming soon!</p>
-            <p class="helper-text">
-                use the books shelf for now to track your reads
-            </p>
+        <div class="tabs-selector">
+            <button
+                class="tab-button"
+                :class="{ active: activeTab === 'myBooks' }"
+                @click="activeTab = 'myBooks'"
+            >
+                your past
+            </button>
+            <button
+                class="tab-button"
+                :class="{ active: activeTab === 'search' }"
+                @click="activeTab = 'search'"
+            >
+                divination (google)
+            </button>
+        </div>
+
+        <div class="tab-content">
+            <MyBooksTab
+                v-if="activeTab === 'myBooks'"
+                :selectedBooks="selectedBooks"
+                :currentFavorites="parsedCurrentFavorites"
+                @toggle="handleBookToggle"
+            />
+            <SearchBooksTab
+                v-else
+                :selectedBooks="selectedBooks"
+                @toggle="handleBookToggle"
+            />
+        </div>
+
+        <SelectedBooksList
+            :selectedBooks="selectedBooks"
+            @remove="handleBookRemove"
+        />
+
+        <div class="form-actions">
+            <BaseButton
+                variant="outline-secondary"
+                :size="buttonSize"
+                @click="handleCancel"
+            >
+                cancel
+            </BaseButton>
+            <BaseButton
+                variant="outline"
+                :size="buttonSize"
+                :disabled="!selectedBooks.length"
+                @click="handleSubmit"
+            >
+                ship'em ({{ selectedBooks.length }})
+            </BaseButton>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { faBook } from "@fortawesome/free-solid-svg-icons";
+import { ref, computed } from "vue";
+import { useDisplay } from "vuetify";
+import MyBooksTab from "./MyBooksTab.vue";
+import SearchBooksTab from "./SearchBooksTab.vue";
+import SelectedBooksList from "./SelectedBooksList.vue";
+import BaseButton from "@/components/ui/BaseButton.vue";
 import type { BookshelfBook } from "@/types";
+
+const { mobile } = useDisplay();
 
 defineOptions({
     name: "BookFavForm",
 });
 
-defineProps<{
+const props = defineProps<{
     currentFavorites: BookshelfBook[] | string[];
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
     (e: "submit", items: BookshelfBook[]): void;
 }>();
+
+const activeTab = ref<"myBooks" | "search">("myBooks");
+const selectedBooks = ref<BookshelfBook[]>([]);
+
+const buttonSize = computed(() => {
+    return mobile.value ? "small" : "medium";
+});
+
+const parsedCurrentFavorites = computed(() => {
+    if (
+        Array.isArray(props.currentFavorites) &&
+        props.currentFavorites.length > 0
+    ) {
+        // Check if it's an array of strings (need to parse)
+        if (typeof props.currentFavorites[0] === "string") {
+            return (props.currentFavorites as string[]).map((str) =>
+                JSON.parse(str)
+            );
+        }
+        // Already an array of BookshelfBook
+        return props.currentFavorites as BookshelfBook[];
+    }
+    return [];
+});
+
+const handleBookToggle = (book: BookshelfBook) => {
+    const index = selectedBooks.value.findIndex((b) => b.id === book.id);
+    if (index > -1) {
+        selectedBooks.value.splice(index, 1);
+    } else {
+        selectedBooks.value.push(book);
+    }
+};
+
+const handleBookRemove = (book: BookshelfBook) => {
+    const index = selectedBooks.value.findIndex((b) => b.id === book.id);
+    if (index > -1) {
+        selectedBooks.value.splice(index, 1);
+    }
+};
+
+const handleCancel = () => {
+    selectedBooks.value = [];
+};
+
+const handleSubmit = () => {
+    if (selectedBooks.value.length > 0) {
+        emit("submit", selectedBooks.value);
+        selectedBooks.value = [];
+    }
+};
 </script>
 
 <style scoped>
 .book-fav-form {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 1.5rem;
     width: 100%;
-    min-height: 300px;
+    min-height: 400px;
 }
 
-.coming-soon-container {
+.tabs-selector {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 2px solid var(--accent-blue);
+}
+
+.tab-button {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    color: var(--accent-blue);
+    background: color-mix(in srgb, var(--accent-blue) 5%, transparent);
+}
+
+.tab-button.active {
+    color: var(--accent-blue);
+    border-bottom-color: var(--accent-blue);
+}
+
+.tab-content {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    padding: 3rem 2rem;
-    border: 2px dashed var(--accent-lavender);
-    border-radius: 1rem;
-    background: color-mix(in srgb, var(--accent-lavender) 3%, transparent);
-    text-align: center;
 }
 
-.book-icon {
-    font-size: 3rem;
-    color: var(--accent-lavender);
-    opacity: 0.6;
-    animation: pulse 2s ease-in-out infinite;
-}
-
-.coming-soon {
-    margin: 0;
-    font-family: "Libre Baskerville", serif;
-    font-size: 1.25rem;
-    color: var(--accent-lavender);
-    font-weight: 600;
-}
-
-.helper-text {
-    margin: 0;
-    font-size: 0.95rem;
-    opacity: 0.75;
-    font-style: italic;
-}
-
-@keyframes pulse {
-    0%,
-    100% {
-        opacity: 0.6;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.8;
-        transform: scale(1.05);
-    }
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--accent-blue);
 }
 
 @media (max-width: 768px) {
     .book-fav-form {
-        min-height: 250px;
+        min-height: 350px;
+        gap: 1.25rem;
     }
 
-    .coming-soon-container {
-        padding: 2rem 1.5rem;
+    .tab-button {
+        padding: 0.6rem 0.75rem;
+        font-size: 1rem;
     }
 
-    .book-icon {
-        font-size: 2.5rem;
-    }
-
-    .coming-soon {
-        font-size: 1.1rem;
-    }
-
-    .helper-text {
-        font-size: 0.85rem;
+    .form-actions {
+        flex-direction: column;
+        gap: 0.5rem;
     }
 }
 </style>

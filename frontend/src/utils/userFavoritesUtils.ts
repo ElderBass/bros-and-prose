@@ -3,12 +3,26 @@ import type { FavoriteType, BookshelfBook } from "@/types";
 
 export const getUpdatedFavorites = (
     selectedFavoriteType: FavoriteType,
-    items: string[]
+    items: string[] | BookshelfBook[]
 ) => {
     const user = useUserStore().loggedInUser;
+
+    let processedItems: string[] | BookshelfBook[];
+
+    if (selectedFavoriteType === "books") {
+        // For books, items should be BookshelfBook[]
+        processedItems = items as BookshelfBook[];
+    } else {
+        // For authors/genres, items should be string[]
+        processedItems = Array.from(new Set(items as string[]));
+    }
+
     const updatedFavorites = {
         ...user.favorites,
-        [selectedFavoriteType]: Array.from(new Set(items)),
+        [selectedFavoriteType]: [
+            ...(user.favorites?.[selectedFavoriteType] || []),
+            ...processedItems,
+        ],
     };
     return updatedFavorites;
 };

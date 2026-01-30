@@ -27,6 +27,7 @@ const userFavorites = ref<UserFavorites | undefined>(user.favorites);
 watch(
     () => user,
     (newUser) => {
+        console.log("\n KERTWANGING INCOMING newUser in UserInfoCard", newUser);
         userFavorites.value = newUser.favorites;
     }
 );

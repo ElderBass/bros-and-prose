@@ -1,22 +1,28 @@
 <template>
-    <div class="book-list">
-        <InfiniteScroll direction="horizontal" height="100%" @load="handleLoad">
-            <BookListColumn
-                v-for="(column, index) in displayedColumns"
-                :key="index"
-                :books="column"
-                @click="openBookModal"
-            />
-        </InfiniteScroll>
-        <div class="button-wrapper">
-            <IconButton
-                v-if="!isGuestUser()"
-                :icon="faMarker"
-                title="edit list"
-                size="small"
-                color="blue"
-                :handleClick="onEditList"
-            />
+    <div class="book-list-container">
+        <div class="book-list">
+            <InfiniteScroll
+                direction="horizontal"
+                height="100%"
+                @load="handleLoad"
+            >
+                <BookListColumn
+                    v-for="(column, index) in displayedColumns"
+                    :key="index"
+                    :books="column"
+                    @click="openBookModal"
+                />
+            </InfiniteScroll>
+            <div class="button-wrapper">
+                <IconButton
+                    v-if="!isGuestUser()"
+                    :icon="faMarker"
+                    title="edit list"
+                    size="small"
+                    color="blue"
+                    :handleClick="onEditList"
+                />
+            </div>
         </div>
         <BookDetailsModal
             v-if="!isGuestUser()"
@@ -100,6 +106,11 @@ const onEditList = () => {
 </script>
 
 <style scoped>
+.book-list-container {
+    height: 100%;
+    width: 100%;
+}
+
 .book-list {
     display: flex;
     justify-content: flex-end;
