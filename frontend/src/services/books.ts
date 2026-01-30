@@ -97,16 +97,11 @@ export const booksService = {
         query: string
     ): Promise<BookshelfBook[]> => {
         try {
-            console.log(
-                "KERTWANGING Searching Google Books for favorites",
-                query
-            );
             const response = await apiRequest<{ data: GoogleBooksResult[] }>(
                 "POST",
                 "/api/googleBooks/title",
                 { title: query }
             );
-            console.log("KERTWANGING Response from Google Books", response);
             // Transform Google Books results to BookshelfBook format
             return response.data.map(transformGoogleBookToBookshelfBook);
         } catch (error) {

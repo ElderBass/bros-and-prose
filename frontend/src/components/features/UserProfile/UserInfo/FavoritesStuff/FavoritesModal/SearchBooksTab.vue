@@ -87,21 +87,18 @@ const handleToggle = (book: BookshelfBook) => {
 };
 
 const performSearch = async () => {
-    console.log("KERTWANGING Performing search BEFORE", searchQuery.value);
     if (!searchQuery.value.trim()) {
         searchResults.value = [];
         hasSearched.value = false;
         error.value = "";
         return;
     }
-    console.log("KERTWANGING Performing search AFTER", searchQuery.value);
     try {
         searching.value = true;
         error.value = "";
         const results = await booksService.searchGoogleBooksForFavorites(
             searchQuery.value.trim()
         );
-        console.log("KERTWANGING Results from Google Books", results);
         searchResults.value = results;
         hasSearched.value = true;
     } catch (err) {
