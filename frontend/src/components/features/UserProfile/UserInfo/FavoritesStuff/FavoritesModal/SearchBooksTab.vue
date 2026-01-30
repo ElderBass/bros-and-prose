@@ -1,25 +1,31 @@
 <template>
     <div class="search-books-tab">
-        <BaseInput
-            v-model="searchQuery"
-            label="Search for books by title or author..."
-            placeholder="Search for books by title or author..."
-            id="search-books-tab-input"
-            :size="mobile ? 'small' : 'medium'"
-            @update:modelValue="handleSearchInput"
-        />
+        <div class="search-input-container">
+            <BaseInput
+                v-model="searchQuery"
+                label="search google for some fucking books, bud."
+                placeholder="book title"
+                id="search-books-tab-input"
+                :size="mobile ? 'small' : 'medium'"
+                @update:modelValue="handleSearchInput"
+            />
+            <ClearSearchButton :onClick="handleClear" />
+        </div>
 
-        <LoadingSpinnerContainer
-            v-if="searching"
-            size="medium"
-            message="searching books..."
-        />
+        <div v-if="searching" class="loading-state">
+            <SkeletonLoader
+                :count="4"
+                type="list-item-avatar-two-line"
+                tone="fuschia"
+                :gapPx="12"
+            />
+        </div>
 
         <div v-else-if="error" class="error-state">
             <FontAwesomeIcon :icon="faExclamationTriangle" class="error-icon" />
             <p class="error-message">{{ error }}</p>
             <p class="error-hint">
-                You can still add books from your HaveRead shelf
+                does seth actually do this for a living? he sucks at it
             </p>
         </div>
 
@@ -36,13 +42,15 @@
 
         <div v-else-if="hasSearched" class="empty-results">
             <FontAwesomeIcon :icon="faSearch" class="empty-icon" />
-            <p class="empty-title">No books found</p>
-            <p class="empty-hint">Try a different search term</p>
+            <p class="empty-title">google didn't find squat</p>
+            <p class="empty-hint">try not being so fucking obscure, bud</p>
         </div>
 
         <div v-else class="initial-state">
             <FontAwesomeIcon :icon="faSearch" class="initial-icon" />
-            <p class="initial-text">Enter a book title or author to search</p>
+            <p class="initial-text">
+                do I have to spell out how to run a goddamn search?
+            </p>
         </div>
     </div>
 </template>
@@ -56,7 +64,8 @@ import {
     faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
 import BaseInput from "@/components/form/BaseInput.vue";
-import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
+import ClearSearchButton from "@/components/features/UserProfile/Shelves/ShelfModals/FormStuff/ClearSearchButton.vue";
+import SkeletonLoader from "@/components/ui/SkeletonLoader.vue";
 import BookListItem from "../BookListItem.vue";
 import type { BookshelfBook } from "@/types";
 import { booksService } from "@/services/books";
@@ -84,6 +93,13 @@ const isSelected = (book: BookshelfBook) => {
 
 const handleToggle = (book: BookshelfBook) => {
     emit("toggle", book);
+};
+
+const handleClear = () => {
+    searchQuery.value = "";
+    searchResults.value = [];
+    hasSearched.value = false;
+    error.value = "";
 };
 
 const performSearch = async () => {
@@ -114,12 +130,10 @@ const performSearch = async () => {
 };
 
 const handleSearchInput = () => {
-    // Clear previous timeout
     if (searchTimeout) {
         clearTimeout(searchTimeout);
     }
 
-    // Debounce search by 500ms
     searchTimeout = setTimeout(() => {
         performSearch();
     }, 500);
@@ -132,7 +146,19 @@ const handleSearchInput = () => {
     flex-direction: column;
     gap: 1rem;
     width: 100%;
-    min-height: 350px;
+    min-height: 300px;
+}
+
+.search-input-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+.loading-state {
+    padding: 0.5rem 0.75rem;
+    flex: 1;
 }
 
 .error-state,
@@ -193,7 +219,7 @@ const handleSearchInput = () => {
 .empty-hint,
 .initial-text {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 1.25rem;
     color: var(--text-muted);
     font-style: italic;
 }
@@ -215,7 +241,7 @@ const handleSearchInput = () => {
     .error-state,
     .empty-results,
     .initial-state {
-        padding: 2rem 1.5rem;
+        padding: 1.5rem 1rem;
     }
 
     .error-icon,
@@ -232,7 +258,7 @@ const handleSearchInput = () => {
     .error-hint,
     .empty-hint,
     .initial-text {
-        font-size: 0.85rem;
+        font-size: 1rem;
     }
 
     .results-grid {

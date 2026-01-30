@@ -13,7 +13,7 @@
                 :class="{ active: activeTab === 'search' }"
                 @click="activeTab = 'search'"
             >
-                divination (google)
+                god's plan (google)
             </button>
         </div>
 
@@ -34,6 +34,7 @@
         <SelectedBooksList
             :selectedBooks="selectedBooks"
             @remove="handleBookRemove"
+            @clear="handleClearSelections"
         />
 
         <div class="form-actions">
@@ -120,6 +121,10 @@ const handleBookRemove = (book: BookshelfBook) => {
     }
 };
 
+const handleClearSelections = () => {
+    selectedBooks.value = [];
+};
+
 const handleCancel = () => {
     selectedBooks.value = [];
     emit("cancel");
@@ -182,7 +187,6 @@ const handleSubmit = () => {
     justify-content: flex-end;
     gap: 0.75rem;
     padding-top: 1rem;
-    border-top: 1px solid var(--accent-blue);
 }
 
 @media (max-width: 768px) {
