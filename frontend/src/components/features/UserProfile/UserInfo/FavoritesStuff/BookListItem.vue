@@ -26,7 +26,7 @@
                 <FontAwesomeIcon :icon="faBook" class="placeholder-icon" />
             </div>
         </div>
-        <div class="badge-content">
+        <div class="badge-content" :class="{ 'has-selector': selectable }">
             <h4 class="badge-title">{{ truncatedTitle }}</h4>
             <p class="badge-author">{{ truncatedAuthor }}</p>
             <span v-if="selectable && disabled" class="already-favorite-badge">
@@ -203,6 +203,10 @@ const handleClick = () => {
     overflow: hidden;
 }
 
+.badge-content.has-selector {
+    padding-right: 2rem;
+}
+
 .badge-title {
     margin: 0;
     font-family: "Courier New", serif;
@@ -253,6 +257,10 @@ const handleClick = () => {
 
     .badge-content {
         padding: 0.5rem;
+    }
+
+    .badge-content.has-selector {
+        padding-right: 2rem;
     }
 
     .badge-title {

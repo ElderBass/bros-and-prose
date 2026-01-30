@@ -102,7 +102,6 @@ export const booksService = {
                 "/api/googleBooks/title",
                 { title: query }
             );
-
             // Transform Google Books results to BookshelfBook format
             return response.data.map(transformGoogleBookToBookshelfBook);
         } catch (error) {

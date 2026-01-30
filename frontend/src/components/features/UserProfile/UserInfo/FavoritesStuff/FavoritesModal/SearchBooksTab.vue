@@ -1,7 +1,7 @@
 <template>
     <div class="search-books-tab">
         <BaseInput
-            :modelValue="searchQuery"
+            v-model="searchQuery"
             label="Search for books by title or author..."
             placeholder="Search for books by title or author..."
             id="search-books-tab-input"
@@ -93,7 +93,6 @@ const performSearch = async () => {
         error.value = "";
         return;
     }
-
     try {
         searching.value = true;
         error.value = "";
@@ -203,7 +202,7 @@ const handleSearchInput = () => {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
-    padding: 0.5rem 0;
+    padding: 0.5rem 0.75rem;
     max-height: 400px;
     overflow-y: auto;
 }
