@@ -3,20 +3,17 @@ import express from "express";
 export const searchGoogleBooks = async (req: express.Request, res: express.Response) => {
     try {
         const { title } = req.body;
+        const apiKey = process.env.GOOGLE_API_KEY;
+        if (!apiKey) {
+            throw new Error("Cannot search Google Books: GOOGLE_API_KEY is not set");
+        }
         const response = await fetch(
-            `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(title)}`
+            `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
+                title
+            )}&key=${apiKey}`
         );
         const rawData: unknown = await response.json();
 
-        console.log("KERTWANGING RAW DATA in searchGoogleBooks", rawData);
-        console.log(
-            "KERTWANGING RAW DATA type in searchGoogleBooks",
-            (rawData as any).error.details
-        );
-        console.log(
-            "KERTWANGING RAW DATA error in searchGoogleBooks",
-            (rawData as any).error.errors
-        );
         if (
             typeof rawData !== "object" ||
             rawData === null ||

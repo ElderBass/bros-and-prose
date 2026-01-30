@@ -8,13 +8,6 @@ export const uploadAvatarImage = async (
     userId: string,
     file: File
 ): Promise<AvatarResponse> => {
-    console.log(
-        "KERTWANGING Uploading avatar image for user",
-        userId,
-        "and file",
-        file
-    );
-
     const formData = new FormData();
     formData.append("avatar", file);
 

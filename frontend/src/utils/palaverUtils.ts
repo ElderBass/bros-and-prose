@@ -88,7 +88,7 @@ export const buildPalaverComment = (commentText: string): Comment => {
 };
 
 export const checkForUnreadEntries = (entries: PalaverEntry[]) => {
-    const { entryId, date } = getLastUnreadPalaverEntry();
+    const { entryId = "", date = "" } = getLastUnreadPalaverEntry();
 
     if (!entryId) {
         setLastUnreadPalaverEntry(entries[0].id, entries[0].createdAt);

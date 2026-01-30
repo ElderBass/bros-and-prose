@@ -21,6 +21,7 @@
                 :is="currentFormComponent"
                 :currentFavorites="getCurrentFavorites"
                 @submit="handleSubmit"
+                @cancel="closeModal"
             />
         </div>
     </BaseModal>
@@ -34,7 +35,7 @@ import FavSelector from "./FavSelector.vue";
 import AuthorForm from "./AuthorForm.vue";
 import GenreForm from "./GenreForm.vue";
 import BookForm from "./BookForm.vue";
-import type { FavoriteType } from "@/types";
+import type { FavoriteType, BookshelfBook } from "@/types";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
 import { useUIStore } from "@/stores/ui";
 import { useLog, useUserFavorites } from "@/composables";
@@ -83,7 +84,7 @@ const handleFavoriteTypeChange = (type: FavoriteType) => {
     selectedFavoriteType.value = type;
 };
 
-const handleSubmit = async (items: string[]) => {
+const handleSubmit = async (items: string[] | BookshelfBook[]) => {
     try {
         loading.value = true;
         const updatedFavorites = getUpdatedFavorites(
