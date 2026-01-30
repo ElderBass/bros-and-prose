@@ -1,9 +1,21 @@
 <template>
     <div class="selected-books-list">
-        <h3 class="list-title">
-            sus selections
-            <span class="count">({{ selectedBooks.length }})</span>
-        </h3>
+        <div class="list-header">
+            <h3 class="list-title">
+                sus selections
+                <span class="count">({{ selectedBooks.length }})</span>
+            </h3>
+            <BaseButton
+                v-if="selectedBooks.length"
+                size="xsmall"
+                variant="outline-error"
+                title="get that mindless drivel outta here"
+                @click="handleClear"
+            >
+                <FontAwesomeIcon :icon="faXmark" />
+                wipe'em
+            </BaseButton>
+        </div>
         <div v-if="!selectedBooks.length" class="empty-state">
             <p>nothing selected yet, thank god</p>
             <p class="hint">fuckin' figure it out and fav something, bud</p>
@@ -46,7 +58,7 @@
 
 <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faBook, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faTrash, faXmark } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "@/components/ui/IconButton.vue";
 import type { BookshelfBook } from "@/types";
 
@@ -56,6 +68,7 @@ defineProps<{
 
 const emit = defineEmits<{
     (e: "remove", book: BookshelfBook): void;
+    (e: "clear"): void;
 }>();
 
 const truncateTitle = (title: string) => {
@@ -68,6 +81,10 @@ const truncateAuthor = (author: string) => {
 
 const handleRemove = (book: BookshelfBook) => {
     emit("remove", book);
+};
+
+const handleClear = () => {
+    emit("clear");
 };
 </script>
 
@@ -86,6 +103,13 @@ const handleRemove = (book: BookshelfBook) => {
     );
     max-height: 300px;
     overflow-y: auto;
+}
+
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
 }
 
 .list-title {
@@ -109,7 +133,7 @@ const handleRemove = (book: BookshelfBook) => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem;
     text-align: center;
     gap: 0.5rem;
 }
