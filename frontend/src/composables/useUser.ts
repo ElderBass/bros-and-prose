@@ -130,7 +130,9 @@ export const useUser = () => {
                     [book.id]: newReview,
                 },
             });
-            await usePalaver().createPalaverEntryFromReview(newReview);
+            if (!existingReview) {
+                await usePalaver().createPalaverEntryFromReview(newReview);
+            }
             showAlert(REVIEW_SUBMITTED_SUCCESS_ALERT);
             return updatedUser;
         } catch (error) {
