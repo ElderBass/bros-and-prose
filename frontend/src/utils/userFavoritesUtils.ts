@@ -1,4 +1,5 @@
 import { useUserStore } from "@/stores/user";
+import { sortBooks } from "./bookUtils";
 import type { FavoriteType, BookshelfBook } from "@/types";
 
 export const getUpdatedFavorites = (
@@ -42,9 +43,12 @@ export const getBookItems = (items: string[]) => {
     return items.map((item) => JSON.parse(item) as BookshelfBook);
 };
 
-export const getBookItemColumns = (items: string[]) => {
+export const getBookItemColumns = (
+    items: string[],
+    sortOrder: "asc" | "desc" = "asc"
+) => {
     const itemsPerColumn = 2; // 2 books per column
-    const books = getBookItems(items);
+    const books = sortBooks(getBookItems(items), sortOrder);
     const columns: BookshelfBook[][] = [];
 
     for (let i = 0; i < books.length; i += itemsPerColumn) {
@@ -64,9 +68,20 @@ export const getUserFavorite = (favoriteType: FavoriteType) => {
     return targetFavs ? Object.values(targetFavs) : [];
 };
 
-export const getFavoriteAuthors = () => getUserFavorite("authors");
-export const getFavoriteGenres = () => getUserFavorite("genres");
-export const getFavoriteBooks = () => getUserFavorite("books");
+const sortNonBookFavorites = (favorites: string[]) => {
+    return favorites.sort((a, b) => a.localeCompare(b));
+};
+
+export const getFavoriteAuthors = () =>
+    sortNonBookFavorites(getUserFavorite("authors"));
+export const getFavoriteGenres = () =>
+    sortNonBookFavorites(getUserFavorite("genres"));
+
+export const getFavoriteBooks = () => {
+    const books = getUserFavorite("books");
+
+    return sortBooks(getBookItems(books));
+};
 
 export const getFavoriteBookById = (bookId: string) => {
     return getFavoriteBooks().find((book) => book.id === bookId);
