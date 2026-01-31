@@ -96,6 +96,9 @@ watch(reviewComment, () => {
     font-size: 1.125rem;
     color: var(--main-text);
     background-color: var(--background-color);
+}
+
+.review-comment-input::placeholder {
     font-style: italic;
 }
 
