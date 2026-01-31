@@ -86,6 +86,7 @@ export interface BookshelfBook {
     yearPublished: number | string;
     tags: string[];
     pages?: number;
+    dateAdded?: string;
 }
 
 export interface GoogleBooksResult {

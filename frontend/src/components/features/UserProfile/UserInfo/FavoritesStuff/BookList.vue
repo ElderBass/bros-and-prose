@@ -13,7 +13,14 @@
                     @click="openBookModal"
                 />
             </InfiniteScroll>
-            <div class="button-wrapper">
+            <div class="actions">
+                <IconButton
+                    :icon="faArrowRightArrowLeft"
+                    title="sort list"
+                    size="small"
+                    color="fuschia"
+                    :handleClick="handleSortList"
+                />
                 <IconButton
                     v-if="!isGuestUser()"
                     :icon="faMarker"
@@ -40,7 +47,10 @@ import BookDetailsModal from "@/components/features/UserProfile/UserInfo/Favorit
 import InfiniteScroll from "@/components/ui/InfiniteScroll.vue";
 import type { BookshelfBook, FavoriteType } from "@/types";
 import { getBookItemColumns } from "@/utils";
-import { faMarker } from "@fortawesome/free-solid-svg-icons";
+import {
+    faArrowRightArrowLeft,
+    faMarker,
+} from "@fortawesome/free-solid-svg-icons";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
 import { isGuestUser } from "@/utils";
 
@@ -55,6 +65,7 @@ const displayedColumns = ref<BookshelfBook[][]>([]);
 const selectedBook = ref<BookshelfBook | null>(null);
 const detailsModalOpen = ref(false);
 const currentIndex = ref(0);
+const sortOrder = ref<"asc" | "desc">("asc");
 
 const incomingColumns = computed(() => {
     return getBookItemColumns(items);
@@ -90,6 +101,11 @@ const handleLoad = ({ done }: { done: (status: "ok" | "empty") => void }) => {
     }, 100);
 };
 
+const handleSortList = () => {
+    sortOrder.value = sortOrder.value === "asc" ? "desc" : "asc";
+    displayedColumns.value = getBookItemColumns(items, sortOrder.value);
+};
+
 const openBookModal = (book: BookshelfBook) => {
     selectedBook.value = book;
     detailsModalOpen.value = true;
@@ -120,9 +136,14 @@ const onEditList = () => {
     height: 100%;
 }
 
-.button-wrapper {
-    align-self: center;
-    padding: 0 0.25rem;
+.actions {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0 0.5rem;
+    align-items: center;
+    justify-content: center;
 }
 
 :deep(.v-infinite-scroll) {
