@@ -1,11 +1,17 @@
 <template>
     <div class="user">
         <div class="avatar-and-name">
-            <AvatarImage
-                :avatar="user.avatar"
-                :avatarType="user.avatarType || 'icon'"
-                :size="mobile ? 'small' : 'medium'"
-            />
+            <button
+                :disabled="!isLoggedInUser"
+                class="avatar-button"
+                @click="handleAvatarClick"
+            >
+                <AvatarImage
+                    :avatar="user.avatar"
+                    :avatarType="user.avatarType || 'icon'"
+                    :size="mobile ? 'small' : 'medium'"
+                />
+            </button>
             <div class="user-name">
                 <h2>{{ user?.username }}</h2>
                 <p>
@@ -25,15 +31,26 @@
             <EditUserButton v-if="isLoggedInUser && !mobile" />
         </div>
     </div>
+    <AvatarSelectorModal
+        v-if="isLoggedInUser && isAvatarModalOpen"
+        :open="isAvatarModalOpen"
+        :currentAvatar="user.avatar"
+        @close="closeModal"
+        @confirm="handleConfirmAvatar"
+    />
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useDisplay } from "vuetify";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
+import AvatarSelectorModal from "@/components/modal/AvatarSelectorModal.vue";
 import EditUserButton from "@/components/features/UserProfile/EditUserButton.vue";
 import type { User } from "@/types";
 import { getProgressPercentage } from "@/utils";
+import { useUser } from "@/composables/useUser";
+import { PROFILE_UPDATED_SUCCESS_ALERT } from "@/constants";
+import { useUIStore } from "@/stores/ui";
 
 const { user, isLoggedInUser } = defineProps<{
     user: User;
@@ -42,9 +59,26 @@ const { user, isLoggedInUser } = defineProps<{
 
 const { mobile } = useDisplay();
 
+const isAvatarModalOpen = ref(false);
+
 const currentProgress = computed(() => {
     return getProgressPercentage(user.currentBookProgress);
 });
+
+const handleAvatarClick = () => {
+    if (!isLoggedInUser) return;
+    isAvatarModalOpen.value = true;
+};
+
+const closeModal = () => {
+    isAvatarModalOpen.value = false;
+};
+
+const handleConfirmAvatar = async (newAvatar: string) => {
+    await useUser().updateUserAvatar(user.id, newAvatar);
+    useUIStore().showAlert(PROFILE_UPDATED_SUCCESS_ALERT);
+    closeModal();
+};
 </script>
 
 <style scoped>
@@ -54,6 +88,13 @@ const currentProgress = computed(() => {
     align-items: center;
     justify-content: space-evenly;
     padding: 0 0.5rem;
+}
+
+.avatar-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
 }
 
 .avatar-and-name {
