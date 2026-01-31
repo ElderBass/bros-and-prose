@@ -100,10 +100,6 @@ const hasFinishedBook = computed(() => {
     return loggedInUser.value.currentBookProgress === FINISHED_BOOK_PROGRESS;
 });
 const bookReview = computed(() => {
-    console.log(
-        "\n KERTWANGING bookReview",
-        loggedInUser.value?.reviews[props.book?.id]
-    );
     return loggedInUser.value?.reviews[props.book?.id] || DEFAULT_REVIEW;
 });
 
