@@ -56,7 +56,7 @@ const emit = defineEmits<{
 }>();
 
 const loadingMessage = ref("");
-const bookReview = ref(DEFAULT_REVIEW);
+const bookReview = ref(props.reviewPrefill);
 const bookTags = ref<string[]>([]);
 
 const setLoadingMessage = (message: string) => {

@@ -185,7 +185,7 @@ const cropImage = async (): Promise<Blob> => {
         }
 
         // Set canvas to circular crop size
-        const size = 500;
+        const size = mobile.value ? 250 : 400;
         canvas.width = size;
         canvas.height = size;
 
@@ -199,10 +199,10 @@ const cropImage = async (): Promise<Blob> => {
         // Calculate source coordinates (which part of image to use)
         const sourceX =
             (frameWidth / 2 - position.value.x) / scale.value -
-            img.naturalWidth / 2;
+            img.naturalWidth / 3.5;
         const sourceY =
             (frameHeight / 2 - position.value.y) / scale.value -
-            img.naturalHeight / 2;
+            img.naturalHeight / 3.5;
         const sourceWidth = frameWidth / scale.value;
         const sourceHeight = frameHeight / scale.value;
 
@@ -285,8 +285,8 @@ watch(
 
 .crop-frame {
     position: relative;
-    width: 500px;
-    height: 500px;
+    width: 400px;
+    height: 400px;
     margin: 0 auto;
     overflow: hidden;
     border: 2px solid var(--accent-blue);
@@ -348,8 +348,8 @@ watch(
 
 @media (max-width: 768px) {
     .crop-frame {
-        width: 300px;
-        height: 300px;
+        width: 250px;
+        height: 250px;
     }
 
     .controls {
