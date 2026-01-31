@@ -1,5 +1,4 @@
 import type { BookshelfBook } from "@/types";
-import { getBookItems } from "./userFavoritesUtils";
 
 const sortBooksAsc = (books: BookshelfBook[]) => {
     return books.sort((a, b) => {
