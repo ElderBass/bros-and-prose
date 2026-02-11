@@ -10,23 +10,23 @@
                     <p class="meta">{{ book.yearPublished }}</p>
                 </div>
 
+                <p v-if="book.pages" class="meta">
+                    <span class="pages-count">
+                        {{ book.pages }} </span> pages
+                </p>
                 <a :href="goodreadsUrl" target="_blank" class="goodreads-link">
                     peep goodreads
                     <FontAwesomeIcon :icon="faGlasses" />
                 </a>
-                <div class="tags" v-if="book.tags?.length">
-                    <BookTag
-                        v-for="tag in book.tags"
-                        :key="tag"
-                        :tag="tag"
-                        :selected="true"
-                        color="blue"
-                        :size="mobile ? 'small' : 'medium'"
-                    />
+                <div class="tags-wrapper">
+                    <div class="tags" v-if="book.tags?.length">
+                        <BookTag v-for="tag in book.tags" :key="tag" :tag="tag" :selected="true" color="blue"
+                            :size="mobile ? 'small' : 'medium'" />
+                    </div>
                 </div>
             </div>
         </div>
-        <p class="description">{{ book.description }}</p>
+        <ExpandableText :text="book.description" />
     </div>
 </template>
 
@@ -36,6 +36,7 @@ import type { FutureBook } from "@/types";
 import { computed } from "vue";
 import { faGlasses } from "@fortawesome/free-solid-svg-icons";
 import BookTag from "@/components/ui/BookTag.vue";
+import ExpandableText from "@/components/features/common/ExpandableText.vue";
 
 const props = defineProps<{
     book: FutureBook;
@@ -99,6 +100,11 @@ const goodreadsUrl = computed(() => {
     gap: 0.25rem;
 }
 
+.pages-count {
+    color: var(--accent-fuschia);
+    font-weight: 600;
+}
+
 .separator {
     color: var(--accent-blue);
     font-size: 1.25rem;
@@ -117,6 +123,13 @@ const goodreadsUrl = computed(() => {
 
 .goodreads-link:hover .fa-glasses {
     color: var(--accent-fuschia);
+}
+
+.tags-wrapper {
+    flex: 1 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
 }
 
 .tags {
