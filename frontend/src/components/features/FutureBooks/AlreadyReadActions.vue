@@ -1,15 +1,9 @@
 <template>
-    <BaseButton
-        :variant="userHasMarkedRead ? 'outline-warning' : 'outline-secondary'"
-        size="small"
-        class="already-read-button"
-        :title="
-            userHasMarkedRead
+    <BaseButton :variant="userHasMarkedRead ? 'outline-warning' : 'outline-error'" size="small"
+        class="already-read-button" :title="userHasMarkedRead
                 ? `on second thought, I ain't read shit`
                 : 'been there, read that'
-        "
-        @click="handleToggle"
-    >
+            " @click="handleToggle">
         {{ userHasMarkedRead ? "unmark" : "mark as read" }}
         <FontAwesomeIcon :icon="userHasMarkedRead ? faCheck : faBookOpen" />
     </BaseButton>

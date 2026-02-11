@@ -22,10 +22,25 @@ export const userHasVotedForBook = (bookId: string, userId: string) => {
     return getUsersFutureBookVoteId(userId) === bookId;
 };
 
+const getMaxNumber = (numbers: number[]) => {
+    return numbers.reduce((max, number) => (number > max ? number : max), 0);
+};
+
 export const getMostVotedFutureBookId = (futureBooks: FutureBook[]) => {
-    return sanitizeFutureBookVotes(futureBooks).reduce((max, book) =>
-        book.votes?.length > max.votes?.length ? book : max
-    ).id;
+    const santizedVotes = sanitizeFutureBookVotes(futureBooks);
+    const maxVoteCount = getMaxNumber(
+        santizedVotes.map((book) => book.votes?.length || 0)
+    );
+
+    const highestBook = sanitizeFutureBookVotes(futureBooks).reduce(
+        (max, book) => (book.votes?.length > max.votes?.length ? book : max)
+    );
+
+    if (highestBook.votes?.length > maxVoteCount) {
+        return highestBook.id;
+    }
+
+    return "";
 };
 
 export const sanitizeFutureBookVotes = (futureBooks: FutureBook[]) => {
