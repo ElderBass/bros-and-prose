@@ -2,25 +2,12 @@
     <AppLayout>
         <PageTitle title="take a closer look" />
         <div v-if="isLoading" class="spinner-container">
-            <LoadingSpinner
-                v-if="isLoading"
-                size="large"
-                message="retrieving the book..."
-            />
+            <LoadingSpinner v-if="isLoading" size="large" message="retrieving the book..." />
         </div>
-        <PastBookDetail
-            v-else
-            :book="book"
-            :userReviews="userReviews"
-            :aggregateRating="aggregateRating"
-        />
+        <PastBookDetail v-else :book="book" :userReviews="userReviews" :aggregateRating="aggregateRating" />
         <AddCommentFab v-if="!isGuestUser()" @click="openAddCommentModal" />
-        <AddCommentModal
-            v-if="showAddCommentModal"
-            :open="showAddCommentModal"
-            @submit="handleSubmitComment"
-            @close="showAddCommentModal = false"
-        />
+        <AddCommentModal v-if="showAddCommentModal" :open="showAddCommentModal" @submit="handleSubmitComment"
+            @close="showAddCommentModal = false" />
     </AppLayout>
 </template>
 
@@ -65,7 +52,12 @@ const loadBookData = async () => {
         (book: Book) => book.id === bookId
     ) as Book;
     if (!fetchedBook) {
-        fetchedBook = await getPastBook(bookId);
+        const currentBook = useBooksStore().getCurrentBook;
+        if (bookId === currentBook.id && currentBook.completed) {
+            fetchedBook = currentBook;
+        } else {
+            fetchedBook = await getPastBook(bookId);
+        }
     }
 
     book.value = fetchedBook;
