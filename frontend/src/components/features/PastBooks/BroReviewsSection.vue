@@ -2,45 +2,26 @@
     <BaseCard shadowColor="green" size="medium">
         <h3>what the bros thought</h3>
         <div class="bro-reviews-container">
-            <BroProgressItem
-                v-for="broReview in broReviews"
-                :key="broReview.reviewer?.username"
-                :bro-name="broReview.reviewer?.username || 'oofda'"
-                :bro-avatar="broReview.reviewer?.avatar"
-                :bro-avatar-type="broReview.reviewer?.avatarType || 'icon'"
-                :has-finished="true"
-                :progress-string="
-                    getRatingReviewString(broReview.review, mobile)
-                "
-                :on-peep-review-click="() => onPeepReviewClick(broReview)"
-                :is-logged-in-user="
-                    loggedInUserName === broReview.reviewer?.username
-                "
-            />
+            <BroProgressItem v-for="broReview in broReviews" :key="broReview.reviewer?.id"
+                :bro-name="getBroName(broReview.reviewer)" :bro-avatar="broReview.reviewer?.avatar"
+                :bro-avatar-type="getAvatarType(broReview.reviewer)" :has-finished="hasFinished(broReview.review)"
+                :progress-string="getRatingReviewString(broReview.review, mobile)
+                    " :on-peep-review-click="() => onPeepReviewClick(broReview)" :is-logged-in-user="loggedInUserName === broReview.reviewer?.username
+                        " />
         </div>
     </BaseCard>
-    <OtherBroReviewModal
-        v-if="showOtherBroReviewModal"
-        :open="showOtherBroReviewModal"
-        :book="book"
-        :brosName="selectedBroName"
-        :brosReview="selectedBroReview"
-        :onClose="() => setShowOtherBroReviewModal(false)"
-    />
-    <UserReviewModal
-        v-if="showUserReviewModal"
-        :open="showUserReviewModal"
-        :book="book"
-        :reviewPrefill="selectedBroReview"
-        @lose="() => setShowUserReviewModal(false)"
-    />
+    <OtherBroReviewModal v-if="showOtherBroReviewModal" :open="showOtherBroReviewModal" :book="book"
+        :brosName="selectedBroName" :brosReview="selectedBroReview"
+        :onClose="() => setShowOtherBroReviewModal(false)" />
+    <UserReviewModal v-if="showUserReviewModal" :open="showUserReviewModal" :book="book"
+        :reviewPrefill="selectedBroReview" @lose="() => setShowUserReviewModal(false)" />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
-import type { Book, BroReview, Review } from "@/types";
+import type { Book, BroReview, Review, User } from "@/types";
 import BroProgressItem from "../common/BroProgressItem.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
 import UserReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
@@ -79,6 +60,18 @@ const onPeepReviewClick = (broReview: BroReview) => {
         selectedBroReview.value = broReview.review;
         setShowOtherBroReviewModal(true);
     }
+};
+
+const getBroName = (bro: User) => {
+    return bro.username || "oofda";
+};
+
+const getAvatarType = (bro: User) => {
+    return bro.avatarType || "icon";
+};
+
+const hasFinished = (review: Review) => {
+    return !!(review?.rating && review.reviewComment !== "");
 };
 
 onMounted(() => {
