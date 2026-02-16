@@ -2,12 +2,25 @@
     <AppLayout>
         <PageTitle title="take a closer look" />
         <div v-if="isLoading" class="spinner-container">
-            <LoadingSpinner v-if="isLoading" size="large" message="retrieving the book..." />
+            <LoadingSpinner
+                v-if="isLoading"
+                size="large"
+                message="retrieving the book..."
+            />
         </div>
-        <PastBookDetail v-else :book="book" :userReviews="userReviews" :aggregateRating="aggregateRating" />
+        <PastBookDetail
+            v-else
+            :book="book"
+            :userReviews="userReviews"
+            :aggregateRating="aggregateRating"
+        />
         <AddCommentFab v-if="!isGuestUser()" @click="openAddCommentModal" />
-        <AddCommentModal v-if="showAddCommentModal" :open="showAddCommentModal" @submit="handleSubmitComment"
-            @close="showAddCommentModal = false" />
+        <AddCommentModal
+            v-if="showAddCommentModal"
+            :open="showAddCommentModal"
+            @submit="handleSubmitComment"
+            @close="showAddCommentModal = false"
+        />
     </AppLayout>
 </template>
 

@@ -4,14 +4,12 @@ import { useUserStore } from "@/stores/user";
 import type { Book, BroReview } from "@/types";
 
 export const getReviewsAndAverageRating = async (book: Book) => {
-    console.log("\n KERTWANGING book in getReviewsAndAverageRating", book, "\n");
     const reviews = await getUserReviews(book);
     const averageRating = getAverageRating(reviews);
     return { reviews, averageRating };
 };
 
 const getUserReviews = async (book: Book) => {
-    console.log("\n KERTWANGING book in getUserReviews", book, "\n");
     let { allUsers } = useUserStore();
     if (allUsers.length === 0) {
         await useUser().getUsers();

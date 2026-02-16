@@ -15,6 +15,7 @@ export const initApp = async () => {
         await useUser().getUsers();
         await useUser().getFutureBookSelector();
         await useFutureBooks().getCurrentSelections(true);
+        await useFutureBooks().getArchivedSelections();
         await usePalaver().getPalaverEntries(true);
 
         const userFromStorage = getUserFromStorage();

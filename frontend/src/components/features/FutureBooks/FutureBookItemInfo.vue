@@ -11,8 +11,7 @@
                 </div>
 
                 <p v-if="book.pages" class="meta">
-                    <span class="pages-count">
-                        {{ book.pages }} </span> pages
+                    <span class="pages-count"> {{ book.pages }} </span> pages
                 </p>
                 <a :href="goodreadsUrl" target="_blank" class="goodreads-link">
                     peep goodreads
@@ -20,8 +19,14 @@
                 </a>
                 <div class="tags-wrapper">
                     <div class="tags" v-if="book.tags?.length">
-                        <BookTag v-for="tag in book.tags" :key="tag" :tag="tag" :selected="true" color="blue"
-                            :size="mobile ? 'small' : 'medium'" />
+                        <BookTag
+                            v-for="tag in book.tags"
+                            :key="tag"
+                            :tag="tag"
+                            :selected="true"
+                            color="blue"
+                            :size="mobile ? 'small' : 'medium'"
+                        />
                     </div>
                 </div>
             </div>
