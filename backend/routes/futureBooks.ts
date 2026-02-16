@@ -2,21 +2,31 @@ import express from "express";
 import { db } from "../db/index.js";
 import { sendEmailNotification } from "../mailjet/sendEmailNotification.js";
 
-export const getCurrentFutureBooks = async (_: express.Request, res: express.Response) => {
+export const getCurrentFutureBooks = async (
+    _: express.Request,
+    res: express.Response
+) => {
     try {
         const currentFutureBooksRef = db.ref("books/futureBooks/current");
         const currentFutureBooks = await currentFutureBooksRef.once("value");
+
+        const values = currentFutureBooks.val()
+            ? Object.values(currentFutureBooks.val())
+            : [];
         console.log(
             "GET CURRENT FUTURE BOOKS currentFutureBooks in getCurrentFutureBooks",
-            currentFutureBooks.val()
+            values
         );
         res.json({
             success: true,
             message: "Current future books fetched successfully",
-            data: Object.values(currentFutureBooks.val()),
+            data: values,
         });
     } catch (error) {
-        console.log("GET CURRENT FUTURE BOOKS ERROR in getCurrentFutureBooks", error);
+        console.log(
+            "GET CURRENT FUTURE BOOKS ERROR in getCurrentFutureBooks",
+            error
+        );
         res.status(500).json({
             success: false,
             message: "Failed to get current future books",
@@ -25,7 +35,10 @@ export const getCurrentFutureBooks = async (_: express.Request, res: express.Res
     }
 };
 
-export const getArchivedFutureBooks = async (_: express.Request, res: express.Response) => {
+export const getArchivedFutureBooks = async (
+    _: express.Request,
+    res: express.Response
+) => {
     try {
         const archivedFutureBooksRef = db.ref("books/futureBooks/archived");
         const archivedFutureBooks = await archivedFutureBooksRef.once("value");
@@ -39,7 +52,10 @@ export const getArchivedFutureBooks = async (_: express.Request, res: express.Re
             data: Object.values(archivedFutureBooks.val()),
         });
     } catch (error) {
-        console.log("GET ARCHIVED FUTURE BOOKS ERROR in getArchivedFutureBooks", error);
+        console.log(
+            "GET ARCHIVED FUTURE BOOKS ERROR in getArchivedFutureBooks",
+            error
+        );
         res.status(500).json({
             success: false,
             message: "Failed to get archived future books",
@@ -48,7 +64,10 @@ export const getArchivedFutureBooks = async (_: express.Request, res: express.Re
     }
 };
 
-export const getCurrentSelector = async (_: express.Request, res: express.Response) => {
+export const getCurrentSelector = async (
+    _: express.Request,
+    res: express.Response
+) => {
     try {
         const currentSelectorRef = db.ref("books/futureBooks/currentSelector");
         const currentSelector = await currentSelectorRef.once("value");
@@ -67,19 +86,30 @@ export const getCurrentSelector = async (_: express.Request, res: express.Respon
     }
 };
 
-export const setFutureBookSelector = async (req: express.Request, res: express.Response) => {
+export const setFutureBookSelector = async (
+    req: express.Request,
+    res: express.Response
+) => {
     try {
         const { selectorId } = req.body;
-        const futureBookSelectorRef = db.ref("books/futureBooks/currentSelector");
+        const futureBookSelectorRef = db.ref(
+            "books/futureBooks/currentSelector"
+        );
         await futureBookSelectorRef.set(selectorId);
-        console.log("SET FUTURE BOOK SELECTOR selectorId in setFutureBookSelector", selectorId);
+        console.log(
+            "SET FUTURE BOOK SELECTOR selectorId in setFutureBookSelector",
+            selectorId
+        );
         res.json({
             success: true,
             message: "Future book selector set successfully",
             data: selectorId,
         });
     } catch (error) {
-        console.log("SET FUTURE BOOK SELECTOR ERROR in setFutureBookSelector", error);
+        console.log(
+            "SET FUTURE BOOK SELECTOR ERROR in setFutureBookSelector",
+            error
+        );
         res.status(500).json({
             success: false,
             message: "Failed to set future book selector",
@@ -88,15 +118,27 @@ export const setFutureBookSelector = async (req: express.Request, res: express.R
     }
 };
 
-export const addCurrentSelection = async (req: express.Request, res: express.Response) => {
+export const addCurrentSelection = async (
+    req: express.Request,
+    res: express.Response
+) => {
     try {
         const { selection, metadata } = req.body;
-        console.log("ADD CURRENT SELECTION futureBook in addCurrentSelection", selection);
-        console.log("ADD CURRENT SELECTION metadata in addCurrentSelection", metadata);
+        console.log(
+            "ADD CURRENT SELECTION futureBook in addCurrentSelection",
+            selection
+        );
+        console.log(
+            "ADD CURRENT SELECTION metadata in addCurrentSelection",
+            metadata
+        );
         const futureBookRef = db.ref("books/futureBooks/current");
         await futureBookRef.child(selection.id).set(selection);
         const updatedSelections = await futureBookRef.once("value");
-        console.log("ADD CURRENT SELECTION future books after addition: ", updatedSelections.val());
+        console.log(
+            "ADD CURRENT SELECTION future books after addition: ",
+            updatedSelections.val()
+        );
         sendEmailNotification("future_book_added", metadata);
         res.json({
             success: true,
@@ -104,7 +146,10 @@ export const addCurrentSelection = async (req: express.Request, res: express.Res
             data: Object.values(updatedSelections.val()),
         });
     } catch (error) {
-        console.log("ADD CURRENT SELECTION ERROR in addCurrentSelection", error);
+        console.log(
+            "ADD CURRENT SELECTION ERROR in addCurrentSelection",
+            error
+        );
         res.status(500).json({
             success: false,
             message: "Failed to add future book selection",
@@ -113,10 +158,16 @@ export const addCurrentSelection = async (req: express.Request, res: express.Res
     }
 };
 
-export const updateCurrentSelection = async (req: express.Request, res: express.Response) => {
+export const updateCurrentSelection = async (
+    req: express.Request,
+    res: express.Response
+) => {
     const { bookId } = req.params;
     const { selection, metadata } = req.body;
-    console.log("UPDATE CURRENT SELECTION bookId in updateCurrentSelection", bookId);
+    console.log(
+        "UPDATE CURRENT SELECTION bookId in updateCurrentSelection",
+        bookId
+    );
     try {
         const futureBookRef = db.ref(`books/futureBooks/current/${bookId}`);
         await futureBookRef.set(selection || req.body);
@@ -130,13 +181,16 @@ export const updateCurrentSelection = async (req: express.Request, res: express.
             message: "Future book updated successfully",
             data: updatedSelection.val(),
         });
-        
+
         // Send email notification only if metadata with updateType provided
         if (metadata?.updateType) {
             sendEmailNotification(metadata.updateType, metadata);
         }
     } catch (error) {
-        console.log("UPDATE CURRENT SELECTION ERROR in updateCurrentSelection", error);
+        console.log(
+            "UPDATE CURRENT SELECTION ERROR in updateCurrentSelection",
+            error
+        );
         res.status(500).json({
             success: false,
             message: "Failed to update future book",
@@ -145,13 +199,21 @@ export const updateCurrentSelection = async (req: express.Request, res: express.
     }
 };
 
-export const deleteCurrentSelection = async (req: express.Request, res: express.Response) => {
+export const deleteCurrentSelection = async (
+    req: express.Request,
+    res: express.Response
+) => {
     const { bookId } = req.params;
-    console.log("DELETE CURRENT SELECTION bookId in deleteCurrentSelection", bookId);
+    console.log(
+        "DELETE CURRENT SELECTION bookId in deleteCurrentSelection",
+        bookId
+    );
     try {
         const futureBookRef = db.ref(`books/futureBooks/current/${bookId}`);
         await futureBookRef.remove();
-        const updatedSelections = await db.ref("books/futureBooks/current").once("value");
+        const updatedSelections = await db
+            .ref("books/futureBooks/current")
+            .once("value");
         console.log(
             "DELETE CURRENT SELECTION updated future books after deletion: ",
             updatedSelections.val()
@@ -159,10 +221,15 @@ export const deleteCurrentSelection = async (req: express.Request, res: express.
         res.json({
             success: true,
             message: "Future book selection deleted successfully",
-            data: Object.values(updatedSelections.val()).filter((selection: any) => selection.id),
+            data: Object.values(updatedSelections.val()).filter(
+                (selection: any) => selection.id
+            ),
         });
     } catch (error) {
-        console.log("DELETE CURRENT SELECTION ERROR in deleteCurrentSelection", error);
+        console.log(
+            "DELETE CURRENT SELECTION ERROR in deleteCurrentSelection",
+            error
+        );
         res.status(500).json({
             success: false,
             message: "Failed to delete future book selection",
@@ -171,7 +238,10 @@ export const deleteCurrentSelection = async (req: express.Request, res: express.
     }
 };
 
-export const archiveFutureBooks = async (req: express.Request, res: express.Response) => {
+export const archiveFutureBooks = async (
+    req: express.Request,
+    res: express.Response
+) => {
     try {
         const archivedBooksEntry = req.body;
         console.log(

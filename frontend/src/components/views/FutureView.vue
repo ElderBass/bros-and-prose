@@ -19,7 +19,7 @@
             :openFormModal="openFormModal"
             :futureBooks="currentSelections"
         />
-        <ArchivesSection :archives="archivedSelections" />
+        <ArchivesSection />
         <AddFutureBookFab
             v-if="userIsFutureBookSelector && !fabDisabled"
             @click="openFormModal"
@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import AddFutureBookFab from "@/components/features/FutureBooks/AddFutureBookFab.vue";
@@ -67,14 +67,12 @@ import type { FutureBook } from "@/types";
 import { useFutureBooksStore } from "@/stores/futureBooks";
 import { useFutureBooks } from "@/composables/useFutureBooks";
 
-const { addCurrentSelection, updateCurrentSelection, getArchivedSelections } =
-    useFutureBooks();
+const { addCurrentSelection, updateCurrentSelection } = useFutureBooks();
 const { isAppLoading } = storeToRefs(useUIStore());
 const { futureBookSelector, userIsFutureBookSelector } =
     storeToRefs(useUserStore());
 const futureBooksStore = useFutureBooksStore();
-const { currentSelections, archivedSelections, modal } =
-    storeToRefs(futureBooksStore);
+const { currentSelections, modal } = storeToRefs(futureBooksStore);
 const { openFormModal, openResultModal, closeModal } = futureBooksStore;
 
 const formModal = computed(() => {
@@ -89,10 +87,6 @@ const resultModal = computed(() => {
         return modal.value;
     }
     return null;
-});
-
-onMounted(() => {
-    void getArchivedSelections();
 });
 
 const onSubmitFutureBook = async (futureBook: FutureBook, isEdit: boolean) => {

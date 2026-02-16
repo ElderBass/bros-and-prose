@@ -30,7 +30,12 @@ export const useFutureBooksStore = defineStore("futureBooks", {
     }),
     getters: {
         getCurrentSelections: (state) => state.currentSelections,
-        getArchivedSelections: (state) => state.archivedSelections,
+        getArchivedSelections: (state) =>
+            state.archivedSelections.sort(
+                (a, b) =>
+                    new Date(b.archivedAt).getTime() -
+                    new Date(a.archivedAt).getTime()
+            ),
         getCurrentSelector: (state) => state.currentSelector,
         modalOpen: (state) => !!state.modal?.open,
         formModal: (state) =>

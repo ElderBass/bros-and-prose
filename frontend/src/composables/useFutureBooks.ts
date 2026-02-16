@@ -191,7 +191,11 @@ export const useFutureBooks = () => {
             archivedBooks: sanitizeFutureBookVotes(selection.archivedBooks),
         }));
         futureBooksStore.setArchivedSelections(sanitizedSelections);
-        return selections;
+        return selections.sort(
+            (a, b) =>
+                new Date(b.archivedAt).getTime() -
+                new Date(a.archivedAt).getTime()
+        );
     };
 
     const archiveSelections = async () => {
