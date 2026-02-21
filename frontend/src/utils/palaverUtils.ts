@@ -76,7 +76,14 @@ export const buildPalaverEntryFromReview = (review: Review): PalaverEntry => {
     };
 };
 
-export const buildPalaverComment = (commentText: string): Comment => {
+export const buildPalaverComment = (
+    commentText: string,
+    replyTo?: {
+        commentId: string;
+        username: string;
+        text: string;
+    }
+): Comment => {
     const user = useUserStore().loggedInUser;
 
     return {
@@ -84,6 +91,11 @@ export const buildPalaverComment = (commentText: string): Comment => {
         userInfo: getUserInfo(user),
         text: commentText,
         createdAt: new Date().toISOString(),
+        ...(replyTo && {
+            replyToId: replyTo.commentId,
+            replyToUsername: replyTo.username,
+            replyToText: replyTo.text.substring(0, 100), // Truncate for preview
+        }),
     };
 };
 
@@ -164,6 +176,23 @@ export const buildPalaverReactionMetadata = (
         targetUserEmail: item.userInfo.email,
         updateType: reactionType,
         text: reactionType === "comment" ? item.text : undefined,
+    };
+};
+
+export const buildReplyMetadata = (reply: Comment, entry: PalaverEntry) => {
+    const loggedInUsername = useUserStore().loggedInUser.username;
+    const { replyToId, replyToUsername, replyToText, text } = reply;
+
+    // Find the original comment being replied to in the entry's comments
+    const originalComment = entry.comments?.find((c) => c.id === replyToId);
+
+    return {
+        username: loggedInUsername,
+        targetUsername: replyToUsername || "unknown",
+        targetUserEmail: originalComment?.userInfo.email || "",
+        updateType: "reply" as ReactionType,
+        text,
+        replyToText,
     };
 };
 
