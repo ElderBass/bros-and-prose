@@ -1,7 +1,10 @@
 <template>
     <div class="nominated-by">
         <p :class="labelClass">nominated by</p>
-        <UsernameLink :username="nominatorUsername" />
+        <UsernameLink
+            :username="nominatorUsername"
+            :fontSize="isLink ? 'small' : 'large'"
+        />
     </div>
 </template>
 
