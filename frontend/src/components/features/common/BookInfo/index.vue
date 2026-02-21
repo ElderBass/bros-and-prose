@@ -11,6 +11,7 @@
             </h3>
             <BookInfoItems :book="book" :isLink="isLink" />
             <NominatedBy :book="book" :isLink="isLink" />
+            <DateCompleted v-if="isLink" :book="book" />
         </div>
     </div>
 </template>
@@ -19,6 +20,7 @@
 import type { Book } from "@/types";
 import BookInfoItems from "./BookInfoItems.vue";
 import NominatedBy from "./NominatedBy.vue";
+import DateCompleted from "./DateCompleted.vue";
 
 defineOptions({
     name: "BookInfo",
@@ -49,7 +51,7 @@ withDefaults(
 }
 
 .cover-image-link {
-    max-width: 90px;
+    max-width: 100px;
     object-fit: cover;
 }
 
@@ -70,7 +72,7 @@ withDefaults(
 }
 
 .link-book-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
 }
 
 .link-layout {
@@ -79,7 +81,7 @@ withDefaults(
 
 @media (min-width: 768px) {
     .book-info-content {
-        gap: 3rem;
+        gap: 1.5rem;
     }
     .cover-image {
         max-width: 200px;
@@ -88,7 +90,7 @@ withDefaults(
         font-size: 2.25rem;
     }
     .link-book-title {
-        font-size: 1.5rem;
+        font-size: 1.35rem;
     }
 }
 </style>

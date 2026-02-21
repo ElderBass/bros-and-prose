@@ -6,7 +6,7 @@
             v-for="item in bookInfoItems"
             :key="item.label"
         >
-            <p v-if="!isLink">{{ item.label }}</p>
+            <p class="info-label" v-if="!isLink">{{ item.label }}</p>
             <p class="info-value" :class="{ 'link-info-value': isLink }">
                 {{ item.value }}
             </p>
@@ -48,6 +48,7 @@ const bookInfoItems = computed(() => {
             value: props.book.goodreadsRating || "unknown",
         },
     ];
+
     return props.isLink ? fullList.slice(0, 2) : fullList;
 });
 </script>
@@ -67,7 +68,7 @@ const bookInfoItems = computed(() => {
     width: 90%;
 }
 
-p {
+.info-label {
     font-size: 0.85rem;
 }
 
@@ -94,14 +95,11 @@ p {
 }
 
 @media (min-width: 768px) {
-    p {
-        font-size: 1.5rem;
+    .info-label {
+        font-size: 1rem;
     }
     .info-value {
-        font-size: 1.5rem;
-    }
-    .link-info-value {
-        font-size: 1.25rem;
+        font-size: 1rem;
     }
 }
 </style>
