@@ -1,3 +1,4 @@
+export * from "./bookUtils";
 export * from "./bookProgressUtils";
 export * from "./bookshelfUtils";
 export * from "./capitalizeAuthorName";
