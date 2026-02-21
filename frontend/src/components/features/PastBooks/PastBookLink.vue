@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import BaseCard from "@/components/ui/BaseCard.vue";
-import BookInfo from "@/components/features/common/BookInfo.vue";
+import BookInfo from "@/components/features/common/BookInfo/index.vue";
 import type { Book } from "@/types";
 
 const props = defineProps<{
@@ -26,6 +26,6 @@ const props = defineProps<{
 
 <style scoped>
 .past-book-link {
-    width: 320px;
+    width: 360px;
 }
 </style>

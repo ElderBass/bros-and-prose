@@ -7,6 +7,7 @@ export interface Book {
     yearPublished: number;
     imageSrc: string;
     completed: boolean;
+    nominator: string;
     groupConsensus?: string;
     dateCompleted?: string;
 }
