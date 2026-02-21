@@ -65,7 +65,12 @@ const loadBookData = async () => {
         (book: Book) => book.id === bookId
     ) as Book;
     if (!fetchedBook) {
-        fetchedBook = await getPastBook(bookId);
+        const currentBook = useBooksStore().getCurrentBook;
+        if (bookId === currentBook.id && currentBook.completed) {
+            fetchedBook = currentBook;
+        } else {
+            fetchedBook = await getPastBook(bookId);
+        }
     }
 
     book.value = fetchedBook;

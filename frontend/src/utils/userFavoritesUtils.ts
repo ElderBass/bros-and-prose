@@ -40,7 +40,9 @@ export const getNonBookItemColumns = (items: string[]) => {
 };
 
 export const getBookItems = (items: string[]) => {
-    return items.map((item) => JSON.parse(item) as BookshelfBook);
+    return items.map((item) =>
+        typeof item === "string" ? (JSON.parse(item) as BookshelfBook) : item
+    );
 };
 
 export const getBookItemColumns = (

@@ -37,21 +37,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, onMounted } from "vue";
 import type { ArchivedBooksEntry } from "@/types/books";
 import ArchiveBookCard from "./ArchiveBookCard.vue";
-import { getUserFromId } from "@/utils/getUserFromId";
-import { getMostVotedFutureBookId } from "@/utils";
+import { getUserFromId, getMostVotedFutureBookId } from "@/utils";
+import { useFutureBooksStore } from "@/stores/futureBooks";
 
-const props = defineProps<{
-    archives: ArchivedBooksEntry[];
-}>();
-
+const archives = ref<ArchivedBooksEntry[]>([]);
 const selectorCache = ref<Record<string, string>>({});
 
 const loadSelectors = async () => {
+    const archivedSelections = useFutureBooksStore().getArchivedSelections;
     const missing = [
-        ...new Set(props.archives.map((entry) => entry.selectorId)),
+        ...new Set(archivedSelections.map((entry) => entry.selectorId)),
     ].filter((id) => !selectorCache.value[id]);
 
     await Promise.all(
@@ -62,15 +60,12 @@ const loadSelectors = async () => {
                 : "@unknown bro";
         })
     );
+    archives.value = archivedSelections;
 };
 
-watch(
-    () => props.archives,
-    () => {
-        void loadSelectors();
-    },
-    { immediate: true }
-);
+onMounted(async () => {
+    await loadSelectors();
+});
 
 const selectorLabel = (selectorId: string) => {
     return selectorCache.value[selectorId] || "@loading...";
@@ -183,16 +178,20 @@ const formatDate = (iso: string) => {
     .books-grid {
         grid-template-columns: 1fr;
     }
+
     .title {
         font-size: 1.125rem;
     }
+
     .separator {
         font-size: 1rem;
         margin: 0 0.25rem;
     }
+
     .selector {
         font-size: 1rem;
     }
+
     .date {
         font-size: 0.9rem;
     }
