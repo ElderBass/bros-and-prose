@@ -25,6 +25,13 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> commented on your palaver.`,
                 text: data.text,
             };
+        case "reply":
+            return {
+                title: "Cheeky Reply",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> is sniping back at <span style="font-weight: bold;color:#00bfff;">@${data.targetUsername}</span>'s palaver.`,
+                text: data.text,
+                replyToText: data.replyToText,
+            };
         case "progress_note":
             return {
                 title: "New Progress Update",
@@ -98,17 +105,17 @@ const getEmailRecipients = (targetUserEmail?: string) => {
 };
 
 const getEmailInfo = (updateType: string, data: { [key: string]: string }) => {
-    const { title, message, text } = getEmailMessaging(updateType, data);
+    const { title, message, text, replyToText } = getEmailMessaging(updateType, data);
     const emailRecipients = getEmailRecipients(data.targetUserEmail);
 
     return {
         subject: "Bros and Prose Update",
-        html: buildHtmlTemplate(title, message, text),
+        html: buildHtmlTemplate(title, message, text, replyToText),
         emailRecipients,
     };
 };
 
-const buildHtmlTemplate = (title: string = "", message: string = "", text: string = "") => {
+const buildHtmlTemplate = (title: string = "", message: string = "", text: string = "", replyToText: string = "") => {
     const endpoint = title.toLocaleLowerCase().includes("future") ? "future" : "palaver";
     return `<!DOCTYPE html>
 <html lang="en">
@@ -134,6 +141,10 @@ const buildHtmlTemplate = (title: string = "", message: string = "", text: strin
                                 <p style="font-size:18px;line-height:1.6;margin:0 0 28px;">${
                                     message ?? ""
                                 }</p>
+                                ${replyToText ? `<div style="padding:12px 16px;margin:0 0 16px;background:rgba(138,43,226,0.1);border-left:3px solid #8a2be2;border-radius:4px;">
+                                    <p style="font-size:13px;margin:0 0 6px;color:#8a2be2;font-weight:600;">Original comment:</p>
+                                    <p style="font-size:14px;margin:0;font-style:italic;opacity:0.8;">"${replyToText}"</p>
+                                </div>` : ''}
                                 <p style="font-size:14px;line-height:1.6;margin:0 0 20px;">${
                                     text ?? ""
                                 }</p>

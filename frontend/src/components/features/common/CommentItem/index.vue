@@ -19,11 +19,33 @@
                         formatDateForDevice(comment.createdAt)
                     }}</span>
                 </div>
-                <ReactionActions
-                    v-if="showReactionActions"
-                    :comment="comment"
-                    :entryId="entryId"
-                />
+                <div class="actions">
+                    <ReactionActions
+                        v-if="showReactionActions"
+                        :comment="comment"
+                        :entryId="entryId"
+                    />
+                    <ReplyButton
+                        v-if="showReplyButton"
+                        :size="replyButtonSize"
+                        @reply="$emit('reply', comment)"
+                    />
+                </div>
+            </div>
+            <div v-if="comment.replyToUsername" class="reply-wrapper">
+                <div class="reply-indicator">
+                    <FontAwesomeIcon :icon="faReply" class="reply-icon" />
+                    <span class="reply-text">
+                        sniping back at
+                        <UsernameLink
+                            :username="comment.replyToUsername"
+                            fontSize="small"
+                        />
+                    </span>
+                </div>
+                <p v-if="comment.replyToText" class="replied-text">
+                    "{{ truncatedReplyText }}"
+                </p>
             </div>
             <p class="text">{{ comment.text }}</p>
         </div>
@@ -33,9 +55,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faReply } from "@fortawesome/free-solid-svg-icons";
 import type { Comment } from "@/types";
 import ReactionActions from "./ReactionActions.vue";
+import ReplyButton from "./ReplyButton.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
+import UsernameLink from "@/components/ui/UsernameLink.vue";
 import { isGuestUser } from "@/utils";
 import { useUserStore } from "@/stores/user";
 
@@ -54,6 +80,10 @@ const props = withDefaults(
     }
 );
 
+defineEmits<{
+    (e: "reply", comment: Comment): void;
+}>();
+
 const { mobile } = useDisplay();
 
 const avatarSize = computed(() => {
@@ -61,6 +91,13 @@ const avatarSize = computed(() => {
         return mobile.value ? "xsmall" : "small";
     }
     return mobile.value ? "small" : "medium";
+});
+
+const replyButtonSize = computed(() => {
+    if (props.size === "compact") {
+        return "supersmall";
+    }
+    return mobile.value ? "supersmall" : "xsmall";
 });
 
 // Mobile-aware date formatter: shorter on mobile, fuller on desktop
@@ -97,6 +134,20 @@ const showReactionActions = computed(() => {
         !isGuestUser() &&
         props.comment.userInfo.id !== useUserStore().loggedInUser.id
     );
+});
+
+const showReplyButton = computed(() => {
+    return (
+        !isGuestUser() &&
+        props.comment.userInfo.id !== useUserStore().loggedInUser.id
+    );
+});
+
+const truncatedReplyText = computed(() => {
+    if (!props.comment.replyToText) return "";
+    return props.comment.replyToText.length > 50
+        ? props.comment.replyToText.substring(0, 50) + "..."
+        : props.comment.replyToText;
 });
 </script>
 
@@ -150,6 +201,12 @@ const showReactionActions = computed(() => {
     align-items: center;
 }
 
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .meta {
     display: flex;
     align-items: center;
@@ -177,6 +234,43 @@ const showReactionActions = computed(() => {
 
 .comment-item.size-compact .timestamp {
     font-size: 0.75rem;
+}
+
+.reply-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background: color-mix(in srgb, var(--accent-lavender) 10%, transparent);
+    border-left: 3px solid var(--accent-lavender);
+    border-radius: 0.25rem;
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+.reply-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.reply-icon {
+    color: var(--accent-lavender);
+    font-size: 0.8rem;
+}
+
+.reply-text {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.replied-text {
+    font-size: 0.9rem;
+    font-style: italic;
+    opacity: 0.7;
+    /* border-left: 1px solid var(--accent-lavender); */
+    padding-left: 0.75rem;
 }
 
 .text {

@@ -12,6 +12,13 @@
             />
         </div>
         <form v-else class="add-comment-form" @submit.prevent="submit">
+            <div v-if="replyTo" class="reply-context">
+                <div class="reply-header">
+                    <FontAwesomeIcon :icon="faReply" class="reply-icon" />
+                    <span>replying to @{{ replyTo.username }}</span>
+                </div>
+                <p class="reply-preview">"{{ truncatedReplyText }}"</p>
+            </div>
             <div class="field">
                 <label for="comment-input">{{ labelText }}</label>
                 <textarea
@@ -35,16 +42,14 @@
                 <BaseButton
                     variant="outline-secondary"
                     @click="onClose"
-                    :size="actionButtonSize"
-                    :style="{ width: '100%' }"
+                    v-bind="actionButtonProps"
                     >{{ primaryButtonLabel }}</BaseButton
                 >
                 <BaseButton
                     variant="outline"
                     type="submit"
                     :disabled="!canSubmitComment"
-                    :size="actionButtonSize"
-                    :style="{ width: '100%' }"
+                    v-bind="actionButtonProps"
                     >{{ secondaryButtonLabel }}</BaseButton
                 >
             </div>
@@ -55,6 +60,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useDisplay } from "vuetify";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faReply } from "@fortawesome/free-solid-svg-icons";
 import type { Comment } from "@/types";
 import { buildPalaverComment } from "@/utils";
 
@@ -69,6 +76,11 @@ const props = withDefaults(
         isProgressUpdate?: boolean;
         submitting?: boolean;
         isItemComment?: boolean;
+        replyTo?: {
+            commentId: string;
+            username: string;
+            text: string;
+        };
     }>(),
     {
         isProgressUpdate: false,
@@ -95,6 +107,8 @@ const loadingMessage = computed(() =>
 const labelText = computed(() => {
     if (props.isItemComment) {
         return "join the palaver";
+    } else if (props.replyTo) {
+        return "set that boy straight, my dude";
     } else {
         return "your inbrospection";
     }
@@ -109,6 +123,8 @@ const modalTitle = computed(() =>
 const textareaPlaceholder = computed(() => {
     if (props.isProgressUpdate) {
         return "(comment optional, but sexy)";
+    } else if (props.replyTo) {
+        return "snipe back atcha boy";
     } else if (props.isItemComment) {
         return "holla atcha boy";
     } else {
@@ -137,12 +153,33 @@ const secondaryButtonLabel = computed(() =>
     props.isProgressUpdate ? "send it" : "submit"
 );
 
-const actionButtonSize = computed(() => (mobile ? "small" : "medium"));
+const actionButtonProps = computed(() => {
+    return {
+        size: mobile.value ? "small" : "medium",
+        style: { width: "100%" },
+    };
+});
+
+const truncatedReplyText = computed(() => {
+    if (!props.replyTo?.text) return "";
+    return props.replyTo.text.length > 80
+        ? props.replyTo.text.substring(0, 80) + "..."
+        : props.replyTo.text;
+});
 
 const submit = () => {
     if (!canSubmitComment.value) return;
     const payload = localComment.value.trim() as string;
-    const fullComment = buildPalaverComment(payload);
+    const fullComment = buildPalaverComment(
+        payload,
+        props.replyTo
+            ? {
+                  commentId: props.replyTo.commentId,
+                  username: props.replyTo.username,
+                  text: props.replyTo.text,
+              }
+            : undefined
+    );
     emit("submit", fullComment);
 };
 const onClose = () => emit("close");
@@ -188,6 +225,12 @@ label {
     border-color: var(--accent-lavender);
 }
 
+.comment-textarea::placeholder {
+    color: var(--main-text);
+    opacity: 0.8;
+    font-style: italic;
+}
+
 .meta-row {
     display: flex;
     align-items: center;
@@ -219,5 +262,37 @@ label {
     .add-comment-form {
         padding: 0.25rem;
     }
+}
+
+.reply-context {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: color-mix(in srgb, var(--accent-lavender) 8%, transparent);
+    border-left: 3px solid var(--accent-lavender);
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.reply-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-lavender);
+}
+
+.reply-icon {
+    font-size: 0.9rem;
+}
+
+.reply-preview {
+    margin: 0;
+    font-size: 0.9rem;
+    font-style: italic;
+    opacity: 0.8;
+    padding-left: 1.25rem;
 }
 </style>
