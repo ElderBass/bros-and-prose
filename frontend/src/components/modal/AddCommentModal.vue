@@ -21,13 +21,14 @@
             </div>
             <div class="field">
                 <label for="comment-input">{{ labelText }}</label>
-                <textarea
-                    id="comment-input"
+                <MentionTextArea
                     v-model="localComment"
-                    class="comment-textarea"
+                    id="comment-input"
                     :rows="mobile ? 5 : 6"
                     :placeholder="textareaPlaceholder"
-                ></textarea>
+                    :users="allUsersExceptCurrent"
+                    :label="labelText"
+                />
                 <div class="meta-row">
                     <p class="hint" v-if="validationMessage">
                         {{ validationMessage }}
@@ -64,6 +65,8 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faReply } from "@fortawesome/free-solid-svg-icons";
 import type { Comment } from "@/types";
 import { buildPalaverComment } from "@/utils";
+import MentionTextArea from "@/components/form/MentionTextArea.vue";
+import { useUserStore } from "@/stores/user";
 
 const emit = defineEmits<{
     (e: "close"): void;
@@ -92,6 +95,11 @@ const props = withDefaults(
 const { mobile } = useDisplay();
 
 const localComment = ref("");
+
+const allUsersExceptCurrent = computed(() => {
+    const currentUserId = useUserStore().loggedInUser?.id;
+    return useUserStore().allUsers.filter((user) => user.id !== currentUserId);
+});
 
 watch(
     () => props.open,
@@ -208,7 +216,7 @@ label {
     color: var(--accent-lavender);
 }
 
-.comment-textarea {
+/* .comment-textarea {
     width: 100%;
     resize: vertical;
     background-color: var(--background-color);
@@ -229,7 +237,7 @@ label {
     color: var(--main-text);
     opacity: 0.8;
     font-style: italic;
-}
+} */
 
 .meta-row {
     display: flex;

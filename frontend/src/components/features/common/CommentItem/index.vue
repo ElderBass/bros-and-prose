@@ -47,7 +47,9 @@
                     "{{ truncatedReplyText }}"
                 </p>
             </div>
-            <p class="text">{{ comment.text }}</p>
+            <div class="text">
+                <MentionText :text="comment.text" fontSize="small" />
+            </div>
         </div>
     </div>
 </template>
@@ -62,6 +64,7 @@ import ReactionActions from "./ReactionActions.vue";
 import ReplyButton from "./ReplyButton.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import UsernameLink from "@/components/ui/UsernameLink.vue";
+import MentionText from "@/components/ui/MentionText.vue";
 import { isGuestUser } from "@/utils";
 import { useUserStore } from "@/stores/user";
 

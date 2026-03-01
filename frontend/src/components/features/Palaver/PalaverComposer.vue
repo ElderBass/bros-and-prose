@@ -28,11 +28,12 @@
                 @update:recAuthor="recAuthor = $event"
             />
 
-            <BaseTextArea
+            <MentionTextArea
                 v-model="text"
                 id="palaver-item-text-input"
                 :label="messages.placeholder"
                 :placeholder="messages.placeholder"
+                :users="allUsersExceptCurrent"
             />
         </div>
         <div class="actions">
@@ -60,6 +61,7 @@ import { useDisplay } from "vuetify";
 import ItemTypeButton from "./ItemTypeButton.vue";
 import BookSelect from "@/components/form/BookSelect.vue";
 import BookRecommendationFormFields from "./BookRecommendationFormFields.vue";
+import MentionTextArea from "@/components/form/MentionTextArea.vue";
 import { usePalaver } from "@/composables";
 import type { PalaverType, PalaverEntry } from "@/types";
 import { buildPalaverEntry, isUnsumbittedRecommendation } from "@/utils";
@@ -104,6 +106,11 @@ const submitButtonLabel = computed(() => {
 const shouldShowBookSelect = computed(() =>
     ["discussion_note", "progress_note"].includes(type.value)
 );
+
+const allUsersExceptCurrent = computed(() => {
+    const currentUserId = useUserStore().loggedInUser?.id;
+    return useUserStore().allUsers.filter((user) => user.id !== currentUserId);
+});
 
 const resetForm = () => {
     type.value = "discussion_note";

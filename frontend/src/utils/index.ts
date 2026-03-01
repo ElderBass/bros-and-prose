@@ -14,6 +14,7 @@ export * from "./getUserInfo";
 export * from "./getIdFromBroName";
 export * from "./futureBookUtils";
 export * from "./localStorageUtils";
+export * from "./mentionUtils";
 export * from "./palaverUtils";
 export * from "./pastBookUtils";
 export * from "./sanitizeUser";

@@ -85,6 +85,12 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
                 title: "Future Book Read Status Updated",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> is an idiot and remembered he hasn't read the future book nom <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
             };
+        case "mention":
+            return {
+                title: "Fuckin' Sniped, Bud",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> tagged you in their palaver.`,
+                text: data.text,
+            };
         default:
             return {
                 title: "New Misc Item",
@@ -172,7 +178,8 @@ const buildHtmlTemplate = (title: string = "", message: string = "", text: strin
 
 export const sendEmailNotification = async (
     updateType: string,
-    data: { [key: string]: string }
+    // @eslint-disable-next-line - this is a hack to get the data type
+    data: { [key: string]: any }
 ) => {
     try {
         const mailjet = Mailjet.Client.apiConnect(
@@ -192,6 +199,37 @@ export const sendEmailNotification = async (
             ],
         });
         console.log("Email notification sent successfully:", response.body);
+
+        // Send mention notifications if mentionedUsers exists
+        if (data.mentionedUsers && Array.isArray(data.mentionedUsers) && data.mentionedUsers.length > 0) {
+            console.log(`Sending mention notifications to ${data.mentionedUsers.length} users`);
+            
+            for (const mentionedUser of data.mentionedUsers) {
+                try {
+                    const mentionData = {
+                        username: data.username,
+                        text: data.text || ""
+                    };
+                    const { title: mentionTitle, message: mentionMessage, text: mentionText } = getEmailMessaging("mention", mentionData);
+                    
+                    await mailjet.post("send", { version: "v3.1" }).request({
+                        Messages: [
+                            {
+                                From: { Email: process.env.MAILJET_FROM_EMAIL || "" },
+                                To: [{ Email: mentionedUser.email }],
+                                Subject: "Bros and Prose Update",
+                                HTMLPart: buildHtmlTemplate(mentionTitle, mentionMessage, mentionText),
+                            },
+                        ],
+                    });
+                    console.log(`Mention notification sent to ${mentionedUser.username}`);
+                } catch (mentionError) {
+                    console.error(`Error sending mention notification to ${mentionedUser.username}:`, mentionError);
+                    // Continue sending to other mentioned users even if one fails
+                }
+            }
+        }
+
         return response.body;
     } catch (error) {
         console.error("Error sending email notification:", error);
