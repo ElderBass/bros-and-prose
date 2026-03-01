@@ -42,7 +42,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
 import BookListColumn from "./BookListColumn.vue";
 import BookDetailsModal from "@/components/features/UserProfile/UserInfo/FavoritesStuff/BookDetailsModal.vue";
 import InfiniteScroll from "@/components/ui/InfiniteScroll.vue";
@@ -53,7 +52,7 @@ import {
     faMarker,
 } from "@fortawesome/free-solid-svg-icons";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
-import { isGuestUser } from "@/utils";
+import { isGuestUser, isProfileRoot } from "@/utils";
 
 const { items, type } = defineProps<{
     items: string[];
@@ -73,7 +72,7 @@ const incomingColumns = computed(() => {
 });
 
 const showActions = computed(() => {
-    return !isGuestUser() && useRoute().name === "profile-root";
+    return !isGuestUser() && isProfileRoot();
 });
 
 // Initialize with first batch

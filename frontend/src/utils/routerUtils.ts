@@ -1,6 +1,7 @@
 import { useUser, useLog } from "@/composables";
 import { useUIStore } from "@/stores/ui";
 import type { RouteLocationNormalized, NavigationGuardNext } from "vue-router";
+import { useRouter } from "vue-router";
 
 export const beforeEnterBrosView = async (
     to: RouteLocationNormalized,
@@ -23,4 +24,8 @@ export const beforeEnterBrosView = async (
     } finally {
         useUIStore().setIsAppLoading(false);
     }
+};
+
+export const isProfileRoot = () => {
+    return useRouter().currentRoute.value.name === "profile-root";
 };

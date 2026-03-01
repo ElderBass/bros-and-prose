@@ -26,7 +26,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import type { Review, BookshelfBook } from "@/types";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
-import { getBookReview } from "@/utils";
+import { getBookReview, isProfileRoot } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import ReviewButton from "./ReviewButton.vue";
 
@@ -41,7 +41,7 @@ const reviewModalOpen = ref(false);
 const username = ref("");
 
 onMounted(() => {
-    if (router.currentRoute.value.name === "profile-root") {
+    if (isProfileRoot()) {
         username.value = useUserStore().loggedInUser.username;
     } else {
         username.value = router.currentRoute.value.params.username as string;
