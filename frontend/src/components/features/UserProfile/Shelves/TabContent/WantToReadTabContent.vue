@@ -53,11 +53,6 @@ const noContentMessage = computed(() =>
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    padding: 2rem 1rem;
-    border: 2px dashed var(--accent-blue);
-    border-radius: 0.75rem;
-    background: color-mix(in srgb, var(--accent-blue) 3%, transparent);
     min-height: 120px;
 }
 

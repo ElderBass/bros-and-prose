@@ -22,7 +22,7 @@
                     :handleClick="handleSortList"
                 />
                 <IconButton
-                    v-if="!isGuestUser()"
+                    v-if="showActions"
                     :icon="faMarker"
                     title="edit list"
                     size="small"
@@ -32,7 +32,7 @@
             </div>
         </div>
         <BookDetailsModal
-            v-if="!isGuestUser()"
+            v-if="showActions"
             :open="detailsModalOpen"
             :book="selectedBook"
             @close="closeBookModal"
@@ -52,7 +52,7 @@ import {
     faMarker,
 } from "@fortawesome/free-solid-svg-icons";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
-import { isGuestUser } from "@/utils";
+import { isGuestUser, isProfileRoot } from "@/utils";
 
 const { items, type } = defineProps<{
     items: string[];
@@ -69,6 +69,10 @@ const sortOrder = ref<"asc" | "desc">("asc");
 
 const incomingColumns = computed(() => {
     return getBookItemColumns(items);
+});
+
+const showActions = computed(() => {
+    return !isGuestUser() && isProfileRoot();
 });
 
 // Initialize with first batch
