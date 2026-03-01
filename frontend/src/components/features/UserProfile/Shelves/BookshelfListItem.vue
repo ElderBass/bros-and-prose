@@ -84,14 +84,16 @@ const props = defineProps<{
 
 const { mobile } = useDisplay();
 
-const isProfilePage = computed(() => useRoute().name === "profile-root");
+const showActions = computed(() => {
+    return (
+        useRoute().name === "profile-root" &&
+        props.isLoggedInUser &&
+        props.book.id
+    );
+});
 
 const showCurrentlyReadingActions = computed(() => {
-    return (
-        props.shelf === "currentlyReading" &&
-        props.book.id &&
-        isProfilePage.value
-    );
+    return props.shelf === "currentlyReading" && showActions.value;
 });
 </script>
 

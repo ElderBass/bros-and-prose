@@ -22,7 +22,7 @@
                     :handleClick="handleSortList"
                 />
                 <IconButton
-                    v-if="!isGuestUser()"
+                    v-if="showActions"
                     :icon="faMarker"
                     title="edit list"
                     size="small"
@@ -32,7 +32,7 @@
             </div>
         </div>
         <BookDetailsModal
-            v-if="!isGuestUser()"
+            v-if="showActions"
             :open="detailsModalOpen"
             :book="selectedBook"
             @close="closeBookModal"
@@ -42,6 +42,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useRoute } from "vue-router";
 import BookListColumn from "./BookListColumn.vue";
 import BookDetailsModal from "@/components/features/UserProfile/UserInfo/FavoritesStuff/BookDetailsModal.vue";
 import InfiniteScroll from "@/components/ui/InfiniteScroll.vue";
@@ -69,6 +70,10 @@ const sortOrder = ref<"asc" | "desc">("asc");
 
 const incomingColumns = computed(() => {
     return getBookItemColumns(items);
+});
+
+const showActions = computed(() => {
+    return !isGuestUser() && useRoute().name === "profile-root";
 });
 
 // Initialize with first batch
