@@ -209,29 +209,6 @@ label {
     color: var(--accent-lavender);
 }
 
-/* .comment-textarea {
-    width: 100%;
-    resize: vertical;
-    background-color: var(--background-color);
-    color: var(--main-text);
-    border: 2px solid var(--accent-blue);
-    border-radius: 0.5rem;
-    font-family: "Crimson Text", serif;
-    font-size: 1.125rem;
-    padding: 0.75rem 1rem;
-}
-
-.comment-textarea:focus {
-    outline: none;
-    border-color: var(--accent-lavender);
-}
-
-.comment-textarea::placeholder {
-    color: var(--main-text);
-    opacity: 0.8;
-    font-style: italic;
-} */
-
 .meta-row {
     display: flex;
     align-items: center;
