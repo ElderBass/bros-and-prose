@@ -22,6 +22,7 @@ interface ModalState {
     moveTargetShelf: Shelf;
     message: string;
     bookActionType: BookActionType;
+    isFinishFlow: boolean;
 }
 
 export const useShelfModalStore = defineStore("shelfModal", {
@@ -32,6 +33,7 @@ export const useShelfModalStore = defineStore("shelfModal", {
         moveTargetShelf: "haveRead",
         message: "",
         bookActionType: "add",
+        isFinishFlow: false,
     }),
 
     actions: {
@@ -51,13 +53,15 @@ export const useShelfModalStore = defineStore("shelfModal", {
             action: BookActionType,
             book: BookshelfBook,
             shelf: Shelf,
-            message: string
+            message: string,
+            isFinishFlow?: boolean
         ) {
             this.modal = "bookActionSuccess";
             this.selectedBook = book;
             this.selectedBookShelf = shelf;
             this.message = message;
             this.bookActionType = action;
+            this.isFinishFlow = isFinishFlow || false;
         },
         openAddBookError(book: BookshelfBook, shelf: Shelf, message: string) {
             this.modal = "addBookError";
@@ -104,6 +108,7 @@ export const useShelfModalStore = defineStore("shelfModal", {
             this.moveTargetShelf = "haveRead";
             this.message = "";
             this.bookActionType = "add";
+            this.isFinishFlow = false;
         },
     },
 
@@ -120,5 +125,6 @@ export const useShelfModalStore = defineStore("shelfModal", {
         addBookErrorModalOpen: (state) => state.modal === "addBookError",
         reviewModalOpen: (state) => state.modal === "review",
         bookDetailsModalOpen: (state) => state.modal === "bookDetails",
+        finishFlowOpen: (state) => state.isFinishFlow,
     },
 });

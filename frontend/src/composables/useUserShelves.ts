@@ -124,7 +124,8 @@ export const useUserShelves = () => {
             "add",
             currentBook as BookshelfBook,
             "haveRead",
-            "the present has now become past"
+            "the present has now become past",
+            true
         );
         return updatedUser;
     };
