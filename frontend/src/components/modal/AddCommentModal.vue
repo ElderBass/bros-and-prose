@@ -21,13 +21,13 @@
             </div>
             <div class="field">
                 <label for="comment-input">{{ labelText }}</label>
-                <textarea
-                    id="comment-input"
+                <MentionTextArea
                     v-model="localComment"
-                    class="comment-textarea"
+                    id="comment-input"
                     :rows="mobile ? 5 : 6"
                     :placeholder="textareaPlaceholder"
-                ></textarea>
+                    :label="labelText"
+                />
                 <div class="meta-row">
                     <p class="hint" v-if="validationMessage">
                         {{ validationMessage }}
@@ -64,6 +64,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faReply } from "@fortawesome/free-solid-svg-icons";
 import type { Comment } from "@/types";
 import { buildPalaverComment } from "@/utils";
+import MentionTextArea from "@/components/form/MentionTextArea.vue";
 
 const emit = defineEmits<{
     (e: "close"): void;
@@ -206,29 +207,6 @@ label {
     font-size: 1.25rem;
     font-weight: 600;
     color: var(--accent-lavender);
-}
-
-.comment-textarea {
-    width: 100%;
-    resize: vertical;
-    background-color: var(--background-color);
-    color: var(--main-text);
-    border: 2px solid var(--accent-blue);
-    border-radius: 0.5rem;
-    font-family: "Crimson Text", serif;
-    font-size: 1.125rem;
-    padding: 0.75rem 1rem;
-}
-
-.comment-textarea:focus {
-    outline: none;
-    border-color: var(--accent-lavender);
-}
-
-.comment-textarea::placeholder {
-    color: var(--main-text);
-    opacity: 0.8;
-    font-style: italic;
 }
 
 .meta-row {

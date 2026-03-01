@@ -27,6 +27,10 @@ export const useUserStore = defineStore("user", {
             state.allUsers.find((user) => user.username === username),
         getUserById: (state) => (id: string) =>
             state.allUsers.find((user) => user.id === id),
+        allUsersExceptCurrent: (state) =>
+            state.allUsers.filter(
+                (user) => user.id !== state.loggedInUser?.id
+            ) || [],
     },
 
     actions: {

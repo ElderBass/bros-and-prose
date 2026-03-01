@@ -49,7 +49,11 @@
                 :size="mobile ? 'xsmall' : 'medium'"
                 :readOnly="true"
             />
-            <ExpandableText :text="entry.text || EMPTY_TEXT" />
+            <ExpandableText :text="entry.text || EMPTY_TEXT">
+                <template #default="{ displayText }">
+                    <MentionText :text="displayText" fontSize="small" />
+                </template>
+            </ExpandableText>
             <ReactionDetails
                 v-if="entry.likes || entry.dislikes"
                 :likes="entry.likes || []"
@@ -64,6 +68,7 @@
             </transition>
             <div class="toggle">
                 <BaseButton
+                    v-if="hasComments"
                     size="xsmall"
                     :variant="
                         showComments ? 'outline-secondary' : 'outline-success'
@@ -82,6 +87,7 @@
 import { computed, ref } from "vue";
 import { useDisplay } from "vuetify";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
+import MentionText from "@/components/ui/MentionText.vue";
 import ListItemActions from "@/components/features/Palaver/PalaverListItem/ListItemActions.vue";
 import ReactionDetails from "@/components/features/Palaver/PalaverListItem/ReactionDetails.vue";
 import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
@@ -107,6 +113,10 @@ const props = withDefaults(
 const { mobile } = useDisplay();
 
 const showComments = ref(false);
+
+const hasComments = computed(() => {
+    return props.entry.comments && props.entry.comments.length > 0;
+});
 
 const typeLabel = computed(() => {
     switch (props.entry.type) {

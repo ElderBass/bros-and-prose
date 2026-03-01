@@ -28,7 +28,7 @@
                 @update:recAuthor="recAuthor = $event"
             />
 
-            <BaseTextArea
+            <MentionTextArea
                 v-model="text"
                 id="palaver-item-text-input"
                 :label="messages.placeholder"
@@ -60,6 +60,7 @@ import { useDisplay } from "vuetify";
 import ItemTypeButton from "./ItemTypeButton.vue";
 import BookSelect from "@/components/form/BookSelect.vue";
 import BookRecommendationFormFields from "./BookRecommendationFormFields.vue";
+import MentionTextArea from "@/components/form/MentionTextArea.vue";
 import { usePalaver } from "@/composables";
 import type { PalaverType, PalaverEntry } from "@/types";
 import { buildPalaverEntry, isUnsumbittedRecommendation } from "@/utils";

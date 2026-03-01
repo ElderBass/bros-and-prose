@@ -57,6 +57,7 @@ export interface PalaverEntryMetadata {
     targetUserEmail?: string;
     updateType?: ReactionType | PalaverType;
     replyToText?: string;
+    mentionedUsers?: Array<{ username: string; email: string }>;
 }
 
 export interface PalaverEntryRequest {
