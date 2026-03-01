@@ -178,7 +178,6 @@ const buildHtmlTemplate = (title: string = "", message: string = "", text: strin
 
 export const sendEmailNotification = async (
     updateType: string,
-    // @eslint-disable-next-line - this is a hack to get the data type
     data: { [key: string]: any }
 ) => {
     try {

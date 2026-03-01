@@ -15,7 +15,6 @@
         />
         <UserMentionDropdown
             v-if="showDropdown"
-            :users="users"
             :selectedIndex="selectedIndex"
             :position="dropdownPosition"
             @select="onUserSelect"
@@ -28,6 +27,8 @@
 import { ref, type CSSProperties, onMounted, onBeforeUnmount } from "vue";
 import type { User } from "@/types";
 import UserMentionDropdown from "@/components/ui/UserMentionDropdown.vue";
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 
 const props = withDefaults(
     defineProps<{
@@ -35,7 +36,6 @@ const props = withDefaults(
         label: string;
         placeholder: string;
         id: string;
-        users: User[];
         disabled?: boolean;
         rows?: number;
         style?: string | CSSProperties;
@@ -57,6 +57,8 @@ const mentionStart = ref(-1);
 const searchQuery = ref("");
 const selectedIndex = ref(0);
 const dropdownPosition = ref({ top: 0, left: 0 });
+
+const { allUsersExceptCurrent: users } = storeToRefs(useUserStore());
 
 const getCaretCoordinates = (
     element: HTMLTextAreaElement,
@@ -156,7 +158,7 @@ const onKeyDown = (e: KeyboardEvent) => {
             e.preventDefault();
             selectedIndex.value = Math.min(
                 selectedIndex.value + 1,
-                props.users.length - 1
+                users.value.length - 1
             );
             break;
         case "ArrowUp":
@@ -165,9 +167,9 @@ const onKeyDown = (e: KeyboardEvent) => {
             break;
         case "Enter":
         case "Tab":
-            if (props.users.length > 0) {
+            if (users.value.length > 0) {
                 e.preventDefault();
-                onUserSelect(props.users[selectedIndex.value]);
+                onUserSelect(users.value[selectedIndex.value]);
             }
             break;
         case "Escape":

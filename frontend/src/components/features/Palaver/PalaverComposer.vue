@@ -33,7 +33,6 @@
                 id="palaver-item-text-input"
                 :label="messages.placeholder"
                 :placeholder="messages.placeholder"
-                :users="allUsersExceptCurrent"
             />
         </div>
         <div class="actions">
@@ -106,11 +105,6 @@ const submitButtonLabel = computed(() => {
 const shouldShowBookSelect = computed(() =>
     ["discussion_note", "progress_note"].includes(type.value)
 );
-
-const allUsersExceptCurrent = computed(() => {
-    const currentUserId = useUserStore().loggedInUser?.id;
-    return useUserStore().allUsers.filter((user) => user.id !== currentUserId);
-});
 
 const resetForm = () => {
     type.value = "discussion_note";

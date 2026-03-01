@@ -26,7 +26,6 @@
                     id="comment-input"
                     :rows="mobile ? 5 : 6"
                     :placeholder="textareaPlaceholder"
-                    :users="allUsersExceptCurrent"
                     :label="labelText"
                 />
                 <div class="meta-row">
@@ -66,7 +65,6 @@ import { faReply } from "@fortawesome/free-solid-svg-icons";
 import type { Comment } from "@/types";
 import { buildPalaverComment } from "@/utils";
 import MentionTextArea from "@/components/form/MentionTextArea.vue";
-import { useUserStore } from "@/stores/user";
 
 const emit = defineEmits<{
     (e: "close"): void;
@@ -95,11 +93,6 @@ const props = withDefaults(
 const { mobile } = useDisplay();
 
 const localComment = ref("");
-
-const allUsersExceptCurrent = computed(() => {
-    const currentUserId = useUserStore().loggedInUser?.id;
-    return useUserStore().allUsers.filter((user) => user.id !== currentUserId);
-});
 
 watch(
     () => props.open,

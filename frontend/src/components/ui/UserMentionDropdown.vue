@@ -33,9 +33,10 @@
 <script setup lang="ts">
 import type { User } from "@/types";
 import AvatarImage from "./AvatarImage.vue";
+import { useUserStore } from "@/stores/user";
+import { storeToRefs } from "pinia";
 
 defineProps<{
-    users: User[];
     selectedIndex: number;
     position: { top: number; left: number };
 }>();
@@ -44,6 +45,8 @@ const emit = defineEmits<{
     (e: "select", user: User): void;
     (e: "hover", index: number): void;
 }>();
+
+const { allUsersExceptCurrent: users } = storeToRefs(useUserStore());
 
 const handleSelect = (user: User) => {
     emit("select", user);
