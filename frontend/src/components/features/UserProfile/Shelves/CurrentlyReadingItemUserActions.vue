@@ -10,7 +10,7 @@
             recommend
         </BaseButton>
         <BaseButton
-            title="finished (move to have read)"
+            title="wherein the present now becomes the past"
             variant="outline-success"
             v-bind="buttonProps"
             @click="handleFinished"
