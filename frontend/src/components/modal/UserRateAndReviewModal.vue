@@ -29,7 +29,10 @@
 import { ref } from "vue";
 import RateAndReviewBookForm from "@/components/form/RateAndReviewBookForm.vue";
 import type { Book, BookshelfBook, SubmitReviewArgs } from "@/types";
-import { DEFAULT_REVIEW } from "@/constants";
+import {
+    DEFAULT_REVIEW,
+    SAVED_BOOK_CLUB_BOOK_SUCCESS_ALERT,
+} from "@/constants";
 import { useUser } from "@/composables/useUser";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { useBooksStore } from "@/stores/books";
@@ -74,16 +77,7 @@ const onReviewSubmit = async () => {
         try {
             setLoadingMessage("edging towards god's plan...");
             await addCurrentBookClubBookToHaveRead(currentBook, bookTags.value);
-            showAlert({
-                show: true,
-                type: "success",
-                messages: [
-                    "your silly review was saved",
-                    "went ahead and added it to your past shelf. you're welcome.",
-                ],
-                duration: 3000,
-                dismissable: false,
-            });
+            showAlert(SAVED_BOOK_CLUB_BOOK_SUCCESS_ALERT);
         } catch (error) {
             console.error("Error adding book to shelf:", error);
             showAlert({
