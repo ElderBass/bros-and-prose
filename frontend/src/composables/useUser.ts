@@ -118,7 +118,9 @@ export const useUser = () => {
                 `newReview in addReview: reviewer = ${loggedInUser.value.username} | review = ${newReview}`
             );
 
-            const currentBookProgress = isReviewOfCurrentBook(book.id)
+            const reviewingCurrentBook = isReviewOfCurrentBook(book.id);
+
+            const currentBookProgress = reviewingCurrentBook
                 ? FINISHED_BOOK_PROGRESS
                 : loggedInUser.value.currentBookProgress;
 
@@ -130,7 +132,7 @@ export const useUser = () => {
                     [book.id]: newReview,
                 },
             });
-            if (!existingReview) {
+            if (!existingReview && !reviewingCurrentBook) {
                 await usePalaver().createPalaverEntryFromReview(newReview);
             }
             showAlert(REVIEW_SUBMITTED_SUCCESS_ALERT);
