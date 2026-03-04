@@ -2,6 +2,7 @@ import express from "express";
 import multer from "multer";
 import { db } from "../db/index.js";
 import { uploadAvatar, deleteAvatar } from "../services/avatarUpload.js";
+import { sendEmailNotification } from "../mailjet/sendEmailNotification.js";
 
 // Configure multer for memory storage
 const upload = multer({
@@ -78,11 +79,20 @@ export const getUsers = async (_: express.Request, res: express.Response) => {
 
 export const updateUser = async (req: express.Request, res: express.Response) => {
     const { userId } = req.params;
+    const { metadata, ...userData } = req.body;
+    
     try {
         const userRef = db.ref(`users/${userId}`);
-        await userRef.update(req.body);
-        console.log("KERTWANGING OUTGOING req.body in updateUser", req.body);
+        await userRef.update(userData);
+        console.log("KERTWANGING OUTGOING userData in updateUser", userData);
+
         const updatedUser = await userRef.once("value");
+        
+        // Send notification if metadata provided
+        if (metadata?.updateType) {
+            sendEmailNotification(metadata.updateType, metadata);
+        }
+        
         return res.json({
             success: true,
             message: "User updated successfully",

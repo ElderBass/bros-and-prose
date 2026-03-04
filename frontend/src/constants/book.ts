@@ -63,6 +63,7 @@ export const ARCHIVE_ENABLED = false;
 
 export const COMMON_BOOK_TAGS = [
     "absurdist",
+    "academic",
     "adventure",
     "alt history",
     "anthology",

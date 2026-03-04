@@ -6,14 +6,18 @@ import type {
     Shelf,
     SubmitReviewArgs,
     Book,
+    ShelfAddMetadata,
 } from "@/types";
 import { useLog } from "./useLog";
 import {
+    buildShelfAddMetadata,
+    convertBookToBookshelfBook,
     getShelfBookIsOn,
     getUserShelves,
-    convertBookToBookshelfBook,
-} from "@/utils/bookshelfUtils";
+} from "@/utils";
 import { useShelfModalStore } from "@/stores/shelfModal";
+
+const SHELF_ADD_METADATA_UPDATE_TYPES = ["currentlyReading", "wantToRead"];
 
 export const useUserShelves = () => {
     const { info, error: logError } = useLog();
@@ -28,10 +32,20 @@ export const useUserShelves = () => {
 
             const currentShelf = getUserShelves(loggedInUser)[shelf];
 
-            const updatedUser = await updateUser(loggedInUser.id, {
-                ...loggedInUser,
-                [shelf]: [...currentShelf, book],
-            });
+            let metadata = undefined;
+
+            if (SHELF_ADD_METADATA_UPDATE_TYPES.includes(shelf)) {
+                metadata = buildShelfAddMetadata(book, shelf);
+            }
+
+            const updatedUser = await updateUser(
+                loggedInUser.id,
+                {
+                    ...loggedInUser,
+                    [shelf]: [...currentShelf, book],
+                },
+                metadata as ShelfAddMetadata
+            );
 
             await info(
                 `Added ${book.title} to ${shelf} for ${loggedInUser.username}`
