@@ -86,7 +86,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
-import { useRouter } from "vue-router";
 import type { BookshelfBook, Review } from "@/types";
 import BookCover from "./BookDetailsComponents/BookCover.vue";
 import BlurbSection from "./BookDetailsComponents/BlurbSection.vue";
@@ -96,7 +95,7 @@ import ActionButtons from "./BookDetailsComponents/ActionButtons.vue";
 import FavoriteButton from "./BookDetailsComponents/FavoriteButton.vue";
 import { faBookOpen, faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useShelfModalStore } from "@/stores/shelfModal";
-import { recommendBook } from "@/utils";
+import { recommendBook, isProfileRoot } from "@/utils";
 
 defineProps<{
     open: boolean;
@@ -104,13 +103,12 @@ defineProps<{
     review: Review | null;
 }>();
 
-const router = useRouter();
 const { mobile } = useDisplay();
 const { openReviewForBook, openEditBook, closeModal } = useShelfModalStore();
 
 const editButtonSize = computed(() => (mobile.value ? "small" : "medium"));
 const canReview = computed(() => {
-    return router.currentRoute.value.name === "profile-root";
+    return isProfileRoot();
 });
 
 const startReview = (book: BookshelfBook) => {

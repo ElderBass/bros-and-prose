@@ -29,6 +29,10 @@ export interface Comment {
     updatedAt?: string;
     likes?: string[];
     dislikes?: string[];
+    // Reply fields
+    replyToId?: string;
+    replyToUsername?: string;
+    replyToText?: string;
 }
 
 export interface PalaverEntry {
@@ -52,6 +56,8 @@ export interface PalaverEntryMetadata {
     targetUsername?: string;
     targetUserEmail?: string;
     updateType?: ReactionType | PalaverType;
+    replyToText?: string;
+    mentionedUsers?: Array<{ username: string; email: string }>;
 }
 
 export interface PalaverEntryRequest {
@@ -59,4 +65,4 @@ export interface PalaverEntryRequest {
     metadata: PalaverEntryMetadata;
 }
 
-export type ReactionType = "like" | "dislike" | "comment";
+export type ReactionType = "like" | "dislike" | "comment" | "reply";

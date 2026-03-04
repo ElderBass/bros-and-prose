@@ -72,9 +72,8 @@ import BookshelfBookListItemActions from "@/components/features/UserProfile/Shel
 import CurrentlyReadingItemUserActions from "@/components/features/UserProfile/Shelves/CurrentlyReadingItemUserActions.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
 import { faBook } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { useRoute } from "vue-router";
 import { EMPTY_TEXT } from "@/constants";
+import { isProfileRoot } from "@/utils";
 
 const props = defineProps<{
     book: BookshelfBook;
@@ -84,14 +83,12 @@ const props = defineProps<{
 
 const { mobile } = useDisplay();
 
-const isProfilePage = computed(() => useRoute().name === "profile-root");
+const showActions = computed(() => {
+    return isProfileRoot() && props.isLoggedInUser && props.book.id;
+});
 
 const showCurrentlyReadingActions = computed(() => {
-    return (
-        props.shelf === "currentlyReading" &&
-        props.book.id &&
-        isProfilePage.value
-    );
+    return props.shelf === "currentlyReading" && showActions.value;
 });
 </script>
 

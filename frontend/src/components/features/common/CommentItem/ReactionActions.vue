@@ -57,7 +57,7 @@ const handleReaction = async (reaction: ReactionType) => {
     align-items: center;
     justify-content: flex-end;
     gap: 0.75rem;
-    padding-right: 0.75rem;
+    padding-right: 0.5rem;
     margin-right: -0.5rem;
 }
 

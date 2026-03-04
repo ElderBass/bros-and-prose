@@ -36,6 +36,15 @@
             >
                 add another
             </BaseButton>
+            <BaseButton
+                v-if="showAddReviewButton"
+                variant="outline"
+                title="rate and review this book"
+                @click="handleAddReview"
+                v-bind="buttonProps"
+            >
+                add review
+            </BaseButton>
         </template>
     </BaseModal>
 </template>
@@ -59,9 +68,10 @@ const {
     selectedBookShelf,
     bookActionType,
     message,
+    isFinishFlow,
 } = storeToRefs(shelfModalStore);
 
-const { closeModal, openAddBook } = shelfModalStore;
+const { closeModal, openAddBook, openReviewForBook } = shelfModalStore;
 
 const { mobile } = useDisplay();
 
@@ -86,7 +96,11 @@ const actionVerbPhrase = computed(() => {
 });
 
 const showAddAnotherButton = computed(() => {
-    return bookActionType.value === "add";
+    return bookActionType.value === "add" && !isFinishFlow.value;
+});
+
+const showAddReviewButton = computed(() => {
+    return isFinishFlow.value;
 });
 
 const secondaryMessage = computed(() => message.value || "");
@@ -101,6 +115,12 @@ const buttonProps = computed(() => {
         style: mobile.value ? { width: "100%" } : {},
     };
 });
+
+const handleAddReview = () => {
+    if (selectedBook.value && selectedBookShelf.value) {
+        openReviewForBook(selectedBook.value, selectedBookShelf.value);
+    }
+};
 </script>
 
 <style scoped>

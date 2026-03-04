@@ -12,6 +12,7 @@ import {
     buildPalaverEntryFromReview,
     buildPalaverEntryMetadata,
     buildPalaverReactionMetadata,
+    buildReplyMetadata,
     checkForUnreadEntries,
     sortPalaverStuff,
     updatePalaverLikesDislikes,
@@ -161,7 +162,10 @@ export const usePalaver = () => {
     };
 
     const addComment = async (entry: PalaverEntry, comment: Comment) => {
-        const metadata = buildPalaverReactionMetadata(entry, "comment");
+        // Check if this is a reply and build appropriate metadata
+        const metadata = comment.replyToId
+            ? buildReplyMetadata(comment, entry)
+            : buildPalaverReactionMetadata(entry, "comment");
 
         const response = await palaverService.update({
             entry: { ...entry, comments: [...(entry.comments || []), comment] },

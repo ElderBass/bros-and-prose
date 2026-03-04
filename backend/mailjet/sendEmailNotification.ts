@@ -1,6 +1,9 @@
 import Mailjet from "node-mailjet";
 
-const getEmailMessaging = (updateType: string, data: { [key: string]: string }) => {
+const getEmailMessaging = (
+    updateType: string,
+    data: { [key: string]: string },
+) => {
     console.log("Getting email messaging for update type:", updateType);
     switch (updateType) {
         case "discussion_note":
@@ -24,6 +27,13 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
                 title: "Item Update",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> commented on your palaver.`,
                 text: data.text,
+            };
+        case "reply":
+            return {
+                title: "Cheeky Reply",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> is sniping back at <span style="font-weight: bold;color:#00bfff;">@${data.targetUsername}</span>'s palaver.`,
+                text: data.text,
+                replyToText: data.replyToText,
             };
         case "progress_note":
             return {
@@ -78,6 +88,24 @@ const getEmailMessaging = (updateType: string, data: { [key: string]: string }) 
                 title: "Future Book Read Status Updated",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> is an idiot and remembered he hasn't read the future book nom <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
             };
+        case "mention":
+            return {
+                title: "Fuckin' Sniped, Bud",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> tagged you in their palaver.`,
+                text: data.text,
+            };
+        case "shelf_currently_reading_added":
+            return {
+                title: "Ya Boy's Out Here Grindin'",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> just started reading <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span> by <span style="color:#00ff7f;">${data.bookAuthor}</span>.`,
+                text: data.bookDescription,
+            };
+        case "shelf_want_to_read_added":
+            return {
+                title: "Your Boy's Got Big Plans",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> wants to read <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span> by <span style="color:#00ff7f;">${data.bookAuthor}</span>.`,
+                text: data.bookDescription,
+            };
         default:
             return {
                 title: "New Misc Item",
@@ -98,18 +126,28 @@ const getEmailRecipients = (targetUserEmail?: string) => {
 };
 
 const getEmailInfo = (updateType: string, data: { [key: string]: string }) => {
-    const { title, message, text } = getEmailMessaging(updateType, data);
+    const { title, message, text, replyToText } = getEmailMessaging(
+        updateType,
+        data,
+    );
     const emailRecipients = getEmailRecipients(data.targetUserEmail);
 
     return {
         subject: "Bros and Prose Update",
-        html: buildHtmlTemplate(title, message, text),
+        html: buildHtmlTemplate(title, message, text, replyToText),
         emailRecipients,
     };
 };
 
-const buildHtmlTemplate = (title: string = "", message: string = "", text: string = "") => {
-    const endpoint = title.toLocaleLowerCase().includes("future") ? "future" : "palaver";
+const buildHtmlTemplate = (
+    title: string = "",
+    message: string = "",
+    text: string = "",
+    replyToText: string = "",
+) => {
+    const endpoint = title.toLocaleLowerCase().includes("future")
+        ? "future"
+        : "palaver";
     return `<!DOCTYPE html>
 <html lang="en">
     <head>
@@ -134,6 +172,14 @@ const buildHtmlTemplate = (title: string = "", message: string = "", text: strin
                                 <p style="font-size:18px;line-height:1.6;margin:0 0 28px;">${
                                     message ?? ""
                                 }</p>
+                                ${
+                                    replyToText
+                                        ? `<div style="padding:12px 16px;margin:0 0 16px;background:rgba(138,43,226,0.1);border-left:3px solid #8a2be2;border-radius:4px;">
+                                    <p style="font-size:13px;margin:0 0 6px;color:#8a2be2;font-weight:600;">Original comment:</p>
+                                    <p style="font-size:14px;margin:0;font-style:italic;opacity:0.8;">"${replyToText}"</p>
+                                </div>`
+                                        : ""
+                                }
                                 <p style="font-size:14px;line-height:1.6;margin:0 0 20px;">${
                                     text ?? ""
                                 }</p>
@@ -161,26 +207,83 @@ const buildHtmlTemplate = (title: string = "", message: string = "", text: strin
 
 export const sendEmailNotification = async (
     updateType: string,
-    data: { [key: string]: string }
+    data: { [key: string]: any },
 ) => {
     try {
         const mailjet = Mailjet.Client.apiConnect(
             process.env.MAILJET_API_KEY || "",
-            process.env.MAILJET_API_SECRET || ""
+            process.env.MAILJET_API_SECRET || "",
         );
-        const { subject, html, emailRecipients } = getEmailInfo(updateType, data);
+        const { subject, html, emailRecipients } = getEmailInfo(
+            updateType,
+            data,
+        );
 
-        const response = await mailjet.post("send", { version: "v3.1" }).request({
-            Messages: [
-                {
-                    From: { Email: process.env.MAILJET_FROM_EMAIL || "" },
-                    To: emailRecipients,
-                    Subject: subject,
-                    HTMLPart: html,
-                },
-            ],
-        });
+        const response = await mailjet
+            .post("send", { version: "v3.1" })
+            .request({
+                Messages: [
+                    {
+                        From: { Email: process.env.MAILJET_FROM_EMAIL || "" },
+                        To: emailRecipients,
+                        Subject: subject,
+                        HTMLPart: html,
+                    },
+                ],
+            });
         console.log("Email notification sent successfully:", response.body);
+
+        // Send mention notifications if mentionedUsers exists
+        if (
+            data.mentionedUsers &&
+            Array.isArray(data.mentionedUsers) &&
+            data.mentionedUsers.length > 0
+        ) {
+            console.log(
+                `Sending mention notifications to ${data.mentionedUsers.length} users`,
+            );
+
+            for (const mentionedUser of data.mentionedUsers) {
+                try {
+                    const mentionData = {
+                        username: data.username,
+                        text: data.text || "",
+                    };
+                    const {
+                        title: mentionTitle,
+                        message: mentionMessage,
+                        text: mentionText,
+                    } = getEmailMessaging("mention", mentionData);
+
+                    await mailjet.post("send", { version: "v3.1" }).request({
+                        Messages: [
+                            {
+                                From: {
+                                    Email: process.env.MAILJET_FROM_EMAIL || "",
+                                },
+                                To: [{ Email: mentionedUser.email }],
+                                Subject: "Bros and Prose Update",
+                                HTMLPart: buildHtmlTemplate(
+                                    mentionTitle,
+                                    mentionMessage,
+                                    mentionText,
+                                ),
+                            },
+                        ],
+                    });
+                    console.log(
+                        `Mention notification sent to ${mentionedUser.username}`,
+                    );
+                } catch (mentionError) {
+                    console.error(
+                        `Error sending mention notification to ${mentionedUser.username}:`,
+                        mentionError,
+                    );
+                    // Continue sending to other mentioned users even if one fails
+                }
+            }
+        }
+
         return response.body;
     } catch (error) {
         console.error("Error sending email notification:", error);

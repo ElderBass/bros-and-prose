@@ -4,6 +4,7 @@ import type {
     Shelf,
     BookshelfBook,
     Book,
+    ShelfAddMetadata,
 } from "@/types";
 import { capitalizeBookTitle } from "./capitalizeBookTitle";
 import { v4 as uuid } from "uuid";
@@ -157,5 +158,32 @@ export const convertBookToBookshelfBook = (
         pages: book.totalPages,
         tags: tags || [],
         description: "",
+    };
+};
+
+export const buildShelfAddMetadata = (
+    book: BookshelfBook,
+    shelf: Shelf
+): ShelfAddMetadata | null => {
+    // Only send notifications for currentlyReading and wantToRead
+    if (shelf !== "currentlyReading" && shelf !== "wantToRead") {
+        return null;
+    }
+
+    const username = useUserStore().loggedInUser.username;
+
+    const updateTypeMap = {
+        currentlyReading: "shelf_currently_reading_added",
+        wantToRead: "shelf_want_to_read_added",
+    };
+
+    return {
+        updateType: updateTypeMap[shelf],
+        bookTitle: book.title,
+        bookAuthor: book.author,
+        bookDescription:
+            book.description ||
+            "the description of this book is not part of god's plan",
+        username,
     };
 };

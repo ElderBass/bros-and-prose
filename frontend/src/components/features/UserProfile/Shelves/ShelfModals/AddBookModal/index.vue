@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import BaseModal from "@/components/ui/BaseModal.vue";
 import ShelfSelector from "../ShelfSelector.vue";
@@ -49,6 +49,12 @@ const shelfMessage = computed(() => {
 
 const shelfDisplayName = computed(() => {
     return getShelfDisplayName(selectedBookShelf.value);
+});
+
+watch(addBookModalOpen, (newVal) => {
+    if (newVal) {
+        loading.value = false;
+    }
 });
 </script>
 

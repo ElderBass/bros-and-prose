@@ -3,6 +3,7 @@ import type {
     Book,
     BookshelfBook,
     FutureBook,
+    ShelfAddMetadata,
     SubmitReviewArgs,
     User,
 } from "@/types";
@@ -58,8 +59,16 @@ export const useUser = () => {
         return users.filter((user) => user.id !== loggedInUser.value.id);
     };
 
-    const updateUser = async (userId: string, user: User) => {
-        const updatedUser = await usersService.updateUser(userId, user);
+    const updateUser = async (
+        userId: string,
+        user: User,
+        metadata?: ShelfAddMetadata
+    ) => {
+        const updatedUser = await usersService.updateUser(
+            userId,
+            user,
+            metadata
+        );
         const sanitizedUser = sanitizeUser(updatedUser);
 
         if (userId === loggedInUser.value.id) {
@@ -118,7 +127,9 @@ export const useUser = () => {
                 `newReview in addReview: reviewer = ${loggedInUser.value.username} | review = ${newReview}`
             );
 
-            const currentBookProgress = isReviewOfCurrentBook(book.id)
+            const reviewingCurrentBook = isReviewOfCurrentBook(book.id);
+
+            const currentBookProgress = reviewingCurrentBook
                 ? FINISHED_BOOK_PROGRESS
                 : loggedInUser.value.currentBookProgress;
 
@@ -130,7 +141,7 @@ export const useUser = () => {
                     [book.id]: newReview,
                 },
             });
-            if (!existingReview) {
+            if (!existingReview && !reviewingCurrentBook) {
                 await usePalaver().createPalaverEntryFromReview(newReview);
             }
             showAlert(REVIEW_SUBMITTED_SUCCESS_ALERT);

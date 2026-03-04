@@ -1,6 +1,6 @@
 <template>
     <div class="book-detail-container">
-        <BaseCard shadowColor="blue" size="medium">
+        <BaseCard shadowColor="blue" size="small">
             <BookInfo :book="book" />
         </BaseCard>
         <BroReviewsSection :book="book" :broReviews="userReviews" />
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import BookInfo from "@/components/features/common/BookInfo.vue";
+import BookInfo from "@/components/features/common/BookInfo/index.vue";
 import BroReviewsSection from "@/components/features/PastBooks/BroReviewsSection.vue";
 import GroupConsensus from "@/components/features/PastBooks/GroupConsensusSection.vue";
 import InbrospectionSection from "@/components/features/PastBooks/InbrospectionSection.vue";

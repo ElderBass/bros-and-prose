@@ -13,6 +13,7 @@ import {
     capitalizeAuthorName,
     capitalizeBookTitle,
     getLastUnreadPalaverEntry,
+    getMentionedUsers,
     setLastUnreadPalaverEntry,
     maybeShowCurrentBookReview,
 } from "@/utils";
@@ -76,7 +77,14 @@ export const buildPalaverEntryFromReview = (review: Review): PalaverEntry => {
     };
 };
 
-export const buildPalaverComment = (commentText: string): Comment => {
+export const buildPalaverComment = (
+    commentText: string,
+    replyTo?: {
+        commentId: string;
+        username: string;
+        text: string;
+    }
+): Comment => {
     const user = useUserStore().loggedInUser;
 
     return {
@@ -84,6 +92,11 @@ export const buildPalaverComment = (commentText: string): Comment => {
         userInfo: getUserInfo(user),
         text: commentText,
         createdAt: new Date().toISOString(),
+        ...(replyTo && {
+            replyToId: replyTo.commentId,
+            replyToUsername: replyTo.username,
+            replyToText: replyTo.text.substring(0, 100), // Truncate for preview
+        }),
     };
 };
 
@@ -126,30 +139,42 @@ export const filterPalaverEntries = (
 };
 
 export const buildPalaverEntryMetadata = (entry: PalaverEntry) => {
+    const currentUserId = useUserStore().loggedInUser?.id;
+    const allUsers = useUserStore().allUsers;
+
+    // Extract mentioned users from the entry text
+    const mentionedUsers = getMentionedUsers(entry.text, allUsers)
+        .filter((user) => user.id !== currentUserId) // Don't notify yourself
+        .map((user) => ({ username: user.username, email: user.email }));
+
+    const baseMetadata = {
+        username: entry.userInfo.username,
+        text: entry.text,
+        mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined,
+    };
+
     switch (entry.type) {
         case "discussion_note":
             return {
+                ...baseMetadata,
                 bookTitle: entry.bookInfo?.title ?? "",
-                username: entry.userInfo.username,
-                text: entry.text,
             };
         case "recommendation":
             return {
+                ...baseMetadata,
                 bookTitle: entry.recommendation?.title ?? "",
-                username: entry.userInfo.username,
-                text: entry.text,
             };
         case "review":
             return {
+                ...baseMetadata,
                 bookTitle: entry.bookInfo?.title ?? "",
-                username: entry.userInfo.username,
                 text: `Score: ${entry.rating} / 10. Comment: ${entry.text}`,
             };
         case "suggestion":
         case "progress_note":
         case "misc":
         default:
-            return { username: entry.userInfo.username, text: entry.text };
+            return baseMetadata;
     }
 };
 
@@ -158,12 +183,52 @@ export const buildPalaverReactionMetadata = (
     reactionType: ReactionType
 ) => {
     const loggedInUsername = useUserStore().loggedInUser.username;
+    const currentUserId = useUserStore().loggedInUser?.id;
+    const allUsers = useUserStore().allUsers;
+
+    // Extract mentioned users from comment text if it's a comment reaction
+    const mentionedUsers =
+        reactionType === "comment"
+            ? getMentionedUsers(item.text, allUsers)
+                  .filter((user) => user.id !== currentUserId)
+                  .map((user) => ({
+                      username: user.username,
+                      email: user.email,
+                  }))
+            : [];
+
     return {
         username: loggedInUsername,
         targetUsername: item.userInfo.username,
         targetUserEmail: item.userInfo.email,
         updateType: reactionType,
         text: reactionType === "comment" ? item.text : undefined,
+        mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined,
+    };
+};
+
+export const buildReplyMetadata = (reply: Comment, entry: PalaverEntry) => {
+    const loggedInUsername = useUserStore().loggedInUser.username;
+    const currentUserId = useUserStore().loggedInUser?.id;
+    const allUsers = useUserStore().allUsers;
+    const { replyToId, replyToUsername, replyToText, text } = reply;
+
+    // Find the original comment being replied to in the entry's comments
+    const originalComment = entry.comments?.find((c) => c.id === replyToId);
+
+    // Extract mentioned users from the reply text
+    const mentionedUsers = getMentionedUsers(text, allUsers)
+        .filter((user) => user.id !== currentUserId) // Don't notify yourself
+        .map((user) => ({ username: user.username, email: user.email }));
+
+    return {
+        username: loggedInUsername,
+        targetUsername: replyToUsername || "unknown",
+        targetUserEmail: originalComment?.userInfo.email || "",
+        updateType: "reply" as ReactionType,
+        text,
+        replyToText,
+        mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined,
     };
 };
 

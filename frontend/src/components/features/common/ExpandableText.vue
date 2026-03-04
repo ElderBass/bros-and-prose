@@ -1,13 +1,15 @@
 <template>
     <div class="text-container">
         <Transition name="text-expand" mode="out-in">
-            <p
+            <div
                 :key="showFullText ? 'expanded' : 'collapsed'"
                 class="text"
                 :class="{ expanded: showFullText, italics: isEmptyText }"
             >
-                {{ displayText }}
-            </p>
+                <slot :displayText="displayText" :showFullText="showFullText">
+                    {{ displayText }}
+                </slot>
+            </div>
         </Transition>
         <div v-if="isLongText" class="show-more-btn-container">
             <button class="show-more-btn" @click="toggleText">

@@ -110,6 +110,17 @@ export const UPDATED_COMMENT_SUCCESS_ALERT: Alert = {
     dismissable: false,
 };
 
+export const SAVED_BOOK_CLUB_BOOK_SUCCESS_ALERT: Alert = {
+    show: true,
+    type: "success",
+    messages: [
+        "your silly review was saved",
+        "went ahead and added it to your past shelf. you're welcome.",
+    ],
+    duration: 3000,
+    dismissable: false,
+};
+
 export const MOVED_BOOK_SUCCESS_ALERT: Alert = {
     show: true,
     messages: [

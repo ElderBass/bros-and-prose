@@ -7,7 +7,7 @@
             shadowColor="fuschia"
             size="small"
             hoverable
-            style="max-height: 200px; height: 180px"
+            class="past-book-card"
         >
             <BookInfo :book="book" :isLink="true" />
         </BaseCard>
@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import BaseCard from "@/components/ui/BaseCard.vue";
-import BookInfo from "@/components/features/common/BookInfo.vue";
+import BookInfo from "@/components/features/common/BookInfo/index.vue";
 import type { Book } from "@/types";
 
 const props = defineProps<{
@@ -26,6 +26,19 @@ const props = defineProps<{
 
 <style scoped>
 .past-book-link {
-    width: 320px;
+    width: 360px;
+    height: 220px;
+}
+
+.past-book-card {
+    height: 100%;
+}
+
+/* Responsive width adjustments */
+@media (max-width: 768px) {
+    .past-book-link {
+        width: 100%;
+        max-width: 360px;
+    }
 }
 </style>

@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRouter } from "vue-router";
+import { isProfileRoot } from "@/utils";
 import type { BookshelfBook } from "@/types";
 import BookCover from "@/components/features/UserProfile/Shelves/HaveReadSection/BookDetailsComponents/BookCover.vue";
 import BlurbSection from "@/components/features/UserProfile/Shelves/HaveReadSection/BookDetailsComponents/BlurbSection.vue";
@@ -78,14 +78,12 @@ const emit = defineEmits<{
     (e: "close"): void;
 }>();
 
-const router = useRouter();
-
 const closeModal = () => {
     emit("close");
 };
 
 const canReview = computed(() => {
-    return router.currentRoute.value.name === "profile-root";
+    return isProfileRoot();
 });
 </script>
 

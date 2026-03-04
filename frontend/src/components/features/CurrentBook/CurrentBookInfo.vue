@@ -6,10 +6,10 @@
 
 <script setup lang="ts">
 import type { Book } from "@/types";
-import BookInfo from "@/components/features/common/BookInfo.vue";
+import BookInfo from "@/components/features/common/BookInfo/index.vue";
 
 defineProps<{
-    book: Book | null;
+    book: Book;
 }>();
 </script>
 

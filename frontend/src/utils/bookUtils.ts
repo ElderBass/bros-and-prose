@@ -1,4 +1,5 @@
-import type { BookshelfBook } from "@/types";
+import { useUserStore } from "@/stores/user";
+import type { Book, BookshelfBook } from "@/types";
 
 const sortBooksAsc = (books: BookshelfBook[]) => {
     return books.sort((a, b) => {
@@ -26,4 +27,11 @@ export const sortBooks = (
         return sortBooksAsc(books);
     }
     return sortBooksDesc(books);
+};
+
+export const getBookNominatorUsername = (book: Book) => {
+    const nominatorId = book.nominator;
+
+    const nominator = useUserStore().getUserById(nominatorId);
+    return nominator?.username || "some shmuck";
 };
