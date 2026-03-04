@@ -167,7 +167,7 @@ const onCancelClick = () => {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
+    gap: 0.25rem;
     font-size: 1.25rem;
     width: 100%;
     min-height: 40px;
@@ -206,7 +206,6 @@ const onCancelClick = () => {
 @media (min-width: 768px) {
     .progress-info {
         font-size: 1.75rem;
-        gap: 2rem;
     }
     .progress-percentage {
         font-size: 1.75rem;

@@ -1,4 +1,4 @@
-import type { ApiResponse, User } from "@/types";
+import type { ApiResponse, ShelfAddMetadata, User } from "@/types";
 import { apiRequest } from "./api";
 import { mockUsers } from "@/data/mockUsers";
 
@@ -42,12 +42,17 @@ export const usersService = {
             throw error;
         }
     },
-    updateUser: async (userId: string, user: User) => {
+    updateUser: async (
+        userId: string,
+        user: User,
+        metadata?: ShelfAddMetadata
+    ) => {
         try {
+            const payload = metadata ? { ...user, metadata } : user;
             const response = await apiRequest<ApiResponse<User>>(
                 "PUT",
                 `/api/users/id/${userId}`,
-                user
+                payload
             );
             return response.data;
         } catch (error) {

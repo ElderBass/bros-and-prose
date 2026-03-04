@@ -53,3 +53,11 @@ export type AvatarProp = {
     prefix: IconPrefix;
     iconName: IconName;
 };
+
+export type ShelfAddMetadata = {
+    updateType: string;
+    bookTitle: string;
+    bookAuthor: string;
+    bookDescription: string;
+    username: string;
+};

@@ -3,6 +3,7 @@ import type {
     Book,
     BookshelfBook,
     FutureBook,
+    ShelfAddMetadata,
     SubmitReviewArgs,
     User,
 } from "@/types";
@@ -58,8 +59,16 @@ export const useUser = () => {
         return users.filter((user) => user.id !== loggedInUser.value.id);
     };
 
-    const updateUser = async (userId: string, user: User) => {
-        const updatedUser = await usersService.updateUser(userId, user);
+    const updateUser = async (
+        userId: string,
+        user: User,
+        metadata?: ShelfAddMetadata
+    ) => {
+        const updatedUser = await usersService.updateUser(
+            userId,
+            user,
+            metadata
+        );
         const sanitizedUser = sanitizeUser(updatedUser);
 
         if (userId === loggedInUser.value.id) {
