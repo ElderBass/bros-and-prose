@@ -3,6 +3,7 @@ import type {
     Book,
     BookshelfBook,
     FutureBook,
+    ProgressUpdateMetadata,
     ShelfAddMetadata,
     SubmitReviewArgs,
     User,
@@ -62,7 +63,7 @@ export const useUser = () => {
     const updateUser = async (
         userId: string,
         user: User,
-        metadata?: ShelfAddMetadata
+        metadata?: ShelfAddMetadata | ProgressUpdateMetadata
     ) => {
         const updatedUser = await usersService.updateUser(
             userId,

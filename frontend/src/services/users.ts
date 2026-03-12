@@ -1,4 +1,9 @@
-import type { ApiResponse, ShelfAddMetadata, User } from "@/types";
+import type {
+    ApiResponse,
+    ProgressUpdateMetadata,
+    ShelfAddMetadata,
+    User,
+} from "@/types";
 import { apiRequest } from "./api";
 import { mockUsers } from "@/data/mockUsers";
 
@@ -45,7 +50,7 @@ export const usersService = {
     updateUser: async (
         userId: string,
         user: User,
-        metadata?: ShelfAddMetadata
+        metadata?: ShelfAddMetadata | ProgressUpdateMetadata
     ) => {
         try {
             const payload = metadata ? { ...user, metadata } : user;
