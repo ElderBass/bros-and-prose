@@ -62,3 +62,13 @@ export type ShelfAddMetadata = {
     bookDescription: string;
     username: string;
 };
+
+export type ProgressUpdateMetadata = {
+    updateType: string;
+    username: string;
+    bookTitle: string;
+    bookAuthor: string;
+    currentPage: string;
+    totalPages: string;
+    percentage: string;
+};

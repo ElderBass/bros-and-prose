@@ -1,4 +1,5 @@
-import type { User } from "@/types";
+import type { BookshelfBook, ProgressUpdateMetadata, User } from "@/types";
+import { useUserStore } from "@/stores/user";
 
 /**
  * Get the reading progress for a specific book on the currentlyReading shelf
@@ -58,4 +59,30 @@ export const removeBookProgress = (user: User, bookId: string): User => {
  */
 export const hasProgress = (user: User, bookId: string): boolean => {
     return user.bookProgress?.[bookId] !== undefined;
+};
+
+/**
+ * Build metadata for progress update notifications
+ * @param book - The book being updated
+ * @param currentPage - The current page number
+ * @returns Metadata object for email notification
+ */
+export const buildProgressUpdateMetadata = (
+    book: BookshelfBook,
+    currentPage: number
+): ProgressUpdateMetadata => {
+    const username = useUserStore().loggedInUser.username;
+    const totalPages = book.pages || 0;
+    const percentage =
+        totalPages > 0 ? Math.round((currentPage / totalPages) * 100) : 0;
+
+    return {
+        updateType: "shelf_progress_updated",
+        username,
+        bookTitle: book.title,
+        bookAuthor: book.author,
+        currentPage: currentPage.toString(),
+        totalPages: totalPages.toString(),
+        percentage: percentage.toString(),
+    };
 };

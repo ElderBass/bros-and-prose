@@ -106,6 +106,11 @@ const getEmailMessaging = (
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> wants to read <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span> by <span style="color:#00ff7f;">${data.bookAuthor}</span>.`,
                 text: data.bookDescription,
             };
+        case "shelf_progress_updated":
+            return {
+                title: "Ya Boy's Grindin' Through Pages",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> is on page <span style="font-weight: bold;color:#ff4dff;">${data.currentPage}</span> of <span style="color:#00ff7f;">${data.totalPages}</span> in <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span> by <span style="color:#00ff7f;">${data.bookAuthor}</span> (${data.percentage}% complete).`,
+            };
         default:
             return {
                 title: "New Misc Item",
