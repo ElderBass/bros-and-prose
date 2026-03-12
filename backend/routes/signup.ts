@@ -47,6 +47,7 @@ export const signup = async (req: express.Request, res: express.Response) => {
             password: hashedPassword,
             username: username.trim(),
             currentBookProgress: 0,
+            bookProgress: {},
             reviews: {},
             avatar: "user-astronaut",
         };

@@ -13,6 +13,7 @@ export interface User {
     username: string;
     email: string;
     currentBookProgress: number;
+    bookProgress?: { [bookId: string]: number };
     avatar: string;
     avatarType?: "icon" | "image"; // Type of avatar: icon (FontAwesome) or image (uploaded file)
     reviews: {

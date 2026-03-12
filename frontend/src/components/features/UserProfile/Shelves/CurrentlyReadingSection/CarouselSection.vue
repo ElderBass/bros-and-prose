@@ -9,9 +9,8 @@
     >
         <template #item="{ item }">
             <div class="item-wrap">
-                <BookshelfListItem
+                <CurrentlyReadingBookItem
                     :book="item as BookshelfBook"
-                    shelf="currentlyReading"
                     :isLoggedInUser="isLoggedInUser"
                 />
             </div>
@@ -23,7 +22,7 @@
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import type { BookshelfBook } from "@/types";
-import BookshelfListItem from "@/components/features/UserProfile/Shelves/BookshelfListItem.vue";
+import CurrentlyReadingBookItem from "@/components/features/UserProfile/Shelves/CurrentlyReadingBookItem.vue";
 import BaseCarousel from "@/components/ui/BaseCarousel.vue";
 
 defineOptions({ name: "CurrentlyReadingCarouselSection" });
