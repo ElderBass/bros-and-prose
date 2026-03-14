@@ -40,6 +40,7 @@ import BaseCard from "@/components/ui/BaseCard.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
 import type { ProseEntry } from "@/types";
+import { getPlainTextFromMarkdown } from "@/utils";
 
 const props = defineProps<{
     entry: ProseEntry;
@@ -71,10 +72,7 @@ const typeColor = computed(() => {
 
 const previewText = computed(() => {
     const rawText = props.entry.excerpt || props.entry.markdown || "";
-    return rawText
-        .replace(/[#*_`>\-\[\]\(\)!]/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
+    return getPlainTextFromMarkdown(rawText);
 });
 </script>
 
