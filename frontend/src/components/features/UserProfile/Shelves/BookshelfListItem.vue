@@ -24,9 +24,10 @@
                 </div>
             </div>
 
-            <ExpandableText
-                :text="book.description || EMPTY_TEXT"
-                :truncateLength="100"
+            <BlurbAndDescription
+                :blurb="book.userBlurb"
+                :description="book.description"
+                :showDescription="true"
             />
         </div>
     </div>
@@ -38,8 +39,7 @@ import BookCover from "@/components/features/common/BookCover.vue";
 import BookMetadata from "@/components/features/common/BookMetadata.vue";
 import TagsContainer from "../../common/TagsContainer.vue";
 import BookshelfBookListItemActions from "@/components/features/UserProfile/Shelves/BookshelfListItemActions.vue";
-import ExpandableText from "@/components/features/common/ExpandableText.vue";
-import { EMPTY_TEXT } from "@/constants";
+import BlurbAndDescription from "@/components/features/common/BlurbAndDescription.vue";
 
 defineProps<{
     book: BookshelfBook;

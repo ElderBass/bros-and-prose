@@ -9,7 +9,7 @@
         <LoadingSpinnerContainer
             v-if="loading"
             size="large"
-            message="updating book..."
+            message="edging book..."
         />
         <div v-else class="shelf-form">
             <ShelfSelector
@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import BaseModal from "@/components/ui/BaseModal.vue";
 import ShelfSelector from "../ShelfSelector.vue";
@@ -49,6 +49,13 @@ const { editBookModalOpen, selectedBook, selectedBookShelf } =
 const { closeModal } = shelfModalStore;
 
 const loading = ref(false);
+
+// Reset loading state when modal opens
+watch(editBookModalOpen, (isOpen) => {
+    if (isOpen) {
+        loading.value = false;
+    }
+});
 
 const shelfMessage = computed(() => {
     return getShelfMessage(selectedBookShelf.value);

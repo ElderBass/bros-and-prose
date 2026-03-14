@@ -17,6 +17,7 @@ export const getInitialBookValues = (
         pages: initialValues?.pages,
         tags: initialValues?.tags ?? [],
         description: initialValues?.description ?? "",
+        userBlurb: initialValues?.userBlurb ?? "",
         imageSrc: initialValues?.imageSrc ?? "",
     } as BookshelfBook | FutureBook;
 };

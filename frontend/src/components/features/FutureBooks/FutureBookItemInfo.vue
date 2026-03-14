@@ -31,7 +31,11 @@
                 </div>
             </div>
         </div>
-        <ExpandableText :text="book.description" />
+        <BlurbAndDescription
+            :blurb="book.userBlurb"
+            :description="book.description"
+            :showDescription="true"
+        />
     </div>
 </template>
 
@@ -41,7 +45,7 @@ import type { FutureBook } from "@/types";
 import { computed } from "vue";
 import { faGlasses } from "@fortawesome/free-solid-svg-icons";
 import BookTag from "@/components/ui/BookTag.vue";
-import ExpandableText from "@/components/features/common/ExpandableText.vue";
+import BlurbAndDescription from "@/components/features/common/BlurbAndDescription.vue";
 
 const props = defineProps<{
     book: FutureBook;

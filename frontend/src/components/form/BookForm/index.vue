@@ -91,7 +91,7 @@ const props = withDefaults(
     {
         initialValues: () => ({ ...EMPTY_SHELF_BOOK }),
         validation: undefined,
-        dirtyKeys: () => ["tags", "description", "pages"],
+        dirtyKeys: () => ["tags", "description", "userBlurb", "pages"],
         selectedShelf: undefined,
         initialIsFavorited: false,
     }
@@ -158,7 +158,7 @@ const canSubmit = computed(() => {
     if (!book.value.author) return false;
     if (!book.value.yearPublished) return false;
     if (v.requireTags && book.value.tags?.length === 0) return false;
-    if (v.requireDescription && !book.value.description?.trim()) return false;
+    if (v.requireDescription && !book.value.userBlurb?.trim()) return false;
     return true;
 });
 
@@ -198,6 +198,7 @@ const onSelectResult = (result: BookFormSearchResult) => {
         pages: result.pages,
         imageSrc: result.imageSrc,
         description: result.description,
+        userBlurb: "",
     };
 
     book.value = { ...book.value, ...mapped };

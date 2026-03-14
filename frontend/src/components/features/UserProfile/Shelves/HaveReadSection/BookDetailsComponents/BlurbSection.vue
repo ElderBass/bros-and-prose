@@ -1,10 +1,10 @@
 <template>
     <div class="section">
-        <h3 class="section-title">{{ possessiveLabel }} blurb</h3>
-        <ExpandableText
-            :text="book.description || EMPTY_TEXT"
-            :truncateLength="100"
-            :isLoggedInUser="canReview"
+        <BlurbAndDescription
+            :blurb="book.userBlurb"
+            :description="book.description"
+            :showDescription="true"
+            :possessiveLabel="possessiveLabel"
         />
     </div>
 </template>
@@ -12,8 +12,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { BookshelfBook } from "@/types";
-import ExpandableText from "@/components/features/common/ExpandableText.vue";
-import { EMPTY_TEXT } from "@/constants";
+import BlurbAndDescription from "@/components/features/common/BlurbAndDescription.vue";
 
 const props = defineProps<{
     book: BookshelfBook;

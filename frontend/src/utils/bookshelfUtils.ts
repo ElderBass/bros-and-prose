@@ -34,7 +34,8 @@ export const buildBookShelfEntry = (
         id: uuid(),
         title: capitalizeBookTitle(fullTitle),
         author: author_name[0].trim(),
-        description: comment.trim(),
+        description: "",
+        userBlurb: comment.trim(),
         yearPublished: parseInt(first_publish_year?.toString()) || 1969,
         imageSrc: cover_i
             ? `https://covers.openlibrary.org/b/id/${cover_i}-M.jpg`
@@ -158,6 +159,7 @@ export const convertBookToBookshelfBook = (
         pages: book.totalPages,
         tags: tags || [],
         description: "",
+        userBlurb: "",
     };
 };
 
@@ -182,6 +184,7 @@ export const buildShelfAddMetadata = (
         bookTitle: book.title,
         bookAuthor: book.author,
         bookDescription:
+            book.userBlurb ||
             book.description ||
             "the description of this book is not part of god's plan",
         username,
