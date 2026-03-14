@@ -1,5 +1,6 @@
 import express from "express";
 import { db } from "../db/index.js";
+import { sendEmailNotification } from "../mailjet/sendEmailNotification.js";
 
 export const getProseEntries = async (_: express.Request, res: express.Response) => {
     try {
@@ -37,12 +38,16 @@ export const getProseEntries = async (_: express.Request, res: express.Response)
 };
 
 export const addProseEntry = async (req: express.Request, res: express.Response) => {
-    const { entry } = req.body;
-
-    console.log("KERTWANGING INCOMING entry in addProseEntry", entry);
+    const { entry, metadata } = req.body;
 
     try {
         await db.ref("prose").child(entry.id).set(entry);
+        const fallbackMetadata = {
+            username: entry?.userInfo?.username ?? "",
+            proseTitle: entry?.title ?? "",
+            text: entry?.markdown ?? "",
+        };
+        sendEmailNotification("prose_created", metadata ?? fallbackMetadata);
         res.json({
             success: true,
             message: "Prose entry added successfully",
@@ -60,9 +65,7 @@ export const addProseEntry = async (req: express.Request, res: express.Response)
 
 export const updateProseEntry = async (req: express.Request, res: express.Response) => {
     const { entryId } = req.params;
-    const { entry } = req.body;
-
-    console.log("KERTWANGING INCOMING entry in updateProseEntry", entry);
+    const { entry, metadata } = req.body;
 
     try {
         const entryRef = db.ref(`prose/${entryId}`);
@@ -74,6 +77,10 @@ export const updateProseEntry = async (req: express.Request, res: express.Respon
             message: `Prose entry ${entryId} updated successfully`,
             data: updatedEntry.val(),
         });
+
+        if (metadata?.updateType) {
+            sendEmailNotification(metadata.updateType, metadata);
+        }
     } catch (error) {
         console.log("UPDATE PROSE ENTRY ERROR in updateProseEntry", error);
         res.status(500).json({
@@ -86,8 +93,6 @@ export const updateProseEntry = async (req: express.Request, res: express.Respon
 
 export const deleteProseEntry = async (req: express.Request, res: express.Response) => {
     const { entryId } = req.params;
-
-    console.log("KERTWANGING INCOMING entryId in deleteProseEntry", entryId);
 
     try {
         const entryRef = db.ref(`prose/${entryId}`);

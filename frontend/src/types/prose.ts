@@ -3,7 +3,12 @@ import type { UserInfo } from "./user";
 
 export type ProseType = "creative" | "academic" | "poetic" | "misc";
 
-export type ProseReactionType = "like" | "dislike" | "comment" | "reply";
+export type ProseUpdateType =
+    | "prose_created"
+    | "prose_like"
+    | "prose_dislike"
+    | "prose_comment"
+    | "prose_reply";
 
 export interface ProseEntry {
     id: string;
@@ -25,7 +30,7 @@ export interface ProseEntryMetadata {
     proseTitle: string;
     targetUsername?: string;
     targetUserEmail?: string;
-    updateType?: ProseReactionType | "prose_created";
+    updateType?: ProseUpdateType;
     replyToText?: string;
     mentionedUsers?: Array<{ username: string; email: string }>;
 }
