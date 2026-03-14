@@ -61,6 +61,14 @@ const router = createRouter({
             component: () => import("@/components/views/PalaverView.vue"),
         },
         {
+            path: "/prose",
+            component: () => import("@/components/views/ProseView.vue"),
+        },
+        {
+            path: "/prose/:proseId",
+            component: () => import("@/components/views/ProseDetailView.vue"),
+        },
+        {
             path: "/:pathMatch(.*)*",
             name: "four-oh-four",
             component: () => import("@/components/views/FourOhFourView.vue"),
