@@ -48,7 +48,7 @@
                 <BaseButton
                     variant="outline"
                     type="submit"
-                    :disabled="!canSubmitComment"
+                    :disabled="!canSubmitComment || submitting"
                     v-bind="actionButtonProps"
                     >{{ secondaryButtonLabel }}</BaseButton
                 >

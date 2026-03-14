@@ -26,6 +26,10 @@ const sortProseEntries = (entries: ProseEntry[]) => {
         );
 };
 
+const getUniqueUsernames = (users: string[] = []) => {
+    return Array.from(new Set(users));
+};
+
 const getMentionMetadata = (text: string) => {
     const currentUserId = useUserStore().loggedInUser?.id;
     const allUsers = useUserStore().allUsers;
@@ -191,7 +195,10 @@ export const useProse = () => {
                     if (action === "like") {
                         return {
                             ...comment,
-                            likes: [...(comment.likes || []), loggedInUsername],
+                            likes: getUniqueUsernames([
+                                ...(comment.likes || []),
+                                loggedInUsername,
+                            ]),
                             dislikes: (comment.dislikes || []).filter(
                                 (username) => username !== loggedInUsername
                             ),
@@ -199,10 +206,10 @@ export const useProse = () => {
                     }
                     return {
                         ...comment,
-                        dislikes: [
+                        dislikes: getUniqueUsernames([
                             ...(comment.dislikes || []),
                             loggedInUsername,
-                        ],
+                        ]),
                         likes: (comment.likes || []).filter(
                             (username) => username !== loggedInUsername
                         ),
@@ -226,17 +233,20 @@ export const useProse = () => {
             action === "like"
                 ? {
                       ...proseEntry,
-                      likes: [...(proseEntry.likes || []), loggedInUsername],
+                      likes: getUniqueUsernames([
+                          ...(proseEntry.likes || []),
+                          loggedInUsername,
+                      ]),
                       dislikes: (proseEntry.dislikes || []).filter(
                           (username) => username !== loggedInUsername
                       ),
                   }
                 : {
                       ...proseEntry,
-                      dislikes: [
+                      dislikes: getUniqueUsernames([
                           ...(proseEntry.dislikes || []),
                           loggedInUsername,
-                      ],
+                      ]),
                       likes: (proseEntry.likes || []).filter(
                           (username) => username !== loggedInUsername
                       ),

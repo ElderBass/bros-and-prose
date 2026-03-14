@@ -21,6 +21,7 @@
         v-if="showReplyModal"
         :open="showReplyModal"
         :isItemComment="true"
+        :submitting="submittingReply"
         :replyTo="replyContext"
         @submit="submitReply"
         @close="closeReplyModal"
@@ -42,8 +43,11 @@ const props = defineProps<{
 }>();
 
 const comments = computed<Comment[]>(() => props.entry.comments || []);
+const { addComment } = useProse();
+const { showAlert } = useUIStore();
 
 const showReplyModal = ref(false);
+const submittingReply = ref(false);
 const replyContext = ref<
     { commentId: string; username: string; text: string } | undefined
 >();
@@ -63,19 +67,22 @@ const closeReplyModal = () => {
 };
 
 const submitReply = async (reply: Comment) => {
+    submittingReply.value = true;
     try {
-        await useProse().addComment(props.entry, reply);
+        await addComment(props.entry, reply);
         closeReplyModal();
-        useUIStore().showAlert(ADDED_COMMENT_SUCCESS_ALERT);
+        showAlert(ADDED_COMMENT_SUCCESS_ALERT);
     } catch (error) {
         console.error("Error submitting prose reply:", error);
         await useLog().error(`Error submitting prose reply: ${error}`);
-        useUIStore().showAlert(
+        showAlert(
             QUICK_ERROR([
                 "failed to submit reply",
                 (error as Error).message || "unknown error",
             ])
         );
+    } finally {
+        submittingReply.value = false;
     }
 };
 </script>

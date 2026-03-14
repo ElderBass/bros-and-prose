@@ -6,6 +6,7 @@ import { useFutureBooks } from "@/composables/useFutureBooks";
 import { useUser } from "@/composables/useUser";
 import { getUserFromStorage, getUserInfo, isGuestUser } from "@/utils";
 import { usePalaver } from "@/composables/usePalaver";
+import { useProse } from "@/composables/useProse";
 
 export const initApp = async () => {
     try {
@@ -17,6 +18,7 @@ export const initApp = async () => {
         await useFutureBooks().getCurrentSelections(true);
         await useFutureBooks().getArchivedSelections();
         await usePalaver().getPalaverEntries(true);
+        await useProse().getProseEntries();
 
         const userFromStorage = getUserFromStorage();
         if (userFromStorage) {
