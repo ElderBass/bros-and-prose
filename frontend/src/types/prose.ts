@@ -28,6 +28,7 @@ export interface ProseEntry {
 export interface ProseEntryMetadata {
     username: string;
     proseTitle: string;
+    text?: string;
     targetUsername?: string;
     targetUserEmail?: string;
     updateType?: ProseUpdateType;
