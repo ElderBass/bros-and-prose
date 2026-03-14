@@ -3,9 +3,9 @@
         <ProseTypeFilters />
 
         <div v-if="!entries.length" class="empty-state">
-            <p class="empty-title">no prose matches this filter yet</p>
+            <p class="empty-title">{{ emptyTitle }}</p>
             <p class="empty-subtitle">
-                try another type or be the first to publish one.
+                {{ emptySubtitle }}
             </p>
         </div>
 
@@ -21,11 +21,30 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import { computed } from "vue";
 import ProseTypeFilters from "./ProseTypeFilters.vue";
 import ProseListItem from "./ProseListItem.vue";
 import { useProseStore } from "@/stores/prose";
 
-const { filteredEntries: entries } = storeToRefs(useProseStore());
+const {
+    filteredEntries: entries,
+    entries: allEntries,
+    selectedFilter,
+} = storeToRefs(useProseStore());
+
+const emptyTitle = computed(() => {
+    if (!allEntries.value.length) {
+        return "no prose yet";
+    }
+    return `no ${selectedFilter.value} prose yet`;
+});
+
+const emptySubtitle = computed(() => {
+    if (!allEntries.value.length) {
+        return "publish the first one and get the section started.";
+    }
+    return "try another type or publish a new piece in this category.";
+});
 </script>
 
 <style scoped>

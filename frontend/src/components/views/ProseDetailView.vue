@@ -7,7 +7,6 @@
             size="large"
             message="loading prose details..."
         />
-
         <div v-else-if="!entry" class="prose-detail-view empty-state">
             <p>couldn't find that prose piece.</p>
         </div>
@@ -66,6 +65,7 @@
         v-if="showCommentModal"
         :open="showCommentModal"
         :isItemComment="true"
+        :submitting="submittingComment"
         @submit="submitComment"
         @close="showCommentModal = false"
     />
@@ -90,7 +90,7 @@ import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
 import { useUIStore } from "@/stores/ui";
 import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
-import type { Comment } from "@/types";
+import type { Comment, ProseEntry } from "@/types";
 import { isGuestUser } from "@/utils";
 import { useLog } from "@/composables";
 
@@ -98,15 +98,13 @@ const route = useRoute();
 const proseId = computed(() => String(route.params.proseId || ""));
 
 const { entries } = storeToRefs(useProseStore());
-const { getProseEntries, addComment } = useProse();
+const { addComment } = useProse();
 const { showAlert } = useUIStore();
 
 const loading = ref(false);
 const showCommentModal = ref(false);
-
-const entry = computed(() => {
-    return entries.value.find((item) => item.id === proseId.value);
-});
+const submittingComment = ref(false);
+const entry = ref<ProseEntry | undefined>(undefined);
 
 const createdAtLabel = computed(() => {
     if (!entry.value) return "";
@@ -123,17 +121,9 @@ const createdAtLabel = computed(() => {
     }
 });
 
-const loadProseDetail = async () => {
-    loading.value = true;
-    try {
-        await getProseEntries();
-    } finally {
-        loading.value = false;
-    }
-};
-
 const submitComment = async (comment: Comment) => {
     if (!entry.value) return;
+    submittingComment.value = true;
     try {
         await addComment(entry.value, comment);
         showCommentModal.value = false;
@@ -147,18 +137,22 @@ const submitComment = async (comment: Comment) => {
                 (error as Error).message || "unknown error",
             ])
         );
+    } finally {
+        submittingComment.value = false;
     }
 };
-
-onMounted(async () => {
-    await loadProseDetail();
+onMounted(() => {
+    entry.value = entries.value.find(
+        (item) => item.id === proseId.value
+    ) as ProseEntry;
 });
-
 watch(
     () => route.params.proseId,
     async (newId, oldId) => {
-        if (newId && newId !== oldId) {
-            await loadProseDetail();
+        if (newId && newId !== oldId && newId !== entry.value?.id) {
+            entry.value = entries.value.find(
+                (item) => item.id === newId
+            ) as ProseEntry;
         }
     }
 );
@@ -180,6 +174,20 @@ watch(
     justify-content: center;
     align-items: center;
     color: var(--accent-lavender);
+    text-align: center;
+}
+
+.error-title {
+    margin: 0;
+    color: var(--accent-fuschia);
+    font-size: 1.1rem;
+}
+
+.error-subtitle {
+    margin: 0.35rem 0 0.5rem;
+    color: var(--main-text);
+    opacity: 0.82;
+    font-size: 0.92rem;
 }
 
 .detail-card,
