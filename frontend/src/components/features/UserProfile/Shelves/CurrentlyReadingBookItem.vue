@@ -26,9 +26,10 @@
                 </div>
             </div>
 
-            <ExpandableText
-                :text="book.description || EMPTY_TEXT"
-                :truncateLength="100"
+            <BlurbAndDescription
+                :blurb="book.userBlurb"
+                :description="book.description"
+                :showDescription="false"
             />
         </div>
 
@@ -124,11 +125,10 @@ import { useUserStore } from "@/stores/user";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { convertToPercentage, recommendBook } from "@/utils";
 import { getBookProgress } from "@/utils/shelfProgressUtils";
-import { EMPTY_TEXT } from "@/constants";
 import BookCover from "@/components/features/common/BookCover.vue";
 import BookMetadata from "@/components/features/common/BookMetadata.vue";
 import BookshelfBookListItemActions from "@/components/features/UserProfile/Shelves/BookshelfListItemActions.vue";
-import ExpandableText from "@/components/features/common/ExpandableText.vue";
+import BlurbAndDescription from "@/components/features/common/BlurbAndDescription.vue";
 import ProgressSliderInput from "@/components/form/ProgressSliderInput.vue";
 import ElementSwap from "@/components/transitions/ElementSwap.vue";
 import { faHandPeace, faCircleCheck } from "@fortawesome/free-solid-svg-icons";

@@ -4,7 +4,11 @@
             <div
                 :key="showFullText ? 'expanded' : 'collapsed'"
                 class="text"
-                :class="{ expanded: showFullText, italics: isEmptyText }"
+                :class="{
+                    expanded: showFullText,
+                    italics: isEmptyText,
+                    opacity: isEmptyText,
+                }"
             >
                 <slot :displayText="displayText" :showFullText="showFullText">
                     {{ displayText }}
@@ -82,6 +86,10 @@ const toggleText = () => {
 
 .text.italics {
     font-style: italic;
+}
+
+.text.opacity {
+    opacity: 0.75;
 }
 
 .text:not(.expanded) {
