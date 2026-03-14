@@ -10,6 +10,7 @@ import type {
     ArchivedBooksEntry,
     FutureBookSelectorRequest,
     PalaverEntryRequest,
+    ProseEntryRequest,
     AvatarRequest,
 } from "@/types";
 import type { FutureBookRequest } from "./futureBooks";
@@ -50,6 +51,7 @@ export const apiRequest = async <T>(
         | { log: Log }
         | FutureBook
         | PalaverEntryRequest
+        | ProseEntryRequest
         | ArchivedBooksEntry
         | FutureBookSelectorRequest
         | FutureBookRequest
