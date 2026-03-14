@@ -33,7 +33,9 @@
                 </div>
 
                 <h2 class="title">{{ entry.title }}</h2>
-                <pre class="markdown-body">{{ entry.markdown }}</pre>
+                <div class="markdown-body">
+                    <MarkdownContent :markdown="entry.markdown" />
+                </div>
 
                 <div class="actions-row">
                     <ProseEntryReactionActions :entry="entry" />
@@ -83,6 +85,7 @@ import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import ProseEntryReactionActions from "@/components/features/Prose/ProseEntryReactionActions.vue";
 import ProseCommentsSection from "@/components/features/Prose/ProseCommentsSection.vue";
+import MarkdownContent from "@/components/features/common/MarkdownContent.vue";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
 import { useUIStore } from "@/stores/ui";
@@ -225,12 +228,6 @@ watch(
     border: 1px solid rgba(0, 191, 255, 0.35);
     border-radius: 0.75rem;
     padding: 0.9rem;
-    white-space: pre-wrap;
-    word-break: break-word;
-    color: var(--main-text);
-    font-family: "Crimson Text", serif;
-    font-size: 1.1rem;
-    line-height: 1.55;
 }
 
 .actions-row {
