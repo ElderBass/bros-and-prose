@@ -11,6 +11,7 @@ export const getMainLinks = () => {
 export const getOtherLinks = (isMobile = false) => {
     let otherLinks: { path: string; label: string }[] = [
         { path: "/bros", label: "bros" },
+        { path: "/prose", label: "prose" },
         { path: "/palaver", label: "palaver" },
         { path: "/profile", label: "profile" },
     ];
