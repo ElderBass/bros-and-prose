@@ -61,10 +61,16 @@
                 <p class="hint" v-if="validationMessage">
                     {{ validationMessage }}
                 </p>
+                <p v-else-if="draftRestored" class="hint saved-hint">
+                    draft restored, your ass is welcome
+                </p>
                 <span class="char-count"
                     >{{ markdown.trim().length }}/6000</span
                 >
             </div>
+            <p v-if="lastSavedLabel" class="autosave-status">
+                saved that shit for ya bud {{ lastSavedLabel }}
+            </p>
 
             <div class="actions">
                 <BaseButton
@@ -96,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { v4 as uuidv4 } from "uuid";
 import BaseModal from "@/components/ui/BaseModal.vue";
@@ -109,9 +115,15 @@ import { useProse } from "@/composables/useProse";
 import { useUserStore } from "@/stores/user";
 import { useUIStore } from "@/stores/ui";
 import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
-import { getPlainTextFromMarkdown, getUserInfo } from "@/utils";
+import {
+    clearProseDraft,
+    getPlainTextFromMarkdown,
+    getProseDraft,
+    getUserInfo,
+    setProseDraft,
+} from "@/utils";
 import { useLog } from "@/composables/useLog";
-import type { ProseEntry, ProseType } from "@/types";
+import type { ProseDraft, ProseEntry, ProseType } from "@/types";
 
 const props = withDefaults(
     defineProps<{
@@ -136,6 +148,9 @@ const type = ref<ProseType>("creative");
 const markdown = ref("");
 const showPreview = ref(false);
 const submitting = ref(false);
+const draftRestored = ref(false);
+const lastSavedAt = ref("");
+let draftSaveTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const typeOptions = [
     { label: "creative", value: "creative" },
@@ -150,16 +165,70 @@ const resetForm = () => {
     markdown.value = "";
     showPreview.value = false;
     submitting.value = false;
+    draftRestored.value = false;
+    lastSavedAt.value = "";
 };
 
 watch(
     () => props.open,
     (isOpen) => {
         if (isOpen) {
-            resetForm();
+            const draft = getProseDraft();
+            if (draft) {
+                title.value = draft.title;
+                type.value = draft.type;
+                markdown.value = draft.markdown;
+                draftRestored.value = true;
+                lastSavedAt.value = draft.savedAt;
+            } else {
+                resetForm();
+            }
+        } else if (draftSaveTimeout) {
+            clearTimeout(draftSaveTimeout);
+            draftSaveTimeout = null;
         }
     }
 );
+
+const saveDraft = () => {
+    if (!props.open || submitting.value) return;
+
+    const hasDraftContent =
+        title.value.trim().length > 0 || markdown.value.trim().length > 0;
+
+    if (!hasDraftContent) {
+        clearProseDraft();
+        lastSavedAt.value = "";
+        return;
+    }
+
+    const savedAt = new Date().toISOString();
+    const draft: ProseDraft = {
+        title: title.value,
+        type: type.value,
+        markdown: markdown.value,
+        savedAt,
+    };
+    setProseDraft(draft);
+    lastSavedAt.value = savedAt;
+};
+
+watch([title, type, markdown], () => {
+    if (!props.open) return;
+
+    if (draftSaveTimeout) {
+        clearTimeout(draftSaveTimeout);
+    }
+    draftSaveTimeout = setTimeout(() => {
+        saveDraft();
+    }, 500);
+});
+
+onBeforeUnmount(() => {
+    if (draftSaveTimeout) {
+        clearTimeout(draftSaveTimeout);
+    }
+});
 
 const validationMessage = computed(() => {
     const trimmedTitle = title.value.trim();
@@ -176,6 +245,18 @@ const validationMessage = computed(() => {
 
 const submitDisabled = computed(() => {
     return Boolean(validationMessage.value) || !loggedInUser.value?.id;
+});
+
+const lastSavedLabel = computed(() => {
+    if (!lastSavedAt.value) return "";
+    try {
+        return new Date(lastSavedAt.value).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    } catch {
+        return "";
+    }
 });
 
 const buildProseEntry = (): ProseEntry => {
@@ -207,6 +288,9 @@ const submit = async () => {
 
     try {
         await createProseEntry(entry);
+        clearProseDraft();
+        lastSavedAt.value = "";
+        draftRestored.value = false;
         showAlert({
             ...ADDED_COMMENT_SUCCESS_ALERT,
             messages: [
@@ -281,9 +365,21 @@ label {
     opacity: 0.8;
 }
 
+.saved-hint {
+    color: var(--accent-green);
+}
+
 .char-count {
     font-size: 0.85rem;
     opacity: 0.75;
+}
+
+.autosave-status {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--main-text);
+    opacity: 0.72;
+    text-align: right;
 }
 
 .actions {

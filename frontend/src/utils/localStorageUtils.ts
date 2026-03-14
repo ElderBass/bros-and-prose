@@ -1,8 +1,9 @@
-import type { User } from "@/types";
+import type { ProseDraft, User } from "@/types";
 
 export const storage_key = "superCoolBroData";
 export const guest_storage_key = "guest";
 export const last_unread_palaver_entry_key = "lastUnreadPalaverEntry";
+export const prose_draft_key = "proseDraft";
 
 export const setUserInStorage = (user: User) => {
     localStorage.setItem(storage_key, JSON.stringify(user));
@@ -40,4 +41,22 @@ export const setLastUnreadPalaverEntry = (entryId: string, date: string) => {
         last_unread_palaver_entry_key,
         JSON.stringify({ entryId, date })
     );
+};
+
+export const getProseDraft = (): ProseDraft | null => {
+    try {
+        const draft = localStorage.getItem(prose_draft_key);
+        if (!draft) return null;
+        return JSON.parse(draft) as ProseDraft;
+    } catch {
+        return null;
+    }
+};
+
+export const setProseDraft = (draft: ProseDraft) => {
+    localStorage.setItem(prose_draft_key, JSON.stringify(draft));
+};
+
+export const clearProseDraft = () => {
+    localStorage.removeItem(prose_draft_key);
 };

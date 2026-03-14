@@ -1,18 +1,6 @@
 <template>
     <AppLayout>
-        <div class="title-row">
-            <PageTitle title="prose from the bros" />
-            <BaseButton
-                v-if="!isGuestUser()"
-                variant="outline-secondary"
-                size="small"
-                title="write a prose piece"
-                :showTooltip="false"
-                @click="showComposerModal = true"
-            >
-                push some prose
-            </BaseButton>
-        </div>
+        <PageTitle title="prose from the bros" />
         <div v-if="loading" class="spinner-wrap">
             <LoadingSpinnerContainer
                 size="large"
@@ -29,6 +17,7 @@
             @close="showComposerModal = false"
             @created="handleEntryCreated"
         />
+        <ProseFab v-if="!isGuestUser()" @click="showComposerModal = true" />
     </AppLayout>
 </template>
 
@@ -36,10 +25,10 @@
 import { ref } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
-import BaseButton from "@/components/ui/BaseButton.vue";
 import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import ProseList from "@/components/features/Prose/ProseList.vue";
 import ProseComposerModal from "@/components/features/Prose/ProseComposerModal.vue";
+import ProseFab from "@/components/features/Prose/ProseFab.vue";
 import type { ProseEntry } from "@/types";
 import { useProseStore } from "@/stores/prose";
 import { isGuestUser } from "@/utils";
@@ -60,13 +49,6 @@ const handleEntryCreated = (entry: ProseEntry) => {
     display: flex;
     flex-direction: column;
     padding: 1rem;
-}
-
-.title-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
 }
 
 .spinner-wrap {
@@ -99,12 +81,5 @@ const handleEntryCreated = (entry: ProseEntry) => {
     color: var(--main-text);
     opacity: 0.82;
     font-size: 0.95rem;
-}
-
-@media (max-width: 768px) {
-    .title-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
 }
 </style>
