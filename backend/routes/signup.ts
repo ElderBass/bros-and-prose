@@ -49,6 +49,7 @@ export const signup = async (req: express.Request, res: express.Response) => {
             currentBookProgress: 0,
             bookProgress: {},
             reviews: {},
+            savedProseIds: [],
             avatar: "user-astronaut",
         };
 

@@ -23,6 +23,7 @@ export interface User {
     currentlyReading?: BookshelfBook[];
     wantToRead?: BookshelfBook[];
     haveRead?: BookshelfBook[];
+    savedProseIds?: string[];
     favorites?: UserFavorites;
     yearReadingGoal?: number;
 }

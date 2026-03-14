@@ -6,12 +6,14 @@ export type ProseFilter = ProseType | "all";
 export interface ProseState {
     entries: ProseEntry[];
     selectedFilter: ProseFilter;
+    savedProseIds: string[];
 }
 
 export const useProseStore = defineStore("prose", {
     state: (): ProseState => ({
         entries: [],
         selectedFilter: "all",
+        savedProseIds: [],
     }),
     getters: {
         filteredEntries: (state) => {
@@ -22,6 +24,9 @@ export const useProseStore = defineStore("prose", {
                 (entry) => entry.type === state.selectedFilter
             );
         },
+        isSaved: (state) => (proseId: string) => {
+            return state.savedProseIds.includes(proseId);
+        },
     },
     actions: {
         setEntries(entries: ProseEntry[]) {
@@ -29,6 +34,12 @@ export const useProseStore = defineStore("prose", {
         },
         setFilter(filter: ProseFilter) {
             this.selectedFilter = filter;
+        },
+        setSavedProseIds(ids: string[]) {
+            this.savedProseIds = ids;
+        },
+        clearSavedProseIds() {
+            this.savedProseIds = [];
         },
         clearEntries() {
             this.entries = [];
