@@ -32,6 +32,12 @@ import {
     updatePalaverEntry,
     deletePalaverEntry,
 } from "./palaver.js";
+import {
+    getProseEntries,
+    addProseEntry,
+    updateProseEntry,
+    deleteProseEntry,
+} from "./prose.js";
 import { searchGoogleBooks } from "./googleBooks.js";
 
 const router = express.Router();
@@ -76,6 +82,12 @@ router.get("/palaver", getPalaverEntries);
 router.post("/palaver", addPalaverEntry);
 router.put("/palaver/:entryId", updatePalaverEntry);
 router.delete("/palaver/:entryId", deletePalaverEntry);
+
+// PROSE ROUTES
+router.get("/prose", getProseEntries);
+router.post("/prose", addProseEntry);
+router.put("/prose/:entryId", updateProseEntry);
+router.delete("/prose/:entryId", deleteProseEntry);
 
 // LOGGER
 router.post("/log", postLog);
