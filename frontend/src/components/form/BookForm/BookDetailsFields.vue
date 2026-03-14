@@ -139,8 +139,6 @@ const bookProxy = computed({
     set: (v: BookFormValues) => emit("update:book", v),
 });
 
-console.log("BOOK PROXY", bookProxy.value);
-
 const showFavoriteToggle = computed(() => {
     return props.selectedShelf === "haveRead";
 });
