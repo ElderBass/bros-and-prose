@@ -2,7 +2,7 @@
     <RouterLink :to="`/prose/${entry.id}`" class="prose-link">
         <BaseCard
             :shadow-color="typeColor"
-            :size="mobile ? 'small' : 'medium'"
+            :size="cardSize"
             :hoverable="true"
             class="prose-card"
         >
@@ -98,6 +98,10 @@ const previewText = computed(() => {
 
 const truncateLength = computed(() => {
     return props.entry.type === "poetic" ? 40 : 220;
+});
+
+const cardSize = computed(() => {
+    return mobile.value ? "small" : "medium";
 });
 </script>
 

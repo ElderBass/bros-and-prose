@@ -123,17 +123,17 @@ import {
     faArrowLeft,
     faCommentMedical,
 } from "@fortawesome/free-solid-svg-icons";
+
 const route = useRoute();
 const { mobile } = useDisplay();
-
-const proseId = computed(() => String(route.params.proseId || ""));
-
 const proseStore = useProseStore();
-const { entries } = storeToRefs(proseStore);
-const { addComment, getProseEntry, toggleSavedProseEntry } = useProse();
 const { showAlert } = useUIStore();
+const { addComment, getProseEntry, toggleSavedProseEntry } = useProse();
+
+const { entries } = storeToRefs(proseStore);
 const { loggedInUser } = storeToRefs(useUserStore());
 
+const proseId = computed(() => String(route.params.proseId || ""));
 const isAuthor = computed(
     () => entry.value?.userInfo?.id === loggedInUser.value?.id
 );
