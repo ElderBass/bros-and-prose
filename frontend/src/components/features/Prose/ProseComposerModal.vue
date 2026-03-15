@@ -2,7 +2,7 @@
     <BaseModal
         :modelValue="open"
         @close="closeModal"
-        title="write prose"
+        :title="editEntry ? 'edit prose' : 'write prose'"
         size="large"
         shadow-color="fuschia"
     >
@@ -88,13 +88,23 @@
                     :title="
                         submitDisabled
                             ? 'fill out required fields'
-                            : 'publish prose'
+                            : editEntry
+                              ? 'save changes'
+                              : 'publish prose'
                     "
                     :showTooltip="false"
                     :disabled="submitDisabled || submitting"
                     @click="submit"
                 >
-                    {{ submitting ? "publishing..." : "publish" }}
+                    {{
+                        submitting
+                            ? editEntry
+                                ? "saving..."
+                                : "publishing..."
+                            : editEntry
+                              ? "save"
+                              : "publish"
+                    }}
                 </BaseButton>
             </div>
         </div>
@@ -128,18 +138,21 @@ import type { ProseDraft, ProseEntry, ProseType } from "@/types";
 const props = withDefaults(
     defineProps<{
         open: boolean;
+        editEntry?: ProseEntry | null;
     }>(),
     {
         open: false,
+        editEntry: null,
     }
 );
 
 const emit = defineEmits<{
     (e: "close"): void;
     (e: "created", entry: ProseEntry): void;
+    (e: "updated", entry: ProseEntry): void;
 }>();
 
-const { createProseEntry } = useProse();
+const { createProseEntry, updateProseEntry } = useProse();
 const { loggedInUser } = storeToRefs(useUserStore());
 const { showAlert } = useUIStore();
 
@@ -170,28 +183,38 @@ const resetForm = () => {
 };
 
 watch(
-    () => props.open,
-    (isOpen) => {
+    () => [props.open, props.editEntry] as const,
+    ([isOpen]) => {
         if (isOpen) {
-            const draft = getProseDraft();
-            if (draft) {
-                title.value = draft.title;
-                type.value = draft.type;
-                markdown.value = draft.markdown;
-                draftRestored.value = true;
-                lastSavedAt.value = draft.savedAt;
+            const entry = props.editEntry;
+            if (entry) {
+                title.value = entry.title ?? "";
+                type.value = entry.type ?? "creative";
+                markdown.value = entry.markdown ?? "";
+                draftRestored.value = false;
+                lastSavedAt.value = "";
             } else {
-                resetForm();
+                const draft = getProseDraft();
+                if (draft) {
+                    title.value = draft.title;
+                    type.value = draft.type;
+                    markdown.value = draft.markdown;
+                    draftRestored.value = true;
+                    lastSavedAt.value = draft.savedAt;
+                } else {
+                    resetForm();
+                }
             }
         } else if (draftSaveTimeout) {
             clearTimeout(draftSaveTimeout);
             draftSaveTimeout = null;
         }
-    }
+    },
+    { immediate: true }
 );
 
 const saveDraft = () => {
-    if (!props.open || submitting.value) return;
+    if (!props.open || submitting.value || props.editEntry) return;
 
     const hasDraftContent =
         title.value.trim().length > 0 || markdown.value.trim().length > 0;
@@ -276,6 +299,18 @@ const buildProseEntry = (): ProseEntry => {
     };
 };
 
+const buildUpdatedEntry = (): ProseEntry => {
+    const plainText = getPlainTextFromMarkdown(markdown.value);
+    const existing = props.editEntry as ProseEntry;
+    return {
+        ...existing,
+        title: title.value.trim(),
+        type: type.value,
+        markdown: markdown.value.trim(),
+        excerpt: plainText.slice(0, 240),
+    };
+};
+
 const closeModal = () => {
     emit("close");
 };
@@ -283,29 +318,49 @@ const closeModal = () => {
 const submit = async () => {
     if (submitDisabled.value) return;
 
-    const entry = buildProseEntry();
+    const isEdit = Boolean(props.editEntry);
+    const entry = isEdit ? buildUpdatedEntry() : buildProseEntry();
     submitting.value = true;
 
     try {
-        await createProseEntry(entry);
-        clearProseDraft();
-        lastSavedAt.value = "";
-        draftRestored.value = false;
-        showAlert({
-            ...ADDED_COMMENT_SUCCESS_ALERT,
-            messages: [
-                "prose published successfully.",
-                "your piece is now live.",
-            ],
-        });
-        emit("created", entry);
+        if (isEdit) {
+            const updated = await updateProseEntry(entry);
+            showAlert({
+                show: true,
+                messages: ["prose updated.", "your changes are live."],
+                type: "success",
+                duration: 3000,
+                dismissable: false,
+            });
+            emit("updated", updated ?? entry);
+        } else {
+            await createProseEntry(entry);
+            clearProseDraft();
+            lastSavedAt.value = "";
+            draftRestored.value = false;
+            showAlert({
+                ...ADDED_COMMENT_SUCCESS_ALERT,
+                messages: [
+                    "prose published successfully.",
+                    "your piece is now live.",
+                ],
+            });
+            emit("created", entry);
+        }
         emit("close");
     } catch (error) {
-        console.error("Error creating prose entry:", error);
-        await useLog().error(`Error creating prose entry: ${error}`);
+        console.error(
+            isEdit
+                ? "Error updating prose entry:"
+                : "Error creating prose entry:",
+            error
+        );
+        await useLog().error(
+            `Error ${isEdit ? "updating" : "creating"} prose entry: ${error}`
+        );
         showAlert(
             QUICK_ERROR([
-                "failed to publish prose",
+                isEdit ? "failed to update prose" : "failed to publish prose",
                 (error as Error).message || "unknown error",
             ])
         );
