@@ -89,7 +89,10 @@
                 size="medium"
                 class="comments-card"
             >
-                <ProseCommentsSection :entry="entry" />
+                <ProseCommentsSection
+                    :entry="entry"
+                    @entry-updated="onEntryUpdated"
+                />
             </BaseCard>
         </div>
     </AppLayout>
@@ -176,11 +179,16 @@ const cardSize = computed(() => {
     return mobile.value ? "small" : "medium";
 });
 
+const onEntryUpdated = (e: ProseEntry) => {
+    entry.value = e;
+};
+
 const submitComment = async (comment: Comment) => {
     if (!entry.value) return;
     submittingComment.value = true;
     try {
-        await addComment(entry.value, comment);
+        const updated = await addComment(entry.value, comment);
+        if (updated) entry.value = updated;
         showCommentModal.value = false;
         showAlert(ADDED_COMMENT_SUCCESS_ALERT);
     } catch (error) {
