@@ -1,6 +1,31 @@
 import type { ProseEntry, ProseType } from "@/types";
+import {
+    getLastUnreadProseEntry,
+    setLastUnreadProseEntry,
+} from "./localStorageUtils";
 
 export type ProseTypeFilter = ProseType;
+
+export const checkForUnreadProseEntries = (
+    entries: ProseEntry[],
+    setHasUnread: (value: boolean) => void
+) => {
+    if (!entries.length) return;
+    const { entryId = "", date = "" } = getLastUnreadProseEntry();
+    if (!entryId) {
+        setLastUnreadProseEntry(entries[0].id, entries[0].createdAt);
+        setHasUnread(true);
+        return;
+    }
+    if (
+        entries[0].id === entryId ||
+        new Date(entries[0].createdAt).getTime() <= new Date(date).getTime()
+    ) {
+        return;
+    }
+    setLastUnreadProseEntry(entries[0].id, entries[0].createdAt);
+    setHasUnread(true);
+};
 
 export const filterProseEntries = (
     entries: ProseEntry[],

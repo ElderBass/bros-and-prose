@@ -4,6 +4,7 @@ import { proseService } from "@/services";
 import { useProseStore } from "@/stores/prose";
 import { useUserStore } from "@/stores/user";
 import type { Comment, ProseEntry, ProseEntryMetadata } from "@/types";
+import { checkForUnreadProseEntries } from "@/utils/proseUtils";
 import { getMentionedUsers } from "@/utils";
 import { useLog } from "./useLog";
 import { useUser } from "./useUser";
@@ -105,7 +106,12 @@ export function subscribeToProse() {
         const list = Object.values(value).filter(
             (item: unknown) => (item as ProseEntry).id
         ) as ProseEntry[];
-        useProseStore().setEntries(sortProseEntries(list));
+        const sorted = sortProseEntries(list);
+        const store = useProseStore();
+        store.setEntries(sorted);
+        checkForUnreadProseEntries(sorted, (v) =>
+            store.setHasUnreadProseEntries(v)
+        );
     };
 
     onValue(proseRef, handler, (error) => {
@@ -132,6 +138,9 @@ export const useProse = () => {
         if (response.success) {
             const sortedEntries = sortProseEntries(response.data);
             proseStore.setEntries(sortedEntries);
+            checkForUnreadProseEntries(sortedEntries, (v) =>
+                proseStore.setHasUnreadProseEntries(v)
+            );
             if (isInit) {
                 subscribeToProse();
             }

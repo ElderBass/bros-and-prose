@@ -105,6 +105,7 @@
         v-if="showCommentModal"
         :open="showCommentModal"
         :isItemComment="true"
+        :maxCommentLength="50000"
         :submitting="submittingComment"
         @submit="submitComment"
         @close="showCommentModal = false"
