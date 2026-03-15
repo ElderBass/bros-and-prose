@@ -36,14 +36,14 @@ defineEmits<{
 const {
     filteredEntries: entries,
     entries: allEntries,
-    selectedFilter,
+    activeFilterLabel,
 } = storeToRefs(useProseStore());
 
 const emptyTitle = computed(() => {
     if (!allEntries.value.length) {
         return "no prose yet";
     }
-    return `no ${selectedFilter.value} prose yet`;
+    return `no ${activeFilterLabel.value} prose yet`;
 });
 
 const emptySubtitle = computed(() => {

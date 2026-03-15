@@ -1,28 +1,38 @@
 import { defineStore } from "pinia";
-import type { ProseEntry, ProseType } from "@/types";
-
-export type ProseFilter = ProseType | "all";
+import type { ProseEntry } from "@/types";
+import { filterProseEntries, type ProseTypeFilter } from "@/utils/proseUtils";
 
 export interface ProseState {
     entries: ProseEntry[];
-    selectedFilter: ProseFilter;
+    filters: ProseTypeFilter[];
+    filteredBro: string;
     savedProseIds: string[];
 }
 
 export const useProseStore = defineStore("prose", {
     state: (): ProseState => ({
         entries: [],
-        selectedFilter: "all",
+        filters: [],
+        filteredBro: "",
         savedProseIds: [],
     }),
     getters: {
-        filteredEntries: (state) => {
-            if (state.selectedFilter === "all") {
+        filteredEntries(state) {
+            if (state.filters.length === 0 && state.filteredBro === "") {
                 return state.entries;
             }
-            return state.entries.filter(
-                (entry) => entry.type === state.selectedFilter
+            return filterProseEntries(
+                state.entries,
+                state.filters,
+                state.filteredBro
             );
+        },
+        activeFilterLabel(state): string {
+            if (state.filters.length === 0 && !state.filteredBro) return "all";
+            if (state.filteredBro && state.filters.length === 0)
+                return "from this bro";
+            if (state.filters.length === 1) return state.filters[0];
+            return state.filters.join(", ");
         },
         isSaved: (state) => (proseId: string) => {
             return state.savedProseIds.includes(proseId);
@@ -32,8 +42,20 @@ export const useProseStore = defineStore("prose", {
         setEntries(entries: ProseEntry[]) {
             this.entries = entries;
         },
-        setFilter(filter: ProseFilter) {
-            this.selectedFilter = filter;
+        addFilter(filter: ProseTypeFilter) {
+            if (!this.filters.includes(filter)) {
+                this.filters.push(filter);
+            }
+        },
+        removeFilter(filter: ProseTypeFilter) {
+            this.filters = this.filters.filter((f) => f !== filter);
+        },
+        clearFilters() {
+            this.filters = [];
+            this.filteredBro = "";
+        },
+        setFilteredBro(bro: string) {
+            this.filteredBro = bro;
         },
         setSavedProseIds(ids: string[]) {
             this.savedProseIds = ids;
