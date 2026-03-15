@@ -27,12 +27,6 @@ export const useProseStore = defineStore("prose", {
         isSaved: (state) => (proseId: string) => {
             return state.savedProseIds.includes(proseId);
         },
-        getComments: (state) => (proseId: string) => {
-            return (
-                state.entries.find((entry) => entry.id === proseId)?.comments ||
-                []
-            );
-        },
     },
     actions: {
         setEntries(entries: ProseEntry[]) {
