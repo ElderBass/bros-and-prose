@@ -32,37 +32,45 @@
 
                 <div class="field">
                     <label for="prose-markdown">body</label>
-                    <div class="editor-toolbar">
-                        <ProseComposerToolButton
-                            title="bold, but not brave"
-                            @click="insertWrap('**', '**')"
+                    <div class="tools-wrapper">
+                        <div class="editor-toolbar">
+                            <ProseComposerToolButton
+                                title="bold, but not brave"
+                                @click="insertWrap('**', '**')"
+                            >
+                                <span style="font-weight: bold">B</span>
+                            </ProseComposerToolButton>
+                            <ProseComposerToolButton
+                                title="italicize me, cap'n"
+                                @click="insertWrap('*', '*')"
+                            >
+                                <span style="font-style: italic">I</span>
+                            </ProseComposerToolButton>
+                            <ProseComposerToolButton
+                                title="header type of thing"
+                                @click="insertLineStart('# ')"
+                            >
+                                H1
+                            </ProseComposerToolButton>
+                            <ProseComposerToolButton
+                                title="slightly smaller header type of thing"
+                                @click="insertLineStart('## ')"
+                            >
+                                H2
+                            </ProseComposerToolButton>
+                            <ProseComposerToolButton
+                                title="hyperlink"
+                                @click="insertWrap('[', '](url)')"
+                            >
+                                <LinkIcon />
+                            </ProseComposerToolButton>
+                        </div>
+                        <p
+                            v-if="lastSavedLabel && !isEdit"
+                            class="autosave-status"
                         >
-                            <span style="font-weight: bold">B</span>
-                        </ProseComposerToolButton>
-                        <ProseComposerToolButton
-                            title="italicize me, cap'n"
-                            @click="insertWrap('*', '*')"
-                        >
-                            <span style="font-style: italic">I</span>
-                        </ProseComposerToolButton>
-                        <ProseComposerToolButton
-                            title="header type of thing"
-                            @click="insertLineStart('# ')"
-                        >
-                            H1
-                        </ProseComposerToolButton>
-                        <ProseComposerToolButton
-                            title="slightly smaller header type of thing"
-                            @click="insertLineStart('## ')"
-                        >
-                            H2
-                        </ProseComposerToolButton>
-                        <ProseComposerToolButton
-                            title="hyperlink"
-                            @click="insertWrap('[', '](url)')"
-                        >
-                            <LinkIcon />
-                        </ProseComposerToolButton>
+                            saved that shit for ya bud {{ lastSavedLabel }}
+                        </p>
                     </div>
                     <div class="editor-area">
                         <textarea
@@ -95,48 +103,53 @@
                         >{{ wordCount }} words ·
                         {{ charCount }} characters</span
                     >
-                </div>
-                <p v-if="lastSavedLabel && !isEdit" class="autosave-status">
-                    saved that shit for ya bud {{ lastSavedLabel }}
-                </p>
-
-                <div class="actions">
-                    <BaseButton
-                        variant="outline-secondary"
-                        size="small"
-                        title="cancel"
-                        :showTooltip="false"
-                        @click="onCancel"
-                    >
-                        cancel
-                    </BaseButton>
-                    <BaseButton
-                        variant="success"
-                        size="small"
-                        :title="
-                            submitDisabled
-                                ? 'fill out required fields'
-                                : isEdit
-                                  ? 'save changes'
-                                  : 'publish prose'
-                        "
-                        :showTooltip="false"
-                        :disabled="submitDisabled || submitting"
-                        @click="submit"
-                    >
-                        {{
-                            submitting
-                                ? isEdit
-                                    ? "saving..."
-                                    : "publishing..."
-                                : isEdit
-                                  ? "save"
-                                  : "publish"
-                        }}
-                    </BaseButton>
+                    <div class="actions">
+                        <BaseButton
+                            variant="outline-secondary"
+                            size="small"
+                            title="cancel"
+                            :showTooltip="false"
+                            @click="onCancel"
+                        >
+                            cancel
+                        </BaseButton>
+                        <BaseButton
+                            variant="success"
+                            size="small"
+                            :title="
+                                submitDisabled
+                                    ? 'fill out required fields'
+                                    : isEdit
+                                      ? 'save changes'
+                                      : 'publish prose'
+                            "
+                            :showTooltip="false"
+                            :disabled="submitDisabled || submitting"
+                            @click="openPublishConfirm"
+                        >
+                            {{
+                                submitting
+                                    ? isEdit
+                                        ? "saving..."
+                                        : "publishing..."
+                                    : isEdit
+                                      ? "save"
+                                      : "publish"
+                            }}
+                        </BaseButton>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <PublishProseConfirmModal
+            v-model="showPublishConfirm"
+            :prose-title="title"
+            :prose-type="type"
+            :initial-blurb="editEntry?.excerpt ?? ''"
+            :is-edit="isEdit"
+            @confirm="handlePublishConfirm"
+        />
     </AppLayout>
 </template>
 
@@ -171,6 +184,7 @@ import {
 import { useLog } from "@/composables/useLog";
 import type { ProseDraft, ProseEntry, ProseType } from "@/types";
 import ProseViewHeader from "@/components/features/Prose/ProseViewHeader.vue";
+import PublishProseConfirmModal from "@/components/features/Prose/PublishProseConfirmModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -195,6 +209,7 @@ const draftRestored = ref(false);
 const lastSavedAt = ref("");
 const editEntry = ref<ProseEntry | null>(null);
 const markdownTextareaRef = ref<HTMLTextAreaElement | null>(null);
+const showPublishConfirm = ref(false);
 let draftSaveTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const typeOptions = [
@@ -276,14 +291,15 @@ onBeforeUnmount(() => {
     }
 });
 
-const buildProseEntry = (): ProseEntry => {
+const buildProseEntry = (blurb?: string): ProseEntry => {
     const plainText = getPlainTextFromMarkdown(markdown.value);
+    const excerpt = blurb?.trim() ? blurb.trim() : plainText.slice(0, 240);
     return {
         id: uuidv4(),
         title: title.value.trim(),
         type: type.value,
         markdown: markdown.value.trim(),
-        excerpt: plainText.slice(0, 240),
+        excerpt,
         createdAt: new Date().toISOString(),
         userInfo: getUserInfo(loggedInUser.value),
         likes: [],
@@ -292,15 +308,16 @@ const buildProseEntry = (): ProseEntry => {
     };
 };
 
-const buildUpdatedEntry = (): ProseEntry => {
+const buildUpdatedEntry = (blurb?: string): ProseEntry => {
     const plainText = getPlainTextFromMarkdown(markdown.value);
     const existing = editEntry.value!;
+    const excerpt = blurb?.trim() ? blurb.trim() : plainText.slice(0, 240);
     return {
         ...existing,
         title: title.value.trim(),
         type: type.value,
         markdown: markdown.value.trim(),
-        excerpt: plainText.slice(0, 240),
+        excerpt,
     };
 };
 
@@ -373,9 +390,12 @@ function onPaste(e: ClipboardEvent) {
     setTextareaSelection(start + md.length, start + md.length);
 }
 
-const submit = async () => {
+function openPublishConfirm() {
     if (submitDisabled.value) return;
-    const entry = isEdit.value ? buildUpdatedEntry() : buildProseEntry();
+    showPublishConfirm.value = true;
+}
+
+async function submitEntry(entry: ProseEntry) {
     submitting.value = true;
     try {
         if (isEdit.value) {
@@ -422,7 +442,15 @@ const submit = async () => {
     } finally {
         submitting.value = false;
     }
-};
+}
+
+function handlePublishConfirm(blurb: string) {
+    showPublishConfirm.value = false;
+    const entry = isEdit.value
+        ? buildUpdatedEntry(blurb)
+        : buildProseEntry(blurb);
+    submitEntry(entry);
+}
 
 onMounted(async () => {
     if (isEdit.value && proseId.value) {
@@ -463,7 +491,7 @@ onMounted(async () => {
     width: 100%;
     max-width: 820px;
     margin: 0 auto;
-    padding: 1rem;
+    padding-bottom: 0;
 }
 
 .composer-wrap {
@@ -482,6 +510,13 @@ label {
     color: var(--accent-blue);
     font-size: 1.1rem;
     padding-left: 0.35rem;
+}
+
+.tools-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .editor-toolbar {

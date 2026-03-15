@@ -41,6 +41,14 @@
                 </div>
 
                 <h2 class="title">{{ entry.title }}</h2>
+                <div v-if="entry.excerpt?.trim()" class="prose-blurb">
+                    <p class="blurb-label">about this piece</p>
+                    <ExpandableText
+                        :text="entry.excerpt"
+                        :truncateLength="280"
+                        :hideMoreButton="false"
+                    />
+                </div>
                 <div class="markdown-body">
                     <MarkdownContent :markdown="entry.markdown" />
                 </div>
@@ -118,6 +126,7 @@ import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import ProseEntryReactionActions from "@/components/features/Prose/ProseEntryReactionActions.vue";
 import ProseCommentsSection from "@/components/features/Prose/ProseCommentsSection.vue";
 import MarkdownContent from "@/components/features/common/MarkdownContent.vue";
+import ExpandableText from "@/components/features/common/ExpandableText.vue";
 import EditButton from "@/components/ui/EditButton.vue";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
@@ -339,6 +348,27 @@ watch(
     padding-left: 0.5rem;
     color: var(--accent-blue);
     font-size: 1.25rem;
+}
+
+.prose-blurb {
+    padding: 0 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.prose-blurb .blurb-label {
+    margin: 0 0 0.25rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-lavender);
+    opacity: 0.9;
+}
+
+.prose-blurb :deep(.text-container) {
+    font-size: 0.95rem;
+    line-height: 1.45;
+    color: var(--main-text);
+    opacity: 0.92;
 }
 
 .markdown-body {
