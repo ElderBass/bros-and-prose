@@ -2,10 +2,6 @@
     <UserContentSection>
         <div class="user-info-section">
             <DetailsSection :user="user" :isLoggedInUser="isLoggedInUser" />
-            <FavoritesSection
-                :favorites="userFavorites"
-                :isLoggedInUser="isLoggedInUser"
-            />
         </div>
     </UserContentSection>
 </template>
@@ -14,7 +10,6 @@
 import { ref, watch } from "vue";
 import UserContentSection from "./UserContentSection.vue";
 import DetailsSection from "./UserInfo/DetailsSection.vue";
-import FavoritesSection from "./UserInfo/FavoritesSection.vue";
 import type { User, UserFavorites } from "@/types";
 
 const { isLoggedInUser, user } = defineProps<{
@@ -35,12 +30,9 @@ watch(
 <style scoped>
 .user-info-section {
     width: 100%;
-    min-height: 140px;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
     background: var(--background-color);
-    border-radius: 1rem;
 }
 
 @media (max-width: 768px) {

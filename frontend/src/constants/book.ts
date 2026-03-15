@@ -53,6 +53,7 @@ export const EMPTY_SHELF_BOOK: BookshelfBook = {
     imageSrc: "",
     tags: [],
     description: "",
+    userBlurb: "",
     yearPublished: 1969,
     pages: 0,
 };

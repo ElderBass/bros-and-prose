@@ -27,6 +27,9 @@
                 <NotificationDot
                     v-if="link.path === '/palaver' && hasUnreadEntries"
                 />
+                <NotificationDot
+                    v-if="link.path === '/prose' && hasUnreadProseEntries"
+                />
             </RouterLink>
         </div>
         <RouterLink
@@ -75,6 +78,9 @@
                     <NotificationDot
                         v-if="link.path === '/palaver' && hasUnreadEntries"
                     />
+                    <NotificationDot
+                        v-if="link.path === '/prose' && hasUnreadProseEntries"
+                    />
                 </RouterLink>
                 <RouterLink
                     v-if="!isGuest"
@@ -121,6 +127,7 @@ import {
     getMobileLinks,
 } from "@/utils";
 import { usePalaverStore } from "@/stores/palaver";
+import { useProseStore } from "@/stores/prose";
 
 const route = useRoute();
 const { mobile } = useDisplay();
@@ -128,6 +135,7 @@ const { mobile } = useDisplay();
 const isMobileMenuOpen = ref(false);
 const { loggedInUser } = storeToRefs(useUserStore());
 const { hasUnreadEntries } = storeToRefs(usePalaverStore());
+const { hasUnreadProseEntries } = storeToRefs(useProseStore());
 
 const isGuest = computed(() => {
     return isGuestUser() || loggedInUser.value.id === "guest";

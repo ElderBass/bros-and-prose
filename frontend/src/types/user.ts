@@ -13,6 +13,7 @@ export interface User {
     username: string;
     email: string;
     currentBookProgress: number;
+    bookProgress?: { [bookId: string]: number };
     avatar: string;
     avatarType?: "icon" | "image"; // Type of avatar: icon (FontAwesome) or image (uploaded file)
     reviews: {
@@ -22,6 +23,7 @@ export interface User {
     currentlyReading?: BookshelfBook[];
     wantToRead?: BookshelfBook[];
     haveRead?: BookshelfBook[];
+    savedProseIds?: string[];
     favorites?: UserFavorites;
     yearReadingGoal?: number;
 }
@@ -60,4 +62,14 @@ export type ShelfAddMetadata = {
     bookAuthor: string;
     bookDescription: string;
     username: string;
+};
+
+export type ProgressUpdateMetadata = {
+    updateType: string;
+    username: string;
+    bookTitle: string;
+    bookAuthor: string;
+    currentPage: string;
+    totalPages: string;
+    percentage: string;
 };

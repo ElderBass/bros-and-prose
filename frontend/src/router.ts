@@ -61,6 +61,42 @@ const router = createRouter({
             component: () => import("@/components/views/PalaverView.vue"),
         },
         {
+            path: "/prose",
+            component: () => import("@/components/views/ProseView.vue"),
+        },
+        {
+            path: "/prose/new",
+            name: "prose-new",
+            component: () => import("@/components/views/ProseComposerView.vue"),
+            beforeEnter: (to, from, next) => {
+                if (isGuestUser()) {
+                    next({ path: "/prose" });
+                } else if (!useUserStore().loggedInUser.id) {
+                    next({ name: "landing" });
+                } else {
+                    next();
+                }
+            },
+        },
+        {
+            path: "/prose/edit/:proseId",
+            name: "prose-edit",
+            component: () => import("@/components/views/ProseComposerView.vue"),
+            beforeEnter: (to, from, next) => {
+                if (isGuestUser()) {
+                    next({ path: "/prose" });
+                } else if (!useUserStore().loggedInUser.id) {
+                    next({ name: "landing" });
+                } else {
+                    next();
+                }
+            },
+        },
+        {
+            path: "/prose/:proseId",
+            component: () => import("@/components/views/ProseDetailView.vue"),
+        },
+        {
             path: "/:pathMatch(.*)*",
             name: "four-oh-four",
             component: () => import("@/components/views/FourOhFourView.vue"),

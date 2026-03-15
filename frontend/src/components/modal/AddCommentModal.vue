@@ -32,9 +32,7 @@
                     <p class="hint" v-if="validationMessage">
                         {{ validationMessage }}
                     </p>
-                    <span class="char-count"
-                        >{{ localComment.length }}/{{ maxLength }}</span
-                    >
+                    <span class="char-count">{{ charCountLabel }}</span>
                 </div>
             </div>
 
@@ -48,7 +46,7 @@
                 <BaseButton
                     variant="outline"
                     type="submit"
-                    :disabled="!canSubmitComment"
+                    :disabled="!canSubmitComment || submitting"
                     v-bind="actionButtonProps"
                     >{{ secondaryButtonLabel }}</BaseButton
                 >
@@ -77,6 +75,8 @@ const props = withDefaults(
         isProgressUpdate?: boolean;
         submitting?: boolean;
         isItemComment?: boolean;
+        /** When set, overrides default max length (e.g. for prose comments). */
+        maxCommentLength?: number;
         replyTo?: {
             commentId: string;
             username: string;
@@ -87,6 +87,7 @@ const props = withDefaults(
         isProgressUpdate: false,
         submitting: false,
         isItemComment: false,
+        maxCommentLength: undefined,
     }
 );
 
@@ -115,7 +116,17 @@ const labelText = computed(() => {
     }
 });
 
-const maxLength = computed(() => (props.isItemComment ? 200 : 500));
+const maxLength = computed(() => {
+    if (props.maxCommentLength != null) return props.maxCommentLength;
+    return props.isItemComment ? 200 : 500;
+});
+
+const charCountLabel = computed(() => {
+    const len = localComment.value.length;
+    const max = maxLength.value;
+    if (max >= 50000) return `${len} characters`;
+    return `${len}/${max}`;
+});
 
 const modalTitle = computed(() =>
     props.isProgressUpdate ? "hit'em with a supdate" : "add a comment"

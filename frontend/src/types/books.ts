@@ -62,6 +62,7 @@ export interface FutureBook {
     pages?: number;
     tags: string[];
     description: string;
+    userBlurb?: string;
     votes: string[];
     alreadyRead?: string[];
 }
@@ -84,6 +85,7 @@ export interface BookshelfBook {
     author: string;
     imageSrc: string;
     description: string;
+    userBlurb?: string;
     yearPublished: number | string;
     tags: string[];
     pages?: number;

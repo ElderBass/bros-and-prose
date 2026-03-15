@@ -94,6 +94,41 @@ const getEmailMessaging = (
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> tagged you in their palaver.`,
                 text: data.text,
             };
+        case "prose_created":
+            return {
+                title: "New Prose Just Dropped",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> just published <span style="font-weight: bold;color:#ff4dff;">${data.proseTitle}</span>.`,
+                text: data.text,
+            };
+        case "prose_like":
+            return {
+                title: "Prose Update",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> liked your prose piece <span style="font-weight: bold;color:#ff4dff;">${data.proseTitle}</span>.`,
+            };
+        case "prose_dislike":
+            return {
+                title: "Prose Update",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> disliked your prose piece <span style="font-weight: bold;color:#ff4dff;">${data.proseTitle}</span>.`,
+            };
+        case "prose_comment":
+            return {
+                title: "Prose Update",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> commented on your prose piece <span style="font-weight: bold;color:#ff4dff;">${data.proseTitle}</span>.`,
+                text: data.text,
+            };
+        case "prose_reply":
+            return {
+                title: "Prose Reply",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> replied to <span style="font-weight: bold;color:#00bfff;">@${data.targetUsername}</span> on <span style="font-weight: bold;color:#ff4dff;">${data.proseTitle}</span>.`,
+                text: data.text,
+                replyToText: data.replyToText,
+            };
+        case "prose_mention":
+            return {
+                title: "Tagged In Prose",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> tagged you in prose comments/discussion.`,
+                text: data.text,
+            };
         case "shelf_currently_reading_added":
             return {
                 title: "Ya Boy's Out Here Grindin'",
@@ -105,6 +140,11 @@ const getEmailMessaging = (
                 title: "Your Boy's Got Big Plans",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> wants to read <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span> by <span style="color:#00ff7f;">${data.bookAuthor}</span>.`,
                 text: data.bookDescription,
+            };
+        case "shelf_progress_updated":
+            return {
+                title: "Ya Boy's Grindin' Through Pages",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> is on page <span style="font-weight: bold;color:#ff4dff;">${data.currentPage}</span> of <span style="color:#00ff7f;">${data.totalPages}</span> in <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span> by <span style="color:#00ff7f;">${data.bookAuthor}</span> (${data.percentage}% complete).`,
             };
         default:
             return {
@@ -134,7 +174,7 @@ const getEmailInfo = (updateType: string, data: { [key: string]: string }) => {
 
     return {
         subject: "Bros and Prose Update",
-        html: buildHtmlTemplate(title, message, text, replyToText),
+        html: buildHtmlTemplate(title, message, text, replyToText, updateType),
         emailRecipients,
     };
 };
@@ -144,10 +184,19 @@ const buildHtmlTemplate = (
     message: string = "",
     text: string = "",
     replyToText: string = "",
+    updateType: string = "",
 ) => {
-    const endpoint = title.toLocaleLowerCase().includes("future")
-        ? "future"
-        : "palaver";
+    const endpoint =
+        updateType.startsWith("future_book") ||
+        updateType === "future_book_added" ||
+        updateType === "future_book_voted" ||
+        updateType === "future_book_unvoted" ||
+        updateType === "future_book_marked_read" ||
+        updateType === "future_book_unmarked_read"
+            ? "future"
+            : updateType.startsWith("prose_")
+              ? "prose"
+              : "palaver";
     return `<!DOCTYPE html>
 <html lang="en">
     <head>
@@ -267,6 +316,10 @@ export const sendEmailNotification = async (
                                     mentionTitle,
                                     mentionMessage,
                                     mentionText,
+                                    "",
+                                    updateType.startsWith("prose_")
+                                        ? "prose_mention"
+                                        : "mention",
                                 ),
                             },
                         ],

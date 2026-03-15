@@ -10,7 +10,7 @@
         :selectedShelf="selectedShelf"
         :initialIsFavorited="initialIsFavorited"
         :onSubmit="onSubmit"
-        :dirtyKeys="['tags', 'description', 'pages']"
+        :dirtyKeys="['tags', 'description', 'userBlurb', 'pages']"
     >
         <template #actions="{ canSubmit, loading, detailsVisible }">
             <FormActionsV2
@@ -64,6 +64,7 @@ const initialValues = computed(() => ({
     pages: props.book.pages,
     tags: props.book.tags || [],
     description: props.book.description || "",
+    userBlurb: props.book.userBlurb || "",
     imageSrc: props.book.imageSrc || "",
 }));
 
@@ -90,6 +91,7 @@ const onSubmit = async (
             pages: values.pages,
             tags: values.tags,
             description: values.description,
+            userBlurb: values.userBlurb,
         };
 
         // Update shelf

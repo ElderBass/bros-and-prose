@@ -4,14 +4,21 @@
             <div
                 :key="showFullText ? 'expanded' : 'collapsed'"
                 class="text"
-                :class="{ expanded: showFullText, italics: isEmptyText }"
+                :class="{
+                    expanded: showFullText,
+                    italics: isEmptyText,
+                    opacity: isEmptyText,
+                }"
             >
                 <slot :displayText="displayText" :showFullText="showFullText">
                     {{ displayText }}
                 </slot>
             </div>
         </Transition>
-        <div v-if="isLongText" class="show-more-btn-container">
+        <div
+            v-if="isLongText && !hideMoreButton"
+            class="show-more-btn-container"
+        >
             <button class="show-more-btn" @click="toggleText">
                 {{ showFullText ? "show less" : "show more" }}
             </button>
@@ -28,10 +35,12 @@ const props = withDefaults(
         text: string;
         truncateLength?: number;
         isLoggedInUser?: boolean;
+        hideMoreButton?: boolean;
     }>(),
     {
         truncateLength: 300,
         isLoggedInUser: false,
+        hideMoreButton: false,
     }
 );
 
@@ -82,6 +91,10 @@ const toggleText = () => {
 
 .text.italics {
     font-style: italic;
+}
+
+.text.opacity {
+    opacity: 0.75;
 }
 
 .text:not(.expanded) {

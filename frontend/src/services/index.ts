@@ -4,3 +4,4 @@ export { authService } from "./auth";
 export { booksService } from "./books";
 export { usersService } from "./users";
 export { palaverService } from "./palaver";
+export { proseService } from "./prose";

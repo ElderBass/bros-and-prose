@@ -15,6 +15,7 @@ import {
     getShelfBookIsOn,
     getUserShelves,
 } from "@/utils";
+import { buildProgressUpdateMetadata } from "@/utils/shelfProgressUtils";
 import { useShelfModalStore } from "@/stores/shelfModal";
 
 const SHELF_ADD_METADATA_UPDATE_TYPES = ["currentlyReading", "wantToRead"];
@@ -92,10 +93,26 @@ export const useUserShelves = () => {
             const currentShelf = getUserShelves(loggedInUser)[shelf];
             const updatedShelf = currentShelf.filter((b) => b.id !== bookId);
 
-            const updatedUser = await updateUser(loggedInUser.id, {
+            // Prepare updated user data
+            const updatedUserData: Partial<User> = {
                 ...loggedInUser,
                 [shelf]: updatedShelf,
-            });
+            };
+
+            // Clean up progress if removing from currentlyReading
+            if (
+                shelf === "currentlyReading" &&
+                loggedInUser.bookProgress?.[bookId]
+            ) {
+                const { [bookId]: _, ...remainingProgress } =
+                    loggedInUser.bookProgress;
+                updatedUserData.bookProgress = remainingProgress;
+            }
+
+            const updatedUser = await updateUser(
+                loggedInUser.id,
+                updatedUserData as User
+            );
             await info(
                 `Removed book ${bookId} from ${shelf} for ${loggedInUser.username}`
             );
@@ -277,6 +294,48 @@ export const useUserShelves = () => {
         }
     };
 
+    const updateShelfBookProgress = async (
+        bookId: string,
+        progress: number
+    ): Promise<User | null> => {
+        try {
+            const loggedInUser = useUserStore().loggedInUser;
+
+            // Find the book to get its details for metadata
+            const book = loggedInUser.currentlyReading?.find(
+                (b) => b.id === bookId
+            );
+
+            const updatedBookProgress = {
+                ...loggedInUser.bookProgress,
+                [bookId]: progress,
+            };
+
+            // Build metadata for notification (only if book exists)
+            const metadata = book
+                ? buildProgressUpdateMetadata(book, progress)
+                : undefined;
+
+            const updatedUser = await updateUser(
+                loggedInUser.id,
+                {
+                    ...loggedInUser,
+                    bookProgress: updatedBookProgress,
+                },
+                metadata
+            );
+
+            await info(
+                `Updated progress for book ${bookId} to page ${progress} for ${loggedInUser.username}`
+            );
+            return updatedUser;
+        } catch (err) {
+            console.error("error in updateShelfBookProgress", err);
+            await logError(`Error updating shelf book progress: ${err}`);
+            throw new Error(`Error updating shelf book progress: ${err}`);
+        }
+    };
+
     return {
         addToCurrentlyReading,
         finishCurrentlyReading,
@@ -291,5 +350,6 @@ export const useUserShelves = () => {
         updateWantToRead,
         updateHaveRead,
         addCurrentBookClubBookToHaveRead,
+        updateShelfBookProgress,
     };
 };

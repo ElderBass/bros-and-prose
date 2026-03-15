@@ -65,16 +65,16 @@
         />
 
         <div v-else class="form-container">
-            <label :for="descriptionId" class="label">
-                blurb
+            <label :for="userBlurbId" class="label">
+                your blurb
                 <span v-if="requireExtras" class="req">*</span>
                 <span v-else class="opt">(optional)</span>
             </label>
             <BaseTextArea
-                v-model="bookProxy.description"
-                :id="descriptionId"
-                label="blurb"
-                placeholder="give this guy a little blurb for your bros"
+                v-model="bookProxy.userBlurb"
+                :id="userBlurbId"
+                label="your blurb"
+                placeholder="share your thoughts, an anecdote, or why you're interested in this book"
                 :style="{ height: '160px' }"
             />
         </div>
@@ -125,7 +125,7 @@ const isEdit = computed(
 const authorId = computed(() => `${props.idPrefix}-author`);
 const yearId = computed(() => `${props.idPrefix}-year`);
 const pagesId = computed(() => `${props.idPrefix}-pages`);
-const descriptionId = computed(() => `${props.idPrefix}-description`);
+const userBlurbId = computed(() => `${props.idPrefix}-user-blurb`);
 
 const requireExtras = computed(() => {
     return props.mode === "future" || props.mode === "future-edit";

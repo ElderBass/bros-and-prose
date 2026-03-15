@@ -30,10 +30,10 @@
             <BaseButton
                 v-if="canReview"
                 variant="success"
-                title="leave a review"
+                title="add review"
                 @click="emit('review', book)"
             >
-                leave a review
+                add review
             </BaseButton>
         </div>
     </div>
