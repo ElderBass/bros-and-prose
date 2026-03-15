@@ -70,22 +70,25 @@ withDefaults(
     z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     height: 100%;
     width: 100%;
 }
 
 /* Size variants */
 .size-large .card-content {
-    padding: 2rem;
+    padding: 1.5rem;
+    gap: 1.5rem;
 }
 
 .size-medium .card-content {
-    padding: 1.5rem;
+    padding: 1.25rem;
+    gap: 1.25rem;
 }
 
 .size-small .card-content {
-    padding: 1rem;
+    padding: 0.5rem;
+    gap: 0.75rem;
 }
 
 /* Shadow color variants */

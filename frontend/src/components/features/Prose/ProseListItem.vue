@@ -22,7 +22,12 @@
                 <span class="author">@{{ entry.userInfo.username }}</span>
             </div>
 
-            <ExpandableText :text="previewText" :truncateLength="220" />
+            <div class="preview-wrap">
+                <ExpandableText
+                    :text="previewText"
+                    :truncateLength="truncateLength"
+                />
+            </div>
 
             <div class="meta-row">
                 <span>{{ entry.comments?.length || 0 }} comments</span>
@@ -73,6 +78,10 @@ const typeColor = computed(() => {
 const previewText = computed(() => {
     const rawText = props.entry.excerpt || props.entry.markdown || "";
     return getPlainTextFromMarkdown(rawText);
+});
+
+const truncateLength = computed(() => {
+    return props.entry.type === "poetic" ? 40 : 220;
 });
 </script>
 
@@ -137,14 +146,41 @@ const previewText = computed(() => {
     font-size: 0.95rem;
 }
 
+.preview-wrap {
+    font-size: inherit;
+}
+
 @media (max-width: 768px) {
+    .prose-header {
+        gap: 0.5rem;
+    }
+
+    .type-pill {
+        padding: 0.1rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .created-at {
+        font-size: 0.8rem;
+    }
+
     .prose-title {
-        font-size: 1.25rem;
+        font-size: 0.9rem;
+        line-height: 1.05;
+    }
+
+    .author {
+        font-size: 0.875rem;
+    }
+
+    .preview-wrap {
+        font-size: 0.875rem;
+        line-height: 1.45;
     }
 
     .meta-row {
-        gap: 0.65rem;
-        font-size: 0.85rem;
+        gap: 0.5rem;
+        font-size: 0.8rem;
     }
 }
 </style>

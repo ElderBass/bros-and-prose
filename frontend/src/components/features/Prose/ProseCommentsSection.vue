@@ -3,7 +3,7 @@
         <p class="section-title">feedback</p>
 
         <p v-if="!comments.length" class="empty-copy">
-            no feedback yet - be first to drop a thought.
+            no feedback yet - be the first to tell bro he's trash.
         </p>
 
         <div v-else class="comments-list">

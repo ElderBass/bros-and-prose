@@ -37,7 +37,7 @@ const safeHtml = computed(() => renderMarkdownToSafeHtml(props.markdown));
 }
 
 .markdown-content :deep(p) {
-    margin: 0.45rem 0;
+    margin: 0.1rem 0;
 }
 
 .markdown-content :deep(ul),
