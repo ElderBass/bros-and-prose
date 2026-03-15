@@ -26,6 +26,10 @@
                     :wantToRead="wantToRead"
                     :haveRead="haveRead"
                 />
+                <FavoritesSection
+                    :favorites="user.favorites"
+                    :isLoggedInUser="isLoggedInUser"
+                />
                 <UserActivitySection :user="user" />
             </div>
         </div>
@@ -57,6 +61,7 @@ import UserActivitySection from "../features/UserProfile/UserActivitySection.vue
 import UserShelvesSection from "../features/UserProfile/Shelves/UserShelvesSection.vue";
 import PalaverModals from "../modal/PalaverModals/index.vue";
 import ShelfModals from "../features/UserProfile/Shelves/ShelfModals/index.vue";
+import FavoritesSection from "../features/UserProfile/UserInfo/FavoritesSection.vue";
 import FavoritesIntroModal from "../features/UserProfile/UserInfo/FavoritesStuff/FavoritesIntroModal.vue";
 import FavoritesWizard from "../features/UserProfile/UserInfo/FavoritesStuff/FavoritesWizard/index.vue";
 import type { User } from "@/types";
@@ -119,7 +124,7 @@ const handleWizardClose = () => {
 
 <style scoped>
 .profile-content {
-    height: 100vh;
+    height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;

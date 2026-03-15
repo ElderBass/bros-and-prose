@@ -8,7 +8,14 @@
 withDefaults(
     defineProps<{
         title: string;
-        color?: "blue" | "fuschia" | "green" | "lavender" | "red" | "yellow";
+        color?:
+            | "blue"
+            | "fuschia"
+            | "green"
+            | "lavender"
+            | "pink"
+            | "red"
+            | "yellow";
         style?: string;
     }>(),
     {
@@ -48,5 +55,9 @@ withDefaults(
 
 .color-yellow {
     color: var(--accent-yellow);
+}
+
+.color-pink {
+    color: var(--accent-pink);
 }
 </style>
