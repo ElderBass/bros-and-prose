@@ -84,4 +84,29 @@ const emptySubtitle = computed(() => {
     opacity: 0.82;
     margin: 0.35rem 0 0;
 }
+
+@media (max-width: 768px) {
+    .prose-list-wrap {
+        gap: 0.5rem;
+    }
+
+    .prose-list {
+        gap: 0.65rem;
+    }
+
+    .empty-state {
+        margin-top: 0.65rem;
+        padding: 0.65rem;
+        border-radius: 0.65rem;
+    }
+
+    .empty-title {
+        font-size: 0.95rem;
+    }
+
+    .empty-subtitle {
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+}
 </style>

@@ -17,7 +17,7 @@
         </div>
 
         <div v-else class="prose-detail-view">
-            <BaseCard shadow-color="blue" size="large" class="detail-card">
+            <BaseCard shadow-color="blue" size="small" class="detail-card">
                 <div class="detail-header">
                     <div class="author-meta">
                         <AvatarImage
@@ -258,6 +258,7 @@ watch(
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-bottom: 0.5rem;
 }
 
 .back-link {
@@ -310,6 +311,7 @@ watch(
 .detail-card,
 .comments-card {
     width: 100%;
+    padding: 0.5rem;
 }
 
 .detail-header {
@@ -371,21 +373,73 @@ watch(
 @media (max-width: 768px) {
     .prose-detail-view {
         padding: 0.5rem;
+        gap: 0.65rem;
+    }
+
+    .header-row {
+        gap: 0.5rem;
+    }
+
+    .back-link {
+        width: 2rem;
+        height: 2rem;
+        padding: 0.35rem;
+    }
+
+    .detail-header {
+        gap: 0.5rem;
+    }
+
+    .author-meta {
+        gap: 0.5rem;
+    }
+
+    .date {
+        font-size: 0.75rem;
+    }
+
+    .type-pill {
+        padding: 0.15rem 0.5rem;
+        font-size: 0.75rem;
     }
 
     .title {
-        font-size: 1.45rem;
+        font-size: 1rem;
+        line-height: 1.1;
+    }
+
+    .markdown-body {
+        padding: 0.6rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    .markdown-body :deep(h1),
+    .markdown-body :deep(h2),
+    .markdown-body :deep(h3),
+    .markdown-body :deep(h4),
+    .markdown-body :deep(h5),
+    .markdown-body :deep(h6) {
+        font-size: 0.95em;
     }
 
     .actions-row {
         flex-direction: column;
         align-items: stretch;
+        gap: 0.5rem;
     }
 
     .entry-actions {
         flex-direction: column;
         align-items: stretch;
         width: 100%;
+        gap: 0.4rem;
+    }
+
+    .empty-state {
+        min-height: 200px;
+        font-size: 0.9rem;
     }
 }
 </style>
