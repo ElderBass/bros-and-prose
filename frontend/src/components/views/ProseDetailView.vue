@@ -37,7 +37,7 @@
                         <span class="type-pill">{{ entry.type }}</span>
                         <EditButton
                             v-if="isAuthor"
-                            title="edit this prose"
+                            title="edit this 'prose' lol"
                             :handleEdit="openComposerForEdit"
                             button-size="small"
                         />

@@ -327,7 +327,10 @@ const submit = async () => {
             const updated = await updateProseEntry(entry);
             showAlert({
                 show: true,
-                messages: ["prose updated.", "your changes are live."],
+                messages: [
+                    "prose updated.",
+                    "your changes are live, though not necessarily better.",
+                ],
                 type: "success",
                 duration: 3000,
                 dismissable: false,
@@ -342,7 +345,7 @@ const submit = async () => {
                 ...ADDED_COMMENT_SUCCESS_ALERT,
                 messages: [
                     "prose published successfully.",
-                    "your piece is now live.",
+                    "your piece (of shit) is now live.",
                 ],
             });
             emit("created", entry);
@@ -358,9 +361,10 @@ const submit = async () => {
         await useLog().error(
             `Error ${isEdit ? "updating" : "creating"} prose entry: ${error}`
         );
+        const verb = isEdit ? "updated" : "published";
         showAlert(
             QUICK_ERROR([
-                isEdit ? "failed to update prose" : "failed to publish prose",
+                `failed to ${verb} prose, which is probably a blessing.`,
                 (error as Error).message || "unknown error",
             ])
         );
