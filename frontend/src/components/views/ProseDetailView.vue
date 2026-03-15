@@ -17,7 +17,7 @@
         </div>
 
         <div v-else class="prose-detail-view">
-            <BaseCard shadow-color="blue" size="small" class="detail-card">
+            <BaseCard shadow-color="blue" :size="cardSize" class="detail-card">
                 <div class="detail-header">
                     <div class="author-meta">
                         <AvatarImage
@@ -67,12 +67,13 @@
                             {{ isEntrySaved ? "saved" : "save prose" }}
                         </BaseButton>
                         <BaseButton
-                            variant="outline-secondary"
+                            variant="outline"
                             size="small"
                             title="add a cheeky comment, don't hold back"
                             :showTooltip="false"
                             @click="showCommentModal = true"
                         >
+                            <FontAwesomeIcon :icon="faCommentMedical" />
                             cheeky feedback
                         </BaseButton>
                     </div>
@@ -103,13 +104,9 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import AppLayout from "@/components/layout/AppLayout.vue";
-import PageTitle from "@/components/ui/PageTitle.vue";
-import BaseCard from "@/components/ui/BaseCard.vue";
-import BaseButton from "@/components/ui/BaseButton.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
-import UsernameLink from "@/components/ui/UsernameLink.vue";
-import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import ProseEntryReactionActions from "@/components/features/Prose/ProseEntryReactionActions.vue";
 import ProseCommentsSection from "@/components/features/Prose/ProseCommentsSection.vue";
@@ -122,9 +119,13 @@ import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import type { Comment, ProseEntry } from "@/types";
 import { isGuestUser } from "@/utils";
 import { useLog } from "@/composables";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-
+import {
+    faArrowLeft,
+    faCommentMedical,
+} from "@fortawesome/free-solid-svg-icons";
 const route = useRoute();
+const { mobile } = useDisplay();
+
 const proseId = computed(() => String(route.params.proseId || ""));
 
 const proseStore = useProseStore();
@@ -161,6 +162,10 @@ const createdAtLabel = computed(() => {
     } catch {
         return entry.value.createdAt;
     }
+});
+
+const cardSize = computed(() => {
+    return mobile.value ? "small" : "medium";
 });
 
 const submitComment = async (comment: Comment) => {
@@ -257,7 +262,7 @@ watch(
 .header-row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     margin-bottom: 0.5rem;
 }
 
@@ -318,6 +323,7 @@ watch(
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 0.25rem;
     gap: 1rem;
 }
 
@@ -344,9 +350,9 @@ watch(
 
 .title {
     margin: 0;
+    padding-left: 0.5rem;
     color: var(--accent-blue);
-    font-size: 1.85rem;
-    line-height: 1.25;
+    font-size: 1.25rem;
 }
 
 .markdown-body {
@@ -360,7 +366,7 @@ watch(
 .actions-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 0.75rem;
 }
 
@@ -405,7 +411,6 @@ watch(
 
     .title {
         font-size: 1rem;
-        line-height: 1.1;
     }
 
     .markdown-body {

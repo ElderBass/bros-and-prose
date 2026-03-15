@@ -83,12 +83,12 @@ withDefaults(
 
 .size-medium .card-content {
     padding: 1.25rem;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
 .size-small .card-content {
-    padding: 0.5rem;
-    gap: 0.75rem;
+    padding: 0.75rem;
+    gap: 0.5rem;
 }
 
 /* Shadow color variants */
