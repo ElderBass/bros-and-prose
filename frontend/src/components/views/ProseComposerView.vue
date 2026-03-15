@@ -175,7 +175,6 @@ import { useUIStore } from "@/stores/ui";
 import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import {
     clearProseDraft,
-    getPlainTextFromMarkdown,
     getProseDraft,
     getUserInfo,
     htmlToMarkdown,
@@ -292,8 +291,7 @@ onBeforeUnmount(() => {
 });
 
 const buildProseEntry = (blurb?: string): ProseEntry => {
-    const plainText = getPlainTextFromMarkdown(markdown.value);
-    const excerpt = blurb?.trim() ? blurb.trim() : plainText.slice(0, 240);
+    const excerpt = blurb?.trim() ? blurb.trim() : "";
     return {
         id: uuidv4(),
         title: title.value.trim(),
@@ -309,9 +307,8 @@ const buildProseEntry = (blurb?: string): ProseEntry => {
 };
 
 const buildUpdatedEntry = (blurb?: string): ProseEntry => {
-    const plainText = getPlainTextFromMarkdown(markdown.value);
     const existing = editEntry.value!;
-    const excerpt = blurb?.trim() ? blurb.trim() : plainText.slice(0, 240);
+    const excerpt = blurb?.trim() ? blurb.trim() : "";
     return {
         ...existing,
         title: title.value.trim(),
@@ -402,7 +399,7 @@ async function submitEntry(entry: ProseEntry) {
             await updateProseEntry(entry);
             showAlert({
                 show: true,
-                messages: ["prose updated.", "your changes are live."],
+                messages: ["prose pruned.", "your effort is cute, if futile."],
                 type: "success",
                 duration: 3000,
                 dismissable: false,
@@ -417,7 +414,7 @@ async function submitEntry(entry: ProseEntry) {
                 ...ADDED_COMMENT_SUCCESS_ALERT,
                 messages: [
                     "prose published successfully.",
-                    "your piece is now live.",
+                    "your piece (of shit) is now live. ugh.",
                 ],
             });
             router.push("/prose");

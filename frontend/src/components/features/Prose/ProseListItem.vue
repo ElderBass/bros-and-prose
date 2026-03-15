@@ -24,6 +24,12 @@
 
             <h3 class="prose-title">{{ entry.title }}</h3>
 
+            <BlurbSection
+                :blurb="entry.excerpt"
+                compact
+                empty-message="bro failed to provide any context for this. probably for the best. guess you'll just have to FAFO."
+            />
+
             <div class="preview-wrap">
                 <ExpandableText
                     :text="previewText"
@@ -61,6 +67,7 @@ import ProseTypePill from "./ProseTypePill.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import GlassesIcon from "@/components/icons/GlassesIcon.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
+import BlurbSection from "@/components/features/Prose/ProseDetail/BlurbSection.vue";
 import type { ProseEntry } from "@/types";
 import { getPlainTextFromMarkdown, getProseTypeColor } from "@/utils";
 
@@ -85,8 +92,7 @@ const typeColor = computed(() => {
 });
 
 const previewText = computed(() => {
-    const rawText = props.entry.excerpt || props.entry.markdown || "";
-    return getPlainTextFromMarkdown(rawText);
+    return getPlainTextFromMarkdown(props.entry.markdown || "");
 });
 
 const truncateLength = computed(() => {

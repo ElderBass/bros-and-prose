@@ -41,13 +41,16 @@ const getMentionMetadata = (text: string) => {
     return mentionedUsers.length > 0 ? mentionedUsers : undefined;
 };
 
-const buildCreateMetadata = (entry: ProseEntry): ProseEntryMetadata => ({
-    username: entry.userInfo.username,
-    proseTitle: entry.title,
-    text: entry.markdown,
-    updateType: "prose_created",
-    mentionedUsers: getMentionMetadata(entry.markdown),
-});
+const buildCreateMetadata = (entry: ProseEntry): ProseEntryMetadata => {
+    const text = entry.excerpt || entry.markdown.slice(0, 240) + "...";
+    return {
+        username: entry.userInfo.username,
+        proseTitle: entry.title,
+        text,
+        updateType: "prose_created",
+        mentionedUsers: getMentionMetadata(text),
+    };
+};
 
 const buildReactionMetadata = (
     proseEntry: ProseEntry,
