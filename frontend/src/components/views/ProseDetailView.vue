@@ -1,6 +1,11 @@
 <template>
     <AppLayout>
-        <PageTitle title="prose details" />
+        <div class="header-row">
+            <RouterLink to="/prose" class="back-link">
+                <FontAwesomeIcon :icon="faArrowLeft" />
+            </RouterLink>
+            <PageTitle title="prose details" />
+        </div>
 
         <LoadingSpinnerContainer
             v-if="loading"
@@ -37,9 +42,13 @@
                 </div>
 
                 <div class="actions-row">
-                    <ProseEntryReactionActions :entry="entry" />
+                    <ProseEntryReactionActions
+                        v-if="!isGuestUser() && !isAuthor"
+                        :entry="entry"
+                    />
                     <div v-if="!isGuestUser()" class="entry-actions">
                         <BaseButton
+                            v-if="!isAuthor"
                             :variant="
                                 isEntrySaved
                                     ? 'outline-success'
@@ -108,24 +117,32 @@ import MarkdownContent from "@/components/features/common/MarkdownContent.vue";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
 import { useUIStore } from "@/stores/ui";
+import { useUserStore } from "@/stores/user";
 import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import type { Comment, ProseEntry } from "@/types";
 import { isGuestUser } from "@/utils";
 import { useLog } from "@/composables";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const route = useRoute();
 const proseId = computed(() => String(route.params.proseId || ""));
 
 const proseStore = useProseStore();
 const { entries } = storeToRefs(proseStore);
-const { addComment, toggleSavedProseEntry } = useProse();
+const { addComment, getProseEntry, toggleSavedProseEntry } = useProse();
 const { showAlert } = useUIStore();
+const { loggedInUser } = storeToRefs(useUserStore());
+
+const isAuthor = computed(
+    () => entry.value?.userInfo?.id === loggedInUser.value?.id
+);
 
 const loading = ref(false);
 const showCommentModal = ref(false);
 const submittingComment = ref(false);
 const savingEntry = ref(false);
 const entry = ref<ProseEntry | undefined>(undefined);
+
 const isEntrySaved = computed(() => {
     if (!entry.value?.id) return false;
     return proseStore.isSaved(entry.value.id);
@@ -196,10 +213,15 @@ const toggleSavedState = async () => {
         savingEntry.value = false;
     }
 };
-onMounted(() => {
-    entry.value = entries.value.find(
+onMounted(async () => {
+    const storedEntry = entries.value.find(
         (item) => item.id === proseId.value
     ) as ProseEntry;
+    if (storedEntry) {
+        entry.value = storedEntry;
+    } else {
+        entry.value = (await getProseEntry(proseId.value)) as ProseEntry;
+    }
 });
 watch(
     () => route.params.proseId,
@@ -230,6 +252,46 @@ watch(
     align-items: center;
     color: var(--accent-lavender);
     text-align: center;
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.back-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    color: var(--accent-blue);
+    border: 2px solid var(--accent-blue);
+    border-radius: 50%;
+    padding: 0.5rem;
+    text-decoration: none;
+    transition:
+        color 0.3s ease,
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.3s ease;
+}
+
+.back-link:hover {
+    color: var(--accent-fuschia);
+    background-color: rgba(255, 77, 255, 0.1);
+    border-color: var(--accent-fuschia);
+    transform: scale(1.1);
+}
+
+.back-link:active {
+    transform: scale(0.95);
+}
+
+.back-link:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
 }
 
 .error-title {

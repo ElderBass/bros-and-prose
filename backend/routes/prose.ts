@@ -2,7 +2,10 @@ import express from "express";
 import { db } from "../db/index.js";
 import { sendEmailNotification } from "../mailjet/sendEmailNotification.js";
 
-export const getProseEntries = async (_: express.Request, res: express.Response) => {
+export const getProseEntries = async (
+    _: express.Request,
+    res: express.Response,
+) => {
     try {
         const proseEntries = await db.ref("prose").once("value");
         const proseEntriesData = proseEntries.val();
@@ -12,12 +15,12 @@ export const getProseEntries = async (_: express.Request, res: express.Response)
             const aCreatedAt = Date.parse(
                 typeof a === "object" && a !== null && "createdAt" in a
                     ? String((a as { createdAt?: string }).createdAt ?? "")
-                    : ""
+                    : "",
             );
             const bCreatedAt = Date.parse(
                 typeof b === "object" && b !== null && "createdAt" in b
                     ? String((b as { createdAt?: string }).createdAt ?? "")
-                    : ""
+                    : "",
             );
             return bCreatedAt - aCreatedAt;
         });
@@ -37,7 +40,33 @@ export const getProseEntries = async (_: express.Request, res: express.Response)
     }
 };
 
-export const addProseEntry = async (req: express.Request, res: express.Response) => {
+export const getProseEntry = async (
+    req: express.Request,
+    res: express.Response,
+) => {
+    const { entryId } = req.params;
+    try {
+        const entryRef = db.ref(`prose/${entryId}`);
+        const entry = await entryRef.once("value");
+        res.json({
+            success: true,
+            message: `Prose entry ${entryId} fetched successfully`,
+            data: entry.val(),
+        });
+    } catch (error) {
+        console.log("GET PROSE ENTRY ERROR in getProseEntry", error);
+        res.status(500).json({
+            success: false,
+            message: `Failed to get prose entry ${entryId}`,
+            error: error,
+        });
+    }
+};
+
+export const addProseEntry = async (
+    req: express.Request,
+    res: express.Response,
+) => {
     const { entry, metadata } = req.body;
 
     try {
@@ -63,7 +92,10 @@ export const addProseEntry = async (req: express.Request, res: express.Response)
     }
 };
 
-export const updateProseEntry = async (req: express.Request, res: express.Response) => {
+export const updateProseEntry = async (
+    req: express.Request,
+    res: express.Response,
+) => {
     const { entryId } = req.params;
     const { entry, metadata } = req.body;
 
@@ -91,7 +123,10 @@ export const updateProseEntry = async (req: express.Request, res: express.Respon
     }
 };
 
-export const deleteProseEntry = async (req: express.Request, res: express.Response) => {
+export const deleteProseEntry = async (
+    req: express.Request,
+    res: express.Response,
+) => {
     const { entryId } = req.params;
 
     try {

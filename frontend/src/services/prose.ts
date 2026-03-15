@@ -16,6 +16,8 @@ export interface ProseEntriesResponse {
 export const proseService = {
     list: async (): Promise<ProseEntriesResponse> =>
         apiRequest("GET", "/api/prose"),
+    get: async (entryId: string): Promise<ProseEntryResponse> =>
+        apiRequest<ProseEntryResponse>("GET", `/api/prose/${entryId}`),
     create: async ({ entry, metadata }: ProseEntryRequest) =>
         apiRequest<ProseEntryResponse>("POST", "/api/prose", {
             entry,
