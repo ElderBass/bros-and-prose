@@ -8,59 +8,33 @@
             />
         </div>
         <div v-else class="prose-view">
-            <ProseList @edit="openComposerForEdit" />
+            <ProseList @edit="goToEdit" />
         </div>
 
-        <ProseComposerModal
-            v-if="showComposerModal"
-            :open="showComposerModal"
-            :edit-entry="editingEntry"
-            @close="closeComposer"
-            @created="handleEntryCreated"
-            @updated="handleEntryUpdated"
-        />
-        <ProseFab v-if="!isGuestUser()" @click="openComposerForNew" />
+        <ProseFab v-if="!isGuestUser()" @click="goToNew" />
     </AppLayout>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
 import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import ProseList from "@/components/features/Prose/ProseList.vue";
-import ProseComposerModal from "@/components/features/Prose/ProseComposerModal.vue";
 import ProseFab from "@/components/features/Prose/ProseFab.vue";
 import type { ProseEntry } from "@/types";
-import { useProseStore } from "@/stores/prose";
 import { isGuestUser } from "@/utils";
 
+const router = useRouter();
 const loading = ref(false);
-const showComposerModal = ref(false);
-const editingEntry = ref<ProseEntry | null>(null);
-const proseStore = useProseStore();
 
-const openComposerForNew = () => {
-    editingEntry.value = null;
-    showComposerModal.value = true;
+const goToNew = () => {
+    router.push("/prose/new");
 };
 
-const openComposerForEdit = (entry: ProseEntry) => {
-    editingEntry.value = entry;
-    showComposerModal.value = true;
-};
-
-const closeComposer = () => {
-    showComposerModal.value = false;
-    editingEntry.value = null;
-};
-
-const handleEntryCreated = (entry: ProseEntry) => {
-    proseStore.setEntries([entry, ...proseStore.entries]);
-};
-
-const handleEntryUpdated = () => {
-    editingEntry.value = null;
+const goToEdit = (entry: ProseEntry) => {
+    router.push(`/prose/edit/${entry.id}`);
 };
 </script>
 

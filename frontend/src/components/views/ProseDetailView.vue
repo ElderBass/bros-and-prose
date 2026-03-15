@@ -1,12 +1,8 @@
 <template>
     <AppLayout>
-        <div class="header-row">
-            <RouterLink to="/prose" class="back-link">
-                <FontAwesomeIcon :icon="faArrowLeft" />
-            </RouterLink>
-            <PageTitle title="prose details" />
+        <div class="header-wrap">
+            <ProseViewHeader title="prose details" :backTarget="'/prose'" />
         </div>
-
         <LoadingSpinnerContainer
             v-if="loading"
             size="large"
@@ -37,8 +33,8 @@
                         <span class="type-pill">{{ entry.type }}</span>
                         <EditButton
                             v-if="isAuthor"
-                            title="edit this 'prose' lol"
-                            :handleEdit="openComposerForEdit"
+                            title="edit this prose"
+                            :handleEdit="goToEdit"
                             button-size="small"
                         />
                     </div>
@@ -106,19 +102,11 @@
         @submit="submitComment"
         @close="showCommentModal = false"
     />
-
-    <ProseComposerModal
-        v-if="showComposerModal && entry"
-        :open="showComposerModal"
-        :edit-entry="entry"
-        @close="showComposerModal = false"
-        @updated="handleProseUpdated"
-    />
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import AppLayout from "@/components/layout/AppLayout.vue";
@@ -126,7 +114,6 @@ import AvatarImage from "@/components/ui/AvatarImage.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import ProseEntryReactionActions from "@/components/features/Prose/ProseEntryReactionActions.vue";
 import ProseCommentsSection from "@/components/features/Prose/ProseCommentsSection.vue";
-import ProseComposerModal from "@/components/features/Prose/ProseComposerModal.vue";
 import MarkdownContent from "@/components/features/common/MarkdownContent.vue";
 import EditButton from "@/components/ui/EditButton.vue";
 import { useProse } from "@/composables/useProse";
@@ -137,12 +124,11 @@ import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import type { Comment, ProseEntry } from "@/types";
 import { isGuestUser } from "@/utils";
 import { useLog } from "@/composables";
-import {
-    faArrowLeft,
-    faCommentMedical,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
+import ProseViewHeader from "../features/Prose/ProseViewHeader.vue";
 
 const route = useRoute();
+const router = useRouter();
 const { mobile } = useDisplay();
 const proseStore = useProseStore();
 const { showAlert } = useUIStore();
@@ -156,18 +142,12 @@ const isAuthor = computed(
     () => entry.value?.userInfo?.id === loggedInUser.value?.id
 );
 
-const openComposerForEdit = () => {
-    showComposerModal.value = true;
-};
-
-const handleProseUpdated = (updated: ProseEntry) => {
-    entry.value = updated;
-    showComposerModal.value = false;
+const goToEdit = () => {
+    if (entry.value?.id) router.push(`/prose/edit/${entry.value.id}`);
 };
 
 const loading = ref(false);
 const showCommentModal = ref(false);
-const showComposerModal = ref(false);
 const submittingComment = ref(false);
 const savingEntry = ref(false);
 const entry = ref<ProseEntry | undefined>(undefined);
@@ -279,53 +259,17 @@ watch(
     padding: 1rem;
 }
 
+.header-wrap {
+    width: 100%;
+    max-width: 820px;
+}
+
 .empty-state {
     min-height: 320px;
     justify-content: center;
     align-items: center;
     color: var(--accent-lavender);
     text-align: center;
-}
-
-.header-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.back-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    color: var(--accent-blue);
-    border: 2px solid var(--accent-blue);
-    border-radius: 50%;
-    padding: 0.5rem;
-    text-decoration: none;
-    transition:
-        color 0.3s ease,
-        background-color 0.3s ease,
-        border-color 0.3s ease,
-        transform 0.3s ease;
-}
-
-.back-link:hover {
-    color: var(--accent-fuschia);
-    background-color: rgba(255, 77, 255, 0.1);
-    border-color: var(--accent-fuschia);
-    transform: scale(1.1);
-}
-
-.back-link:active {
-    transform: scale(0.95);
-}
-
-.back-link:focus-visible {
-    outline: 2px solid var(--accent-blue);
-    outline-offset: 2px;
 }
 
 .error-title {
