@@ -20,7 +20,13 @@ import type { CSSProperties } from "vue";
 
 withDefaults(
     defineProps<{
-        shadowColor?: "blue" | "lavender" | "green" | "fuschia";
+        shadowColor?:
+            | "blue"
+            | "lavender"
+            | "green"
+            | "fuschia"
+            | "pink"
+            | "yellow";
         size?: "small" | "medium" | "large";
         hoverable?: boolean;
         handleClick?: () => void;
@@ -121,6 +127,27 @@ withDefaults(
     box-shadow:
         0 4px 10px var(--accent-fuschia),
         0 0 20px var(--accent-fuschia),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.shadow-pink {
+    box-shadow:
+        0 4px 10px var(--accent-pink),
+        0 0 20px var(--accent-pink),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.shadow-yellow {
+    box-shadow:
+        0 4px 10px var(--accent-yellow),
+        0 0 20px var(--accent-yellow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.shadow-red {
+    box-shadow:
+        0 4px 10px var(--accent-red),
+        0 0 20px var(--accent-red),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 

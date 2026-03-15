@@ -13,8 +13,11 @@
                         :avatarType="entry.userInfo.avatarType || 'icon'"
                         size="xsmall"
                     />
-                    <span class="author">@{{ entry.userInfo.username }}</span>
-                    <span class="type-pill">{{ entry.type }}</span>
+                    <UsernameLink
+                        :username="entry.userInfo.username"
+                        fontSize="small"
+                    />
+                    <ProseTypePill :type="entry.type" />
                 </div>
                 <span class="created-at">{{ createdAtLabel }}</span>
             </div>
@@ -41,7 +44,7 @@
                         variant="outline-tertiary"
                         title="peep deets'"
                     >
-                        <FontAwesomeIcon :icon="faGlasses" />
+                        <GlassesIcon />
                         peep deets
                     </BaseButton>
                 </RouterLink>
@@ -54,11 +57,11 @@
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import { RouterLink } from "vue-router";
+import ProseTypePill from "./ProseTypePill.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
 import type { ProseEntry } from "@/types";
-import { getPlainTextFromMarkdown } from "@/utils";
-import { faGlasses } from "@fortawesome/free-solid-svg-icons";
+import { getPlainTextFromMarkdown, getProseTypeColor } from "@/utils";
 
 const props = defineProps<{
     entry: ProseEntry;
@@ -77,17 +80,7 @@ const createdAtLabel = computed(() => {
 });
 
 const typeColor = computed(() => {
-    switch (props.entry.type) {
-        case "creative":
-            return "fuschia";
-        case "academic":
-            return "blue";
-        case "poetic":
-            return "lavender";
-        case "misc":
-        default:
-            return "green";
-    }
+    return getProseTypeColor(props.entry.type);
 });
 
 const previewText = computed(() => {
@@ -131,17 +124,6 @@ const cardSize = computed(() => {
 
 .prose-header .created-at {
     flex-shrink: 0;
-}
-
-.type-pill {
-    flex-shrink: 0;
-    text-transform: lowercase;
-    border: 1px solid var(--accent-fuschia);
-    color: var(--accent-fuschia);
-    padding: 0.125rem 0.65rem;
-    border-radius: 999px;
-    font-size: 0.875rem;
-    letter-spacing: 0.02em;
 }
 
 .created-at {
@@ -198,11 +180,6 @@ const cardSize = computed(() => {
 @media (max-width: 768px) {
     .prose-header {
         gap: 0.5rem;
-    }
-
-    .type-pill {
-        padding: 0.1rem 0.5rem;
-        font-size: 0.75rem;
     }
 
     .created-at {

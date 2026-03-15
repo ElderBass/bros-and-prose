@@ -22,11 +22,12 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import ProseTypeFilters from "./ProseTypeFilters.vue";
 import ProseListItem from "./ProseListItem.vue";
 import { useProseStore } from "@/stores/prose";
 import type { ProseEntry } from "@/types";
+import { useProse } from "@/composables";
 
 defineEmits<{
     (e: "edit", entry: ProseEntry): void;
@@ -50,6 +51,10 @@ const emptySubtitle = computed(() => {
         return "publish the first one and get the section started.";
     }
     return "try another type or publish a new piece in this category.";
+});
+
+onMounted(async () => {
+    await useProse().getProseEntries();
 });
 </script>
 

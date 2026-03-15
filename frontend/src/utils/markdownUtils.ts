@@ -116,7 +116,14 @@ export const renderMarkdownToSafeHtml = (markdown: string): string => {
         }
 
         closeLists();
-        htmlParts.push(`<p>${formatInline(trimmed)}</p>`);
+        // Preserve leading spaces/tabs for paragraph indentation
+        const leadingMatch = line.match(/^(\s*)/);
+        const leading = leadingMatch ? leadingMatch[1] : "";
+        const rest = line.slice(leading.length).trimEnd();
+        const indentHtml = leading
+            .replace(/ /g, "&#160;")
+            .replace(/\t/g, "&#160;&#160;&#160;&#160;");
+        htmlParts.push(`<p>${indentHtml}${rest ? formatInline(rest) : ""}</p>`);
     }
 
     closeLists();
