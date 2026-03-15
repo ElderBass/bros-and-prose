@@ -37,7 +37,14 @@ const props = withDefaults(
         elevation?: number;
         rounded?: string | number;
         multiple?: boolean;
-        color?: "blue" | "fuschia" | "green" | "lavender" | "red" | "yellow";
+        color?:
+            | "blue"
+            | "fuschia"
+            | "green"
+            | "lavender"
+            | "pink"
+            | "red"
+            | "yellow";
         modelValue?: number[];
         defaultOpen?: boolean;
     }>(),
@@ -97,6 +104,10 @@ watch(internalValue, (next) => emit("update:modelValue", next));
 
 :deep(.bro-expansion-panel.color-lavender) {
     border-color: var(--accent-lavender);
+}
+
+:deep(.bro-expansion-panel.color-pink) {
+    border-color: var(--accent-pink);
 }
 
 :deep(.bro-expansion-panel.color-red) {

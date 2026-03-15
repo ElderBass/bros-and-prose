@@ -32,6 +32,7 @@ const { isAppLoading } = storeToRefs(useUIStore());
     height: 100vh;
     display: flex;
     flex-direction: column;
+    padding-bottom: 0.5rem;
 }
 
 .main-content {

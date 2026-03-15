@@ -33,7 +33,14 @@ const props = withDefaults(
         title: string;
         noContentMessage?: string;
         contentCount: number;
-        color?: "blue" | "fuschia" | "green" | "lavender" | "red" | "yellow";
+        color?:
+            | "blue"
+            | "fuschia"
+            | "green"
+            | "lavender"
+            | "pink"
+            | "red"
+            | "yellow";
         scrollDirection?: "vertical" | "horizontal";
         defaultOpen?: boolean;
     }>(),

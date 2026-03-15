@@ -1,17 +1,12 @@
 <template>
     <div class="header-row">
-        <RouterLink :to="backTarget" class="back-link">
-            <FontAwesomeIcon :icon="faArrowLeft" />
-        </RouterLink>
+        <BackButton :title="title" />
         <PageTitle :title="title" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from "vue-router";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import PageTitle from "@/components/ui/PageTitle.vue";
+import BackButton from "@/components/ui/BackButton.vue";
 
 defineProps<{
     title: string;
