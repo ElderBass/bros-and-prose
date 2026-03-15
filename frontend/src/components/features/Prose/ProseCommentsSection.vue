@@ -21,6 +21,7 @@
         v-if="showReplyModal"
         :open="showReplyModal"
         :isItemComment="true"
+        :maxCommentLength="50000"
         :submitting="submittingReply"
         :replyTo="replyContext"
         @submit="submitReply"

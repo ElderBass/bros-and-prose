@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
@@ -24,10 +24,13 @@ import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue
 import ProseList from "@/components/features/Prose/ProseList.vue";
 import ProseFab from "@/components/features/Prose/ProseFab.vue";
 import type { ProseEntry } from "@/types";
-import { isGuestUser } from "@/utils";
+import { isGuestUser, setLastUnreadProseEntry } from "@/utils";
+import { useProseStore } from "@/stores/prose";
+import { useProse } from "@/composables";
 
 const router = useRouter();
 const loading = ref(false);
+const proseStore = useProseStore();
 
 const goToNew = () => {
     router.push("/prose/new");
@@ -36,6 +39,18 @@ const goToNew = () => {
 const goToEdit = (entry: ProseEntry) => {
     router.push(`/prose/edit/${entry.id}`);
 };
+
+onMounted(async () => {
+    let entries = proseStore.entries;
+    if (entries.length === 0) {
+        await useProse().getProseEntries();
+        entries = proseStore.entries;
+    }
+    if (entries.length > 0) {
+        setLastUnreadProseEntry(entries[0].id, entries[0].createdAt);
+        proseStore.setHasUnreadProseEntries(false);
+    }
+});
 </script>
 
 <style scoped>

@@ -3,6 +3,7 @@ import type { ProseDraft, User } from "@/types";
 export const storage_key = "superCoolBroData";
 export const guest_storage_key = "guest";
 export const last_unread_palaver_entry_key = "lastUnreadPalaverEntry";
+export const last_unread_prose_entry_key = "lastUnreadProseEntry";
 export const prose_draft_key = "proseDraft";
 
 export const setUserInStorage = (user: User) => {
@@ -39,6 +40,21 @@ export const getLastUnreadPalaverEntry = () => {
 export const setLastUnreadPalaverEntry = (entryId: string, date: string) => {
     localStorage.setItem(
         last_unread_palaver_entry_key,
+        JSON.stringify({ entryId, date })
+    );
+};
+
+export const getLastUnreadProseEntry = (): {
+    entryId?: string;
+    date?: string;
+} => {
+    const raw = localStorage.getItem(last_unread_prose_entry_key);
+    return raw ? JSON.parse(raw) : {};
+};
+
+export const setLastUnreadProseEntry = (entryId: string, date: string) => {
+    localStorage.setItem(
+        last_unread_prose_entry_key,
         JSON.stringify({ entryId, date })
     );
 };
