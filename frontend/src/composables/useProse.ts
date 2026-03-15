@@ -137,6 +137,14 @@ export const useProse = () => {
         return [];
     };
 
+    const getProseEntry = async (entryId: string) => {
+        const response = await proseService.get(entryId);
+        if (response.success) {
+            return response.data;
+        }
+        return null;
+    };
+
     const createProseEntry = async (
         entry: ProseEntry,
         metadata?: ProseEntryMetadata
@@ -346,6 +354,7 @@ export const useProse = () => {
 
     return {
         getProseEntries,
+        getProseEntry,
         createProseEntry,
         updateProseEntry,
         deleteProseEntry,
