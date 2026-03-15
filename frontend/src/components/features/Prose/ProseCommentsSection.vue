@@ -41,11 +41,14 @@ import ProseCommentItem from "./ProseCommentItem.vue";
 const props = defineProps<{
     entry: ProseEntry;
 }>();
+const emit = defineEmits<{
+    "entry-updated": [entry: ProseEntry];
+}>();
 
-const comments = computed<Comment[]>(() => props.entry.comments || []);
 const { addComment } = useProse();
 const { showAlert } = useUIStore();
 
+const comments = computed(() => props.entry.comments || []);
 const showReplyModal = ref(false);
 const submittingReply = ref(false);
 const replyContext = ref<
@@ -69,7 +72,8 @@ const closeReplyModal = () => {
 const submitReply = async (reply: Comment) => {
     submittingReply.value = true;
     try {
-        await addComment(props.entry, reply);
+        const updated = await addComment(props.entry, reply);
+        if (updated) emit("entry-updated", updated);
         closeReplyModal();
         showAlert(ADDED_COMMENT_SUCCESS_ALERT);
     } catch (error) {

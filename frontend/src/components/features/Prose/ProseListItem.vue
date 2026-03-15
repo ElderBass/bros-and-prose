@@ -59,6 +59,7 @@ import { useDisplay } from "vuetify";
 import { RouterLink } from "vue-router";
 import ProseTypePill from "./ProseTypePill.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
+import GlassesIcon from "@/components/icons/GlassesIcon.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
 import type { ProseEntry } from "@/types";
 import { getPlainTextFromMarkdown, getProseTypeColor } from "@/utils";
