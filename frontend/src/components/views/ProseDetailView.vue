@@ -38,16 +38,35 @@
 
                 <div class="actions-row">
                     <ProseEntryReactionActions :entry="entry" />
-                    <BaseButton
-                        v-if="!isGuestUser()"
-                        variant="outline-secondary"
-                        size="small"
-                        title="add a cheeky comment, don't hold back"
-                        :showTooltip="false"
-                        @click="showCommentModal = true"
-                    >
-                        cheeky feedback
-                    </BaseButton>
+                    <div v-if="!isGuestUser()" class="entry-actions">
+                        <BaseButton
+                            :variant="
+                                isEntrySaved
+                                    ? 'outline-success'
+                                    : 'outline-tertiary'
+                            "
+                            size="small"
+                            :title="
+                                isEntrySaved
+                                    ? 'remove this prose from your annals'
+                                    : 'add this prose to your annals'
+                            "
+                            :showTooltip="false"
+                            :disabled="savingEntry"
+                            @click="toggleSavedState"
+                        >
+                            {{ isEntrySaved ? "saved" : "save prose" }}
+                        </BaseButton>
+                        <BaseButton
+                            variant="outline-secondary"
+                            size="small"
+                            title="add a cheeky comment, don't hold back"
+                            :showTooltip="false"
+                            @click="showCommentModal = true"
+                        >
+                            cheeky feedback
+                        </BaseButton>
+                    </div>
                 </div>
             </BaseCard>
 
@@ -97,14 +116,20 @@ import { useLog } from "@/composables";
 const route = useRoute();
 const proseId = computed(() => String(route.params.proseId || ""));
 
-const { entries } = storeToRefs(useProseStore());
-const { addComment } = useProse();
+const proseStore = useProseStore();
+const { entries } = storeToRefs(proseStore);
+const { addComment, toggleSavedProseEntry } = useProse();
 const { showAlert } = useUIStore();
 
 const loading = ref(false);
 const showCommentModal = ref(false);
 const submittingComment = ref(false);
+const savingEntry = ref(false);
 const entry = ref<ProseEntry | undefined>(undefined);
+const isEntrySaved = computed(() => {
+    if (!entry.value?.id) return false;
+    return proseStore.isSaved(entry.value.id);
+});
 
 const createdAtLabel = computed(() => {
     if (!entry.value) return "";
@@ -139,6 +164,36 @@ const submitComment = async (comment: Comment) => {
         );
     } finally {
         submittingComment.value = false;
+    }
+};
+
+const toggleSavedState = async () => {
+    if (!entry.value?.id || savingEntry.value) return;
+    savingEntry.value = true;
+    try {
+        const wasSaved = isEntrySaved.value;
+        await toggleSavedProseEntry(entry.value.id);
+        showAlert({
+            show: true,
+            messages: [
+                wasSaved
+                    ? "prose removed from saved."
+                    : "prose saved for later.",
+            ],
+            type: "success",
+            duration: 3000,
+            dismissable: false,
+        });
+    } catch (error) {
+        await useLog().error(`Error toggling saved prose: ${error}`);
+        showAlert(
+            QUICK_ERROR([
+                "failed to update saved prose",
+                (error as Error).message || "unknown error",
+            ])
+        );
+    } finally {
+        savingEntry.value = false;
     }
 };
 onMounted(() => {
@@ -245,6 +300,12 @@ watch(
     gap: 0.75rem;
 }
 
+.entry-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 @media (max-width: 768px) {
     .prose-detail-view {
         padding: 0.5rem;
@@ -257,6 +318,12 @@ watch(
     .actions-row {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .entry-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
     }
 }
 </style>

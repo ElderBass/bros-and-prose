@@ -40,3 +40,10 @@ export interface ProseEntryRequest {
     entry: ProseEntry;
     metadata?: ProseEntryMetadata;
 }
+
+export interface ProseDraft {
+    title: string;
+    type: ProseType;
+    markdown: string;
+    savedAt: string;
+}
