@@ -33,7 +33,15 @@
                             <p class="date">{{ createdAtLabel }}</p>
                         </div>
                     </div>
-                    <span class="type-pill">{{ entry.type }}</span>
+                    <div class="header-actions">
+                        <span class="type-pill">{{ entry.type }}</span>
+                        <EditButton
+                            v-if="isAuthor"
+                            title="edit this 'prose' lol"
+                            :handleEdit="openComposerForEdit"
+                            button-size="small"
+                        />
+                    </div>
                 </div>
 
                 <h2 class="title">{{ entry.title }}</h2>
@@ -98,6 +106,14 @@
         @submit="submitComment"
         @close="showCommentModal = false"
     />
+
+    <ProseComposerModal
+        v-if="showComposerModal && entry"
+        :open="showComposerModal"
+        :edit-entry="entry"
+        @close="showComposerModal = false"
+        @updated="handleProseUpdated"
+    />
 </template>
 
 <script setup lang="ts">
@@ -110,7 +126,9 @@ import AvatarImage from "@/components/ui/AvatarImage.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import ProseEntryReactionActions from "@/components/features/Prose/ProseEntryReactionActions.vue";
 import ProseCommentsSection from "@/components/features/Prose/ProseCommentsSection.vue";
+import ProseComposerModal from "@/components/features/Prose/ProseComposerModal.vue";
 import MarkdownContent from "@/components/features/common/MarkdownContent.vue";
+import EditButton from "@/components/ui/EditButton.vue";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
 import { useUIStore } from "@/stores/ui";
@@ -138,8 +156,18 @@ const isAuthor = computed(
     () => entry.value?.userInfo?.id === loggedInUser.value?.id
 );
 
+const openComposerForEdit = () => {
+    showComposerModal.value = true;
+};
+
+const handleProseUpdated = (updated: ProseEntry) => {
+    entry.value = updated;
+    showComposerModal.value = false;
+};
+
 const loading = ref(false);
 const showCommentModal = ref(false);
+const showComposerModal = ref(false);
 const submittingComment = ref(false);
 const savingEntry = ref(false);
 const entry = ref<ProseEntry | undefined>(undefined);
@@ -325,6 +353,12 @@ watch(
     align-items: center;
     padding-bottom: 0.25rem;
     gap: 1rem;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .author-meta {

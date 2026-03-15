@@ -8,16 +8,18 @@
             />
         </div>
         <div v-else class="prose-view">
-            <ProseList />
+            <ProseList @edit="openComposerForEdit" />
         </div>
 
         <ProseComposerModal
             v-if="showComposerModal"
             :open="showComposerModal"
-            @close="showComposerModal = false"
+            :edit-entry="editingEntry"
+            @close="closeComposer"
             @created="handleEntryCreated"
+            @updated="handleEntryUpdated"
         />
-        <ProseFab v-if="!isGuestUser()" @click="showComposerModal = true" />
+        <ProseFab v-if="!isGuestUser()" @click="openComposerForNew" />
     </AppLayout>
 </template>
 
@@ -35,10 +37,30 @@ import { isGuestUser } from "@/utils";
 
 const loading = ref(false);
 const showComposerModal = ref(false);
+const editingEntry = ref<ProseEntry | null>(null);
 const proseStore = useProseStore();
+
+const openComposerForNew = () => {
+    editingEntry.value = null;
+    showComposerModal.value = true;
+};
+
+const openComposerForEdit = (entry: ProseEntry) => {
+    editingEntry.value = entry;
+    showComposerModal.value = true;
+};
+
+const closeComposer = () => {
+    showComposerModal.value = false;
+    editingEntry.value = null;
+};
 
 const handleEntryCreated = (entry: ProseEntry) => {
     proseStore.setEntries([entry, ...proseStore.entries]);
+};
+
+const handleEntryUpdated = () => {
+    editingEntry.value = null;
 };
 </script>
 

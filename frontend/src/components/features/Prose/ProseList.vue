@@ -14,6 +14,7 @@
                 v-for="entry in entries"
                 :key="entry.id"
                 :entry="entry"
+                @edit="$emit('edit', $event)"
             />
         </div>
     </div>
@@ -25,6 +26,11 @@ import { computed } from "vue";
 import ProseTypeFilters from "./ProseTypeFilters.vue";
 import ProseListItem from "./ProseListItem.vue";
 import { useProseStore } from "@/stores/prose";
+import type { ProseEntry } from "@/types";
+
+defineEmits<{
+    (e: "edit", entry: ProseEntry): void;
+}>();
 
 const {
     filteredEntries: entries,
