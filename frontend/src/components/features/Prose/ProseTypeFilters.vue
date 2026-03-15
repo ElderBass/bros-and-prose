@@ -46,6 +46,6 @@ const filterOptions: Array<{ label: string; value: ProseFilter }> = [
     justify-content: center;
     flex-wrap: wrap;
     gap: 0.5rem;
-    padding: 0.25rem 0;
+    padding: 0.5rem 0;
 }
 </style>
