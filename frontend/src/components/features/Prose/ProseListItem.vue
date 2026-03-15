@@ -17,12 +17,6 @@
                     <span class="type-pill">{{ entry.type }}</span>
                 </div>
                 <span class="created-at">{{ createdAtLabel }}</span>
-                <EditButton
-                    v-if="isAuthor"
-                    title="edit this prose"
-                    :handle-edit="onEditClick"
-                    button-size="xsmall"
-                />
             </div>
 
             <h3 class="prose-title">{{ entry.title }}</h3>
@@ -60,12 +54,8 @@
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import { RouterLink } from "vue-router";
-import { storeToRefs } from "pinia";
-import BaseCard from "@/components/ui/BaseCard.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
-import EditButton from "@/components/ui/EditButton.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
-import { useUserStore } from "@/stores/user";
 import type { ProseEntry } from "@/types";
 import { getPlainTextFromMarkdown } from "@/utils";
 import { faGlasses } from "@fortawesome/free-solid-svg-icons";
@@ -79,16 +69,6 @@ const emit = defineEmits<{
 }>();
 
 const { mobile } = useDisplay();
-
-const { loggedInUser } = storeToRefs(useUserStore());
-const isAuthor = computed(
-    () => props.entry?.userInfo?.id === loggedInUser.value?.id
-);
-
-const onEditClick = (e?: MouseEvent) => {
-    e?.stopPropagation?.();
-    emit("edit", props.entry);
-};
 
 const createdAtLabel = computed(() => {
     const date = new Date(props.entry.createdAt);
