@@ -64,10 +64,6 @@ const props = defineProps<{
     entry: ProseEntry;
 }>();
 
-const emit = defineEmits<{
-    (e: "edit", entry: ProseEntry): void;
-}>();
-
 const { mobile } = useDisplay();
 
 const createdAtLabel = computed(() => {
