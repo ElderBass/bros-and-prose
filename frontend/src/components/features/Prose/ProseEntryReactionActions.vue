@@ -6,6 +6,7 @@
             :type="reaction"
             :reactions="getReactionArray(reaction)"
             :onClick="() => handleReaction(reaction)"
+            size="small"
         />
     </div>
 </template>

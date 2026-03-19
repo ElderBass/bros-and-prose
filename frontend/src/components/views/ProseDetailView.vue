@@ -55,34 +55,31 @@
                         :entry="entry"
                     />
                     <div v-if="!isGuestUser()" class="entry-actions">
-                        <BaseButton
+                        <IconButton
                             v-if="!isAuthor"
-                            :variant="
-                                isEntrySaved
-                                    ? 'outline-success'
-                                    : 'outline-tertiary'
-                            "
+                            :icon="isEntrySaved ? faHeartSolid : faHeartRegular"
+                            color="pink"
                             size="small"
                             :title="
                                 isEntrySaved
                                     ? 'remove this prose from your annals'
                                     : 'add this prose to your annals'
                             "
-                            :showTooltip="false"
                             :disabled="savingEntry"
-                            @click="toggleSavedState"
-                        >
-                            {{ isEntrySaved ? "saved" : "save prose" }}
-                        </BaseButton>
+                            :handleClick="toggleSavedState"
+                        />
                         <BaseButton
                             variant="outline"
                             size="small"
                             title="add a cheeky comment, don't hold back"
                             :showTooltip="false"
+                            class="comment-btn"
                             @click="showCommentModal = true"
                         >
                             <FontAwesomeIcon :icon="faCommentMedical" />
-                            cheeky feedback
+                            <span class="comment-btn-text"
+                                >cheeky feedback</span
+                            >
                         </BaseButton>
                     </div>
                 </div>
@@ -125,6 +122,7 @@ import ProseCommentsSection from "@/components/features/Prose/ProseCommentsSecti
 import MarkdownContent from "@/components/features/common/MarkdownContent.vue";
 import BlurbSection from "@/components/features/Prose/ProseDetail/BlurbSection.vue";
 import EditButton from "@/components/ui/EditButton.vue";
+import IconButton from "@/components/ui/IconButton.vue";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
 import { useUIStore } from "@/stores/ui";
@@ -134,6 +132,8 @@ import type { Comment, ProseEntry } from "@/types";
 import { isGuestUser } from "@/utils";
 import { useLog } from "@/composables";
 import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import ProseViewHeader from "../features/Prose/ProseViewHeader.vue";
 
 const route = useRoute();
@@ -360,12 +360,19 @@ watch(
     align-items: center;
     justify-content: flex-end;
     gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .entry-actions {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.comment-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
 }
 
 @media (max-width: 768px) {
@@ -422,16 +429,22 @@ watch(
     }
 
     .actions-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.5rem;
+        gap: 0.75rem;
+        flex-wrap: nowrap;
     }
 
     .entry-actions {
-        flex-direction: column;
-        align-items: stretch;
-        width: 100%;
-        gap: 0.4rem;
+        gap: 0.35rem;
+    }
+
+    .comment-btn-text {
+        display: none;
+    }
+
+    .comment-btn {
+        min-width: auto;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
 
     .empty-state {
