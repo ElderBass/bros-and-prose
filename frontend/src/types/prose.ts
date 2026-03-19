@@ -21,6 +21,7 @@ export interface ProseEntry {
     tags?: string[];
     likes?: string[];
     dislikes?: string[];
+    favorites?: string[];
     comments?: Comment[];
     updatedAt?: string;
 }

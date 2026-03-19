@@ -24,16 +24,20 @@
                     <span class="created-at">{{ createdAtLabel }}</span>
                     <div v-if="compact" class="header-reactions">
                         <ReactionPill
-                            type="comment"
-                            :count="entry.comments?.length || 0"
-                        />
-                        <ReactionPill
                             type="like"
                             :count="entry.likes?.length || 0"
                         />
                         <ReactionPill
                             type="dislike"
                             :count="entry.dislikes?.length || 0"
+                        />
+                        <ReactionPill
+                            type="favorite"
+                            :count="entry.favorites?.length || 0"
+                        />
+                        <ReactionPill
+                            type="comment"
+                            :count="entry.comments?.length || 0"
                         />
                     </div>
                 </div>
@@ -58,16 +62,20 @@
             <div class="footer-row">
                 <div v-if="!compact" class="meta-row">
                     <ReactionPill
-                        type="comment"
-                        :count="entry.comments?.length || 0"
-                    />
-                    <ReactionPill
                         type="like"
                         :count="entry.likes?.length || 0"
                     />
                     <ReactionPill
                         type="dislike"
                         :count="entry.dislikes?.length || 0"
+                    />
+                    <ReactionPill
+                        type="favorite"
+                        :count="entry.favorites?.length || 0"
+                    />
+                    <ReactionPill
+                        type="comment"
+                        :count="entry.comments?.length || 0"
                     />
                 </div>
                 <RouterLink v-if="!compact" :to="`/prose/${entry.id}`">

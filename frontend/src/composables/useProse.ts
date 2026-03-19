@@ -282,6 +282,23 @@ export const useProse = () => {
         );
     };
 
+    const updateProseEntryFavorites = async (
+        proseEntry: ProseEntry,
+        action: "add" | "remove"
+    ) => {
+        const loggedInUsername = useUserStore().loggedInUser.username;
+        const updatedEntry = {
+            ...proseEntry,
+            favorites:
+                action === "add"
+                    ? [...(proseEntry.favorites || []), loggedInUsername]
+                    : (proseEntry.favorites || []).filter(
+                          (username) => username !== loggedInUsername
+                      ),
+        };
+        return updateProseEntry(updatedEntry);
+    };
+
     const addComment = async (proseEntry: ProseEntry, comment: Comment) => {
         const updatedEntry = {
             ...proseEntry,
@@ -300,6 +317,14 @@ export const useProse = () => {
 
     const dislikeProseEntry = async (entry: ProseEntry) => {
         return updateProseItemLikesDislikes(entry, entry, "dislike");
+    };
+
+    const favoriteProseEntry = async (entry: ProseEntry) => {
+        return updateProseEntryFavorites(entry, "add");
+    };
+
+    const unfavoriteProseEntry = async (entry: ProseEntry) => {
+        return updateProseEntryFavorites(entry, "remove");
     };
 
     const likeComment = async (entry: ProseEntry, comment: Comment) => {
@@ -324,6 +349,8 @@ export const useProse = () => {
         addComment,
         likeProseEntry,
         dislikeProseEntry,
+        favoriteProseEntry,
+        unfavoriteProseEntry,
         likeComment,
         dislikeComment,
     };

@@ -65,4 +65,9 @@ export interface PalaverEntryRequest {
     metadata: PalaverEntryMetadata;
 }
 
-export type ReactionType = "like" | "dislike" | "comment" | "reply";
+export type ReactionType =
+    | "like"
+    | "dislike"
+    | "comment"
+    | "reply"
+    | "favorite";
