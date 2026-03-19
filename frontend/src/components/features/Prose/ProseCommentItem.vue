@@ -150,12 +150,4 @@ const truncatedReplyText = computed(() => {
     margin: 0.1rem 0 0;
     font-style: italic;
 }
-
-@media (max-width: 768px) {
-    /* .comment-header {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 0.2rem;
-    } */
-}
 </style>
