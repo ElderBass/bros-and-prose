@@ -40,9 +40,18 @@
 
             <div class="footer-row">
                 <div class="meta-row">
-                    <span>{{ entry.comments?.length || 0 }} comments</span>
-                    <span>{{ entry.likes?.length || 0 }} likes</span>
-                    <span>{{ entry.dislikes?.length || 0 }} dislikes</span>
+                    <ReactionPill
+                        type="comment"
+                        :count="entry.comments?.length || 0"
+                    />
+                    <ReactionPill
+                        type="like"
+                        :count="entry.likes?.length || 0"
+                    />
+                    <ReactionPill
+                        type="dislike"
+                        :count="entry.dislikes?.length || 0"
+                    />
                 </div>
                 <RouterLink :to="`/prose/${entry.id}`">
                     <BaseButton
@@ -64,6 +73,7 @@ import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import { RouterLink } from "vue-router";
 import ProseTypePill from "./ProseTypePill.vue";
+import ReactionPill from "@/components/features/common/ReactionPill.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import GlassesIcon from "@/components/icons/GlassesIcon.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
