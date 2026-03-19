@@ -207,6 +207,11 @@ const onClose = () => emit("close");
     padding: 0.5rem;
 }
 
+.loading-content {
+    width: 100%;
+    height: 100%;
+}
+
 .field {
     display: flex;
     flex-direction: column;
