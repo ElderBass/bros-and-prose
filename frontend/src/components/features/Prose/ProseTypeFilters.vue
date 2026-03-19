@@ -126,10 +126,13 @@ function clearFilters() {
 }
 
 @media (max-width: 768px) {
+    .filters-wrap {
+        gap: 0.25rem;
+    }
     .bro-select {
         min-height: 2rem;
-        font-size: 0.85rem;
-        max-width: 8rem;
+        font-size: 0.75rem;
+        max-width: 7rem;
     }
 }
 </style>
