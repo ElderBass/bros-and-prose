@@ -20,6 +20,7 @@
                         v-if="showActions"
                         :entry="entry"
                         :comment="comment"
+                        @entry-updated="$emit('entry-updated', $event)"
                     />
                     <ReplyButton
                         v-if="showActions"
@@ -58,6 +59,7 @@ const props = defineProps<{
 
 defineEmits<{
     (e: "reply", comment: Comment): void;
+    (e: "entry-updated", entry: ProseEntry): void;
 }>();
 
 const { mobile } = useDisplay();

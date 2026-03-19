@@ -13,6 +13,7 @@
                 :entry="entry"
                 :comment="comment"
                 @reply="openReplyModal"
+                @entry-updated="(e) => emit('entry-updated', e)"
             />
         </div>
     </section>

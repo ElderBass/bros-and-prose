@@ -73,5 +73,6 @@ const handleDislike = async () => {
     align-items: center;
     justify-content: flex-end;
     gap: 0.65rem;
+    padding: 0.5rem 0;
 }
 </style>
