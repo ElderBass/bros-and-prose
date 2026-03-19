@@ -57,16 +57,18 @@
                     <div v-if="!isGuestUser()" class="entry-actions">
                         <IconButton
                             v-if="!isAuthor"
-                            :icon="isEntrySaved ? faHeartSolid : faHeartRegular"
+                            :icon="
+                                isProseFavorited ? faHeartSolid : faHeartRegular
+                            "
                             color="pink"
                             size="small"
                             :title="
-                                isEntrySaved
+                                isProseFavorited
                                     ? 'remove this prose from your annals'
                                     : 'add this prose to your annals'
                             "
                             :disabled="savingEntry"
-                            :handleClick="toggleSavedState"
+                            :handleClick="toggleFavoriteState"
                         />
                         <BaseButton
                             variant="outline"
@@ -127,6 +129,7 @@ import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
 import { useUIStore } from "@/stores/ui";
 import { useUserStore } from "@/stores/user";
+import { useUserFavorites } from "@/composables";
 import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import type { Comment, ProseEntry } from "@/types";
 import { isGuestUser } from "@/utils";
@@ -141,7 +144,7 @@ const router = useRouter();
 const { mobile } = useDisplay();
 const proseStore = useProseStore();
 const { showAlert } = useUIStore();
-const { addComment, getProseEntry, toggleSavedProseEntry } = useProse();
+const { addComment, getProseEntry } = useProse();
 
 const { entries } = storeToRefs(proseStore);
 const { loggedInUser } = storeToRefs(useUserStore());
@@ -161,9 +164,19 @@ const submittingComment = ref(false);
 const savingEntry = ref(false);
 const entry = ref<ProseEntry | undefined>(undefined);
 
-const isEntrySaved = computed(() => {
+const normalizeProseFavorites = (raw: unknown): ProseEntry[] => {
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw as ProseEntry[];
+    if (typeof raw === "object") return Object.values(raw) as ProseEntry[];
+    return [];
+};
+
+const isProseFavorited = computed(() => {
     if (!entry.value?.id) return false;
-    return proseStore.isSaved(entry.value.id);
+    const proseFavs = normalizeProseFavorites(
+        loggedInUser.value?.favorites?.prose
+    );
+    return proseFavs.some((p) => p.id === entry.value?.id);
 });
 
 const createdAtLabel = computed(() => {
@@ -211,28 +224,42 @@ const submitComment = async (comment: Comment) => {
     }
 };
 
-const toggleSavedState = async () => {
+const toggleFavoriteState = async () => {
     if (!entry.value?.id || savingEntry.value) return;
     savingEntry.value = true;
     try {
-        const wasSaved = isEntrySaved.value;
-        await toggleSavedProseEntry(entry.value.id);
+        const currentFavorites = normalizeProseFavorites(
+            loggedInUser.value?.favorites?.prose
+        );
+        const wasFavorited = currentFavorites.some(
+            (p) => p.id === entry.value?.id
+        );
+
+        const updatedFavorites = wasFavorited
+            ? currentFavorites.filter((p) => p.id !== entry.value?.id)
+            : [...currentFavorites, entry.value];
+
+        await useUserFavorites().updateFavorite("prose", updatedFavorites);
         showAlert({
             show: true,
-            messages: [
-                wasSaved
-                    ? "prose removed from saved."
-                    : "prose saved for later.",
-            ],
+            messages: wasFavorited
+                ? [
+                      "prose removed from favorites.",
+                      "I mean can't blame you, it's garbo",
+                  ]
+                : [
+                      "prose added to favorites. you have...some kinda taste...",
+                      "look at you, all cultured and shit",
+                  ],
             type: "success",
-            duration: 3000,
+            duration: 5000,
             dismissable: false,
         });
     } catch (error) {
-        await useLog().error(`Error toggling saved prose: ${error}`);
+        await useLog().error(`Error toggling favorite prose: ${error}`);
         showAlert(
             QUICK_ERROR([
-                "failed to update saved prose",
+                "failed to update favorite prose",
                 (error as Error).message || "unknown error",
             ])
         );

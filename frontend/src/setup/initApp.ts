@@ -27,7 +27,6 @@ export const initApp = async () => {
             );
             const user = await useUser().getUser(userFromStorage.id);
             console.log("KERTWANGING user in initApp", getUserInfo(user));
-            useProse().syncSavedProseFromUser();
         } else if (isGuestUser()) {
             useLog().info("Guest user found, redirecting to present page...");
             router.push("/present");

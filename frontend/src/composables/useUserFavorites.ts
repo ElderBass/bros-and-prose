@@ -1,4 +1,9 @@
-import type { BookshelfBook, FavoriteType, UserFavorites } from "@/types";
+import type {
+    BookshelfBook,
+    FavoriteType,
+    ProseEntry,
+    UserFavorites,
+} from "@/types";
 import { useUser } from "./useUser";
 import { useUserStore } from "@/stores/user";
 import { useLog } from "./useLog";
@@ -19,12 +24,15 @@ export const useUserFavorites = () => {
 
     const updateFavorite = async (
         favoriteType: FavoriteType,
-        items: string[] | BookshelfBook[]
+        items: string[] | BookshelfBook[] | ProseEntry[]
     ) => {
         const loggedInUser = useUserStore().loggedInUser;
         const updatedUser = await updateUser(loggedInUser.id, {
             ...loggedInUser,
-            favorites: { ...loggedInUser.favorites, [favoriteType]: items },
+            favorites: {
+                ...(loggedInUser.favorites || {}),
+                [favoriteType]: items,
+            },
         });
         await info(`Updated '${favoriteType}' for ${loggedInUser.username}`);
         return updatedUser;

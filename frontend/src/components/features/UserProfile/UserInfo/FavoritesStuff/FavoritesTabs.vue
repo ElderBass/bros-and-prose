@@ -28,6 +28,13 @@
                 :isLoggedInUser="isLoggedInUser"
             />
         </template>
+        <template #prose>
+            <FavoritesTabContent
+                type="prose"
+                :items="getItemsForTab('prose')"
+                :isLoggedInUser="isLoggedInUser"
+            />
+        </template>
     </TabsContainer>
 </template>
 
@@ -37,7 +44,7 @@ import TabsContainer, {
     type TabConfig,
 } from "@/components/ui/TabsContainer.vue";
 import FavoritesTabContent from "@/components/features/UserProfile/UserInfo/FavoritesStuff/FavoritesTabContent.vue";
-import type { UserFavorites, FavoriteType } from "@/types";
+import type { UserFavorites, FavoriteType, ProseEntry } from "@/types";
 
 const { favorites, isLoggedInUser } = defineProps<{
     favorites: UserFavorites | undefined;
@@ -45,12 +52,13 @@ const { favorites, isLoggedInUser } = defineProps<{
 }>();
 
 const favoriteTabs: TabConfig[] = [
+    { id: "prose", label: "prose by bros", color: "fuschia" },
     { id: "books", label: "books", color: "fuschia" },
     { id: "authors", label: "authors", color: "fuschia" },
     { id: "genres", label: "genres", color: "fuschia" },
 ];
 
-const activeTab = ref<string>("books");
+const activeTab = ref<string>("prose");
 
 const getItemsForTab = (tab: FavoriteType): string[] => {
     if (tab === "books") {
@@ -59,6 +67,15 @@ const getItemsForTab = (tab: FavoriteType): string[] => {
                 JSON.stringify(book)
             ) ?? []
         );
+    }
+    if (tab === "prose") {
+        const proseRaw = favorites?.prose;
+        const proseList: ProseEntry[] = Array.isArray(proseRaw)
+            ? (proseRaw as ProseEntry[])
+            : proseRaw && typeof proseRaw === "object"
+              ? (Object.values(proseRaw) as ProseEntry[])
+              : [];
+        return proseList.map((prose) => JSON.stringify(prose)) ?? [];
     }
     return Object.values(favorites?.[tab] ?? []);
 };

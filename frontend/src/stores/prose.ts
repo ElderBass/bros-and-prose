@@ -6,7 +6,6 @@ export interface ProseState {
     entries: ProseEntry[];
     filters: ProseTypeFilter[];
     filteredBro: string;
-    savedProseIds: string[];
     hasUnreadProseEntries: boolean;
 }
 
@@ -15,7 +14,6 @@ export const useProseStore = defineStore("prose", {
         entries: [],
         filters: [],
         filteredBro: "",
-        savedProseIds: [],
         hasUnreadProseEntries: false,
     }),
     getters: {
@@ -35,9 +33,6 @@ export const useProseStore = defineStore("prose", {
                 return "from this bro";
             if (state.filters.length === 1) return state.filters[0];
             return state.filters.join(", ");
-        },
-        isSaved: (state) => (proseId: string) => {
-            return state.savedProseIds.includes(proseId);
         },
     },
     actions: {
@@ -61,12 +56,6 @@ export const useProseStore = defineStore("prose", {
         },
         setHasUnreadProseEntries(hasUnread: boolean) {
             this.hasUnreadProseEntries = hasUnread;
-        },
-        setSavedProseIds(ids: string[]) {
-            this.savedProseIds = ids;
-        },
-        clearSavedProseIds() {
-            this.savedProseIds = [];
         },
         clearEntries() {
             this.entries = [];

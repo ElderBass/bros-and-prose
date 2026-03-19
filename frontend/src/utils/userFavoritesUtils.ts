@@ -1,18 +1,21 @@
 import { useUserStore } from "@/stores/user";
 import { sortBooks } from "./bookUtils";
-import type { FavoriteType, BookshelfBook } from "@/types";
+import type { FavoriteType, BookshelfBook, ProseEntry } from "@/types";
 
 export const getUpdatedFavorites = (
     selectedFavoriteType: FavoriteType,
-    items: string[] | BookshelfBook[]
+    items: string[] | BookshelfBook[] | ProseEntry[]
 ) => {
     const user = useUserStore().loggedInUser;
 
-    let processedItems: string[] | BookshelfBook[];
+    let processedItems: string[] | BookshelfBook[] | ProseEntry[];
 
     if (selectedFavoriteType === "books") {
         // For books, items should be BookshelfBook[]
         processedItems = items as BookshelfBook[];
+    } else if (selectedFavoriteType === "prose") {
+        // For prose, keep the array as-is (no string-based dedup).
+        processedItems = items as ProseEntry[];
     } else {
         // For authors/genres, items should be string[]
         processedItems = Array.from(new Set(items as string[]));
