@@ -7,7 +7,6 @@ import type { Comment, ProseEntry, ProseEntryMetadata } from "@/types";
 import { checkForUnreadProseEntries } from "@/utils/proseUtils";
 import { getMentionedUsers } from "@/utils";
 import { useLog } from "./useLog";
-import { useUser } from "./useUser";
 
 let unsubscribe: (() => void) | null = null;
 
@@ -130,8 +129,6 @@ export function unsubscribeFromProse() {
 export const useProse = () => {
     const proseStore = useProseStore();
     const { info } = useLog();
-    const { updateUser } = useUser();
-    const userStore = useUserStore();
 
     const getProseEntries = async (isInit = false) => {
         const response = await proseService.list();
@@ -318,52 +315,6 @@ export const useProse = () => {
         );
     };
 
-    const syncSavedProseFromUser = () => {
-        proseStore.setSavedProseIds(userStore.loggedInUser.savedProseIds || []);
-    };
-
-    const saveProseEntry = async (proseId: string) => {
-        const loggedInUser = userStore.loggedInUser;
-        if (!loggedInUser?.id) return null;
-
-        const updatedSavedIds = getUniqueUsernames([
-            ...(loggedInUser.savedProseIds || []),
-            proseId,
-        ]);
-
-        const updatedUser = await updateUser(loggedInUser.id, {
-            ...loggedInUser,
-            savedProseIds: updatedSavedIds,
-        });
-
-        proseStore.setSavedProseIds(updatedUser?.savedProseIds || []);
-        return updatedUser;
-    };
-
-    const unsaveProseEntry = async (proseId: string) => {
-        const loggedInUser = userStore.loggedInUser;
-        if (!loggedInUser?.id) return null;
-
-        const updatedSavedIds = (loggedInUser.savedProseIds || []).filter(
-            (savedId) => savedId !== proseId
-        );
-
-        const updatedUser = await updateUser(loggedInUser.id, {
-            ...loggedInUser,
-            savedProseIds: updatedSavedIds,
-        });
-
-        proseStore.setSavedProseIds(updatedUser?.savedProseIds || []);
-        return updatedUser;
-    };
-
-    const toggleSavedProseEntry = async (proseId: string) => {
-        if (proseStore.savedProseIds.includes(proseId)) {
-            return unsaveProseEntry(proseId);
-        }
-        return saveProseEntry(proseId);
-    };
-
     return {
         getProseEntries,
         getProseEntry,
@@ -375,9 +326,5 @@ export const useProse = () => {
         dislikeProseEntry,
         likeComment,
         dislikeComment,
-        syncSavedProseFromUser,
-        saveProseEntry,
-        unsaveProseEntry,
-        toggleSavedProseEntry,
     };
 };

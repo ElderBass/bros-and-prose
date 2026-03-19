@@ -5,6 +5,7 @@ import type {
 } from "@fortawesome/fontawesome-svg-core";
 import type { Review } from "./review";
 import type { BookshelfBook } from "./books";
+import type { ProseEntry } from "./prose";
 
 export interface User {
     id: string;
@@ -23,7 +24,6 @@ export interface User {
     currentlyReading?: BookshelfBook[];
     wantToRead?: BookshelfBook[];
     haveRead?: BookshelfBook[];
-    savedProseIds?: string[];
     favorites?: UserFavorites;
     yearReadingGoal?: number;
 }
@@ -32,9 +32,10 @@ export interface UserFavorites {
     authors?: string[];
     genres?: string[];
     books?: BookshelfBook[];
+    prose?: ProseEntry[];
 }
 
-export type FavoriteType = "authors" | "genres" | "books";
+export type FavoriteType = "authors" | "genres" | "books" | "prose";
 
 export interface UserInfo {
     id: string;
