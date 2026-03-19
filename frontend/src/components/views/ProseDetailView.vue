@@ -240,21 +240,12 @@ const toggleFavoriteState = async () => {
             : [...currentFavorites, entry.value];
 
         await useUserFavorites().updateFavorite("prose", updatedFavorites);
-        showAlert({
-            show: true,
-            messages: wasFavorited
-                ? [
-                      "prose removed from favorites.",
-                      "I mean can't blame you, it's garbo",
-                  ]
-                : [
-                      "prose added to favorites. you have...some kinda taste...",
-                      "look at you, all cultured and shit",
-                  ],
-            type: "success",
-            duration: 5000,
-            dismissable: false,
-        });
+
+        if (wasFavorited) {
+            await useProse().unfavoriteProseEntry(entry.value);
+        } else {
+            await useProse().favoriteProseEntry(entry.value);
+        }
     } catch (error) {
         await useLog().error(`Error toggling favorite prose: ${error}`);
         showAlert(

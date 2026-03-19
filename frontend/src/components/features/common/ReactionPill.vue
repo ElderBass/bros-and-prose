@@ -18,6 +18,7 @@ import {
     faThumbsDown,
     faComment,
     faQuestion,
+    faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 
 const props = defineProps<{
@@ -39,6 +40,8 @@ const icon = computed(() => {
             return faThumbsDown;
         case "comment":
             return faComment;
+        case "favorite":
+            return faHeart;
         default:
             return faQuestion;
     }
@@ -52,6 +55,8 @@ const title = computed(() => {
             return `${props.count} dislikes`;
         case "comment":
             return `${props.count} comments`;
+        case "favorite":
+            return `${props.count} favorites`;
         default:
             return "";
     }
@@ -97,6 +102,12 @@ const title = computed(() => {
     background-color: color-mix(in srgb, var(--accent-blue) 25%, transparent);
     border: 1px solid var(--accent-blue);
     color: var(--accent-blue);
+}
+
+.count-pill-favorite {
+    background-color: color-mix(in srgb, var(--accent-pink) 25%, transparent);
+    border: 1px solid var(--accent-pink);
+    color: var(--accent-pink);
 }
 
 .count-icon {
