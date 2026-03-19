@@ -29,21 +29,29 @@ const props = defineProps<{
     entry: ProseEntry;
 }>();
 
+const emit = defineEmits<{
+    (e: "entry-updated", entry: ProseEntry): void;
+}>();
+
 const { likeComment, dislikeComment } = useProse();
 const { error: logError, info: logInfo } = useLog();
 const { showAlert } = useUIStore();
 
 const handleReaction = async (reaction: ReactionType) => {
     try {
-        if (reaction === "like") {
-            await likeComment(props.entry, props.comment);
-            await logInfo(`Liked prose comment: ${props.comment.id}`);
-            showAlert(LIKED_PALAVER_ENTRY_SUCCESS_ALERT);
-        } else {
-            await dislikeComment(props.entry, props.comment);
-            await logInfo(`Disliked prose comment: ${props.comment.id}`);
-            showAlert(DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT);
-        }
+        const updated =
+            reaction === "like"
+                ? await likeComment(props.entry, props.comment)
+                : await dislikeComment(props.entry, props.comment);
+        if (updated) emit("entry-updated", updated);
+        await logInfo(
+            `${reaction === "like" ? "Liked" : "Disliked"} prose comment: ${props.comment.id}`
+        );
+        showAlert(
+            reaction === "like"
+                ? LIKED_PALAVER_ENTRY_SUCCESS_ALERT
+                : DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT
+        );
     } catch (error) {
         console.error(error);
         await logError(`Error reacting to prose comment: ${props.comment.id}`);
