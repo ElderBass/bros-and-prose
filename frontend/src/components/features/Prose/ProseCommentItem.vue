@@ -74,11 +74,11 @@ const showActions = computed(() => {
 const timestamp = computed(() => {
     try {
         return new Date(props.comment.createdAt).toLocaleString(undefined, {
-            month: "short",
+            month: mobile.value ? "2-digit" : "short",
             day: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
+            year: mobile.value ? "2-digit" : "numeric",
+            hour: mobile.value ? undefined : "2-digit",
+            minute: mobile.value ? undefined : "2-digit",
         });
     } catch {
         return props.comment.createdAt;
@@ -135,6 +135,7 @@ const truncatedReplyText = computed(() => {
 .actions {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 0.25rem;
 }
 
@@ -151,10 +152,10 @@ const truncatedReplyText = computed(() => {
 }
 
 @media (max-width: 768px) {
-    .comment-header {
+    /* .comment-header {
         align-items: flex-start;
         flex-direction: column;
         gap: 0.2rem;
-    }
+    } */
 }
 </style>

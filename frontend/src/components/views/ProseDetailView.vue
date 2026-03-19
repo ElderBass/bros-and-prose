@@ -90,7 +90,7 @@
 
             <BaseCard
                 shadow-color="lavender"
-                size="medium"
+                :size="cardSize"
                 class="comments-card"
             >
                 <ProseCommentsSection
