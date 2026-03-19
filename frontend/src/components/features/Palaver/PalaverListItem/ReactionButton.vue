@@ -32,9 +32,12 @@ const props = withDefaults(
         reactions: string[];
         onClick: () => void;
         isChildComment?: boolean;
+        /** When set, overrides the default size (e.g. to match other actions). */
+        size?: "supersmall" | "xsmall" | "small" | "medium" | "large";
     }>(),
     {
         isChildComment: false,
+        size: undefined,
     }
 );
 
@@ -72,6 +75,7 @@ const color = computed(() => {
 });
 
 const buttonSize = computed(() => {
+    if (props.size !== undefined) return props.size;
     return props.isChildComment
         ? "supersmall"
         : mobile.value
