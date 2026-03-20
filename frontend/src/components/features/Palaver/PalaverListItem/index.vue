@@ -16,7 +16,11 @@
                         formatDateForDevice(entry.createdAt)
                     }}</span>
                 </div>
-                <ListItemActions v-if="!isGuestUser()" :entry="entry" />
+                <ListItemActions
+                    v-if="!isGuestUser()"
+                    :entry="workingEntry"
+                    @entry-updated="syncEntryFromReaction"
+                />
             </div>
 
             <p class="stock-text">
@@ -55,14 +59,14 @@
                 </template>
             </ExpandableText>
             <ReactionDetails
-                v-if="entry.likes || entry.dislikes"
-                :likes="entry.likes || []"
-                :dislikes="entry.dislikes || []"
+                v-if="workingEntry.likes || workingEntry.dislikes"
+                :likes="workingEntry.likes || []"
+                :dislikes="workingEntry.dislikes || []"
             />
             <transition name="fade">
                 <CommentsSection
                     v-if="showComments"
-                    :entry="entry"
+                    :entry="workingEntry"
                     :variant="themeVariant"
                 />
             </transition>
@@ -84,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useDisplay } from "vuetify";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import MentionText from "@/components/ui/MentionText.vue";
@@ -114,8 +118,25 @@ const { mobile } = useDisplay();
 
 const showComments = ref(false);
 
+/** Keeps likes/dislikes (and comments UI) in sync immediately after reacting, before parent props refresh. */
+const workingEntry = ref<PalaverEntry>(props.entry);
+
+watch(
+    () => props.entry,
+    (e) => {
+        workingEntry.value = e;
+    },
+    { immediate: true }
+);
+
+const syncEntryFromReaction = (e: PalaverEntry) => {
+    workingEntry.value = e;
+};
+
 const hasComments = computed(() => {
-    return props.entry.comments && props.entry.comments.length > 0;
+    return (
+        workingEntry.value.comments && workingEntry.value.comments.length > 0
+    );
 });
 
 const typeLabel = computed(() => {

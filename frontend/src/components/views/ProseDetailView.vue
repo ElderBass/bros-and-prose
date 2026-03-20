@@ -53,6 +53,7 @@
                     <ProseEntryReactionActions
                         v-if="!isGuestUser() && !isAuthor"
                         :entry="entry"
+                        @entry-updated="onEntryUpdated"
                     />
                     <div v-if="!isGuestUser()" class="entry-actions">
                         <IconButton
