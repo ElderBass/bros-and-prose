@@ -31,6 +31,10 @@ const { info: logInfo, error: logError } = useLog();
 
 const props = defineProps<{ entry: PalaverEntry }>();
 
+const emit = defineEmits<{
+    (e: "entry-updated", entry: PalaverEntry): void;
+}>();
+
 const handleReaction = async (reaction: ReactionType) => {
     if (reaction === "like") {
         await handleLike();
@@ -41,7 +45,8 @@ const handleReaction = async (reaction: ReactionType) => {
 
 const handleLike = async () => {
     try {
-        await likePalaverEntry(props.entry);
+        const updated = await likePalaverEntry(props.entry);
+        if (updated) emit("entry-updated", updated);
         await logInfo(`Liked palaver entry: ${props.entry.id}`);
         showAlert(LIKED_PALAVER_ENTRY_SUCCESS_ALERT);
     } catch (error) {
@@ -52,7 +57,8 @@ const handleLike = async () => {
 
 const handleDislike = async () => {
     try {
-        await dislikePalaverEntry(props.entry);
+        const updated = await dislikePalaverEntry(props.entry);
+        if (updated) emit("entry-updated", updated);
         await logInfo(`Disliked palaver entry: ${props.entry.id}`);
         showAlert(DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT);
     } catch (error) {

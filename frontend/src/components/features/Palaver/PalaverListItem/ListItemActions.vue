@@ -12,7 +12,11 @@
         />
         <CommentButton :entry="entry" />
     </div>
-    <ReactionActions v-else :entry="entry" />
+    <ReactionActions
+        v-else
+        :entry="entry"
+        @entry-updated="emit('entry-updated', $event)"
+    />
 </template>
 
 <script setup lang="ts">
@@ -28,6 +32,10 @@ import { useDisplay } from "vuetify";
 import { usePalaverStore } from "@/stores/palaver";
 
 const props = defineProps<{ entry: PalaverEntry }>();
+
+const emit = defineEmits<{
+    (e: "entry-updated", entry: PalaverEntry): void;
+}>();
 
 const { mobile } = useDisplay();
 const userStore = useUserStore();
