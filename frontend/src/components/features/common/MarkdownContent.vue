@@ -66,6 +66,47 @@ const safeHtml = computed(() => renderMarkdownToSafeHtml(props.markdown));
     font-size: 0.92em;
 }
 
+.markdown-content :deep(pre) {
+    margin: 0.5rem 0;
+    padding: 0.65rem 0.85rem;
+    overflow-x: auto;
+    border-radius: 0.4rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.9em;
+}
+
+.markdown-content :deep(pre code) {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+}
+
+.markdown-content :deep(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+    font-size: 0.95em;
+}
+
+.markdown-content :deep(th),
+.markdown-content :deep(td) {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+}
+
+.markdown-content :deep(th) {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.markdown-content :deep(hr) {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 0.75rem 0;
+}
+
 .markdown-content :deep(a) {
     color: var(--accent-fuschia);
     text-decoration: underline;
