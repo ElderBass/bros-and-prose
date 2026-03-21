@@ -31,6 +31,13 @@
 
             <div class="field">
                 <label for="prose-body-v2">body</label>
+                <p class="format-hint">
+                    published prose uses standard markdown:
+                    <strong>Shift+Enter</strong> inserts a line break inside a
+                    paragraph. pasting from Google Docs may drop custom
+                    indents—use paragraphs, lists, or blockquotes so layout
+                    survives publish.
+                </p>
                 <div class="tools-wrapper">
                     <ComposerToolbar v-if="editor" :editor="editor" />
                     <p v-if="lastSavedLabel && !isEdit" class="autosave-status">
@@ -106,6 +113,10 @@ import {
     getUserInfo,
     setProseDraft,
 } from "@/utils";
+import {
+    PROSE_MARKDOWN_INDENTATION,
+    PROSE_MARKED_OPTIONS,
+} from "@/utils/proseMarkedConfig";
 
 const route = useRoute();
 const router = useRouter();
@@ -161,7 +172,8 @@ const editor = useEditor({
             heading: { levels: [1, 2, 3, 4, 5, 6] },
         }),
         Markdown.configure({
-            markedOptions: { gfm: true },
+            indentation: PROSE_MARKDOWN_INDENTATION,
+            markedOptions: { ...PROSE_MARKED_OPTIONS },
         }),
         Link.configure({
             openOnClick: false,
@@ -173,7 +185,7 @@ const editor = useEditor({
         }),
         Placeholder.configure({
             placeholder:
-                "write your prose… use the toolbar for bold, links, and lists.",
+                "write your prose… Shift+Enter for a line break. toolbar: bold, links, lists.",
         }),
     ],
     content: "",
@@ -433,6 +445,20 @@ label {
     color: var(--accent-blue);
     font-size: 1.1rem;
     padding-left: 0.35rem;
+}
+
+.format-hint {
+    margin: 0 0 0.15rem;
+    padding: 0 0.35rem;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: var(--main-text);
+    opacity: 0.78;
+}
+
+.format-hint strong {
+    font-weight: 600;
+    color: var(--accent-lavender);
 }
 
 .tools-wrapper {

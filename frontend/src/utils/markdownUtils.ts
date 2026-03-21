@@ -1,10 +1,9 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
+import { normalizeIndentedProseMarkdown } from "./markdownProseNormalize";
+import { PROSE_MARKED_OPTIONS } from "./proseMarkedConfig";
 
-marked.use({
-    gfm: true,
-    breaks: false,
-});
+marked.setOptions(PROSE_MARKED_OPTIONS);
 
 let domPurifyHooksRegistered = false;
 
@@ -31,7 +30,8 @@ export const renderMarkdownToSafeHtml = (markdown: string): string => {
 
     ensureDomPurifyLinkHook();
 
-    const raw = marked.parse(markdown, { async: false }) as string;
+    const normalized = normalizeIndentedProseMarkdown(markdown);
+    const raw = marked.parse(normalized, { async: false }) as string;
 
     return DOMPurify.sanitize(raw, {
         USE_PROFILES: { html: true },
