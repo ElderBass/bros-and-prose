@@ -1,134 +1,42 @@
-const escapeHtml = (text: string): string => {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-};
+import DOMPurify from "dompurify";
+import { marked } from "marked";
 
-const sanitizeUrl = (url: string): string => {
-    const trimmed = url.trim();
-    if (/^https?:\/\//i.test(trimmed)) {
-        return escapeHtml(trimmed);
-    }
-    return "#";
-};
+marked.use({
+    gfm: true,
+    breaks: false,
+});
 
-const formatInline = (text: string): string => {
-    let formatted = text;
+let domPurifyHooksRegistered = false;
 
-    // links: [text](https://example.com)
-    formatted = formatted.replace(
-        /\[([^\]]+)\]\(([^)]+)\)/g,
-        (_match, label: string, url: string) => {
-            const safeUrl = sanitizeUrl(url);
-            return `<a href="${safeUrl}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+function ensureDomPurifyLinkHook(): void {
+    if (domPurifyHooksRegistered || typeof window === "undefined") return;
+    DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+        if (node instanceof HTMLElement && node.tagName === "A") {
+            const href = node.getAttribute("href");
+            if (href && /^https?:\/\//i.test(href)) {
+                node.setAttribute("target", "_blank");
+                node.setAttribute("rel", "noopener noreferrer");
+            }
         }
-    );
+    });
+    domPurifyHooksRegistered = true;
+}
 
-    // inline code: `code`
-    formatted = formatted.replace(/`([^`]+)`/g, "<code>$1</code>");
-
-    // bold: **text**
-    formatted = formatted.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-
-    // italic: *text*
-    formatted = formatted.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-
-    return formatted;
-};
-
+/**
+ * Renders markdown to safe HTML for display (e.g. prose body).
+ * Uses Marked (GFM) + DOMPurify so output matches TipTap `@tiptap/markdown` serialization.
+ */
 export const renderMarkdownToSafeHtml = (markdown: string): string => {
     if (!markdown?.trim()) return "<p></p>";
 
-    const escaped = escapeHtml(markdown);
-    const lines = escaped.split("\n");
-    const htmlParts: string[] = [];
+    ensureDomPurifyLinkHook();
 
-    let inUl = false;
-    let inOl = false;
+    const raw = marked.parse(markdown, { async: false }) as string;
 
-    const closeLists = () => {
-        if (inUl) {
-            htmlParts.push("</ul>");
-            inUl = false;
-        }
-        if (inOl) {
-            htmlParts.push("</ol>");
-            inOl = false;
-        }
-    };
-
-    for (const line of lines) {
-        const trimmed = line.trim();
-
-        if (!trimmed) {
-            closeLists();
-            continue;
-        }
-
-        const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
-        if (headingMatch) {
-            closeLists();
-            const level = headingMatch[1].length;
-            htmlParts.push(
-                `<h${level}>${formatInline(headingMatch[2])}</h${level}>`
-            );
-            continue;
-        }
-
-        const ulMatch = trimmed.match(/^[-*]\s+(.+)$/);
-        if (ulMatch) {
-            if (inOl) {
-                htmlParts.push("</ol>");
-                inOl = false;
-            }
-            if (!inUl) {
-                htmlParts.push("<ul>");
-                inUl = true;
-            }
-            htmlParts.push(`<li>${formatInline(ulMatch[1])}</li>`);
-            continue;
-        }
-
-        const olMatch = trimmed.match(/^\d+\.\s+(.+)$/);
-        if (olMatch) {
-            if (inUl) {
-                htmlParts.push("</ul>");
-                inUl = false;
-            }
-            if (!inOl) {
-                htmlParts.push("<ol>");
-                inOl = true;
-            }
-            htmlParts.push(`<li>${formatInline(olMatch[1])}</li>`);
-            continue;
-        }
-
-        const quoteMatch = trimmed.match(/^>\s+(.+)$/);
-        if (quoteMatch) {
-            closeLists();
-            htmlParts.push(
-                `<blockquote>${formatInline(quoteMatch[1])}</blockquote>`
-            );
-            continue;
-        }
-
-        closeLists();
-        // Preserve leading spaces/tabs for paragraph indentation
-        const leadingMatch = line.match(/^(\s*)/);
-        const leading = leadingMatch ? leadingMatch[1] : "";
-        const rest = line.slice(leading.length).trimEnd();
-        const indentHtml = leading
-            .replace(/ /g, "&#160;")
-            .replace(/\t/g, "&#160;&#160;&#160;&#160;");
-        htmlParts.push(`<p>${indentHtml}${rest ? formatInline(rest) : ""}</p>`);
-    }
-
-    closeLists();
-
-    return htmlParts.join("");
+    return DOMPurify.sanitize(raw, {
+        USE_PROFILES: { html: true },
+        ADD_ATTR: ["target", "rel", "class"],
+    });
 };
 
 export const getPlainTextFromMarkdown = (markdown: string): string => {
