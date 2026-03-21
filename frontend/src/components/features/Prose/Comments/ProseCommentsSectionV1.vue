@@ -38,7 +38,7 @@ import { useUIStore } from "@/stores/ui";
 import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import { useLog } from "@/composables";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
-import ProseCommentItem from "./ProseCommentItem.vue";
+import ProseCommentItem from "@/components/features/Prose/Comments/ProseCommentItem.vue";
 
 const props = defineProps<{
     entry: ProseEntry;

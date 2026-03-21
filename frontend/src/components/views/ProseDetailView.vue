@@ -81,7 +81,7 @@
                             title="add a cheeky comment, don't hold back"
                             :showTooltip="false"
                             class="comment-btn"
-                            @click="showCommentModal = true"
+                            @click="onCheekyFeedbackClick"
                         >
                             <FontAwesomeIcon :icon="faCommentMedical" />
                             <span class="comment-btn-text"
@@ -98,6 +98,7 @@
                 class="comments-card"
             >
                 <ProseCommentsSection
+                    ref="proseCommentsSectionRef"
                     :entry="entry"
                     @entry-updated="onEntryUpdated"
                 />
@@ -106,7 +107,7 @@
     </AppLayout>
 
     <AddCommentModal
-        v-if="showCommentModal"
+        v-if="!useV2ProseComments && showCommentModal"
         :open="showCommentModal"
         :isItemComment="true"
         :maxCommentLength="50000"
@@ -125,7 +126,7 @@ import AppLayout from "@/components/layout/AppLayout.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import ProseEntryReactionActions from "@/components/features/Prose/ProseEntryReactionActions.vue";
-import ProseCommentsSection from "@/components/features/Prose/ProseCommentsSection.vue";
+import ProseCommentsSection from "@/components/features/Prose/Comments/ProseCommentsSection.vue";
 import MarkdownContentV1 from "@/components/features/common/MarkdownContentV1.vue";
 import MarkdownContentV2 from "@/components/features/common/MarkdownContentV2.vue";
 import BlurbSection from "@/components/features/Prose/ProseDetail/BlurbSection.vue";
@@ -144,7 +145,7 @@ import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import ProseViewHeader from "../features/Prose/ProseViewHeader.vue";
-import { useV2ProseComposer } from "@/constants/features";
+import { useV2ProseComposer, useV2ProseComments } from "@/constants/features";
 
 const route = useRoute();
 const router = useRouter();
@@ -168,6 +169,9 @@ const goToEdit = () => {
 const loading = ref(false);
 const showCommentModal = ref(false);
 const submittingComment = ref(false);
+const proseCommentsSectionRef = ref<{
+    openComposer: () => void;
+} | null>(null);
 const savingEntry = ref(false);
 const entry = ref<ProseEntry | undefined>(undefined);
 
@@ -207,6 +211,14 @@ const cardSize = computed(() => {
 
 const onEntryUpdated = (e: ProseEntry) => {
     entry.value = e;
+};
+
+const onCheekyFeedbackClick = () => {
+    if (useV2ProseComments) {
+        proseCommentsSectionRef.value?.openComposer();
+    } else {
+        showCommentModal.value = true;
+    }
 };
 
 const submitComment = async (comment: Comment) => {
