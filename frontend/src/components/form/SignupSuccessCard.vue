@@ -1,5 +1,8 @@
 <template>
-    <div class="success-card-container">
+    <div
+        class="success-card-container"
+        :class="{ 'size-small': size === 'small' }"
+    >
         <h1>welcome to the club</h1>
         <BaseCard size="medium" shadowColor="blue">
             <h2>real bros read prose</h2>
@@ -33,6 +36,7 @@ import { computed } from "vue";
 import { isGuestUser } from "@/utils";
 
 defineProps<{
+    size?: "small" | "medium" | "large";
     onProceedClick?: () => void;
 }>();
 
@@ -52,6 +56,12 @@ const buttonSize = computed(() => {
     justify-content: center;
     align-items: center;
     gap: 2rem;
+}
+
+.size-small {
+    gap: 1rem;
+    max-width: 520px;
+    margin: 0 auto;
 }
 
 h1 {
