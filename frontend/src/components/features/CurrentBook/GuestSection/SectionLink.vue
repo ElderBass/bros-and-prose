@@ -24,12 +24,14 @@ const { mobile } = useDisplay();
 
 const title = computed(() => {
     switch (props.type) {
-        case "past":
-            return "peer into the past";
         case "bros":
             return "browse the bros";
+        case "past":
+            return "peer into their past";
+        case "prose":
+            return "peruse their prose";
         case "palaver":
-            return "peep the palaver";
+            return "peep their palaver";
         default:
             return "go to the page";
     }
@@ -41,6 +43,8 @@ const variant = computed(() => {
             return "outline-tertiary";
         case "bros":
             return "outline";
+        case "prose":
+            return "outline-success";
         case "palaver":
             return "outline-secondary";
         default:
