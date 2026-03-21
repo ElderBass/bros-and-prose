@@ -1,6 +1,6 @@
 <template>
     <div class="guest-section">
-        <SignupSuccessCard />
+        <SignupSuccessCard size="small" />
 
         <div class="links">
             <SectionLink
@@ -19,7 +19,7 @@ import type { SectionLinkType } from "./types";
 
 defineOptions({ name: "GuestSection" });
 
-const sectionLinks: SectionLinkType[] = ["past", "bros", "palaver"];
+const sectionLinks: SectionLinkType[] = ["bros", "past", "prose", "palaver"];
 </script>
 
 <style scoped>

@@ -1,1 +1,1 @@
-export type SectionLinkType = "past" | "bros" | "palaver";
+export type SectionLinkType = "past" | "bros" | "prose" | "palaver";
