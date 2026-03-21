@@ -46,43 +46,47 @@
                     :blurb="entry.excerpt"
                 />
                 <div class="markdown-body">
-                    <MarkdownContent :markdown="entry.markdown" />
+                    <MarkdownContentV2
+                        v-if="useV2ProseComposer"
+                        :markdown="entry.markdown"
+                    />
+                    <MarkdownContentV1 v-else :markdown="entry.markdown" />
                 </div>
 
                 <div class="actions-row">
                     <ProseEntryReactionActions
                         v-if="!isGuestUser() && !isAuthor"
                         :entry="entry"
+                        @entry-updated="onEntryUpdated"
                     />
                     <div v-if="!isGuestUser()" class="entry-actions">
-                        <BaseButton
+                        <IconButton
                             v-if="!isAuthor"
-                            :variant="
-                                isEntrySaved
-                                    ? 'outline-success'
-                                    : 'outline-tertiary'
+                            :icon="
+                                isProseFavorited ? faHeartSolid : faHeartRegular
                             "
+                            color="pink"
                             size="small"
                             :title="
-                                isEntrySaved
+                                isProseFavorited
                                     ? 'remove this prose from your annals'
                                     : 'add this prose to your annals'
                             "
-                            :showTooltip="false"
                             :disabled="savingEntry"
-                            @click="toggleSavedState"
-                        >
-                            {{ isEntrySaved ? "saved" : "save prose" }}
-                        </BaseButton>
+                            :handleClick="toggleFavoriteState"
+                        />
                         <BaseButton
                             variant="outline"
                             size="small"
                             title="add a cheeky comment, don't hold back"
                             :showTooltip="false"
-                            @click="showCommentModal = true"
+                            class="comment-btn"
+                            @click="onCheekyFeedbackClick"
                         >
                             <FontAwesomeIcon :icon="faCommentMedical" />
-                            cheeky feedback
+                            <span class="comment-btn-text"
+                                >cheeky feedback</span
+                            >
                         </BaseButton>
                     </div>
                 </div>
@@ -90,10 +94,11 @@
 
             <BaseCard
                 shadow-color="lavender"
-                size="medium"
+                :size="cardSize"
                 class="comments-card"
             >
                 <ProseCommentsSection
+                    ref="proseCommentsSectionRef"
                     :entry="entry"
                     @entry-updated="onEntryUpdated"
                 />
@@ -102,7 +107,7 @@
     </AppLayout>
 
     <AddCommentModal
-        v-if="showCommentModal"
+        v-if="!useV2ProseComments && showCommentModal"
         :open="showCommentModal"
         :isItemComment="true"
         :maxCommentLength="50000"
@@ -121,27 +126,33 @@ import AppLayout from "@/components/layout/AppLayout.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import ProseEntryReactionActions from "@/components/features/Prose/ProseEntryReactionActions.vue";
-import ProseCommentsSection from "@/components/features/Prose/ProseCommentsSection.vue";
-import MarkdownContent from "@/components/features/common/MarkdownContent.vue";
+import ProseCommentsSection from "@/components/features/Prose/Comments/ProseCommentsSection.vue";
+import MarkdownContentV1 from "@/components/features/common/MarkdownContentV1.vue";
+import MarkdownContentV2 from "@/components/features/common/MarkdownContentV2.vue";
 import BlurbSection from "@/components/features/Prose/ProseDetail/BlurbSection.vue";
 import EditButton from "@/components/ui/EditButton.vue";
+import IconButton from "@/components/ui/IconButton.vue";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
 import { useUIStore } from "@/stores/ui";
 import { useUserStore } from "@/stores/user";
+import { useUserFavorites } from "@/composables";
 import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import type { Comment, ProseEntry } from "@/types";
 import { isGuestUser } from "@/utils";
 import { useLog } from "@/composables";
 import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import ProseViewHeader from "../features/Prose/ProseViewHeader.vue";
+import { useV2ProseComposer, useV2ProseComments } from "@/constants/features";
 
 const route = useRoute();
 const router = useRouter();
 const { mobile } = useDisplay();
 const proseStore = useProseStore();
 const { showAlert } = useUIStore();
-const { addComment, getProseEntry, toggleSavedProseEntry } = useProse();
+const { addComment, getProseEntry } = useProse();
 
 const { entries } = storeToRefs(proseStore);
 const { loggedInUser } = storeToRefs(useUserStore());
@@ -158,12 +169,25 @@ const goToEdit = () => {
 const loading = ref(false);
 const showCommentModal = ref(false);
 const submittingComment = ref(false);
+const proseCommentsSectionRef = ref<{
+    openComposer: () => void;
+} | null>(null);
 const savingEntry = ref(false);
 const entry = ref<ProseEntry | undefined>(undefined);
 
-const isEntrySaved = computed(() => {
+const normalizeProseFavorites = (raw: unknown): ProseEntry[] => {
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw as ProseEntry[];
+    if (typeof raw === "object") return Object.values(raw) as ProseEntry[];
+    return [];
+};
+
+const isProseFavorited = computed(() => {
     if (!entry.value?.id) return false;
-    return proseStore.isSaved(entry.value.id);
+    const proseFavs = normalizeProseFavorites(
+        loggedInUser.value?.favorites?.prose
+    );
+    return proseFavs.some((p) => p.id === entry.value?.id);
 });
 
 const createdAtLabel = computed(() => {
@@ -189,6 +213,14 @@ const onEntryUpdated = (e: ProseEntry) => {
     entry.value = e;
 };
 
+const onCheekyFeedbackClick = () => {
+    if (useV2ProseComments) {
+        proseCommentsSectionRef.value?.openComposer();
+    } else {
+        showCommentModal.value = true;
+    }
+};
+
 const submitComment = async (comment: Comment) => {
     if (!entry.value) return;
     submittingComment.value = true;
@@ -211,28 +243,33 @@ const submitComment = async (comment: Comment) => {
     }
 };
 
-const toggleSavedState = async () => {
+const toggleFavoriteState = async () => {
     if (!entry.value?.id || savingEntry.value) return;
     savingEntry.value = true;
     try {
-        const wasSaved = isEntrySaved.value;
-        await toggleSavedProseEntry(entry.value.id);
-        showAlert({
-            show: true,
-            messages: [
-                wasSaved
-                    ? "prose removed from saved."
-                    : "prose saved for later.",
-            ],
-            type: "success",
-            duration: 3000,
-            dismissable: false,
-        });
+        const currentFavorites = normalizeProseFavorites(
+            loggedInUser.value?.favorites?.prose
+        );
+        const wasFavorited = currentFavorites.some(
+            (p) => p.id === entry.value?.id
+        );
+
+        const updatedFavorites = wasFavorited
+            ? currentFavorites.filter((p) => p.id !== entry.value?.id)
+            : [...currentFavorites, entry.value];
+
+        await useUserFavorites().updateFavorite("prose", updatedFavorites);
+
+        if (wasFavorited) {
+            await useProse().unfavoriteProseEntry(entry.value);
+        } else {
+            await useProse().favoriteProseEntry(entry.value);
+        }
     } catch (error) {
-        await useLog().error(`Error toggling saved prose: ${error}`);
+        await useLog().error(`Error toggling favorite prose: ${error}`);
         showAlert(
             QUICK_ERROR([
-                "failed to update saved prose",
+                "failed to update favorite prose",
                 (error as Error).message || "unknown error",
             ])
         );
@@ -360,12 +397,19 @@ watch(
     align-items: center;
     justify-content: flex-end;
     gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
 .entry-actions {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.comment-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
 }
 
 @media (max-width: 768px) {
@@ -422,16 +466,22 @@ watch(
     }
 
     .actions-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.5rem;
+        gap: 0.75rem;
+        flex-wrap: nowrap;
     }
 
     .entry-actions {
-        flex-direction: column;
-        align-items: stretch;
-        width: 100%;
-        gap: 0.4rem;
+        gap: 0.35rem;
+    }
+
+    .comment-btn-text {
+        display: none;
+    }
+
+    .comment-btn {
+        min-width: auto;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
 
     .empty-state {

@@ -9,8 +9,12 @@
             />
             <div v-else class="empty-state" :key="`${type}-empty`">
                 <p class="empty-text">no {{ type }} added yet</p>
+                <p v-if="type === 'prose'" class="empty-text">
+                    which makes sense, since the bros have written nothing but
+                    trash
+                </p>
                 <BaseButton
-                    v-if="isLoggedInUser"
+                    v-if="isLoggedInUser && type !== 'prose'"
                     variant="outline"
                     size="small"
                     color="green"
@@ -31,6 +35,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useFavoritesModalStore } from "@/stores/favoritesModal";
 import NonBookList from "./NonBookList.vue";
 import BookList from "./BookList.vue";
+import ProseList from "./ProseList.vue";
 
 const { type, items, isLoggedInUser } = defineProps<{
     type: FavoriteType;
@@ -45,11 +50,14 @@ const hasItems = computed(() => {
 const singularType = computed(() => {
     if (type === "authors") return "author";
     if (type === "genres") return "genre";
+    if (type === "prose") return "prose";
     return "book";
 });
 
 const componentName = computed(() => {
-    return type === "books" ? BookList : NonBookList;
+    if (type === "books") return BookList;
+    if (type === "prose") return ProseList;
+    return NonBookList;
 });
 
 const handleAdd = () => {
@@ -117,23 +125,18 @@ const handleAdd = () => {
 }
 
 .empty-state {
+    flex: 1 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1rem;
-    padding: 2rem 1rem;
-    border: 2px dashed var(--accent-blue);
-    border-radius: 0.75rem;
-    background: color-mix(in srgb, var(--accent-blue) 3%, transparent);
-    min-height: 120px;
 }
 
 .empty-text {
     margin: 0;
     font-style: italic;
     opacity: 0.75;
-    font-size: 0.9rem;
+    font-size: 1.25rem;
 }
 
 /* Fade transition */
@@ -155,6 +158,10 @@ const handleAdd = () => {
 
     .tab-content.books-content {
         padding: 0.4rem;
+    }
+
+    .empty-text {
+        font-size: 1rem;
     }
 
     .edit-icon {

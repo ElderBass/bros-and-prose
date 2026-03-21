@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { renderMarkdownToSafeHtml } from "@/utils";
+import { renderMarkdownToSafeHtml } from "@/utils/markdownUtilsV1";
 
 const props = withDefaults(
     defineProps<{

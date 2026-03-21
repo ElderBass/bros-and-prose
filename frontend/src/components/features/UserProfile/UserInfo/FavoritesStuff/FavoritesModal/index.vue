@@ -68,6 +68,8 @@ const currentFormComponent = computed(() => {
 
 const getCurrentFavorites = computed(() => {
     const userFavorites = useUserStore().loggedInUser.favorites;
+    // Prose favorites are added/removed from Prose detail view (not this modal).
+    if (selectedFavoriteType.value === "prose") return [];
     if (!userFavorites) {
         return selectedFavoriteType.value === "books" ? [] : [];
     }
