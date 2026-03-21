@@ -16,6 +16,7 @@ export * from "./futureBookUtils";
 export * from "./htmlToMarkdown";
 export * from "./localStorageUtils";
 export * from "./markdownUtils";
+export * from "./proseMarkedConfig";
 export * from "./mentionUtils";
 export * from "./palaverUtils";
 export * from "./pastBookUtils";
