@@ -31,7 +31,7 @@ const hasContent = computed(() => props.items.length > 0);
 const noContentMessage = computed(() =>
     props.isLoggedInUser
         ? "no favorite prose yet — heart something worth roasting."
-        : "no favorite prose here yet — this bro has basic taste."
+        : "no favorite prose here yet, which makes sense since the bros produce nothing but trash."
 );
 </script>
 
