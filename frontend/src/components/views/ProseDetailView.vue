@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <div class="header-wrap">
-            <ProseViewHeader title="prose details" :backTarget="'/prose'" />
+            <PageHeader title="prose details" :fallback-to="'/prose'" />
         </div>
         <LoadingSpinnerContainer
             v-if="loading"
@@ -152,7 +152,6 @@ import { useLog } from "@/composables";
 import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
-import ProseViewHeader from "../features/Prose/ProseViewHeader.vue";
 import { useV2ProseComposer, useV2ProseComments } from "@/constants/features";
 
 const route = useRoute();
@@ -424,16 +423,6 @@ watch(
     .prose-detail-view {
         padding: 0.5rem;
         gap: 0.65rem;
-    }
-
-    .header-row {
-        gap: 0.5rem;
-    }
-
-    .back-link {
-        width: 2rem;
-        height: 2rem;
-        padding: 0.35rem;
     }
 
     .detail-header {

@@ -1,8 +1,8 @@
 <template>
     <div class="composer-view">
-        <ProseViewHeader
+        <PageHeader
             :title="isEdit ? 'prune prose' : 'produce prose'"
-            :backTarget="backTarget"
+            :fallback-to="backTarget"
         />
 
         <div class="composer-wrap">
@@ -159,6 +159,7 @@ import { storeToRefs } from "pinia";
 import { v4 as uuidv4 } from "uuid";
 import LinkIcon from "@/components/icons/LinkIcon.vue";
 import ProseComposerToolButton from "@/components/features/Prose/ProseComposerToolButton.vue";
+import PublishProseConfirmModal from "@/components/features/Prose/PublishProseConfirmModal.vue";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
 import { useUserStore } from "@/stores/user";
@@ -173,8 +174,6 @@ import {
 } from "@/utils";
 import { useLog } from "@/composables/useLog";
 import type { ProseDraft, ProseEntry, ProseType } from "@/types";
-import ProseViewHeader from "@/components/features/Prose/ProseViewHeader.vue";
-import PublishProseConfirmModal from "@/components/features/Prose/PublishProseConfirmModal.vue";
 
 const route = useRoute();
 const router = useRouter();

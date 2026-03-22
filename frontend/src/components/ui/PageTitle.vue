@@ -21,7 +21,6 @@ withDefaults(
 .page-title {
     font-size: 1.5rem;
     color: var(--main-text);
-    border-bottom: 2px solid var(--accent-blue);
     font-weight: 600;
     text-align: center;
     margin: 0 auto;

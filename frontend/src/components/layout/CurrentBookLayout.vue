@@ -1,6 +1,6 @@
 <template>
     <div class="current-book-layout">
-        <PageTitle title="current prose ferda bros" />
+        <PageHeader title="current prose ferda bros" />
         <div v-if="mobile" class="layout-column">
             <slot name="current-book" />
             <slot name="user-progress" />
@@ -18,7 +18,6 @@
 
 <script setup lang="ts">
 import { useDisplay } from "vuetify";
-import PageTitle from "@/components/ui/PageTitle.vue";
 
 const { mobile } = useDisplay();
 </script>

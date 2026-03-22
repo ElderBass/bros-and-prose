@@ -14,6 +14,7 @@ import ExpansionPanel from "@/components/ui/ExpansionPanel.vue";
 import LoadingSpinner from "@/components/ui/LoadingSpinner.vue";
 import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import PageTitle from "@/components/ui/PageTitle.vue";
+import PageHeader from "@/components/ui/PageHeader.vue";
 import UsernameLink from "@/components/ui/UsernameLink.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import type { App } from "vue";
@@ -36,5 +37,6 @@ export const registerComponents = (app: App) => {
     app.component("LoadingSpinnerContainer", LoadingSpinnerContainer);
     app.component("FontAwesomeIcon", FontAwesomeIcon);
     app.component("PageTitle", PageTitle);
+    app.component("PageHeader", PageHeader);
     app.component("UsernameLink", UsernameLink);
 };

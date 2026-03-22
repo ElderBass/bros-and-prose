@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <PageTitle title="palaver feed" />
+        <PageHeader title="palaver feed" />
         <div class="container">
             <LoadingSpinnerContainer
                 v-if="loading"
@@ -17,7 +17,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
-import PageTitle from "@/components/ui/PageTitle.vue";
 import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
 import PalaverModals from "@/components/modal/PalaverModals/index.vue";
 import PalaverList from "@/components/features/Palaver/PalaverList.vue";

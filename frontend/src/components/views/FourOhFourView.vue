@@ -1,9 +1,10 @@
 <template>
     <AppLayout>
         <div class="four-oh-four">
-            <PageTitle
-                style="width: fit-content"
+            <PageHeader
                 title="404 — this page ain't in the canon"
+                title-style="width: fit-content"
+                :fallback-to="'/'"
             />
             <div class="fallback">
                 <BaseCard shadow-color="lavender" size="medium">

@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <PageTitle title="take a closer look" />
+        <PageHeader title="take a closer look" :fallback-to="'/past'" />
         <div v-if="isLoading" class="spinner-container">
             <LoadingSpinner
                 v-if="isLoading"
