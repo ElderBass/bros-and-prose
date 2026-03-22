@@ -22,24 +22,7 @@
                 </div>
                 <div class="header-right">
                     <span class="created-at">{{ createdAtLabel }}</span>
-                    <div v-if="compact" class="header-reactions">
-                        <ReactionPill
-                            type="like"
-                            :count="entry.likes?.length || 0"
-                        />
-                        <ReactionPill
-                            type="dislike"
-                            :count="entry.dislikes?.length || 0"
-                        />
-                        <ReactionPill
-                            type="favorite"
-                            :count="entry.favorites?.length || 0"
-                        />
-                        <ReactionPill
-                            type="comment"
-                            :count="entry.comments?.length || 0"
-                        />
-                    </div>
+                    <ProseReactionPills v-if="!compact" :entry="entry" />
                 </div>
             </div>
 
@@ -60,24 +43,7 @@
             </div>
 
             <div class="footer-row">
-                <div v-if="!compact" class="meta-row">
-                    <ReactionPill
-                        type="like"
-                        :count="entry.likes?.length || 0"
-                    />
-                    <ReactionPill
-                        type="dislike"
-                        :count="entry.dislikes?.length || 0"
-                    />
-                    <ReactionPill
-                        type="favorite"
-                        :count="entry.favorites?.length || 0"
-                    />
-                    <ReactionPill
-                        type="comment"
-                        :count="entry.comments?.length || 0"
-                    />
-                </div>
+                <ProseReactionPills v-if="!compact" :entry="entry" />
                 <RouterLink v-if="!compact" :to="`/prose/${entry.id}`">
                     <BaseButton
                         :size="mobile ? 'xsmall' : 'small'"
@@ -98,7 +64,7 @@ import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import { RouterLink } from "vue-router";
 import ProseTypePill from "./ProseTypePill.vue";
-import ReactionPill from "@/components/features/common/ReactionPill.vue";
+import ProseReactionPills from "./ProseReactionPills.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import GlassesIcon from "@/components/icons/GlassesIcon.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";

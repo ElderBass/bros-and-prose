@@ -59,6 +59,13 @@
                         :entry="entry"
                         @entry-updated="onEntryUpdated"
                     />
+                    <ProseReactionPills
+                        v-else
+                        :likes="entry.likes"
+                        :dislikes="entry.dislikes"
+                        :favorites="entry.favorites"
+                        :comments="entry.comments"
+                    />
                     <div v-if="!isGuestUser()" class="entry-actions">
                         <IconButton
                             v-if="!isAuthor"
@@ -130,6 +137,7 @@ import ProseCommentsSection from "@/components/features/Prose/Comments/ProseComm
 import MarkdownContentV1 from "@/components/features/common/MarkdownContentV1.vue";
 import MarkdownContentV2 from "@/components/features/common/MarkdownContentV2.vue";
 import BlurbSection from "@/components/features/Prose/ProseDetail/BlurbSection.vue";
+import ProseReactionPills from "@/components/features/Prose/ProseReactionPills.vue";
 import EditButton from "@/components/ui/EditButton.vue";
 import IconButton from "@/components/ui/IconButton.vue";
 import { useProse } from "@/composables/useProse";
