@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <PageTitle title="bros before prose" />
+        <PageHeader title="bros before prose" />
         <LoadingSpinnerContainer
             v-if="isLoading"
             size="large"
@@ -25,7 +25,6 @@
 import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
-import PageTitle from "@/components/ui/PageTitle.vue";
 import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import BroListItem from "@/components/features/Bros/BroListItem.vue";
 import { useUserStore } from "@/stores/user";

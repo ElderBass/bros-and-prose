@@ -16,13 +16,12 @@
                     />
                     <UsernameLink
                         :username="entry.userInfo.username"
-                        fontSize="small"
+                        :fontSize="mobile ? 'small' : 'medium'"
                     />
                     <ProseTypePill :type="entry.type" />
                 </div>
                 <div class="header-right">
                     <span class="created-at">{{ createdAtLabel }}</span>
-                    <ProseReactionPills v-if="!compact" :entry="entry" />
                 </div>
             </div>
 
@@ -84,9 +83,9 @@ const createdAtLabel = computed(() => {
     const date = new Date(props.entry.createdAt);
     if (Number.isNaN(date.getTime())) return "";
     return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
+        month: mobile.value ? "2-digit" : "short",
+        day: mobile.value ? "2-digit" : "numeric",
+        year: mobile.value ? "2-digit" : "numeric",
     });
 });
 
@@ -191,7 +190,7 @@ const cardSize = computed(() => {
 .footer-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 0.5rem;
 }
 
