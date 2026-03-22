@@ -1,61 +1,59 @@
 <template>
-    <RouterLink :to="`/prose/${entry.id}`" class="prose-link">
-        <BaseCard
-            :shadow-color="typeColor"
-            :size="cardSize"
-            :hoverable="true"
-            class="prose-card"
-            :class="{ 'prose-card--compact': compact }"
-        >
-            <div class="prose-header">
-                <div class="author-row">
-                    <AvatarImage
-                        :avatar="entry.userInfo.avatar"
-                        :avatarType="entry.userInfo.avatarType || 'icon'"
-                        size="xsmall"
-                    />
-                    <UsernameLink
-                        :username="entry.userInfo.username"
-                        :fontSize="mobile ? 'small' : 'medium'"
-                    />
-                    <ProseTypePill :type="entry.type" />
-                </div>
-                <div class="header-right">
-                    <span class="created-at">{{ createdAtLabel }}</span>
-                </div>
-            </div>
-
-            <h3 class="prose-title">{{ entry.title }}</h3>
-
-            <BlurbSection
-                :blurb="entry.excerpt"
-                compact
-                empty-message="bro failed to provide any context for this. probably for the best. guess you'll just have to FAFO."
-            />
-
-            <div v-if="!compact" class="preview-wrap">
-                <ExpandableText
-                    :text="previewText"
-                    :truncateLength="truncateLength"
-                    :hideMoreButton="true"
+    <BaseCard
+        :shadow-color="typeColor"
+        :size="cardSize"
+        :hoverable="true"
+        class="prose-card"
+        :class="{ 'prose-card--compact': compact }"
+    >
+        <div class="prose-header">
+            <div class="author-row">
+                <AvatarImage
+                    :avatar="entry.userInfo.avatar"
+                    :avatarType="entry.userInfo.avatarType || 'icon'"
+                    size="xsmall"
                 />
+                <UsernameLink
+                    :username="entry.userInfo.username"
+                    :fontSize="mobile ? 'small' : 'medium'"
+                />
+                <ProseTypePill :type="entry.type" />
             </div>
+            <div class="header-right">
+                <span class="created-at">{{ createdAtLabel }}</span>
+            </div>
+        </div>
 
-            <div class="footer-row">
-                <ProseReactionPills v-if="!compact" :entry="entry" />
-                <RouterLink v-if="!compact" :to="`/prose/${entry.id}`">
-                    <BaseButton
-                        :size="mobile ? 'xsmall' : 'small'"
-                        variant="outline-tertiary"
-                        title="peep deets'"
-                    >
-                        <GlassesIcon />
-                        peep deets
-                    </BaseButton>
-                </RouterLink>
-            </div>
-        </BaseCard>
-    </RouterLink>
+        <h3 class="prose-title">{{ entry.title }}</h3>
+
+        <BlurbSection
+            :blurb="entry.excerpt"
+            compact
+            empty-message="bro failed to provide any context for this. probably for the best. guess you'll just have to FAFO."
+        />
+
+        <div v-if="!compact" class="preview-wrap">
+            <ExpandableText
+                :text="previewText"
+                :truncateLength="truncateLength"
+                :hideMoreButton="true"
+            />
+        </div>
+
+        <div class="footer-row">
+            <ProseReactionPills v-if="!compact" :entry="entry" />
+            <RouterLink v-if="!compact" :to="`/prose/${entry.id}`">
+                <BaseButton
+                    :size="mobile ? 'xsmall' : 'small'"
+                    variant="outline-tertiary"
+                    title="peep deets'"
+                >
+                    <GlassesIcon />
+                    peep deets
+                </BaseButton>
+            </RouterLink>
+        </div>
+    </BaseCard>
 </template>
 
 <script setup lang="ts">
