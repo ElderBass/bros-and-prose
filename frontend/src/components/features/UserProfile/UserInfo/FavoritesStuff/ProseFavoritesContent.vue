@@ -1,0 +1,83 @@
+<template>
+    <div class="tab-content">
+        <div v-if="!hasContent" class="empty-state">
+            <p class="empty-message">{{ noContentMessage }}</p>
+        </div>
+        <InfiniteScroll v-else direction="horizontal" class="scroll-content">
+            <ProseFavoriteListItem
+                v-for="item in items"
+                :key="item.id"
+                :entry="item"
+                :is-logged-in-user="isLoggedInUser"
+            />
+        </InfiniteScroll>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import InfiniteScroll from "@/components/ui/InfiniteScroll.vue";
+import ProseFavoriteListItem from "./ProseFavoriteListItem.vue";
+import type { FavoriteType, ProseEntry } from "@/types";
+
+const props = defineProps<{
+    items: ProseEntry[];
+    type: FavoriteType;
+    isLoggedInUser: boolean;
+}>();
+
+const hasContent = computed(() => props.items.length > 0);
+
+const noContentMessage = computed(() =>
+    props.isLoggedInUser
+        ? "no favorite prose yet — heart something worth roasting."
+        : "no favorite prose here yet, which makes sense since the bros produce nothing but trash."
+);
+</script>
+
+<style scoped>
+.tab-content {
+    padding: 1.25rem;
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+}
+
+.scroll-content {
+    display: flex;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+.empty-message {
+    margin: 0;
+    font-style: italic;
+    opacity: 0.75;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .tab-content {
+        padding: 0.75rem;
+        min-height: 160px;
+    }
+
+    .scroll-content {
+        gap: 0.75rem;
+    }
+
+    .empty-state {
+        padding: 1.5rem 0.75rem;
+        min-height: 100px;
+    }
+}
+</style>

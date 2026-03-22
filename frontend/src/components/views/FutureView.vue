@@ -1,12 +1,12 @@
 <template>
     <AppLayout>
-        <PageTitle>
+        <PageHeader>
             <UsernameLink
                 :username="futureBookSelector.username"
                 fontSize="large"
             />
             's selections
-        </PageTitle>
+        </PageHeader>
         <LoadingSpinnerContainer
             v-if="isAppLoading"
             size="large"

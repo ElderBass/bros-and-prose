@@ -2,8 +2,8 @@
     <TabsContainer
         v-model="activeTab"
         :tabs="favoriteTabs"
-        headerTitle="FAVORITES"
-        :dynamicHeight="activeTab === 'books'"
+        :headerTitle="headerTitle"
+        :dynamicHeight="activeTab === 'books' || activeTab === 'prose'"
     >
         <template #authors>
             <FavoritesTabContent
@@ -29,9 +29,9 @@
             />
         </template>
         <template #prose>
-            <FavoritesTabContent
+            <ProseFavoritesContent
                 type="prose"
-                :items="getItemsForTab('prose')"
+                :items="getProseItems(favorites?.prose ?? [])"
                 :isLoggedInUser="isLoggedInUser"
             />
         </template>
@@ -39,11 +39,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useDisplay } from "vuetify";
 import TabsContainer, {
     type TabConfig,
 } from "@/components/ui/TabsContainer.vue";
 import FavoritesTabContent from "@/components/features/UserProfile/UserInfo/FavoritesStuff/FavoritesTabContent.vue";
+import ProseFavoritesContent from "./ProseFavoritesContent.vue";
 import type { UserFavorites, FavoriteType, ProseEntry } from "@/types";
 
 const { favorites, isLoggedInUser } = defineProps<{
@@ -58,7 +60,13 @@ const favoriteTabs: TabConfig[] = [
     { id: "genres", label: "genres", color: "fuschia" },
 ];
 
+const { mobile } = useDisplay();
+
 const activeTab = ref<string>("prose");
+
+const headerTitle = computed(() => {
+    return mobile.value ? "FAVS" : "FAVORITES";
+});
 
 const getItemsForTab = (tab: FavoriteType): string[] => {
     if (tab === "books") {
@@ -68,15 +76,15 @@ const getItemsForTab = (tab: FavoriteType): string[] => {
             ) ?? []
         );
     }
-    if (tab === "prose") {
-        const proseRaw = favorites?.prose;
-        const proseList: ProseEntry[] = Array.isArray(proseRaw)
-            ? (proseRaw as ProseEntry[])
-            : proseRaw && typeof proseRaw === "object"
-              ? (Object.values(proseRaw) as ProseEntry[])
-              : [];
-        return proseList.map((prose) => JSON.stringify(prose)) ?? [];
-    }
+
     return Object.values(favorites?.[tab] ?? []);
+};
+
+const getProseItems = (proseRaw: string[] | ProseEntry[]): ProseEntry[] => {
+    return Array.isArray(proseRaw)
+        ? (proseRaw as ProseEntry[])
+        : proseRaw && typeof proseRaw === "object"
+          ? (Object.values(proseRaw) as ProseEntry[])
+          : [];
 };
 </script>

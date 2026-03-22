@@ -1,96 +1,59 @@
 <template>
-    <RouterLink :to="`/prose/${entry.id}`" class="prose-link">
-        <BaseCard
-            :shadow-color="typeColor"
-            :size="cardSize"
-            :hoverable="true"
-            class="prose-card"
-            :class="{ 'prose-card--compact': compact }"
-        >
-            <div class="prose-header">
-                <div class="author-row">
-                    <AvatarImage
-                        :avatar="entry.userInfo.avatar"
-                        :avatarType="entry.userInfo.avatarType || 'icon'"
-                        size="xsmall"
-                    />
-                    <UsernameLink
-                        :username="entry.userInfo.username"
-                        fontSize="small"
-                    />
-                    <ProseTypePill :type="entry.type" />
-                </div>
-                <div class="header-right">
-                    <span class="created-at">{{ createdAtLabel }}</span>
-                    <div v-if="compact" class="header-reactions">
-                        <ReactionPill
-                            type="like"
-                            :count="entry.likes?.length || 0"
-                        />
-                        <ReactionPill
-                            type="dislike"
-                            :count="entry.dislikes?.length || 0"
-                        />
-                        <ReactionPill
-                            type="favorite"
-                            :count="entry.favorites?.length || 0"
-                        />
-                        <ReactionPill
-                            type="comment"
-                            :count="entry.comments?.length || 0"
-                        />
-                    </div>
-                </div>
-            </div>
-
-            <h3 class="prose-title">{{ entry.title }}</h3>
-
-            <BlurbSection
-                :blurb="entry.excerpt"
-                compact
-                empty-message="bro failed to provide any context for this. probably for the best. guess you'll just have to FAFO."
-            />
-
-            <div v-if="!compact" class="preview-wrap">
-                <ExpandableText
-                    :text="previewText"
-                    :truncateLength="truncateLength"
-                    :hideMoreButton="true"
+    <BaseCard
+        :shadow-color="typeColor"
+        :size="cardSize"
+        :hoverable="true"
+        class="prose-card"
+        :class="{ 'prose-card--compact': compact }"
+    >
+        <div class="prose-header">
+            <div class="author-row">
+                <AvatarImage
+                    :avatar="entry.userInfo.avatar"
+                    :avatarType="entry.userInfo.avatarType || 'icon'"
+                    size="xsmall"
                 />
+                <UsernameLink
+                    :username="entry.userInfo.username"
+                    :fontSize="mobile ? 'small' : 'medium'"
+                />
+                <ProseTypePill :type="entry.type" />
             </div>
+            <div class="header-right">
+                <span class="created-at">{{ createdAtLabel }}</span>
+            </div>
+        </div>
 
-            <div class="footer-row">
-                <div v-if="!compact" class="meta-row">
-                    <ReactionPill
-                        type="like"
-                        :count="entry.likes?.length || 0"
-                    />
-                    <ReactionPill
-                        type="dislike"
-                        :count="entry.dislikes?.length || 0"
-                    />
-                    <ReactionPill
-                        type="favorite"
-                        :count="entry.favorites?.length || 0"
-                    />
-                    <ReactionPill
-                        type="comment"
-                        :count="entry.comments?.length || 0"
-                    />
-                </div>
-                <RouterLink v-if="!compact" :to="`/prose/${entry.id}`">
-                    <BaseButton
-                        :size="mobile ? 'xsmall' : 'small'"
-                        variant="outline-tertiary"
-                        title="peep deets'"
-                    >
-                        <GlassesIcon />
-                        peep deets
-                    </BaseButton>
-                </RouterLink>
-            </div>
-        </BaseCard>
-    </RouterLink>
+        <h3 class="prose-title">{{ entry.title }}</h3>
+
+        <BlurbSection
+            :blurb="entry.excerpt"
+            compact
+            empty-message="bro failed to provide any context for this. probably for the best. guess you'll just have to FAFO."
+        />
+
+        <div v-if="!compact" class="preview-wrap">
+            <ExpandableText
+                :text="previewText"
+                :truncateLength="truncateLength"
+                :hideMoreButton="true"
+            />
+        </div>
+
+        <div class="footer-row">
+            <ProseReactionPills v-if="!compact" :entry="entry" />
+            <RouterLink v-if="!compact" :to="`/prose/${entry.id}`">
+                <BaseButton
+                    :size="mobile ? 'xsmall' : 'small'"
+                    variant="outline-tertiary"
+                    title="peep deets'"
+                >
+                    <GlassesIcon />
+                    peep deets
+                </BaseButton>
+            </RouterLink>
+        </div>
+    </BaseCard>
 </template>
 
 <script setup lang="ts">
@@ -98,7 +61,7 @@ import { computed } from "vue";
 import { useDisplay } from "vuetify";
 import { RouterLink } from "vue-router";
 import ProseTypePill from "./ProseTypePill.vue";
-import ReactionPill from "@/components/features/common/ReactionPill.vue";
+import ProseReactionPills from "./ProseReactionPills.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import GlassesIcon from "@/components/icons/GlassesIcon.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
@@ -118,9 +81,9 @@ const createdAtLabel = computed(() => {
     const date = new Date(props.entry.createdAt);
     if (Number.isNaN(date.getTime())) return "";
     return date.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
+        month: mobile.value ? "2-digit" : "short",
+        day: mobile.value ? "2-digit" : "numeric",
+        year: mobile.value ? "2-digit" : "numeric",
     });
 });
 
@@ -225,7 +188,7 @@ const cardSize = computed(() => {
 .footer-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 0.5rem;
 }
 

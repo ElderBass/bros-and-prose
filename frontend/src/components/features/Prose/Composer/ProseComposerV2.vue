@@ -1,8 +1,8 @@
 <template>
     <div class="composer-view">
-        <ProseViewHeader
+        <PageHeader
             :title="isEdit ? 'prune prose' : 'produce prose'"
-            :backTarget="backTarget"
+            :fallback-to="backTarget"
         />
 
         <div class="composer-wrap">
@@ -99,7 +99,6 @@ import { storeToRefs } from "pinia";
 import ComposerActions from "@/components/features/Prose/Composer/ComposerActions.vue";
 import ComposerToolbar from "@/components/features/Prose/Composer/ComposerToolbar.vue";
 import PublishProseConfirmModal from "@/components/features/Prose/PublishProseConfirmModal.vue";
-import ProseViewHeader from "@/components/features/Prose/ProseViewHeader.vue";
 import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import { useProse } from "@/composables/useProse";
 import { useLog } from "@/composables/useLog";

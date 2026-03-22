@@ -1,13 +1,13 @@
 <template>
     <AppLayout>
-        <PageTitle>
+        <PageHeader>
             <template v-if="isLoggedInUser">
                 check urself / wreck urself
             </template>
             <template v-else>
                 checking out <span class="username">@{{ user.username }}</span>
             </template>
-        </PageTitle>
+        </PageHeader>
         <LoadingSpinnerContainer
             v-if="isAppLoading"
             size="large"
@@ -54,7 +54,6 @@
 import { computed, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
-import PageTitle from "../ui/PageTitle.vue";
 import MainUserInfoSection from "../features/UserProfile/MainUserInfoSection.vue";
 import ProfileFab from "../features/UserProfile/ProfileFab.vue";
 import UserActivitySection from "../features/UserProfile/UserActivitySection.vue";

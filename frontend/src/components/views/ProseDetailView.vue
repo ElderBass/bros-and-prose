@@ -1,7 +1,7 @@
 <template>
     <AppLayout>
         <div class="header-wrap">
-            <ProseViewHeader title="prose details" :backTarget="'/prose'" />
+            <PageHeader title="prose details" :fallback-to="'/prose'" />
         </div>
         <LoadingSpinnerContainer
             v-if="loading"
@@ -58,6 +58,13 @@
                         v-if="!isGuestUser() && !isAuthor"
                         :entry="entry"
                         @entry-updated="onEntryUpdated"
+                    />
+                    <ProseReactionPills
+                        v-else
+                        :likes="entry.likes"
+                        :dislikes="entry.dislikes"
+                        :favorites="entry.favorites"
+                        :comments="entry.comments"
                     />
                     <div v-if="!isGuestUser()" class="entry-actions">
                         <IconButton
@@ -130,6 +137,7 @@ import ProseCommentsSection from "@/components/features/Prose/Comments/ProseComm
 import MarkdownContentV1 from "@/components/features/common/MarkdownContentV1.vue";
 import MarkdownContentV2 from "@/components/features/common/MarkdownContentV2.vue";
 import BlurbSection from "@/components/features/Prose/ProseDetail/BlurbSection.vue";
+import ProseReactionPills from "@/components/features/Prose/ProseReactionPills.vue";
 import EditButton from "@/components/ui/EditButton.vue";
 import IconButton from "@/components/ui/IconButton.vue";
 import { useProse } from "@/composables/useProse";
@@ -144,7 +152,6 @@ import { useLog } from "@/composables";
 import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
-import ProseViewHeader from "../features/Prose/ProseViewHeader.vue";
 import { useV2ProseComposer, useV2ProseComments } from "@/constants/features";
 
 const route = useRoute();
@@ -416,16 +423,6 @@ watch(
     .prose-detail-view {
         padding: 0.5rem;
         gap: 0.65rem;
-    }
-
-    .header-row {
-        gap: 0.5rem;
-    }
-
-    .back-link {
-        width: 2rem;
-        height: 2rem;
-        padding: 0.35rem;
     }
 
     .detail-header {

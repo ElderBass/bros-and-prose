@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <PageTitle title="prose from the bros" />
+        <PageHeader title="prose from the bros" />
         <div v-if="loading" class="spinner-wrap">
             <LoadingSpinnerContainer
                 size="large"
@@ -19,7 +19,6 @@
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import AppLayout from "@/components/layout/AppLayout.vue";
-import PageTitle from "@/components/ui/PageTitle.vue";
 import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import ProseList from "@/components/features/Prose/ProseList.vue";
 import ProseFab from "@/components/features/Prose/ProseFab.vue";

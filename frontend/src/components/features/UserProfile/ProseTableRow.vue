@@ -7,10 +7,22 @@
         <div class="cell type">
             <ProseTypePill :type="entry.type" />
         </div>
-        <div class="cell reactions">
-            <ReactionPill type="like" :count="entry.likes?.length ?? 0" />
-            <ReactionPill type="dislike" :count="entry.dislikes?.length ?? 0" />
-            <ReactionPill type="comment" :count="entry.comments?.length ?? 0" />
+        <div class="cell reactions" @click.stop>
+            <ReactionPill
+                type="like"
+                :count="entry.likes?.length ?? 0"
+                :reactors="entry.likes"
+            />
+            <ReactionPill
+                type="dislike"
+                :count="entry.dislikes?.length ?? 0"
+                :reactors="entry.dislikes"
+            />
+            <ReactionPill
+                type="comment"
+                :count="entry.comments?.length ?? 0"
+                :reactors="commentUsernames"
+            />
         </div>
     </RouterLink>
 </template>
@@ -21,10 +33,15 @@ import { RouterLink } from "vue-router";
 import type { ProseEntry } from "@/types";
 import ProseTypePill from "@/components/features/Prose/ProseTypePill.vue";
 import ReactionPill from "@/components/features/common/ReactionPill.vue";
+import { uniqueCommenterUsernames } from "@/utils/reactionDisplayUtils";
 
 const props = defineProps<{
     entry: ProseEntry;
 }>();
+
+const commentUsernames = computed(() =>
+    uniqueCommenterUsernames(props.entry.comments)
+);
 
 const createdAtLabel = computed(() => {
     const date = new Date(props.entry.createdAt);

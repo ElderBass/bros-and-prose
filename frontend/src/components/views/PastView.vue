@@ -1,6 +1,6 @@
 <template>
     <AppLayout>
-        <PageTitle title="past prose don'tcha knows" />
+        <PageHeader title="past prose in repose" />
         <PastBookList />
     </AppLayout>
 </template>
@@ -9,7 +9,6 @@
 import { onMounted } from "vue";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import PastBookList from "../features/PastBooks/PastBookList.vue";
-import PageTitle from "@/components/ui/PageTitle.vue";
 
 onMounted(async () => {});
 </script>
