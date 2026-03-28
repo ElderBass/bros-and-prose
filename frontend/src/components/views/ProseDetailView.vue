@@ -46,8 +46,12 @@
                     :blurb="entry.excerpt"
                 />
                 <div class="markdown-body">
+                    <MarkdownContentV3
+                        v-if="useV3ProseComposer"
+                        :markdown="entry.markdown"
+                    />
                     <MarkdownContentV2
-                        v-if="useV2ProseComposer"
+                        v-else-if="useV2ProseComposer"
                         :markdown="entry.markdown"
                     />
                     <MarkdownContentV1 v-else :markdown="entry.markdown" />
@@ -136,6 +140,7 @@ import ProseEntryReactionActions from "@/components/features/Prose/ProseEntryRea
 import ProseCommentsSection from "@/components/features/Prose/Comments/ProseCommentsSection.vue";
 import MarkdownContentV1 from "@/components/features/common/MarkdownContentV1.vue";
 import MarkdownContentV2 from "@/components/features/common/MarkdownContentV2.vue";
+import MarkdownContentV3 from "@/components/features/common/MarkdownContentV3.vue";
 import BlurbSection from "@/components/features/Prose/ProseDetail/BlurbSection.vue";
 import ProseReactionPills from "@/components/features/Prose/ProseReactionPills.vue";
 import EditButton from "@/components/ui/EditButton.vue";
@@ -152,7 +157,11 @@ import { useLog } from "@/composables";
 import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
-import { useV2ProseComposer, useV2ProseComments } from "@/constants/features";
+import {
+    useV2ProseComposer,
+    useV2ProseComments,
+    useV3ProseComposer,
+} from "@/constants/features";
 
 const route = useRoute();
 const router = useRouter();
