@@ -5,6 +5,17 @@ export const guest_storage_key = "guest";
 export const last_unread_palaver_entry_key = "lastUnreadPalaverEntry";
 export const last_unread_prose_entry_key = "lastUnreadProseEntry";
 export const prose_draft_key = "proseDraft";
+const prose_comment_draft_key_prefix = "proseCommentDraft";
+
+export type ProseCommentDraft = {
+    text: string;
+    replyContext?: {
+        commentId: string;
+        username: string;
+        text: string;
+    };
+    savedAt: string;
+};
 
 export const setUserInStorage = (user: User) => {
     localStorage.setItem(storage_key, JSON.stringify(user));
@@ -75,4 +86,35 @@ export const setProseDraft = (draft: ProseDraft) => {
 
 export const clearProseDraft = () => {
     localStorage.removeItem(prose_draft_key);
+};
+
+const getProseCommentDraftKey = (entryId: string, userId: string) =>
+    `${prose_comment_draft_key_prefix}:${userId}:${entryId}`;
+
+export const getProseCommentDraft = (
+    entryId: string,
+    userId: string
+): ProseCommentDraft | null => {
+    try {
+        const key = getProseCommentDraftKey(entryId, userId);
+        const draft = localStorage.getItem(key);
+        if (!draft) return null;
+        return JSON.parse(draft) as ProseCommentDraft;
+    } catch {
+        return null;
+    }
+};
+
+export const setProseCommentDraft = (
+    entryId: string,
+    userId: string,
+    draft: ProseCommentDraft
+) => {
+    const key = getProseCommentDraftKey(entryId, userId);
+    localStorage.setItem(key, JSON.stringify(draft));
+};
+
+export const clearProseCommentDraft = (entryId: string, userId: string) => {
+    const key = getProseCommentDraftKey(entryId, userId);
+    localStorage.removeItem(key);
 };
