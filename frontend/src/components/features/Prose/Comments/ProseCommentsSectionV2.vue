@@ -59,17 +59,27 @@
                     </div>
                 </div>
                 <div class="actions">
-                    <BaseButton
-                        variant="outline-secondary"
-                        type="button"
-                        v-bind="actionButtonProps"
-                        @click="onCancel"
-                        >{{ cancelLabel }}</BaseButton
-                    >
+                    <div class="actions-row-top">
+                        <BaseButton
+                            variant="outline-secondary"
+                            type="button"
+                            v-bind="actionButtonProps"
+                            @click="onCancel"
+                            >{{ cancelLabel }}</BaseButton
+                        >
+                        <BaseButton
+                            variant="outline-error"
+                            type="button"
+                            v-bind="actionButtonProps"
+                            @click="onClearDraft"
+                            >clear</BaseButton
+                        >
+                    </div>
                     <BaseButton
                         variant="outline"
                         type="submit"
                         :disabled="!canSubmitComment || submitting"
+                        class="submit-button"
                         v-bind="actionButtonProps"
                         >submit</BaseButton
                     >
@@ -80,16 +90,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faReply } from "@fortawesome/free-solid-svg-icons";
 import type { Comment, ProseEntry } from "@/types";
 import { useProse } from "@/composables/useProse";
 import { useUIStore } from "@/stores/ui";
+import { useUserStore } from "@/stores/user";
 import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import { useLog } from "@/composables";
-import { buildPalaverComment, isGuestUser } from "@/utils";
+import {
+    buildPalaverComment,
+    clearProseCommentDraft,
+    getProseCommentDraft,
+    isGuestUser,
+    setProseCommentDraft,
+} from "@/utils";
 import MentionTextArea from "@/components/form/MentionTextArea.vue";
 import LoadingSpinnerContainer from "@/components/ui/LoadingSpinnerContainer.vue";
 import ProseCommentItem from "./ProseCommentItem.vue";
@@ -106,6 +124,7 @@ const emit = defineEmits<{
 const { addComment } = useProse();
 const { showAlert } = useUIStore();
 const { mobile } = useDisplay();
+const { loggedInUser } = storeToRefs(useUserStore());
 
 const composerAnchorRef = ref<HTMLElement | null>(null);
 
@@ -113,20 +132,66 @@ const comments = computed(() => props.entry.comments || []);
 const composerExpanded = ref(false);
 const submitting = ref(false);
 const localComment = ref("");
-const replyContext = ref<
-    { commentId: string; username: string; text: string } | undefined
->();
+type ReplyContext = { commentId: string; username: string; text: string };
+const replyContext = ref<ReplyContext | undefined>();
+const currentUserId = computed(() => loggedInUser.value?.id);
 
 const maxLength = 50000;
+let draftSaveTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function clearPersistedDraft(entryId = props.entry.id) {
+    if (!entryId || !currentUserId.value) return;
+    clearProseCommentDraft(entryId, currentUserId.value);
+}
+
+function persistDraft() {
+    if (!props.entry.id || !currentUserId.value) return;
+    const hasDraft =
+        localComment.value.trim().length > 0 || !!replyContext.value;
+    if (!hasDraft) {
+        clearPersistedDraft();
+        return;
+    }
+    setProseCommentDraft(props.entry.id, currentUserId.value, {
+        text: localComment.value,
+        replyContext: replyContext.value,
+        savedAt: new Date().toISOString(),
+    });
+}
+
+function restorePersistedDraft() {
+    if (!props.entry.id || !currentUserId.value) return;
+    const draft = getProseCommentDraft(props.entry.id, currentUserId.value);
+    if (!draft) return;
+    localComment.value = draft.text ?? "";
+    if (draft.replyContext?.commentId) {
+        const replyTargetExists = comments.value.some(
+            (comment) => comment.id === draft.replyContext?.commentId
+        );
+        replyContext.value = replyTargetExists ? draft.replyContext : undefined;
+        return;
+    }
+    replyContext.value = undefined;
+}
 
 watch(
     () => props.entry.id,
-    () => {
+    (_newEntryId, oldEntryId) => {
+        if (oldEntryId) clearPersistedDraft(oldEntryId);
         localComment.value = "";
         replyContext.value = undefined;
         composerExpanded.value = false;
     }
 );
+
+watch([localComment, replyContext, composerExpanded], () => {
+    if (!composerExpanded.value || submitting.value) return;
+    if (draftSaveTimeout) clearTimeout(draftSaveTimeout);
+    draftSaveTimeout = setTimeout(() => {
+        persistDraft();
+        draftSaveTimeout = null;
+    }, 350);
+});
 
 const labelText = computed(() =>
     replyContext.value ? "set that boy straight, my dude" : "join the palaver"
@@ -183,6 +248,7 @@ function scrollComposerIntoView() {
 
 async function openComposer() {
     composerExpanded.value = true;
+    restorePersistedDraft();
     await nextTick();
     scrollComposerIntoView();
     await nextTick();
@@ -205,6 +271,13 @@ function onCancel() {
     }
     composerExpanded.value = false;
     localComment.value = "";
+    clearPersistedDraft();
+}
+
+function onClearDraft() {
+    localComment.value = "";
+    replyContext.value = undefined;
+    clearPersistedDraft();
 }
 
 const submit = async () => {
@@ -226,6 +299,7 @@ const submit = async () => {
         if (updated) emit("entry-updated", updated);
         localComment.value = "";
         replyContext.value = undefined;
+        clearPersistedDraft();
         showAlert(ADDED_COMMENT_SUCCESS_ALERT);
     } catch (error) {
         console.error("Error submitting prose comment:", error);
@@ -240,6 +314,10 @@ const submit = async () => {
         submitting.value = false;
     }
 };
+
+onBeforeUnmount(() => {
+    if (draftSaveTimeout) clearTimeout(draftSaveTimeout);
+});
 
 defineExpose({
     openComposer,
@@ -321,9 +399,21 @@ label {
 
 .actions {
     display: flex;
-    justify-content: flex-end;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.actions-row-top {
+    display: flex;
     gap: 0.75rem;
-    flex-wrap: wrap;
+}
+
+.actions-row-top > * {
+    flex: 1;
+}
+
+.submit-button {
+    width: 100%;
 }
 
 .reply-context {
