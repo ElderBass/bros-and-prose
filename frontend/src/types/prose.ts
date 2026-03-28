@@ -8,7 +8,8 @@ export type ProseUpdateType =
     | "prose_like"
     | "prose_dislike"
     | "prose_comment"
-    | "prose_reply";
+    | "prose_reply"
+    | "prose_mention";
 
 export interface ProseEntry {
     id: string;

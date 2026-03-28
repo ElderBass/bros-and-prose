@@ -112,20 +112,20 @@ const getEmailMessaging = (
             };
         case "prose_comment":
             return {
-                title: "Prose Update",
+                title: "Someone's Shitting on Your Prose",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> commented on your prose piece <span style="font-weight: bold;color:#ff4dff;">${data.proseTitle}</span>.`,
                 text: data.text,
             };
         case "prose_reply":
             return {
-                title: "Prose Reply",
+                title: "Someone's Shit Back at You on Your Prose",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> replied to <span style="font-weight: bold;color:#00bfff;">@${data.targetUsername}</span> on <span style="font-weight: bold;color:#ff4dff;">${data.proseTitle}</span>.`,
                 text: data.text,
                 replyToText: data.replyToText,
             };
         case "prose_mention":
             return {
-                title: "Tagged In Prose",
+                title: "Someone Smeared You in a Prose Comment",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> tagged you in prose comments/discussion.`,
                 text: data.text,
             };
