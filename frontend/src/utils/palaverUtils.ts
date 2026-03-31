@@ -170,8 +170,13 @@ export const buildPalaverEntryMetadata = (entry: PalaverEntry) => {
                 bookTitle: entry.bookInfo?.title ?? "",
                 text: `Score: ${entry.rating} / 10. Comment: ${entry.text}`,
             };
-        case "suggestion":
         case "progress_note":
+            return {
+                ...baseMetadata,
+                bookTitle: entry.bookInfo?.title ?? "",
+                bookAuthor: entry.bookInfo?.author ?? "",
+            };
+        case "suggestion":
         case "misc":
         default:
             return baseMetadata;

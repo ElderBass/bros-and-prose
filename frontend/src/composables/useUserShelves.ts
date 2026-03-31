@@ -15,7 +15,6 @@ import {
     getShelfBookIsOn,
     getUserShelves,
 } from "@/utils";
-import { buildProgressUpdateMetadata } from "@/utils/shelfProgressUtils";
 import { useShelfModalStore } from "@/stores/shelfModal";
 
 const SHELF_ADD_METADATA_UPDATE_TYPES = ["currentlyReading", "wantToRead"];
@@ -301,28 +300,17 @@ export const useUserShelves = () => {
         try {
             const loggedInUser = useUserStore().loggedInUser;
 
-            // Find the book to get its details for metadata
-            const book = loggedInUser.currentlyReading?.find(
-                (b) => b.id === bookId
-            );
-
             const updatedBookProgress = {
                 ...loggedInUser.bookProgress,
                 [bookId]: progress,
             };
-
-            // Build metadata for notification (only if book exists)
-            const metadata = book
-                ? buildProgressUpdateMetadata(book, progress)
-                : undefined;
 
             const updatedUser = await updateUser(
                 loggedInUser.id,
                 {
                     ...loggedInUser,
                     bookProgress: updatedBookProgress,
-                },
-                metadata
+                }
             );
 
             await info(

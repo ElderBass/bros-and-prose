@@ -102,6 +102,14 @@
             </div>
         </div>
 
+        <AddCommentModal
+            v-if="showAddCommentModal"
+            :open="showAddCommentModal"
+            :isProgressUpdate="true"
+            @submit="onAddComment"
+            @close="showAddCommentModal = false"
+        />
+
         <!-- Action Buttons -->
         <div v-if="isLoggedInUser" class="actions">
             <BaseButton
@@ -119,18 +127,22 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import type { BookshelfBook } from "@/types";
+import type { BookshelfBook, Comment } from "@/types";
 import { useDisplay } from "vuetify";
 import { useUserStore } from "@/stores/user";
 import { useUserShelves } from "@/composables/useUserShelves";
-import { convertToPercentage, recommendBook } from "@/utils";
+import { usePalaver } from "@/composables/usePalaver";
+import { useUIStore } from "@/stores/ui";
+import { convertToPercentage, recommendBook, buildPalaverEntry } from "@/utils";
 import { getBookProgress } from "@/utils/shelfProgressUtils";
+import { UPDATE_PROGRESS_SUCCESS_ALERT } from "@/constants";
 import BookCover from "@/components/features/common/BookCover.vue";
 import BookMetadata from "@/components/features/common/BookMetadata.vue";
 import BookshelfBookListItemActions from "@/components/features/UserProfile/Shelves/BookshelfListItemActions.vue";
 import BlurbAndDescription from "@/components/features/common/BlurbAndDescription.vue";
 import ProgressSliderInput from "@/components/form/ProgressSliderInput.vue";
 import ElementSwap from "@/components/transitions/ElementSwap.vue";
+import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import { faHandPeace, faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import TagsContainer from "../../common/TagsContainer.vue";
@@ -143,8 +155,11 @@ const props = defineProps<{
 const { mobile } = useDisplay();
 const { loggedInUser } = useUserStore();
 const { updateShelfBookProgress, finishCurrentlyReading } = useUserShelves();
+const { createPalaverEntry } = usePalaver();
+const { showAlert } = useUIStore();
 
 const updateModeEnabled = ref(false);
+const showAddCommentModal = ref(false);
 const currentProgress = computed(() =>
     getBookProgress(loggedInUser, props.book.id)
 );
@@ -205,7 +220,23 @@ const onUpdateClick = async () => {
     } else {
         await updateShelfBookProgress(props.book.id, updatedProgress.value);
         setUpdateModeEnabled(false);
+        showAddCommentModal.value = true;
     }
+};
+
+const onAddComment = async (comment: Comment) => {
+    showAddCommentModal.value = false;
+    const entry = buildPalaverEntry({
+        type: "progress_note",
+        text: comment.text,
+        bookInfo: {
+            title: props.book.title,
+            author: props.book.author,
+            id: props.book.id,
+        },
+    });
+    await createPalaverEntry(entry);
+    showAlert(UPDATE_PROGRESS_SUCCESS_ALERT);
 };
 
 const onCancelClick = () => {
