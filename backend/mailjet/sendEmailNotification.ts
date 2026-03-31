@@ -38,7 +38,7 @@ const getEmailMessaging = (
         case "progress_note":
             return {
                 title: "New Progress Update",
-                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> made progress on the current book.`,
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> made progress on <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span> by <span style="color:#00ff7f;">${data.bookAuthor}</span>.`,
                 text: data.text,
             };
         case "review":

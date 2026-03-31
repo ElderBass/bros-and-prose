@@ -305,13 +305,10 @@ export const useUserShelves = () => {
                 [bookId]: progress,
             };
 
-            const updatedUser = await updateUser(
-                loggedInUser.id,
-                {
-                    ...loggedInUser,
-                    bookProgress: updatedBookProgress,
-                }
-            );
+            const updatedUser = await updateUser(loggedInUser.id, {
+                ...loggedInUser,
+                bookProgress: updatedBookProgress,
+            });
 
             await info(
                 `Updated progress for book ${bookId} to page ${progress} for ${loggedInUser.username}`
