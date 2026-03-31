@@ -18,8 +18,8 @@ import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
 import {
     REACTION_TYPES,
-    LIKED_PALAVER_ENTRY_SUCCESS_ALERT,
-    DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT,
+    LIKED_PROSE_ENTRY_SUCCESS_ALERT,
+    DISLIKED_PROSE_ENTRY_SUCCESS_ALERT,
 } from "@/constants";
 import type { ProseEntry, ReactionType } from "@/types";
 
@@ -54,7 +54,7 @@ const handleLike = async () => {
         const updated = await likeProseEntry(props.entry);
         if (updated) emit("entry-updated", updated);
         await logInfo(`Liked prose entry: ${props.entry.id}`);
-        showAlert(LIKED_PALAVER_ENTRY_SUCCESS_ALERT);
+        showAlert(LIKED_PROSE_ENTRY_SUCCESS_ALERT);
     } catch (error) {
         console.error(error);
         await logError(`Error liking prose entry: ${props.entry.id}`);
@@ -66,7 +66,7 @@ const handleDislike = async () => {
         const updated = await dislikeProseEntry(props.entry);
         if (updated) emit("entry-updated", updated);
         await logInfo(`Disliked prose entry: ${props.entry.id}`);
-        showAlert(DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT);
+        showAlert(DISLIKED_PROSE_ENTRY_SUCCESS_ALERT);
     } catch (error) {
         console.error(error);
         await logError(`Error disliking prose entry: ${props.entry.id}`);

@@ -113,7 +113,7 @@ import ComposerActions from "@/components/features/Prose/Composer/ComposerAction
 import ComposerToolbar from "@/components/features/Prose/Composer/ComposerToolbar.vue";
 import ProseTypePillPicker from "@/components/features/Prose/Composer/ProseTypePillPicker.vue";
 import PublishProseConfirmModal from "@/components/features/Prose/PublishProseConfirmModal.vue";
-import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
+import { PUBLISHED_PROSE_ENTRY_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import { useLog } from "@/composables/useLog";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
@@ -385,13 +385,7 @@ async function submitEntry(entry: ProseEntry) {
             clearProseDraft();
             lastSavedAt.value = "";
             draftRestored.value = false;
-            showAlert({
-                ...ADDED_COMMENT_SUCCESS_ALERT,
-                messages: [
-                    "prose published successfully.",
-                    "your piece (of shit) is now live. ugh.",
-                ],
-            });
+            showAlert(PUBLISHED_PROSE_ENTRY_SUCCESS_ALERT);
             router.push("/prose");
         }
     } catch (error) {

@@ -75,6 +75,61 @@ export const FUTURE_BOOK_ADDED_SUCCESS_ALERT: Alert = {
     dismissable: false,
 };
 
+export const LIKED_PROSE_ENTRY_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "liked prose entry successfully.",
+        "did you read the same thing, I did, my dude?",
+    ],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
+export const DISLIKED_PROSE_ENTRY_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "disliked prose entry successfully.",
+        "sounds about right, yeah...",
+    ],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
+export const PUBLISHED_PROSE_ENTRY_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "prose entry published successfully.",
+        "your piece (of shit) is now live. ugh.",
+    ],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
+export const LIKED_PROSE_COMMENT_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "liked prose comment successfully.",
+        "I hope they didn't pull punches with this one...",
+    ],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
+export const DISLIKED_PROSE_COMMENT_SUCCESS_ALERT: Alert = {
+    show: true,
+    messages: [
+        "disliked prose comment successfully.",
+        "not everyone can handle truth, my dude...",
+    ],
+    type: "success",
+    duration: 5000,
+    dismissable: false,
+};
+
 export const LIKED_PALAVER_ENTRY_SUCCESS_ALERT: Alert = {
     show: true,
     messages: [
