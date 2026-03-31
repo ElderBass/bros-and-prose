@@ -18,15 +18,28 @@
             </div>
 
             <div class="field">
-                <label for="prose-type-v3">type</label>
-                <BaseSelect
-                    id="prose-type-v3"
+                <label id="prose-type-v3-label">type</label>
+                <ProseTypePillPicker
                     v-model="type"
-                    label="prose type"
-                    :showLabel="false"
                     :options="typeOptions"
-                    size="medium"
+                    labelled-by="prose-type-v3-label"
                 />
+            </div>
+
+            <div class="field">
+                <label for="prose-context-v3">context (optional)</label>
+                <p class="format-hint">
+                    attempt to justify why you birthed this monstrosity.
+                </p>
+                <textarea
+                    id="prose-context-v3"
+                    v-model="context"
+                    class="context-textarea"
+                    rows="4"
+                    maxlength="600"
+                    placeholder="a short context line or two..."
+                />
+                <p class="context-count">{{ contextCharCount }}/600</p>
             </div>
 
             <div class="field">
@@ -71,7 +84,9 @@
         v-model="showPublishConfirm"
         :prose-title="title"
         :prose-type="type"
-        :initial-blurb="editEntry?.excerpt ?? ''"
+        :prose-context="context"
+        :prose-markdown="markdown"
+        :preview-mode="true"
         :is-edit="isEdit"
         @confirm="handlePublishConfirm"
     />
@@ -96,8 +111,9 @@ import {
 } from "vue";
 import ComposerActions from "@/components/features/Prose/Composer/ComposerActions.vue";
 import ComposerToolbar from "@/components/features/Prose/Composer/ComposerToolbar.vue";
+import ProseTypePillPicker from "@/components/features/Prose/Composer/ProseTypePillPicker.vue";
 import PublishProseConfirmModal from "@/components/features/Prose/PublishProseConfirmModal.vue";
-import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
+import { PUBLISHED_PROSE_ENTRY_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
 import { useLog } from "@/composables/useLog";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
@@ -141,6 +157,7 @@ const backTarget = computed(() =>
 
 const title = ref("");
 const type = ref<ProseType>("creative");
+const context = ref("");
 const markdown = ref("");
 const submitting = ref(false);
 const draftRestored = ref(false);
@@ -157,7 +174,7 @@ const typeOptions = [
     { label: "academic", value: "academic" },
     { label: "poetic", value: "poetic" },
     { label: "misc", value: "misc" },
-];
+] as const;
 
 const getMarkdownForSave = (): string => markdown.value.trimEnd();
 
@@ -239,6 +256,7 @@ const wordCount = computed(() => {
 });
 
 const charCount = computed(() => markdown.value.trim().length);
+const contextCharCount = computed(() => context.value.length);
 
 const lastSavedLabel = computed(() => {
     if (!lastSavedAt.value) return "";
@@ -255,7 +273,9 @@ const lastSavedLabel = computed(() => {
 const saveDraft = () => {
     if (isEdit.value || submitting.value) return;
     const hasDraftContent =
-        title.value.trim().length > 0 || markdown.value.trim().length > 0;
+        title.value.trim().length > 0 ||
+        context.value.trim().length > 0 ||
+        markdown.value.trim().length > 0;
     if (!hasDraftContent) {
         clearProseDraft();
         lastSavedAt.value = "";
@@ -265,6 +285,7 @@ const saveDraft = () => {
     const draft: ProseDraft = {
         title: title.value,
         type: type.value,
+        context: context.value,
         markdown: markdown.value,
         savedAt,
     };
@@ -272,7 +293,7 @@ const saveDraft = () => {
     lastSavedAt.value = savedAt;
 };
 
-watch([title, type, markdown], () => {
+watch([title, type, context, markdown], () => {
     if (isEdit.value) return;
     if (draftSaveTimeout) clearTimeout(draftSaveTimeout);
     draftSaveTimeout = setTimeout(saveDraft, 500);
@@ -301,14 +322,15 @@ onBeforeUnmount(() => {
     editor.value?.destroy();
 });
 
-const buildProseEntry = (blurb?: string): ProseEntry => {
-    const excerpt = blurb?.trim() ? blurb.trim() : "";
+const getExcerptForSave = (): string => context.value.trim();
+
+const buildProseEntry = (): ProseEntry => {
     return {
         id: uuidv4(),
         title: title.value.trim(),
         type: type.value,
         markdown: getMarkdownForSave(),
-        excerpt,
+        excerpt: getExcerptForSave(),
         createdAt: new Date().toISOString(),
         userInfo: getUserInfo(loggedInUser.value),
         likes: [],
@@ -317,15 +339,14 @@ const buildProseEntry = (blurb?: string): ProseEntry => {
     };
 };
 
-const buildUpdatedEntry = (blurb?: string): ProseEntry => {
+const buildUpdatedEntry = (): ProseEntry => {
     const existing = editEntry.value!;
-    const excerpt = blurb?.trim() ? blurb.trim() : "";
     return {
         ...existing,
         title: title.value.trim(),
         type: type.value,
         markdown: getMarkdownForSave(),
-        excerpt,
+        excerpt: getExcerptForSave(),
     };
 };
 
@@ -364,13 +385,7 @@ async function submitEntry(entry: ProseEntry) {
             clearProseDraft();
             lastSavedAt.value = "";
             draftRestored.value = false;
-            showAlert({
-                ...ADDED_COMMENT_SUCCESS_ALERT,
-                messages: [
-                    "prose published successfully.",
-                    "your piece (of shit) is now live. ugh.",
-                ],
-            });
+            showAlert(PUBLISHED_PROSE_ENTRY_SUCCESS_ALERT);
             router.push("/prose");
         }
     } catch (error) {
@@ -395,11 +410,9 @@ async function submitEntry(entry: ProseEntry) {
     }
 }
 
-function handlePublishConfirm(blurb: string) {
+function handlePublishConfirm() {
     showPublishConfirm.value = false;
-    const entry = isEdit.value
-        ? buildUpdatedEntry(blurb)
-        : buildProseEntry(blurb);
+    const entry = isEdit.value ? buildUpdatedEntry() : buildProseEntry();
     submitEntry(entry);
 }
 
@@ -411,6 +424,7 @@ onMounted(async () => {
             editEntry.value = stored;
             title.value = stored.title ?? "";
             type.value = stored.type ?? "creative";
+            context.value = stored.context ?? stored.excerpt ?? "";
             markdown.value = stored.markdown ?? "";
         } else {
             const fetched = await getProseEntry(proseId.value);
@@ -418,6 +432,7 @@ onMounted(async () => {
                 editEntry.value = fetched;
                 title.value = fetched.title ?? "";
                 type.value = fetched.type ?? "creative";
+                context.value = fetched.context ?? fetched.excerpt ?? "";
                 markdown.value = fetched.markdown ?? "";
             } else {
                 router.replace("/prose");
@@ -429,12 +444,14 @@ onMounted(async () => {
         if (draft) {
             title.value = draft.title;
             type.value = draft.type;
+            context.value = draft.context ?? "";
             markdown.value = draft.markdown;
             draftRestored.value = true;
             lastSavedAt.value = draft.savedAt;
         } else {
             title.value = "";
             type.value = "creative";
+            context.value = "";
             markdown.value = "";
             draftRestored.value = false;
             lastSavedAt.value = "";
@@ -483,6 +500,31 @@ label {
 .format-hint strong {
     font-weight: 600;
     color: var(--accent-lavender);
+}
+
+.context-textarea {
+    width: 100%;
+    min-height: 4rem;
+    padding: 0.75rem 0.9rem;
+    border-radius: 0.5rem;
+    border: 1px solid color-mix(in srgb, var(--accent-blue) 55%, transparent);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--main-text);
+    line-height: 1.45;
+    resize: vertical;
+}
+
+.context-textarea:focus {
+    outline: none;
+    border-color: var(--accent-lavender);
+}
+
+.context-count {
+    margin: 0;
+    text-align: right;
+    font-size: 0.78rem;
+    opacity: 0.7;
+    padding-right: 0.2rem;
 }
 
 .tools-wrapper {

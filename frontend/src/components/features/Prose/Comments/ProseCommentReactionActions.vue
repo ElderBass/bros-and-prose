@@ -16,8 +16,8 @@ import ReactionButton from "@/components/features/Palaver/PalaverListItem/Reacti
 import type { Comment, ProseEntry, ReactionType } from "@/types";
 import { REACTION_TYPES } from "@/constants";
 import {
-    LIKED_PALAVER_ENTRY_SUCCESS_ALERT,
-    DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT,
+    LIKED_PROSE_COMMENT_SUCCESS_ALERT,
+    DISLIKED_PROSE_COMMENT_SUCCESS_ALERT,
 } from "@/constants";
 import { getReactions } from "@/utils";
 import { useProse } from "@/composables/useProse";
@@ -49,8 +49,8 @@ const handleReaction = async (reaction: ReactionType) => {
         );
         showAlert(
             reaction === "like"
-                ? LIKED_PALAVER_ENTRY_SUCCESS_ALERT
-                : DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT
+                ? LIKED_PROSE_COMMENT_SUCCESS_ALERT
+                : DISLIKED_PROSE_COMMENT_SUCCESS_ALERT
         );
     } catch (error) {
         console.error(error);

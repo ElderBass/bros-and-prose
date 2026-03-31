@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, watch, onMounted, onBeforeUnmount } from "vue";
 import RateAndReviewBookForm from "@/components/form/RateAndReviewBookForm.vue";
 import type { Book, BookshelfBook, SubmitReviewArgs } from "@/types";
 import {
@@ -37,11 +37,18 @@ import { useUser } from "@/composables/useUser";
 import { useUserShelves } from "@/composables/useUserShelves";
 import { useBooksStore } from "@/stores/books";
 import { useUIStore } from "@/stores/ui";
+import { useUserStore } from "@/stores/user";
+import {
+    getBookReviewDraft,
+    setBookReviewDraft,
+    clearBookReviewDraft,
+} from "@/utils/localStorageUtils";
 
 const { addReview } = useUser();
 const { currentBook } = useBooksStore();
 const { addCurrentBookClubBookToHaveRead } = useUserShelves();
 const { showAlert } = useUIStore();
+const { loggedInUser } = useUserStore();
 
 const props = withDefaults(
     defineProps<{
@@ -61,6 +68,41 @@ const emit = defineEmits<{
 const loadingMessage = ref("");
 const bookReview = ref(props.reviewPrefill);
 const bookTags = ref<string[]>([]);
+
+const currentUserId = loggedInUser?.id ?? "";
+
+let draftSaveTimeout: ReturnType<typeof setTimeout> | null = null;
+
+const persistDraft = () => {
+    if (draftSaveTimeout) clearTimeout(draftSaveTimeout);
+    draftSaveTimeout = setTimeout(() => {
+        if (!currentUserId || !props.book?.id) return;
+        setBookReviewDraft(props.book.id, currentUserId, {
+            rating: bookReview.value.rating,
+            reviewComment: bookReview.value.reviewComment,
+            savedAt: new Date().toISOString(),
+        });
+    }, 350);
+};
+
+const restoreDraft = () => {
+    if (!currentUserId || !props.book?.id) return;
+    const draft = getBookReviewDraft(props.book.id, currentUserId);
+    if (draft) {
+        bookReview.value = {
+            rating: draft.rating,
+            reviewComment: draft.reviewComment,
+        };
+    }
+};
+
+watch(bookReview, persistDraft, { deep: true });
+
+onMounted(restoreDraft);
+
+onBeforeUnmount(() => {
+    if (draftSaveTimeout) clearTimeout(draftSaveTimeout);
+});
 
 const setLoadingMessage = (message: string) => {
     loadingMessage.value = message;
@@ -93,6 +135,7 @@ const onReviewSubmit = async () => {
         }
     }
 
+    clearBookReviewDraft(props.book.id, currentUserId);
     setLoadingMessage("");
     emit("close");
 };

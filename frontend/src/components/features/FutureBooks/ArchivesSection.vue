@@ -1,6 +1,6 @@
 <template>
     <section class="archives-container">
-        <h2 class="section-title">archives</h2>
+        <h2 class="section-title">{{ title }}</h2>
         <p v-if="!archives.length" class="empty-copy">
             no archived selections yet — keep voting, bros.
         </p>
@@ -42,6 +42,15 @@ import type { ArchivedBooksEntry } from "@/types/books";
 import ArchiveBookCard from "./ArchiveBookCard.vue";
 import { getUserFromId, getMostVotedFutureBookId } from "@/utils";
 import { useFutureBooksStore } from "@/stores/futureBooks";
+
+withDefaults(
+    defineProps<{
+        title?: string;
+    }>(),
+    {
+        title: "archives",
+    }
+);
 
 const archives = ref<ArchivedBooksEntry[]>([]);
 const selectorCache = ref<Record<string, string>>({});

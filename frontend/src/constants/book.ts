@@ -58,7 +58,7 @@ export const EMPTY_SHELF_BOOK: BookshelfBook = {
     pages: 0,
 };
 
-export const ON_DECK_BOOK_SELECTOR = "chris_dub";
+export const ON_DECK_BOOK_SELECTOR = "judd_prasnicky";
 
 export const ARCHIVE_ENABLED = false;
 
