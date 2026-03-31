@@ -77,6 +77,7 @@ const onSubmit = async (
             pages: bookValues.pages,
             tags: bookValues.tags || [],
             description: bookValues.description.trim(),
+            userBlurb: bookValues.userBlurb?.trim() || "",
         };
 
         // Add to shelf first
