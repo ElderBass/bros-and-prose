@@ -35,11 +35,11 @@
                     id="prose-context-v3"
                     v-model="context"
                     class="context-textarea"
-                    rows="3"
-                    maxlength="320"
+                    rows="4"
+                    maxlength="600"
                     placeholder="a short context line or two..."
                 />
-                <p class="context-count">{{ contextCharCount }}/320</p>
+                <p class="context-count">{{ contextCharCount }}/600</p>
             </div>
 
             <div class="field">
