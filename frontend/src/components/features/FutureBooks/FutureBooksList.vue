@@ -1,22 +1,15 @@
 <template>
-    <div :class="`future-books-list-${listLayout}`">
-        <template v-for="i in [0, 1, 2]">
-            <FutureBookItem
-                v-if="futureBooks[i]"
-                :key="futureBooks[i].id"
-                :book="futureBooks[i]"
-                :isMostVoted="futureBooks[i].id === mostVotedFutureBookId"
-            />
-            <div v-else :key="i" class="future-books-list-item-placeholder">
-                <p>nothing to see here</p>
-            </div>
-        </template>
+    <div class="future-books-list">
+        <FutureBookItem
+            v-for="book in futureBooks"
+            :key="book.id"
+            :book="book"
+            :isMostVoted="book.id === mostVotedFutureBookId"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useDisplay } from "vuetify";
 import FutureBookItem from "./FutureBookItem.vue";
 import type { FutureBook } from "@/types";
 import { storeToRefs } from "pinia";
@@ -26,62 +19,32 @@ defineProps<{
     futureBooks: FutureBook[];
 }>();
 
-const { mobile } = useDisplay();
 const { mostVotedFutureBookId } = storeToRefs(useFutureBooksStore());
-
-const listLayout = computed(() => {
-    return mobile.value ? "column" : "row";
-});
 </script>
 
 <style scoped>
-.future-books-list-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1.5rem;
-    width: 100%;
-}
-
-.future-books-list-column {
-    display: grid;
-    grid-template-rows: 1fr 1fr 1fr;
-    width: 100%;
-    gap: 1.5rem;
-    height: 100%;
-}
-
-.future-books-list-item-placeholder {
-    width: 100%;
-    height: 100%;
-    border: 2px dashed var(--accent-blue);
-    border-radius: 1rem;
-    background: linear-gradient(
-        180deg,
-        rgba(0, 191, 255, 0.06),
-        rgba(0, 191, 255, 0.03)
-    );
-
-    box-shadow:
-        0 4px 20px rgba(0, 191, 255, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+.future-books-list {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
-    font-size: 1.5rem;
-    color: var(--accent-blue);
-    font-family: "Libre Baskerville", serif;
-    font-style: italic;
-    padding: 2rem;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.future-books-list > :deep(*) {
+    flex: 0 0 calc((100% - 3rem) / 3);
+    min-width: 0;
 }
 
 @media (max-width: 1024px) {
-    .future-books-list-row {
-        grid-template-columns: 1fr;
+    .future-books-list > :deep(*) {
+        flex: 0 0 calc(50% - 0.75rem);
     }
 }
+
 @media (max-width: 768px) {
-    .future-books-list-item-placeholder {
-        font-size: 1.25rem;
+    .future-books-list > :deep(*) {
+        flex: 0 0 100%;
     }
 }
 </style>
