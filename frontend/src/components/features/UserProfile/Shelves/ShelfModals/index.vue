@@ -30,6 +30,7 @@ import { useShelfModalStore } from "@/stores/shelfModal";
 import type { SubmitReviewArgs } from "@/types";
 import { DEFAULT_REVIEW } from "@/constants";
 import { useUserStore } from "@/stores/user";
+import { getBookReviewDraft } from "@/utils/localStorageUtils";
 
 defineOptions({
     name: "ShelfModals",
@@ -44,8 +45,23 @@ const { closeModal } = shelfModalStore;
 const reviewPrefill = computed<SubmitReviewArgs>(() => {
     const bookId = selectedBook.value?.id;
     if (!bookId) return DEFAULT_REVIEW;
+
     const existing = loggedInUser.value?.reviews?.[bookId];
-    if (!existing) return DEFAULT_REVIEW;
-    return { rating: existing.rating, reviewComment: existing.reviewComment };
+    if (existing) {
+        return {
+            rating: existing.rating,
+            reviewComment: existing.reviewComment,
+        };
+    }
+
+    const userId = loggedInUser.value?.id;
+    if (userId) {
+        const draft = getBookReviewDraft(bookId, userId);
+        if (draft) {
+            return { rating: draft.rating, reviewComment: draft.reviewComment };
+        }
+    }
+
+    return DEFAULT_REVIEW;
 });
 </script>

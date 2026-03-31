@@ -118,3 +118,42 @@ export const clearProseCommentDraft = (entryId: string, userId: string) => {
     const key = getProseCommentDraftKey(entryId, userId);
     localStorage.removeItem(key);
 };
+
+export type BookReviewDraft = {
+    rating: number;
+    reviewComment: string;
+    savedAt: string;
+};
+
+const book_review_draft_key_prefix = "bookReviewDraft";
+
+const getBookReviewDraftKey = (bookId: string, userId: string) =>
+    `${book_review_draft_key_prefix}:${userId}:${bookId}`;
+
+export const getBookReviewDraft = (
+    bookId: string,
+    userId: string
+): BookReviewDraft | null => {
+    try {
+        const key = getBookReviewDraftKey(bookId, userId);
+        const draft = localStorage.getItem(key);
+        if (!draft) return null;
+        return JSON.parse(draft) as BookReviewDraft;
+    } catch {
+        return null;
+    }
+};
+
+export const setBookReviewDraft = (
+    bookId: string,
+    userId: string,
+    draft: BookReviewDraft
+) => {
+    const key = getBookReviewDraftKey(bookId, userId);
+    localStorage.setItem(key, JSON.stringify(draft));
+};
+
+export const clearBookReviewDraft = (bookId: string, userId: string) => {
+    const key = getBookReviewDraftKey(bookId, userId);
+    localStorage.removeItem(key);
+};
