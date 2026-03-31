@@ -19,6 +19,7 @@ export interface ProseEntry {
     createdAt: string;
     userInfo: UserInfo;
     excerpt?: string;
+    context?: string;
     tags?: string[];
     likes?: string[];
     dislikes?: string[];
@@ -46,6 +47,7 @@ export interface ProseEntryRequest {
 export interface ProseDraft {
     title: string;
     type: ProseType;
+    context?: string;
     markdown: string;
     savedAt: string;
 }
