@@ -163,7 +163,7 @@ const stockMessage = computed(() => {
         case "discussion_note":
             return " said some shit about ";
         case "progress_note":
-            return " made progress on the current book";
+            return " made progress on ";
         case "suggestion":
             return " suggested an idea for the app";
         case "recommendation":
@@ -182,7 +182,8 @@ const showBookInfo = computed(() => {
     return (
         props.entry.type === "recommendation" ||
         props.entry.type === "review" ||
-        props.entry.type === "discussion_note"
+        props.entry.type === "discussion_note" ||
+        props.entry.type === "progress_note"
     );
 });
 
