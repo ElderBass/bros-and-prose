@@ -3,75 +3,79 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import ErrorBoundaryView from "./components/views/ErrorBoundaryView.vue";
 import { initApp } from "./setup";
-import { useLog } from "./composables/useLog";
 
-const lastInitAt = ref(0);
-const INIT_STALE_MS = 5 * 60 * 1000; // re-init if last run was >5 minutes ago
-let inFlight = false;
-let reinitTimeout: number | undefined;
+/** Full reload after this long with no throttled activity while tab is visible */
+const IDLE_RELOAD_MS = 15 * 60 * 1000;
+/** Avoid resetting the idle timer on every scroll/wheel tick */
+const ACTIVITY_THROTTLE_MS = 1000;
 
-async function reinitIfNeeded(reason: string) {
-    if (inFlight) return;
-    const now = Date.now();
-    const isStale = now - lastInitAt.value > INIT_STALE_MS;
-    if (!isStale) return;
+const ACTIVITY_EVENTS = ["pointerdown", "keydown", "wheel", "scroll"] as const;
 
-    inFlight = true;
-    try {
-        await useLog().info(`Re-initializing app (reason: ${reason})`);
-        await initApp();
-        lastInitAt.value = Date.now();
-        await useLog().info(`Re-init complete (reason: ${reason})`);
-    } finally {
-        inFlight = false;
+const activityListenerOpts: AddEventListenerOptions = {
+    capture: true,
+    passive: true,
+};
+
+let idleTimerId: ReturnType<typeof setTimeout> | undefined;
+let lastActivityThrottleAt = 0;
+
+function clearIdleTimer() {
+    if (idleTimerId !== undefined) {
+        clearTimeout(idleTimerId);
+        idleTimerId = undefined;
     }
 }
 
-function scheduleReinit(reason: string) {
-    if (reinitTimeout) {
-        clearTimeout(reinitTimeout);
-    }
-    reinitTimeout = window.setTimeout(() => {
-        void reinitIfNeeded(reason);
-    }, 150);
+function scheduleIdleReload() {
+    clearIdleTimer();
+    idleTimerId = window.setTimeout(() => {
+        window.location.reload();
+    }, IDLE_RELOAD_MS);
+}
+
+function onUserActivity() {
+    const now = Date.now();
+    if (now - lastActivityThrottleAt < ACTIVITY_THROTTLE_MS) return;
+    lastActivityThrottleAt = now;
+    scheduleIdleReload();
 }
 
 function onVisibilityChange() {
-    if (document.visibilityState === "visible") {
-        scheduleReinit("visibilitychange");
+    if (document.visibilityState === "hidden") {
+        clearIdleTimer();
+    } else {
+        scheduleIdleReload();
     }
 }
 
-function onFocus() {
-    scheduleReinit("focus");
-}
-
-function onPageShow() {
-    // Fires when returning from bfcache too; treat like a resume
-    scheduleReinit("pageshow");
-}
-
 function onOnline() {
-    scheduleReinit("online");
+    scheduleIdleReload();
 }
 
 onMounted(async () => {
     await initApp();
-    lastInitAt.value = Date.now();
+    scheduleIdleReload();
 
+    for (const type of ACTIVITY_EVENTS) {
+        document.addEventListener(type, onUserActivity, activityListenerOpts);
+    }
     document.addEventListener("visibilitychange", onVisibilityChange);
-    window.addEventListener("focus", onFocus);
-    window.addEventListener("pageshow", onPageShow);
     window.addEventListener("online", onOnline);
 });
 
 onUnmounted(() => {
+    clearIdleTimer();
+    for (const type of ACTIVITY_EVENTS) {
+        document.removeEventListener(
+            type,
+            onUserActivity,
+            activityListenerOpts
+        );
+    }
     document.removeEventListener("visibilitychange", onVisibilityChange);
-    window.removeEventListener("focus", onFocus);
-    window.removeEventListener("pageshow", onPageShow);
     window.removeEventListener("online", onOnline);
 });
 </script>
