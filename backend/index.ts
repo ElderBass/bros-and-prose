@@ -12,7 +12,7 @@ const CORS_ORIGIN = process.env.CORS_ORIGIN || "*";
 app.use(
     cors({
         origin: CORS_ORIGIN === "*" ? true : CORS_ORIGIN.split(",").map((o) => o.trim()),
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
         credentials: false,
     })
 );

@@ -23,6 +23,7 @@ import {
     getUserByUsername,
     getUsers,
     updateUser,
+    patchUser,
     uploadUserAvatar,
 } from "./user.js";
 import { postLog } from "./log.js";
@@ -76,6 +77,7 @@ router.get("/users/id/:userId", getUser);
 router.get("/users/username/:username", getUserByUsername);
 router.get("/users/all", getUsers);
 router.put("/users/id/:userId", updateUser);
+router.patch("/users/id/:userId", patchUser);
 router.post("/users/id/:userId/avatar", uploadUserAvatar);
 
 // PALAVER ROUTES
