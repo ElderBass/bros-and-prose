@@ -10,9 +10,6 @@
         @mouseleave="isHovering = false"
         @keydown.left.prevent="prev"
         @keydown.right.prevent="next"
-        @pointerdown="onPointerDown"
-        @pointerup="onPointerUp"
-        @pointercancel="resetPointer"
     >
         <div class="row">
             <div v-if="showArrowsResolved && items.length > 1" class="nav-col">
@@ -25,7 +22,12 @@
                 />
             </div>
 
-            <div class="viewport">
+            <div
+                class="viewport"
+                @pointerdown="onPointerDown"
+                @pointerup="onPointerUp"
+                @pointercancel="onPointerCancel"
+            >
                 <Transition :name="transitionName" mode="out-in">
                     <div
                         v-if="items.length"
@@ -200,20 +202,37 @@ watch(
 onMounted(() => startTimer());
 onBeforeUnmount(() => clearTimer());
 
-// Swipe support (simple)
+// Swipe support (viewport only; no setPointerCapture — capture steals pointerup from
+// buttons/inputs inside the slide and breaks clicks.)
 const pointerStartX = ref<number | null>(null);
+
+const swipeThreshold = (e: PointerEvent) =>
+    e.pointerType === "touch" ? 52 : 40;
+
+/** Do not treat drags starting on controls as carousel swipes */
+const isSwipeIgnoredTarget = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false;
+    return !!target.closest(
+        'button, a, input, textarea, select, label, [role="button"], [role="slider"], [role="textbox"]'
+    );
+};
+
 const onPointerDown = (e: PointerEvent) => {
+    if (isSwipeIgnoredTarget(e.target)) return;
     pointerStartX.value = e.clientX;
 };
+
 const onPointerUp = (e: PointerEvent) => {
     if (pointerStartX.value === null) return;
     const dx = e.clientX - pointerStartX.value;
+    const minDx = swipeThreshold(e);
     pointerStartX.value = null;
-    if (Math.abs(dx) < 40) return;
+    if (Math.abs(dx) < minDx) return;
     if (dx < 0) next();
     else prev();
 };
-const resetPointer = () => {
+
+const onPointerCancel = () => {
     pointerStartX.value = null;
 };
 </script>
@@ -244,6 +263,8 @@ const resetPointer = () => {
     grid-column: 2;
     width: 100%;
     overflow: hidden;
+    /* Prefer vertical scroll; let JS handle horizontal swipe without browser hijacking */
+    touch-action: pan-y pinch-zoom;
 }
 
 .slide {
