@@ -9,6 +9,8 @@ import { initApp } from "./setup";
 
 /** Full reload after this long with no throttled activity while tab is visible */
 const IDLE_RELOAD_MS = 15 * 60 * 1000;
+/** Full reload when tab becomes visible again after this long continuously hidden */
+const BACKGROUND_RELOAD_MS = 5 * 60 * 1000;
 /** Avoid resetting the idle timer on every scroll/wheel tick */
 const ACTIVITY_THROTTLE_MS = 1000;
 
@@ -21,6 +23,8 @@ const activityListenerOpts: AddEventListenerOptions = {
 
 let idleTimerId: ReturnType<typeof setTimeout> | undefined;
 let lastActivityThrottleAt = 0;
+/** Set when document becomes hidden; cleared after handling visible */
+let hiddenAtMs: number | undefined;
 
 function clearIdleTimer() {
     if (idleTimerId !== undefined) {
@@ -46,7 +50,16 @@ function onUserActivity() {
 function onVisibilityChange() {
     if (document.visibilityState === "hidden") {
         clearIdleTimer();
+        hiddenAtMs = Date.now();
     } else {
+        if (
+            hiddenAtMs !== undefined &&
+            Date.now() - hiddenAtMs >= BACKGROUND_RELOAD_MS
+        ) {
+            window.location.reload();
+            return;
+        }
+        hiddenAtMs = undefined;
         scheduleIdleReload();
     }
 }
