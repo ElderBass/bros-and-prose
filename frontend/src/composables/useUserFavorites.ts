@@ -9,15 +9,12 @@ import { useUserStore } from "@/stores/user";
 import { useLog } from "./useLog";
 
 export const useUserFavorites = () => {
-    const { updateUser } = useUser();
+    const { patchUser } = useUser();
     const { info } = useLog();
 
     const updateUserFavorites = async (favorites: UserFavorites) => {
         const loggedInUser = useUserStore().loggedInUser;
-        const updatedUser = await updateUser(loggedInUser.id, {
-            ...loggedInUser,
-            favorites,
-        });
+        const updatedUser = await patchUser(loggedInUser.id, { favorites });
         await info(`Updated favorites for ${loggedInUser.username}`);
         return updatedUser;
     };
@@ -27,12 +24,8 @@ export const useUserFavorites = () => {
         items: string[] | BookshelfBook[] | ProseEntry[]
     ) => {
         const loggedInUser = useUserStore().loggedInUser;
-        const updatedUser = await updateUser(loggedInUser.id, {
-            ...loggedInUser,
-            favorites: {
-                ...(loggedInUser.favorites || {}),
-                [favoriteType]: items,
-            },
+        const updatedUser = await patchUser(loggedInUser.id, {
+            [`favorites/${favoriteType}`]: items,
         });
         await info(`Updated '${favoriteType}' for ${loggedInUser.username}`);
         return updatedUser;
