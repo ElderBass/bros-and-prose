@@ -2,7 +2,7 @@
     <BaseCarousel
         class="carousel"
         :items="currentlyReading"
-        :cycle="bookCount > 1"
+        :cycle="bookCount > 1 && !isLoggedInUser"
         :intervalMs="intervalMs"
         :showArrows="showArrows"
         :showDelimiters="bookCount > 1"

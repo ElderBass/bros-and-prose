@@ -39,8 +39,13 @@ export class ApiError extends Error {
     }
 }
 
+export interface UserPatchRequest {
+    updates: Record<string, unknown>;
+    metadata?: Record<string, unknown>;
+}
+
 export const apiRequest = async <T>(
-    method: "GET" | "POST" | "PUT" | "DELETE",
+    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
     url: string,
     data?:
         | SignupCredentials
@@ -57,6 +62,7 @@ export const apiRequest = async <T>(
         | FutureBookRequest
         | Avatar
         | AvatarRequest
+        | UserPatchRequest
         | { title: string }
 ): Promise<T> => {
     try {

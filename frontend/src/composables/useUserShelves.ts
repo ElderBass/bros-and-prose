@@ -21,7 +21,7 @@ const SHELF_ADD_METADATA_UPDATE_TYPES = ["currentlyReading", "wantToRead"];
 
 export const useUserShelves = () => {
     const { info, error: logError } = useLog();
-    const { updateUser } = useUser();
+    const { patchUser } = useUser();
 
     const addToShelf = async (
         shelf: Shelf,
@@ -38,12 +38,9 @@ export const useUserShelves = () => {
                 metadata = buildShelfAddMetadata(book, shelf);
             }
 
-            const updatedUser = await updateUser(
+            const updatedUser = await patchUser(
                 loggedInUser.id,
-                {
-                    ...loggedInUser,
-                    [shelf]: [...currentShelf, book],
-                },
+                { [shelf]: [...currentShelf, book] },
                 metadata as ShelfAddMetadata
             );
 
@@ -68,8 +65,7 @@ export const useUserShelves = () => {
             const updatedShelf = currentShelf.map((b) =>
                 b.id === updatedBook.id ? updatedBook : b
             );
-            const updatedUser = await updateUser(loggedInUser.id, {
-                ...loggedInUser,
+            const updatedUser = await patchUser(loggedInUser.id, {
                 [shelf]: updatedShelf,
             });
             await info(
@@ -92,26 +88,18 @@ export const useUserShelves = () => {
             const currentShelf = getUserShelves(loggedInUser)[shelf];
             const updatedShelf = currentShelf.filter((b) => b.id !== bookId);
 
-            // Prepare updated user data
-            const updatedUserData: Partial<User> = {
-                ...loggedInUser,
+            const updates: Record<string, unknown> = {
                 [shelf]: updatedShelf,
             };
 
-            // Clean up progress if removing from currentlyReading
             if (
                 shelf === "currentlyReading" &&
-                loggedInUser.bookProgress?.[bookId]
+                loggedInUser.bookProgress?.[bookId] !== undefined
             ) {
-                const { [bookId]: _, ...remainingProgress } =
-                    loggedInUser.bookProgress;
-                updatedUserData.bookProgress = remainingProgress;
+                updates[`bookProgress/${bookId}`] = null;
             }
 
-            const updatedUser = await updateUser(
-                loggedInUser.id,
-                updatedUserData as User
-            );
+            const updatedUser = await patchUser(loggedInUser.id, updates);
             await info(
                 `Removed book ${bookId} from ${shelf} for ${loggedInUser.username}`
             );
@@ -300,14 +288,8 @@ export const useUserShelves = () => {
         try {
             const loggedInUser = useUserStore().loggedInUser;
 
-            const updatedBookProgress = {
-                ...loggedInUser.bookProgress,
-                [bookId]: progress,
-            };
-
-            const updatedUser = await updateUser(loggedInUser.id, {
-                ...loggedInUser,
-                bookProgress: updatedBookProgress,
+            const updatedUser = await patchUser(loggedInUser.id, {
+                [`bookProgress/${bookId}`]: progress,
             });
 
             await info(

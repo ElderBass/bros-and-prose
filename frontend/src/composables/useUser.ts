@@ -20,6 +20,7 @@ import { useFutureBooks } from "./useFutureBooks";
 import { buildReview, isReviewOfCurrentBook, sanitizeUser } from "@/utils";
 import { storeToRefs } from "pinia";
 import { usePalaver } from "./usePalaver";
+import type { UserPatchMetadata } from "@/services/users";
 
 export const useUser = () => {
     const { setLoggedInUser, setAllUsers, setFutureBookSelector } =
@@ -78,15 +79,29 @@ export const useUser = () => {
         return sanitizedUser;
     };
 
+    const patchUser = async (
+        userId: string,
+        updates: Record<string, unknown>,
+        metadata?: UserPatchMetadata
+    ) => {
+        const updatedUser = await usersService.patchUser(
+            userId,
+            updates,
+            metadata
+        );
+        const sanitizedUser = sanitizeUser(updatedUser);
+
+        if (userId === loggedInUser.value.id) {
+            setLoggedInUser(sanitizedUser);
+        }
+        return sanitizedUser;
+    };
+
     const updateUserProgress = async (userId: string, progress: number) => {
         try {
-            const updatedUser = await usersService.updateUser(userId, {
-                ...loggedInUser.value,
+            const updatedUser = await patchUser(userId, {
                 currentBookProgress: progress,
             });
-            if (userId === loggedInUser.value.id) {
-                setLoggedInUser(updatedUser);
-            }
             return updatedUser;
         } catch (error) {
             console.error("error in updateUserProgress", error);
@@ -101,18 +116,12 @@ export const useUser = () => {
     };
 
     const updateUserAvatar = async (userId: string, avatar: string) => {
-        const updatedUser = await updateUser(userId, {
-            ...loggedInUser.value,
-            avatar,
-        });
+        const updatedUser = await patchUser(userId, { avatar });
         return updatedUser;
     };
 
     const updateUserUsername = async (userId: string, username: string) => {
-        const updatedUser = await updateUser(userId, {
-            ...loggedInUser.value,
-            username,
-        });
+        const updatedUser = await patchUser(userId, { username });
         return updatedUser;
     };
 
@@ -130,18 +139,15 @@ export const useUser = () => {
 
             const reviewingCurrentBook = isReviewOfCurrentBook(book.id);
 
-            const currentBookProgress = reviewingCurrentBook
-                ? FINISHED_BOOK_PROGRESS
-                : loggedInUser.value.currentBookProgress;
+            const updates: Record<string, unknown> = {
+                [`reviews/${book.id}`]: newReview,
+            };
+            if (reviewingCurrentBook) {
+                updates.currentBookProgress = FINISHED_BOOK_PROGRESS;
+            }
 
-            const updatedUser = await updateUser(loggedInUser.value.id, {
-                ...loggedInUser.value,
-                currentBookProgress,
-                reviews: {
-                    ...loggedInUser.value.reviews,
-                    [book.id]: newReview,
-                },
-            });
+            const updatedUser = await patchUser(loggedInUser.value.id, updates);
+
             if (!existingReview && !reviewingCurrentBook) {
                 await usePalaver().createPalaverEntryFromReview(newReview);
             }
@@ -167,6 +173,7 @@ export const useUser = () => {
         getFutureBookSelector,
         getOtherBros,
         updateUser,
+        patchUser,
         updateUserAvatar,
         updateUserUsername,
         addReview,

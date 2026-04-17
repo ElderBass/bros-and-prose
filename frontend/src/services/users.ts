@@ -7,6 +7,8 @@ import type {
 import { apiRequest } from "./api";
 import { mockUsers } from "@/data/mockUsers";
 
+export type UserPatchMetadata = ShelfAddMetadata | ProgressUpdateMetadata;
+
 export const usersService = {
     getUser: async (userId: string) => {
         try {
@@ -58,6 +60,23 @@ export const usersService = {
                 "PUT",
                 `/api/users/id/${userId}`,
                 payload
+            );
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    },
+    patchUser: async (
+        userId: string,
+        updates: Record<string, unknown>,
+        metadata?: UserPatchMetadata
+    ) => {
+        try {
+            const response = await apiRequest<ApiResponse<User>>(
+                "PATCH",
+                `/api/users/id/${userId}`,
+                { updates, metadata }
             );
             return response.data;
         } catch (error) {
