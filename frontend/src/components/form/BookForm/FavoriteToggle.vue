@@ -20,7 +20,7 @@
             color="pink"
             shadowColor="pink"
             :title="isFavorited ? 'Remove from favorites' : 'Add to favorites'"
-            :handleClick="handleToggle"
+            :handleClick="onIconButtonClick"
             :class="{ 'button-favorited': isFavorited }"
         />
     </div>
@@ -59,6 +59,13 @@ const handleToggle = () => {
     setTimeout(() => {
         justToggled.value = false;
     }, 600);
+};
+
+const onIconButtonClick = (event?: MouseEvent) => {
+    // Prevent the icon-button click from also triggering the container @click.
+    // Without this, one tap toggles twice and ends up back where it started.
+    event?.stopPropagation();
+    handleToggle();
 };
 
 // Watch for external changes to isFavorited (e.g., form reset)

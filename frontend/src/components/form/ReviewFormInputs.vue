@@ -6,7 +6,7 @@
         <FavoriteToggle
             v-if="showFavoriteToggle"
             :isFavorited="isFavorited"
-            @toggle="emit('update:isFavorited')"
+            @toggle="handleFavoriteToggle"
         />
     </div>
     <div class="review-comment-input-container">
@@ -43,7 +43,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     (e: "update", value: SubmitReviewArgs): void;
-    (e: "update:isFavorited"): void;
+    (e: "update:isFavorited", value: boolean): void;
 }>();
 
 const starRating = ref(props.rating);
@@ -62,6 +62,10 @@ watch(reviewComment, () => {
         reviewComment: reviewComment.value,
     });
 });
+
+const handleFavoriteToggle = () => {
+    emit("update:isFavorited", !props.isFavorited);
+};
 </script>
 
 <style scoped>

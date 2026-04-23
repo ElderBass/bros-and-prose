@@ -13,6 +13,7 @@
                 :title="title"
                 :style="style"
                 :disabled="disabled"
+                type="button"
                 @click="(event) => handleClick(event)"
             >
                 <FontAwesomeIcon :icon="icon" />
