@@ -16,9 +16,11 @@
             :rating="bookReview.rating"
             :comment="bookReview.reviewComment"
             :tags="bookTags"
+            :isFavorited="isFavorited"
             :showFavoriteToggle="true"
             @update="bookReview = $event"
             @update:tags="bookTags = $event"
+            @update:isFavorited="isFavorited = $event"
             @cancel="$emit('close')"
             @submit="onReviewSubmit"
         />
@@ -38,6 +40,7 @@ import { useUserShelves } from "@/composables/useUserShelves";
 import { useBooksStore } from "@/stores/books";
 import { useUIStore } from "@/stores/ui";
 import { useUserStore } from "@/stores/user";
+import { isBookFavorite } from "@/utils";
 import {
     getBookReviewDraft,
     setBookReviewDraft,
@@ -68,6 +71,7 @@ const emit = defineEmits<{
 const loadingMessage = ref("");
 const bookReview = ref(props.reviewPrefill);
 const bookTags = ref<string[]>([]);
+const isFavorited = ref(false);
 
 const currentUserId = loggedInUser?.id ?? "";
 
@@ -98,7 +102,10 @@ const restoreDraft = () => {
 
 watch(bookReview, persistDraft, { deep: true });
 
-onMounted(restoreDraft);
+onMounted(() => {
+    restoreDraft();
+    isFavorited.value = isBookFavorite(props.book.id);
+});
 
 onBeforeUnmount(() => {
     if (draftSaveTimeout) clearTimeout(draftSaveTimeout);
