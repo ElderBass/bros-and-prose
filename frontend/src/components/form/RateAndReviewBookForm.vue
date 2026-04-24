@@ -14,8 +14,10 @@
         <ReviewFormInputs
             :rating="rating"
             :comment="comment"
+            :isFavorited="isFavorited"
             :showFavoriteToggle="showFavoriteToggle"
             @update="emit('update', $event)"
+            @update:isFavorited="emit('update:isFavorited', $event)"
         />
         <div class="form-actions">
             <BaseButton
@@ -51,12 +53,14 @@ defineProps<{
     rating: number;
     comment: string;
     tags: string[];
+    isFavorited?: boolean;
     showFavoriteToggle: boolean;
 }>();
 
 const emit = defineEmits<{
     (e: "update", value: SubmitReviewArgs): void;
     (e: "update:tags", value: string[]): void;
+    (e: "update:isFavorited", value: boolean): void;
     (e: "submit", value: Event): void;
     (e: "cancel", value: Event): void;
 }>();
@@ -95,6 +99,7 @@ const buttonProps = computed(() => {
 
 .book-info {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
     text-align: center;
