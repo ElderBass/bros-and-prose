@@ -158,7 +158,7 @@ const messages = computed(() => {
         case "prose_prompt":
             return {
                 stock: "prompt the bros",
-                placeholder: "give the boys something to write about...",
+                placeholder: "remind the bros they completely lack imagination",
             };
         case "suggestion":
             return {
