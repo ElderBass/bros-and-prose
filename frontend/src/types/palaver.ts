@@ -7,6 +7,7 @@ export type PalaverType =
     | "suggestion"
     | "recommendation"
     | "review"
+    | "prose_prompt"
     | "misc";
 
 export interface ItemTypeButtonProp {
@@ -58,6 +59,8 @@ export interface PalaverEntryMetadata {
     updateType?: ReactionType | PalaverType;
     replyToText?: string;
     mentionedUsers?: Array<{ username: string; email: string }>;
+    ctaLabel?: string;
+    ctaPath?: string;
 }
 
 export interface PalaverEntryRequest {

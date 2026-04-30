@@ -20,6 +20,17 @@ import {
 import { useUserStore } from "@/stores/user";
 import { usePalaverStore, type PalaverFilter } from "@/stores/palaver";
 
+export const buildProsePromptComposerPath = (
+    promptText: string,
+    promptedBy: string
+) => {
+    const params = new URLSearchParams({
+        prompt: promptText,
+        promptedBy,
+    });
+    return `/prose/new?${params.toString()}`;
+};
+
 export const buildPalaverEntry = ({
     type,
     text,
@@ -175,6 +186,15 @@ export const buildPalaverEntryMetadata = (entry: PalaverEntry) => {
                 ...baseMetadata,
                 bookTitle: entry.bookInfo?.title ?? "",
                 bookAuthor: entry.bookInfo?.author ?? "",
+            };
+        case "prose_prompt":
+            return {
+                ...baseMetadata,
+                ctaLabel: "Heed the Call",
+                ctaPath: buildProsePromptComposerPath(
+                    entry.text,
+                    entry.userInfo.username
+                ),
             };
         case "suggestion":
         case "misc":
