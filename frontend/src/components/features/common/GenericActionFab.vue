@@ -40,11 +40,13 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import type { CSSProperties } from "vue";
+import { useRouter } from "vue-router";
 import { useDisplay } from "vuetify";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
     faBookMedical,
     faComments,
+    faPenNib,
     faPlus,
     faXmark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -63,6 +65,7 @@ const props = withDefaults(
 const isOpen = ref(false);
 const palaver = usePalaverStore();
 const shelfModalStore = useShelfModalStore();
+const router = useRouter();
 const { mobile } = useDisplay();
 
 const DESKTOP_FAB_SIZE = 64;
@@ -215,6 +218,11 @@ const openPalaverModal = () => {
     isOpen.value = false;
 };
 
+const openProseComposer = () => {
+    router.push("/prose/new");
+    isOpen.value = false;
+};
+
 const actions: Array<{
     id: string;
     title: string;
@@ -228,6 +236,13 @@ const actions: Array<{
         icon: faComments,
         color: "var(--accent-fuschia)",
         handler: openPalaverModal,
+    },
+    {
+        id: "prose",
+        title: "pen some pretentious prose",
+        icon: faPenNib,
+        color: "var(--accent-lavender)",
+        handler: openProseComposer,
     },
     {
         id: "add-book",
@@ -306,6 +321,15 @@ const actions: Array<{
 
 :deep(.generic-speed-dial-action-palaver:hover) {
     background-color: var(--accent-blue) !important;
+}
+
+:deep(.generic-speed-dial-action-prose) {
+    background-color: var(--accent-lavender) !important;
+    color: var(--background-color) !important;
+}
+
+:deep(.generic-speed-dial-action-prose:hover) {
+    background-color: var(--accent-fuschia) !important;
 }
 
 :deep(.v-speed-dial__list) {
