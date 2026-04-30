@@ -178,9 +178,17 @@ const showProgressSection = computed(() => {
     return props.isLoggedInUser && props.book.pages && props.book.pages > 0;
 });
 
+const isFinishedProgress = computed(() => {
+    return !!props.book.pages && updatedProgress.value >= props.book.pages;
+});
+
 const updateButtonConfig = computed(() => {
     return {
-        label: updateModeEnabled.value ? "confirm" : "update",
+        label: updateModeEnabled.value
+            ? isFinishedProgress.value
+                ? "finish"
+                : "confirm"
+            : "update",
         variant: updateModeEnabled.value ? "outline-success" : "outline",
     };
 });
@@ -206,7 +214,8 @@ const inputStyle = computed(() => {
 
 const handleProgressChange = (value: number) => {
     if (value >= initialProgress.value) {
-        updatedProgress.value = Math.round(value);
+        const maxProgress = props.book.pages ?? value;
+        updatedProgress.value = Math.min(Math.round(value), maxProgress);
     }
 };
 
@@ -218,6 +227,12 @@ const onUpdateClick = async () => {
     if (!updateModeEnabled.value) {
         setUpdateModeEnabled(true);
     } else {
+        if (isFinishedProgress.value) {
+            await handleFinished();
+            setUpdateModeEnabled(false);
+            return;
+        }
+
         await updateShelfBookProgress(props.book.id, updatedProgress.value);
         setUpdateModeEnabled(false);
         showAddCommentModal.value = true;
