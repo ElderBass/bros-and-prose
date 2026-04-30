@@ -63,14 +63,16 @@
                 :likes="workingEntry.likes || []"
                 :dislikes="workingEntry.dislikes || []"
             />
-            <transition name="fade">
-                <CommentsSection
-                    v-if="showComments"
-                    :entry="workingEntry"
-                    :variant="themeVariant"
-                />
-            </transition>
-            <div class="toggle">
+            <div v-if="showItemActions" class="item-actions">
+                <RouterLink
+                    v-if="entry.type === 'prose_prompt'"
+                    class="prose-prompt-cta"
+                    :to="prosePromptPath"
+                >
+                    <BaseButton size="xsmall" variant="outline-warning">
+                        heed the call
+                    </BaseButton>
+                </RouterLink>
                 <BaseButton
                     v-if="hasComments"
                     size="xsmall"
@@ -82,6 +84,13 @@
                     {{ showComments ? "hide comments" : "show comments" }}
                 </BaseButton>
             </div>
+            <transition name="fade">
+                <CommentsSection
+                    v-if="showComments"
+                    :entry="workingEntry"
+                    :variant="commentsVariant"
+                />
+            </transition>
         </div>
     </div>
     <!-- Recommendation-specific CTA could be added here later -->
@@ -97,7 +106,7 @@ import ReactionDetails from "@/components/features/Palaver/PalaverListItem/React
 import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
 import { EMPTY_TEXT } from "@/constants";
-import { isGuestUser } from "@/utils";
+import { buildProsePromptComposerPath, isGuestUser } from "@/utils";
 import CommentsSection from "./CommentsSection.vue";
 import BookInfo from "./BookInfo.vue";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
@@ -151,6 +160,8 @@ const typeLabel = computed(() => {
             return "Book Rec";
         case "review":
             return "Book Review";
+        case "prose_prompt":
+            return "Prose Prompt";
         case "misc":
         default:
             return "Some Bullshit";
@@ -172,6 +183,8 @@ const stockMessage = computed(() => {
                 : " made a recommendation";
         case "review":
             return " reviewed ";
+        case "prose_prompt":
+            return " called the boys to replace their swords with pens and crank out some prose";
         case "misc":
         default:
             return " has thoughts...";
@@ -220,6 +233,8 @@ const themeVariant = computed(() => {
             return "fuschia";
         case "recommendation":
             return "green";
+        case "prose_prompt":
+            return "yellow";
         case "suggestion":
             return "red";
         case "misc":
@@ -238,11 +253,28 @@ const themeColor = computed(() => {
             return "var(--accent-green)";
         case "red":
             return "var(--accent-red)";
+        case "yellow":
+            return "var(--accent-yellow)";
         case "blue":
         default:
             return "var(--accent-blue)";
     }
 });
+
+const commentsVariant = computed(() => {
+    return themeVariant.value === "yellow" ? "blue" : themeVariant.value;
+});
+
+const prosePromptPath = computed(() =>
+    buildProsePromptComposerPath(
+        props.entry.text,
+        props.entry.userInfo.username
+    )
+);
+
+const showItemActions = computed(
+    () => props.entry.type === "prose_prompt" || hasComments.value
+);
 </script>
 
 <style scoped>
@@ -310,9 +342,16 @@ const themeColor = computed(() => {
     opacity: 0.95;
 }
 
-.toggle {
+.item-actions {
     display: flex;
+    align-items: center;
     justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.prose-prompt-cta {
+    margin-right: auto;
+    text-decoration: none;
 }
 
 .text {

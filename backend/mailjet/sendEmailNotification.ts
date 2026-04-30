@@ -53,6 +53,12 @@ const getEmailMessaging = (
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> recommended <span style="font-weight: bold;color:#ff4dff;">${data.bookTitle}</span>.`,
                 text: data.text,
             };
+        case "prose_prompt":
+            return {
+                title: "Ye've Been Summoned",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> issued a prose prompt, despite knowing full well you won't listen.`,
+                text: data.text,
+            };
         case "suggestion":
             return {
                 title: "New Suggestion",
@@ -174,7 +180,15 @@ const getEmailInfo = (updateType: string, data: { [key: string]: string }) => {
 
     return {
         subject: "Bros and Prose Update",
-        html: buildHtmlTemplate(title, message, text, replyToText, updateType),
+        html: buildHtmlTemplate(
+            title,
+            message,
+            text,
+            replyToText,
+            updateType,
+            data.ctaLabel,
+            data.ctaPath,
+        ),
         emailRecipients,
     };
 };
@@ -185,6 +199,8 @@ const buildHtmlTemplate = (
     text: string = "",
     replyToText: string = "",
     updateType: string = "",
+    ctaLabel: string = "check it out",
+    ctaPath: string = "",
 ) => {
     const endpoint =
         updateType.startsWith("future_book") ||
@@ -197,6 +213,12 @@ const buildHtmlTemplate = (
             : updateType.startsWith("prose_")
               ? "prose"
               : "palaver";
+    const normalizedCtaPath = ctaPath
+        ? ctaPath.startsWith("/")
+            ? ctaPath
+            : `/${ctaPath}`
+        : `/${endpoint}`;
+    const ctaHref = `https://bros-and-prose.vercel.app${normalizedCtaPath}`;
     return `<!DOCTYPE html>
 <html lang="en">
     <head>
@@ -235,7 +257,7 @@ const buildHtmlTemplate = (
                                 <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0">
                                     <tr>
                                         <td align="center" style="border-radius:999px;background-color:#ff4dff;">
-                                            <a href="https://bros-and-prose.vercel.app/${endpoint}" style="display:inline-block;padding:14px 32px;border-radius:999px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0b0b13;text-decoration:none;">check it out</a>
+                                            <a href="${ctaHref}" style="display:inline-block;padding:14px 32px;border-radius:999px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#0b0b13;text-decoration:none;">${ctaLabel}</a>
                                         </td>
                                     </tr>
                                 </table>

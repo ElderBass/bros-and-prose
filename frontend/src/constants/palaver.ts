@@ -14,6 +14,11 @@ export const COMPOSER_ITEM_TYPE_BUTTONS: ItemTypeButtonProp[] = [
         title: "recommend a book",
     },
     {
+        type: "prose_prompt",
+        label: "prompt",
+        title: "summon the bros to prose",
+    },
+    {
         type: "suggestion",
         label: "suggest",
         title: "suggest an idea for the app",
