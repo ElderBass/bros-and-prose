@@ -33,7 +33,11 @@
                 <UserActivitySection :user="user" />
             </div>
         </div>
-        <ProfileFab v-if="isLoggedInUser" />
+        <GenericActionFab
+            v-if="isLoggedInUser && useGenericMovableFab"
+            :draggable="true"
+        />
+        <ProfileFab v-else-if="isLoggedInUser" />
         <PalaverModals v-if="isLoggedInUser" />
         <ShelfModals />
         <FavoritesIntroModal
@@ -54,6 +58,7 @@
 import { computed, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import AppLayout from "@/components/layout/AppLayout.vue";
+import GenericActionFab from "@/components/features/common/GenericActionFab.vue";
 import MainUserInfoSection from "../features/UserProfile/MainUserInfoSection.vue";
 import ProfileFab from "../features/UserProfile/ProfileFab.vue";
 import UserActivitySection from "../features/UserProfile/UserActivitySection.vue";
@@ -67,6 +72,7 @@ import type { User } from "@/types";
 import { useUIStore } from "@/stores/ui";
 import { getUserShelves } from "@/utils";
 import { shouldShowFavoritesIntro } from "@/utils/favoritesIntroUtils";
+import { useGenericMovableFab } from "@/constants/features";
 
 const props = defineProps<{
     user: User;

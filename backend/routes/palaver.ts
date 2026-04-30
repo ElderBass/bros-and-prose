@@ -5,7 +5,6 @@ import { sendEmailNotification } from "../mailjet/sendEmailNotification.js";
 export const getPalaverEntries = async (_: express.Request, res: express.Response) => {
     try {
         const entries = await db.ref("palaver").once("value");
-        console.log("GET PALAVER ENTRIES entries in getPalaverEntries", entries.val());
         res.json({
             success: true,
             message: "Palaver entries fetched successfully",
