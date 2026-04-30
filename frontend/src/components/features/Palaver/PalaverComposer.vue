@@ -155,6 +155,11 @@ const messages = computed(() => {
                 stock: "get the boys (e)rect",
                 placeholder: "paint'em a lascivious picture...",
             };
+        case "prose_prompt":
+            return {
+                stock: "prompt the bros",
+                placeholder: "remind the bros they completely lack imagination",
+            };
         case "suggestion":
             return {
                 stock: "suggest an idea for the app",

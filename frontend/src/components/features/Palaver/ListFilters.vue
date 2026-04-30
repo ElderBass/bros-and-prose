@@ -1,16 +1,22 @@
 <template>
     <div class="filters-container">
-        <FontAwesomeIcon :icon="faSliders" class="sliders-icon" />
-        <div class="filter-buttons">
-            <FilterButton
-                v-for="filter in filters"
-                :key="filter.value"
-                :filter-value="filter.value as PalaverFilter"
-                :filter-label="filter.label"
-            />
-            <BroFilterSelect />
+        <div class="filter-side filter-side-left">
+            <FontAwesomeIcon :icon="faSliders" class="sliders-icon" />
         </div>
-        <ClearFiltersButton />
+        <div class="filter-scroll" aria-label="Palaver filters">
+            <div class="filter-buttons">
+                <FilterButton
+                    v-for="filter in filters"
+                    :key="filter.value"
+                    :filter-value="filter.value as PalaverFilter"
+                    :filter-label="filter.label"
+                />
+                <BroFilterSelect />
+            </div>
+        </div>
+        <div class="filter-side filter-side-right">
+            <ClearFiltersButton />
+        </div>
     </div>
 </template>
 
@@ -29,6 +35,10 @@ const filters = [
     {
         label: "recs",
         value: "recommendation",
+    },
+    {
+        label: "prompts",
+        value: "prose_prompt",
     },
     {
         label: "reviews",
@@ -55,15 +65,33 @@ const filters = [
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    width: 50%;
+    width: min(760px, 70vw);
+    min-width: 0;
 }
-.filter-buttons {
-    width: 100%;
+
+.filter-side {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-scroll {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.filter-buttons {
+    width: max-content;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
     gap: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.5rem 0.25rem;
 }
 
 .sliders-icon {
@@ -74,13 +102,17 @@ const filters = [
 @media (max-width: 768px) {
     .filters-container {
         width: 100%;
+        gap: 0.25rem;
     }
     .sliders-icon {
         font-size: 1.25rem;
     }
+    .filter-side {
+        min-width: 2rem;
+    }
     .filter-buttons {
         gap: 0.25rem;
-        padding: 0.25rem;
+        padding: 0.25rem 0.125rem;
     }
 }
 </style>

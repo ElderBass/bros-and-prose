@@ -37,7 +37,15 @@
             </template>
         </CurrentBookLayout>
         <PalaverModals />
-        <PalaverFab v-if="!isGuestUser()" @click="openItemModal('create')" />
+        <ShelfModals v-if="!isGuestUser() && useGenericMovableFab" />
+        <GenericActionFab
+            v-if="!isGuestUser() && useGenericMovableFab"
+            :draggable="true"
+        />
+        <PalaverFab
+            v-else-if="!isGuestUser()"
+            @click="openItemModal('create')"
+        />
     </AppLayout>
 </template>
 
@@ -50,8 +58,10 @@ import CurrentBookInfo from "@/components/features/CurrentBook/CurrentBookInfo.v
 import UserSection from "@/components/features/CurrentBook/UserSection.vue";
 import GuestSection from "@/components/features/CurrentBook/GuestSection/index.vue";
 import OtherBrosProgress from "@/components/features/CurrentBook/OtherBrosProgress.vue";
+import GenericActionFab from "@/components/features/common/GenericActionFab.vue";
 import PalaverFab from "@/components/features/Palaver/PalaverFab.vue";
 import PalaverModals from "@/components/modal/PalaverModals/index.vue";
+import ShelfModals from "@/components/features/UserProfile/Shelves/ShelfModals/index.vue";
 import { useBooks } from "@/composables/useBooks";
 import { useBooksStore } from "@/stores/books";
 import type { Book } from "@/types";
@@ -61,6 +71,7 @@ import { getUserFromStorage, isGuestUser } from "@/utils";
 import { useUser } from "@/composables/useUser";
 import { useLog } from "@/composables/useLog";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
+import { useGenericMovableFab } from "@/constants/features";
 
 const { currentBook: storedCurrentBook } = useBooksStore();
 const { getCurrentBook } = useBooks();

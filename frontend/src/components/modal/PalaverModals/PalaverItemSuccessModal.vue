@@ -35,6 +35,8 @@ const itemTypeText = computed(() => {
             return "book comment";
         case "recommendation":
             return "book rec";
+        case "prose_prompt":
+            return "prose prompt";
         case "misc":
             return "bullshit";
         default:

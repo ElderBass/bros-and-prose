@@ -155,6 +155,18 @@ const backTarget = computed(() =>
     isEdit.value && proseId.value ? `/prose/${proseId.value}` : "/prose"
 );
 
+const getQueryString = (value: unknown) => {
+    if (Array.isArray(value)) return String(value[0] ?? "");
+    return typeof value === "string" ? value : "";
+};
+
+const prosePromptContextPrefill = computed(() => {
+    const prompt = getQueryString(route.query.prompt).trim();
+    const promptedBy = getQueryString(route.query.promptedBy).trim();
+    if (!prompt || !promptedBy) return "";
+    return `response to ${promptedBy}'s prompt of "${prompt}"`;
+});
+
 const title = ref("");
 const type = ref<ProseType>("creative");
 const context = ref("");
@@ -455,6 +467,10 @@ onMounted(async () => {
             markdown.value = "";
             draftRestored.value = false;
             lastSavedAt.value = "";
+        }
+
+        if (prosePromptContextPrefill.value) {
+            context.value = prosePromptContextPrefill.value;
         }
     }
     await nextTick();
