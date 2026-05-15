@@ -1,14 +1,16 @@
 import type { User } from "@/types";
 
+const createMentionRegex = () => /(^|[^A-Za-z0-9._-])@([A-Za-z0-9_-]+)/g;
+
 /**
  * Extract all @username mentions from text
  * @param text - The text to extract mentions from
  * @returns Array of usernames (without the @ symbol)
  */
 export function extractMentions(text: string): string[] {
-    const mentionRegex = /@(\w+)/g;
+    const mentionRegex = createMentionRegex();
     const matches = text.matchAll(mentionRegex);
-    return Array.from(matches, (match) => match[1]);
+    return Array.from(matches, (match) => match[2]);
 }
 
 /**
@@ -33,26 +35,31 @@ export function parseTextWithMentions(
     text: string
 ): Array<{ type: "text" | "mention"; value: string }> {
     const segments: Array<{ type: "text" | "mention"; value: string }> = [];
-    const mentionRegex = /@(\w+)/g;
+    const mentionRegex = createMentionRegex();
     let lastIndex = 0;
     let match;
 
     while ((match = mentionRegex.exec(text)) !== null) {
+        const prefix = match[1] ?? "";
+        const username = match[2];
+        const mentionStart = match.index + prefix.length;
+        const mentionEnd = mentionStart + username.length + 1;
+
         // Add text before the mention
-        if (match.index > lastIndex) {
+        if (mentionStart > lastIndex) {
             segments.push({
                 type: "text",
-                value: text.substring(lastIndex, match.index),
+                value: text.substring(lastIndex, mentionStart),
             });
         }
 
         // Add the mention (without the @ symbol)
         segments.push({
             type: "mention",
-            value: match[1],
+            value: username,
         });
 
-        lastIndex = match.index + match[0].length;
+        lastIndex = mentionEnd;
     }
 
     // Add any remaining text after the last mention
@@ -80,5 +87,5 @@ export function parseTextWithMentions(
  * @returns True if text contains at least one mention
  */
 export function hasMentions(text: string): boolean {
-    return /@(\w+)/.test(text);
+    return createMentionRegex().test(text);
 }
