@@ -109,6 +109,7 @@ const handleBackdropClick = () => {
     justify-content: center;
     z-index: 1100;
     padding: 1rem;
+    box-sizing: border-box;
 }
 
 .modal-container {
@@ -124,6 +125,8 @@ const handleBackdropClick = () => {
     max-width: 90vw;
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .modal-container.shadow-lavender {
@@ -198,6 +201,8 @@ const handleBackdropClick = () => {
     padding-bottom: 1.5rem;
     position: relative;
     z-index: 1;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .icon-header {
@@ -280,6 +285,8 @@ const handleBackdropClick = () => {
     overflow: visible;
     position: relative;
     z-index: 1;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .modal-footer {
@@ -290,6 +297,8 @@ const handleBackdropClick = () => {
     justify-content: flex-end;
     align-items: center;
     gap: 1rem;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 /* Size variants */
