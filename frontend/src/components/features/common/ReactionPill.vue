@@ -70,6 +70,7 @@ const props = defineProps<{
     count: number;
     /** Usernames (prose reactions store usernames). */
     reactors?: string[];
+    size?: "xsmall" | "small" | "medium";
 }>();
 
 const { mobile } = useDisplay();
@@ -115,6 +116,7 @@ function onActivatorClick(e: MouseEvent) {
 }
 
 const pillSize = computed(() => {
+    if (props.size) return props.size;
     return mobile.value ? "small" : "medium";
 });
 
@@ -185,6 +187,12 @@ const headingLabel = computed(() => {
     font-size: 0.75rem;
     padding: 0.175rem 0.35rem;
     gap: 0.25rem;
+}
+
+.count-pill.xsmall {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.25rem;
+    gap: 0.15rem;
 }
 
 .count-pill.medium {
