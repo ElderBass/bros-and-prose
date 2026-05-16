@@ -3,7 +3,7 @@
         :modelValue="open"
         @close="onClose"
         :title="modalTitle"
-        size="medium"
+        size="large"
     >
         <div v-if="submitting" class="loading-content">
             <LoadingSpinnerContainer
@@ -168,7 +168,7 @@ const secondaryButtonLabel = computed(() =>
 const actionButtonProps = computed(() => {
     return {
         size: mobile.value ? "small" : "medium",
-        style: { width: "100%" },
+        style: mobile.value ? { width: "100%" } : {},
     };
 });
 
@@ -205,17 +205,25 @@ const onClose = () => emit("close");
     justify-content: space-between;
     gap: 1rem;
     padding: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .loading-content {
     width: 100%;
     height: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .field {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 label {
@@ -229,6 +237,9 @@ label {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .hint {
@@ -247,6 +258,9 @@ label {
     justify-content: flex-end;
     gap: 0.75rem;
     margin-top: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -255,6 +269,10 @@ label {
     }
     .add-comment-form {
         padding: 0.25rem;
+    }
+    .actions {
+        flex-direction: column;
+        gap: 0.5rem;
     }
 }
 
@@ -267,6 +285,9 @@ label {
     border-left: 3px solid var(--accent-lavender);
     border-radius: 0.5rem;
     margin-bottom: 0.5rem;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .reply-header {
@@ -288,5 +309,8 @@ label {
     font-style: italic;
     opacity: 0.8;
     padding-left: 1.25rem;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    box-sizing: border-box;
 }
 </style>

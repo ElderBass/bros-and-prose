@@ -16,6 +16,10 @@
                     <span class="timestamp">{{ timestamp }}</span>
                 </div>
                 <div class="actions">
+                    <ProseCommentReactionPills
+                        v-if="showReactionPills"
+                        :comment="comment"
+                    />
                     <ProseCommentReactionActions
                         v-if="showActions"
                         :entry="entry"
@@ -48,6 +52,7 @@ import UsernameLink from "@/components/ui/UsernameLink.vue";
 import MentionText from "@/components/ui/MentionText.vue";
 import ReplyButton from "@/components/features/common/CommentItem/ReplyButton.vue";
 import ProseCommentReactionActions from "./ProseCommentReactionActions.vue";
+import ProseCommentReactionPills from "./ProseCommentReactionPills.vue";
 import type { Comment, ProseEntry } from "@/types";
 import { useUserStore } from "@/stores/user";
 import { isGuestUser } from "@/utils";
@@ -68,6 +73,13 @@ const showActions = computed(() => {
     return (
         !isGuestUser() &&
         props.comment.userInfo.id !== useUserStore().loggedInUser.id
+    );
+});
+
+const showReactionPills = computed(() => {
+    return (
+        !isGuestUser() &&
+        props.comment.userInfo.id === useUserStore().loggedInUser.id
     );
 });
 
