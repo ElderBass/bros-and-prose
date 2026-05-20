@@ -6,7 +6,7 @@
         <div v-else class="content">
             <HaveReadTable
                 :books="haveRead"
-                :reviewUser="reviewUser"
+                :reviewUser="user"
                 :heightPx="tableHeightPx"
                 :isLoggedInUser="isLoggedInUser"
             />
@@ -23,38 +23,25 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import { useRoute } from "vue-router";
 import { useDisplay } from "vuetify";
 import HaveReadTable from "@/components/features/UserProfile/Shelves/HaveReadSection/HaveReadTable.vue";
 import HaveReadBookDetailsModal from "@/components/features/UserProfile/Shelves/HaveReadSection/HaveReadBookDetailsModal.vue";
 import type { BookshelfBook, Review, User } from "@/types";
-import { useUserStore } from "@/stores/user";
 import { useShelfModalStore } from "@/stores/shelfModal";
+import { getBookReview } from "@/utils";
 
 const props = defineProps<{
+    user: User;
     haveRead: BookshelfBook[];
     isLoggedInUser: boolean;
 }>();
 
-const route = useRoute();
-const userStore = useUserStore();
-
 const { selectedBook } = storeToRefs(useShelfModalStore());
 const { bookDetailsModalOpen } = storeToRefs(useShelfModalStore());
 
-const viewedUsername = computed(
-    () => route.params.username as string | undefined
-);
-
-const reviewUser = computed<User | null>(() => {
-    if (!viewedUsername.value) return null;
-    return userStore.getUserByUsername(viewedUsername.value) ?? null;
-});
-
 const selectedReview = computed<Review | null>(() => {
     if (!selectedBook.value) return null;
-    if (!reviewUser.value) return null;
-    return reviewUser.value.reviews?.[selectedBook.value.id] ?? null;
+    return getBookReview(props.user, selectedBook.value.id);
 });
 
 const { mobile } = useDisplay();
@@ -63,9 +50,9 @@ const tableHeightPx = computed(() => (mobile.value ? 400 : 540));
 const hasContent = computed(() => props.haveRead.length > 0);
 
 const noContentMessage = computed(() =>
-    viewedUsername.value
-        ? "no books on this user's have read list yet — they probably don't want to read anything anyway."
-        : "no books on your have read list yet — add some books to get started."
+    props.isLoggedInUser
+        ? "no books on your have read list yet — add some books to get started."
+        : "no books on this user's have read list yet — they probably don't want to read anything anyway."
 );
 </script>
 

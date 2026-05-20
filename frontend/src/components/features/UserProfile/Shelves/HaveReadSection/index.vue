@@ -9,8 +9,9 @@
         <template #content>
             <HaveReadTable
                 :books="haveRead"
-                :reviewUser="reviewUser"
+                :reviewUser="user"
                 :heightPx="tableHeightPx"
+                :isLoggedInUser="isLoggedInUser"
             />
             <HaveReadBookDetailsModal
                 v-if="selectedBook"
@@ -26,44 +27,30 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import { useRoute } from "vue-router";
 import UserContentPanel from "@/components/features/UserProfile/UserContentPanel.vue";
 import HaveReadTable from "@/components/features/UserProfile/Shelves/HaveReadSection/HaveReadTable.vue";
 import HaveReadBookDetailsModal from "@/components/features/UserProfile/Shelves/HaveReadSection/HaveReadBookDetailsModal.vue";
 import type { BookshelfBook, Review, User } from "@/types";
-import { useUserStore } from "@/stores/user";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { useDisplay } from "vuetify";
+import { getBookReview } from "@/utils";
 
 defineOptions({
     name: "HaveReadSection",
 });
 
 const props = defineProps<{
+    user: User;
     haveRead: BookshelfBook[];
     isLoggedInUser: boolean;
 }>();
 
-const route = useRoute();
-const userStore = useUserStore();
-
-const { loggedInUser } = storeToRefs(userStore);
 const { bookDetailsModalOpen } = storeToRefs(useShelfModalStore());
 const { selectedBook } = storeToRefs(useShelfModalStore());
 
-const viewedUsername = computed(
-    () => route.params.username as string | undefined
-);
-const reviewUser = computed<User | null>(() => {
-    if (props.isLoggedInUser) return loggedInUser.value;
-    if (!viewedUsername.value) return null;
-    return userStore.getUserByUsername(viewedUsername.value) ?? null;
-});
-
 const selectedReview = computed<Review | null>(() => {
     if (!selectedBook.value) return null;
-    if (!reviewUser.value) return null;
-    return reviewUser.value.reviews?.[selectedBook.value.id] ?? null;
+    return getBookReview(props.user, selectedBook.value.id);
 });
 
 const { mobile } = useDisplay();
