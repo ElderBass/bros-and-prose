@@ -15,42 +15,26 @@
     <OtherBroReviewModal
         v-if="review"
         :open="reviewModalOpen"
-        :brosName="username"
+        :brosName="reviewUser.username"
         :brosReview="review"
         :onClose="() => (reviewModalOpen = false)"
     />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import type { Review, BookshelfBook } from "@/types";
+import { computed, ref } from "vue";
+import type { BookshelfBook, User } from "@/types";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
-import { getBookReview, isProfileRoot } from "@/utils";
-import { useUserStore } from "@/stores/user";
+import { getBookReview } from "@/utils";
 import ReviewButton from "./ReviewButton.vue";
-
-const router = useRouter();
 
 const props = defineProps<{
     book: BookshelfBook;
+    reviewUser: User;
 }>();
 
-const review = ref<Review | null>(null);
+const review = computed(() => getBookReview(props.reviewUser, props.book.id));
 const reviewModalOpen = ref(false);
-const username = ref("");
-
-onMounted(() => {
-    if (isProfileRoot()) {
-        username.value = useUserStore().loggedInUser.username;
-    } else {
-        username.value = router.currentRoute.value.params.username as string;
-    }
-    const user = useUserStore().getUserByUsername(username.value);
-    if (user) {
-        review.value = getBookReview(user, props.book.id) ?? null;
-    }
-});
 </script>
 
 <style scoped>

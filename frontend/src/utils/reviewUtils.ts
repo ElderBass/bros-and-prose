@@ -1,8 +1,13 @@
 import type { User, Review } from "@/types";
 
-export const getBookReview = (user: User, bookId: string) => {
-    const reviews = Object.values(user.reviews);
-    return reviews.find((review: Review) => review.book.id === bookId);
+export const getBookReview = (user: User | null, bookId: string) => {
+    if (!user) return null;
+    const reviews = Object.values(user.reviews ?? {});
+    return (
+        (reviews.find((review: Review) => review.book.id === bookId) as
+            | Review
+            | undefined) ?? null
+    );
 };
 
 export const getReviewColor = (rating: number) => {

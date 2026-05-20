@@ -21,6 +21,7 @@
             />
             <div class="secondary-content">
                 <UserShelvesSection
+                    :user="user"
                     :isLoggedInUser="isLoggedInUser"
                     :currentlyReading="currentlyReading"
                     :wantToRead="wantToRead"
