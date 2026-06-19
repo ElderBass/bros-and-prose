@@ -54,6 +54,11 @@ withDefaults(
     color: var(--accent-blue);
 }
 
+.count-badge--child {
+    top: -0.38rem;
+    right: -0.2rem;
+}
+
 @media (max-width: 768px) {
     .count-badge {
         min-width: 0.95rem;
@@ -63,8 +68,8 @@ withDefaults(
     }
 
     .count-badge--child {
-        top: -0.45rem;
-        right: -0.45rem;
+        top: -0.38rem;
+        right: -0.15rem;
         min-width: 0.75rem;
         height: 0.75rem;
         font-size: 0.5rem;

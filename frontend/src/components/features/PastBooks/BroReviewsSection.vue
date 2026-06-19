@@ -16,6 +16,7 @@
                 :is-logged-in-user="
                     loggedInUserName === broReview.reviewer?.username
                 "
+                :is-past-book="true"
             />
         </div>
     </BaseCard>
@@ -32,7 +33,7 @@
         :open="showUserReviewModal"
         :book="book"
         :reviewPrefill="selectedBroReview"
-        @lose="() => setShowUserReviewModal(false)"
+        @close="() => setShowUserReviewModal(false)"
     />
 </template>
 
