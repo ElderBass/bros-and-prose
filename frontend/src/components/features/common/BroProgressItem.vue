@@ -23,7 +23,7 @@
                 size="xsmall"
                 :variant="isLoggedInUser ? 'outline' : 'outline-tertiary'"
                 :title="buttonTitle"
-                :disabled="!hasFinishedCurrentBook()"
+                :disabled="reviewDisabled"
             >
                 <div class="button-content">
                     <FontAwesomeIcon v-if="isLoggedInUser" :icon="faMarker" />
@@ -52,10 +52,12 @@ const props = withDefaults(
         progressString: string;
         onPeepReviewClick: () => void;
         isLoggedInUser?: boolean;
+        isPastBook?: boolean;
     }>(),
     {
         isLoggedInUser: false,
         broAvatarType: "icon",
+        isPastBook: false,
     }
 );
 
@@ -65,6 +67,10 @@ const buttonTitle = computed(() => {
     return props.isLoggedInUser
         ? "you can't fix stupid, but I suppose you can try"
         : "peep this bro's review which is probably way smarter than yours";
+});
+
+const reviewDisabled = computed(() => {
+    return !props.isPastBook && !hasFinishedCurrentBook();
 });
 </script>
 
