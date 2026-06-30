@@ -3,7 +3,7 @@
         :modelValue="!!itemModalOpen"
         @close="closeModal"
         :title="modalTitle"
-        size="medium"
+        size="large"
     >
         <div v-if="loading" class="loading-content">
             <LoadingSpinnerContainer

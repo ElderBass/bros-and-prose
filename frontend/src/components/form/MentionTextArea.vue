@@ -1,5 +1,5 @@
 <template>
-    <div class="mention-textarea-container">
+    <div class="mention-textarea-container" :style="containerStyle">
         <textarea
             ref="textareaRef"
             :id="id"
@@ -38,12 +38,14 @@ const props = withDefaults(
         id: string;
         disabled?: boolean;
         rows?: number;
-        style?: string | CSSProperties;
+        style?: CSSProperties;
+        containerStyle?: CSSProperties;
     }>(),
     {
         disabled: false,
         rows: 5,
         style: undefined,
+        containerStyle: undefined,
     }
 );
 
