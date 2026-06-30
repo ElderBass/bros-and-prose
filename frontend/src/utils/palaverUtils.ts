@@ -46,17 +46,13 @@ export const buildPalaverEntry = ({
     recAuthor?: string;
     tags?: string[];
 }) => {
-    const bookInfoValue =
-        type === "discussion_note" || type === "progress_note"
-            ? bookInfo
-            : undefined;
     const entry: PalaverEntry = {
         id: uuidv4(),
         type: type,
         text: text.trim(),
         createdAt: new Date().toISOString(),
         userInfo: getUserInfo(useUserStore().loggedInUser),
-        bookInfo: bookInfoValue,
+        bookInfo,
         recommendation:
             type === "recommendation"
                 ? {
