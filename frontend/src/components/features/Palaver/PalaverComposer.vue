@@ -33,6 +33,7 @@
                 id="palaver-item-text-input"
                 :label="messages.placeholder"
                 :placeholder="messages.placeholder"
+                :containerStyle="{ height: '100%' }"
             />
         </div>
         <div class="actions">
