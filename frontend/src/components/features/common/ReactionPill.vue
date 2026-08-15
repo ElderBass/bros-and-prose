@@ -18,13 +18,18 @@
                 role="button"
                 :aria-expanded="menuOpen"
                 aria-haspopup="true"
+                :aria-disabled="disabled"
+                :tabindex="clickable && !disabled ? 0 : undefined"
                 @click="onActivatorClick"
+                @keydown.enter.prevent="onActivatorKeydown"
+                @keydown.space.prevent="onActivatorKeydown"
                 @mousedown.stop
                 @touchstart.passive="longPress.onTouchStart"
                 @touchend="onTouchEnd"
                 @touchcancel="longPress.onTouchCancel"
             >
-                <FontAwesomeIcon :icon="icon" class="count-icon" />
+                <span v-if="emoji" class="emoji-icon">{{ emoji }}</span>
+                <FontAwesomeIcon v-else :icon="icon" class="count-icon" />
                 <span>{{ count }}</span>
             </span>
         </template>
@@ -36,7 +41,8 @@
                     :key="name"
                     class="reactor-row"
                 >
-                    @{{ name }}
+                    <span v-if="name === loggedInUser?.username">you</span>
+                    <UsernameLink v-else :username="name" fontSize="small" />
                 </li>
             </ul>
         </div>
@@ -44,10 +50,17 @@
     <span
         v-else
         class="count-pill"
-        :class="[`count-pill-${type.toLowerCase()}`, pillSize]"
+        :class="pillClassList"
         :title="title"
+        role="button"
+        :aria-disabled="disabled"
+        :tabindex="clickable && !disabled ? 0 : undefined"
+        @click="onActivatorClick"
+        @keydown.enter.prevent="onActivatorKeydown"
+        @keydown.space.prevent="onActivatorKeydown"
     >
-        <FontAwesomeIcon :icon="icon" class="count-icon" />
+        <span v-if="emoji" class="emoji-icon">{{ emoji }}</span>
+        <FontAwesomeIcon v-else :icon="icon" class="count-icon" />
         <span>{{ count }}</span>
     </span>
 </template>
@@ -55,8 +68,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useDisplay } from "vuetify";
-import type { ReactionType } from "@/types";
+import { storeToRefs } from "pinia";
+import type { EmojiReactionKey, ReactionType } from "@/types";
 import { useLongPress } from "@/composables/useLongPress";
+import { useUserStore } from "@/stores/user";
+import UsernameLink from "@/components/ui/UsernameLink.vue";
 import {
     faThumbsUp,
     faThumbsDown,
@@ -66,14 +82,24 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const props = defineProps<{
-    type: ReactionType;
+    type: ReactionType | EmojiReactionKey;
     count: number;
     /** Usernames (prose reactions store usernames). */
     reactors?: string[];
     size?: "xsmall" | "small" | "medium";
+    emoji?: string;
+    label?: string;
+    clickable?: boolean;
+    userHasReacted?: boolean;
+    disabled?: boolean;
+}>();
+
+const emit = defineEmits<{
+    (e: "select"): void;
 }>();
 
 const { mobile } = useDisplay();
+const { loggedInUser } = storeToRefs(useUserStore());
 
 const menuOpen = ref(false);
 const skipNextTapToggle = ref(false);
@@ -106,6 +132,16 @@ function onTouchEnd() {
 
 function onActivatorClick(e: MouseEvent) {
     e.stopPropagation();
+    if (props.disabled) return;
+    if (props.clickable) {
+        if (skipNextTapToggle.value) {
+            skipNextTapToggle.value = false;
+            return;
+        }
+        emit("select");
+        return;
+    }
+
     if (!hasReactors.value) return;
     if (!mobile.value) return;
     if (skipNextTapToggle.value) {
@@ -115,6 +151,11 @@ function onActivatorClick(e: MouseEvent) {
     menuOpen.value = !menuOpen.value;
 }
 
+function onActivatorKeydown() {
+    if (!props.clickable || props.disabled) return;
+    emit("select");
+}
+
 const pillSize = computed(() => {
     if (props.size) return props.size;
     return mobile.value ? "small" : "medium";
@@ -122,9 +163,19 @@ const pillSize = computed(() => {
 
 const pillClassList = computed(() => [
     "count-pill",
-    `count-pill-${props.type.toLowerCase()}`,
+    `count-pill-${pillTone.value}`,
     pillSize.value,
+    {
+        clickable: props.clickable && !props.disabled,
+        selected: props.userHasReacted,
+        disabled: props.disabled,
+    },
 ]);
+
+const pillTone = computed(() => {
+    if (props.emoji) return "emoji";
+    return props.type.toLowerCase();
+});
 
 const icon = computed(() => {
     switch (props.type) {
@@ -142,6 +193,16 @@ const icon = computed(() => {
 });
 
 const title = computed(() => {
+    if (props.emoji) {
+        const label = props.label || "emoji";
+        if (props.clickable) {
+            return props.userHasReacted
+                ? `remove your ${label} reaction`
+                : `react with ${label}`;
+        }
+        return `${props.count} ${label} reactions`;
+    }
+
     switch (props.type) {
         case "like":
             return `${props.count} likes`;
@@ -157,6 +218,10 @@ const title = computed(() => {
 });
 
 const headingLabel = computed(() => {
+    if (props.emoji) {
+        return `reacted ${props.emoji}`;
+    }
+
     switch (props.type) {
         case "like":
             return "liked by";
@@ -181,6 +246,24 @@ const headingLabel = computed(() => {
     border-radius: 999px;
     font-size: 0.7rem;
     font-weight: 600;
+}
+
+.count-pill.clickable {
+    cursor: pointer;
+}
+
+.count-pill.selected {
+    border-color: var(--accent-fuschia);
+    background-color: color-mix(
+        in srgb,
+        var(--accent-fuschia) 22%,
+        transparent
+    );
+}
+
+.count-pill.disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
 }
 
 .count-pill.small {
@@ -225,8 +308,19 @@ const headingLabel = computed(() => {
     color: var(--accent-pink);
 }
 
-.count-icon {
+.count-pill-emoji {
+    background-color: color-mix(in srgb, var(--accent-blue) 18%, transparent);
+    border: 1px solid var(--accent-blue);
+    color: var(--main-text);
+}
+
+.count-icon,
+.emoji-icon {
     font-size: inherit;
+}
+
+.emoji-icon {
+    line-height: 1;
 }
 
 .reactor-panel {
@@ -258,6 +352,8 @@ const headingLabel = computed(() => {
 }
 
 .reactor-row {
+    display: flex;
+    align-items: center;
     padding: 0.2rem 0;
     font-size: 0.88rem;
     color: var(--main-text);

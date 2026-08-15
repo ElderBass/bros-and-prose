@@ -1,27 +1,17 @@
 <template>
     <div class="reaction-actions">
-        <ReactionButton
-            v-for="reaction in REACTION_TYPES"
-            :key="reaction"
-            :type="reaction"
-            :reactions="getReactionArray(reaction)"
-            :onClick="() => handleReaction(reaction)"
-            size="small"
-        />
+        <ReactionMenu :item="entry" size="small" @select="handleReaction" />
     </div>
 </template>
 
 <script setup lang="ts">
-import ReactionButton from "@/components/features/Palaver/PalaverListItem/ReactionButton.vue";
+import ReactionMenu from "@/components/features/Palaver/PalaverListItem/ReactionMenu.vue";
 import { useProse } from "@/composables/useProse";
 import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
-import {
-    REACTION_TYPES,
-    LIKED_PROSE_ENTRY_SUCCESS_ALERT,
-    DISLIKED_PROSE_ENTRY_SUCCESS_ALERT,
-} from "@/constants";
-import type { ProseEntry, ReactionType } from "@/types";
+import { QUICK_SUCCESS } from "@/constants";
+import type { EmojiReactionKey, ProseEntry } from "@/types";
+import { getEmojiReactionOption } from "@/utils";
 
 const props = defineProps<{
     entry: ProseEntry;
@@ -31,45 +21,28 @@ const emit = defineEmits<{
     (e: "entry-updated", entry: ProseEntry): void;
 }>();
 
-const { likeProseEntry, dislikeProseEntry } = useProse();
+const { toggleProseEntryReaction } = useProse();
 const { showAlert } = useUIStore();
 const { info: logInfo, error: logError } = useLog();
 
-const getReactionArray = (reaction: ReactionType) => {
-    return reaction === "like"
-        ? props.entry.likes || []
-        : props.entry.dislikes || [];
-};
-
-const handleReaction = async (reaction: ReactionType) => {
-    if (reaction === "like") {
-        await handleLike();
-    } else {
-        await handleDislike();
-    }
-};
-
-const handleLike = async () => {
+const handleReaction = async (reactionKey: EmojiReactionKey) => {
     try {
-        const updated = await likeProseEntry(props.entry);
+        const updated = await toggleProseEntryReaction(
+            props.entry,
+            reactionKey
+        );
         if (updated) emit("entry-updated", updated);
-        await logInfo(`Liked prose entry: ${props.entry.id}`);
-        showAlert(LIKED_PROSE_ENTRY_SUCCESS_ALERT);
+        const reaction = getEmojiReactionOption(reactionKey);
+        await logInfo(`Reacted to prose entry: ${props.entry.id}`);
+        showAlert(
+            QUICK_SUCCESS([
+                "reaction updated successfully.",
+                `${reaction?.emoji || ""} ${reaction?.label || "reaction"}`,
+            ])
+        );
     } catch (error) {
         console.error(error);
-        await logError(`Error liking prose entry: ${props.entry.id}`);
-    }
-};
-
-const handleDislike = async () => {
-    try {
-        const updated = await dislikeProseEntry(props.entry);
-        if (updated) emit("entry-updated", updated);
-        await logInfo(`Disliked prose entry: ${props.entry.id}`);
-        showAlert(DISLIKED_PROSE_ENTRY_SUCCESS_ALERT);
-    } catch (error) {
-        console.error(error);
-        await logError(`Error disliking prose entry: ${props.entry.id}`);
+        await logError(`Error reacting to prose entry: ${props.entry.id}`);
     }
 };
 </script>

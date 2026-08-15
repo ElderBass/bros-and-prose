@@ -30,6 +30,7 @@ export interface Comment {
     updatedAt?: string;
     likes?: string[];
     dislikes?: string[];
+    reactions?: EmojiReactions;
     // Reply fields
     replyToId?: string;
     replyToUsername?: string;
@@ -47,6 +48,7 @@ export interface PalaverEntry {
     recommendation?: Recommendation;
     likes?: string[];
     dislikes?: string[];
+    reactions?: EmojiReactions;
     comments?: Comment[];
     updatedAt?: string;
 }
@@ -57,6 +59,8 @@ export interface PalaverEntryMetadata {
     targetUsername?: string;
     targetUserEmail?: string;
     updateType?: ReactionType | PalaverType;
+    reactionKey?: EmojiReactionKey;
+    reactionEmoji?: string;
     replyToText?: string;
     mentionedUsers?: Array<{ username: string; email: string }>;
     ctaLabel?: string;
@@ -71,6 +75,27 @@ export interface PalaverEntryRequest {
 export type ReactionType =
     | "like"
     | "dislike"
+    | "reaction"
     | "comment"
     | "reply"
     | "favorite";
+
+export type EmojiReactionKey =
+    | "thumbs_up"
+    | "thumbs_down"
+    | "heart"
+    | "laugh"
+    | "eyes"
+    | "fire";
+
+export type EmojiReactions = Partial<Record<EmojiReactionKey, string[]>>;
+
+export interface EmojiReactionOption {
+    key: EmojiReactionKey;
+    emoji: string;
+    label: string;
+}
+
+export interface EmojiReactionBucket extends EmojiReactionOption {
+    reactors: string[];
+}

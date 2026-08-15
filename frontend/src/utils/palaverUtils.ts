@@ -4,6 +4,7 @@ import type {
     Comment,
     PalaverEntry,
     PalaverType,
+    EmojiReactionKey,
     ReactionType,
     Review,
 } from "@/types";
@@ -19,6 +20,7 @@ import {
 } from "@/utils";
 import { useUserStore } from "@/stores/user";
 import { usePalaverStore, type PalaverFilter } from "@/stores/palaver";
+import { getEmojiReactionOption, getReactionReactors } from "./reactionUtils";
 
 export const buildProsePromptComposerPath = (
     promptText: string,
@@ -80,6 +82,7 @@ export const buildPalaverEntryFromReview = (review: Review): PalaverEntry => {
         userInfo: getUserInfo(user),
         likes: [],
         dislikes: [],
+        reactions: {},
         comments: [],
     };
 };
@@ -99,6 +102,7 @@ export const buildPalaverComment = (
         userInfo: getUserInfo(user),
         text: commentText,
         createdAt: new Date().toISOString(),
+        reactions: {},
         ...(replyTo && {
             replyToId: replyTo.commentId,
             replyToUsername: replyTo.username,
@@ -201,11 +205,15 @@ export const buildPalaverEntryMetadata = (entry: PalaverEntry) => {
 
 export const buildPalaverReactionMetadata = (
     item: PalaverEntry | Comment,
-    reactionType: ReactionType
+    reactionType: ReactionType,
+    reactionKey?: EmojiReactionKey
 ) => {
     const loggedInUsername = useUserStore().loggedInUser.username;
     const currentUserId = useUserStore().loggedInUser?.id;
     const allUsers = useUserStore().allUsers;
+    const reaction = reactionKey
+        ? getEmojiReactionOption(reactionKey)
+        : undefined;
 
     // Extract mentioned users from comment text if it's a comment reaction
     const mentionedUsers =
@@ -223,6 +231,8 @@ export const buildPalaverReactionMetadata = (
         targetUsername: item.userInfo.username,
         targetUserEmail: item.userInfo.email,
         updateType: reactionType,
+        reactionKey,
+        reactionEmoji: reaction?.emoji,
         text: reactionType === "comment" ? item.text : undefined,
         mentionedUsers: mentionedUsers.length > 0 ? mentionedUsers : undefined,
     };
@@ -271,7 +281,9 @@ export const getReactions = (
     reaction: ReactionType,
     item: PalaverEntry | Comment
 ): string[] => {
-    return reaction === "like" ? item.likes || [] : item.dislikes || [];
+    return reaction === "like"
+        ? getReactionReactors(item, "thumbs_up")
+        : getReactionReactors(item, "thumbs_down");
 };
 
 export const updatePalaverLikesDislikes = (
@@ -320,6 +332,7 @@ export const buildRecommendationFromBookshelfBook = (
         userInfo: getUserInfo(useUserStore().loggedInUser),
         likes: [],
         dislikes: [],
+        reactions: {},
         comments: [],
     };
 };

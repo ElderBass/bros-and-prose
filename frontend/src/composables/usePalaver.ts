@@ -2,8 +2,10 @@ import { ref, onValue, off, type DataSnapshot } from "firebase/database";
 import { getFirebase } from "@/setup/firebaseClient";
 import { palaverService } from "@/services";
 import { usePalaverStore } from "@/stores/palaver";
+import { useUserStore } from "@/stores/user";
 import type {
     Comment,
+    EmojiReactionKey,
     PalaverEntry,
     PalaverEntryMetadata,
     Review,
@@ -15,7 +17,7 @@ import {
     buildReplyMetadata,
     checkForUnreadEntries,
     sortPalaverStuff,
-    updatePalaverLikesDislikes,
+    toggleEmojiReaction,
 } from "@/utils";
 import { useLog } from "./useLog";
 
@@ -118,47 +120,69 @@ export const usePalaver = () => {
         return response.data;
     };
 
-    const updatePalaverItemLikesDislikes = async (
+    const updatePalaverItemReaction = async (
         item: PalaverEntry | Comment,
-        action: "like" | "dislike",
+        reactionKey: EmojiReactionKey,
         entryId?: string
     ) => {
         let updatedItem;
+        let metadataTarget: PalaverEntry | Comment;
+        const loggedInUsername = useUserStore().loggedInUser.username;
 
         if (entryId) {
-            const updatedComment = updatePalaverLikesDislikes(
+            const updatedComment = toggleEmojiReaction(
                 item,
-                action
+                reactionKey,
+                loggedInUsername
             ) as Comment;
             const entry = palaverStore.entries.find(
                 (e) => e.id === entryId
             ) as PalaverEntry;
-            entry.comments = entry.comments?.map((c) =>
-                c.id === item.id ? updatedComment : c
-            );
-            updatedItem = entry;
+            updatedItem = {
+                ...entry,
+                comments: entry.comments?.map((c) =>
+                    c.id === item.id ? updatedComment : c
+                ),
+            };
+            metadataTarget = updatedComment;
         } else {
-            updatedItem = updatePalaverLikesDislikes(
+            updatedItem = toggleEmojiReaction(
                 item,
-                action
+                reactionKey,
+                loggedInUsername
             ) as PalaverEntry;
+            metadataTarget = updatedItem;
         }
 
-        const metadata = buildPalaverReactionMetadata(updatedItem, action);
+        const metadata = buildPalaverReactionMetadata(
+            metadataTarget,
+            "reaction",
+            reactionKey
+        );
         return await updatePalaverEntry(updatedItem, metadata);
     };
 
+    const togglePalaverEntryReaction = async (
+        entry: PalaverEntry,
+        reactionKey: EmojiReactionKey
+    ) => {
+        return await updatePalaverItemReaction(entry, reactionKey);
+    };
+
+    const togglePalaverCommentReaction = async (
+        comment: Comment,
+        entryId: string,
+        reactionKey: EmojiReactionKey
+    ) => {
+        return await updatePalaverItemReaction(comment, reactionKey, entryId);
+    };
+
     const likePalaverEntry = async (entry: PalaverEntry) => {
-        const updateEntry = await updatePalaverItemLikesDislikes(entry, "like");
-        return updateEntry;
+        return await togglePalaverEntryReaction(entry, "thumbs_up");
     };
 
     const dislikePalaverEntry = async (entry: PalaverEntry) => {
-        const updateEntry = await updatePalaverItemLikesDislikes(
-            entry,
-            "dislike"
-        );
-        return updateEntry;
+        return await togglePalaverEntryReaction(entry, "thumbs_down");
     };
 
     const addComment = async (entry: PalaverEntry, comment: Comment) => {
@@ -182,21 +206,19 @@ export const usePalaver = () => {
     };
 
     const likeComment = async (comment: Comment, entryId: string) => {
-        const updateEntry = await updatePalaverItemLikesDislikes(
+        return await togglePalaverCommentReaction(
             comment,
-            "like",
-            entryId
+            entryId,
+            "thumbs_up"
         );
-        return updateEntry;
     };
 
     const dislikeComment = async (comment: Comment, entryId: string) => {
-        const updateEntry = await updatePalaverItemLikesDislikes(
+        return await togglePalaverCommentReaction(
             comment,
-            "dislike",
-            entryId
+            entryId,
+            "thumbs_down"
         );
-        return updateEntry;
     };
 
     return {
@@ -205,6 +227,8 @@ export const usePalaver = () => {
         createPalaverEntryFromReview,
         updatePalaverEntry,
         deletePalaverEntry,
+        togglePalaverEntryReaction,
+        togglePalaverCommentReaction,
         likePalaverEntry,
         dislikePalaverEntry,
         addComment,

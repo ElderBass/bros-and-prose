@@ -1,25 +1,18 @@
 <template>
     <div class="reaction-actions">
-        <ReactionButton
-            v-for="reaction in REACTION_TYPES"
-            :key="reaction"
-            :type="reaction"
+        <ReactionMenu
+            :item="comment"
             :isChildComment="true"
-            :reactions="getReactions(reaction, comment)"
-            :onClick="() => handleReaction(reaction)"
+            @select="handleReaction"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-import ReactionButton from "@/components/features/Palaver/PalaverListItem/ReactionButton.vue";
-import type { Comment, ReactionType } from "@/types";
-import { REACTION_TYPES } from "@/constants";
-import {
-    LIKED_PALAVER_ENTRY_SUCCESS_ALERT,
-    DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT,
-} from "@/constants";
-import { getReactions } from "@/utils";
+import ReactionMenu from "@/components/features/Palaver/PalaverListItem/ReactionMenu.vue";
+import type { Comment, EmojiReactionKey } from "@/types";
+import { QUICK_SUCCESS } from "@/constants";
+import { getEmojiReactionOption } from "@/utils";
 import { usePalaver } from "@/composables/usePalaver";
 import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
@@ -29,24 +22,28 @@ const props = defineProps<{
     entryId: string;
 }>();
 
-const { likeComment, dislikeComment } = usePalaver();
+const { togglePalaverCommentReaction } = usePalaver();
 const { error: logError, info: logInfo } = useLog();
 const { showAlert } = useUIStore();
 
-const handleReaction = async (reaction: ReactionType) => {
+const handleReaction = async (reactionKey: EmojiReactionKey) => {
     try {
-        if (reaction === "like") {
-            await likeComment(props.comment, props.entryId);
-            await logInfo(`Liked comment: ${props.comment.id}`);
-            showAlert(LIKED_PALAVER_ENTRY_SUCCESS_ALERT);
-        } else {
-            await dislikeComment(props.comment, props.entryId);
-            await logInfo(`Disliked comment: ${props.comment.id}`);
-            showAlert(DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT);
-        }
+        await togglePalaverCommentReaction(
+            props.comment,
+            props.entryId,
+            reactionKey
+        );
+        const reaction = getEmojiReactionOption(reactionKey);
+        await logInfo(`Reacted to comment: ${props.comment.id}`);
+        showAlert(
+            QUICK_SUCCESS([
+                "reaction updated successfully.",
+                `${reaction?.emoji || ""} ${reaction?.label || "reaction"}`,
+            ])
+        );
     } catch (error) {
         console.error(error);
-        await logError(`Error liking comment: ${props.comment.id}`);
+        await logError(`Error reacting to comment: ${props.comment.id}`);
     }
 };
 </script>

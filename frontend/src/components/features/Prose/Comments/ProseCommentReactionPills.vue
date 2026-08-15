@@ -1,51 +1,60 @@
 <template>
-    <div v-if="hasReactions" class="comment-reaction-pills">
-        <ReactionPill
-            type="like"
-            :count="likesFromOthers.length"
-            :reactors="likesFromOthers"
-            size="xsmall"
-        />
-        <ReactionPill
-            type="dislike"
-            :count="dislikesFromOthers.length"
-            :reactors="dislikesFromOthers"
-            size="xsmall"
-        />
-    </div>
+    <EmojiReactionPills
+        :item="comment"
+        size="xsmall"
+        :clickable="clickable"
+        :filterReactors="isNotCommentAuthor"
+        @select="handleReaction"
+    />
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import ReactionPill from "@/components/features/common/ReactionPill.vue";
-import type { Comment } from "@/types";
+import EmojiReactionPills from "@/components/features/common/EmojiReactionPills.vue";
+import type { Comment, EmojiReactionKey, ProseEntry } from "@/types";
+import { QUICK_SUCCESS } from "@/constants";
+import { useProse } from "@/composables/useProse";
+import { useLog } from "@/composables/useLog";
+import { useUIStore } from "@/stores/ui";
+import { getEmojiReactionOption } from "@/utils";
 
 const props = defineProps<{
+    entry: ProseEntry;
     comment: Comment;
+    clickable?: boolean;
 }>();
+
+const emit = defineEmits<{
+    (e: "entry-updated", entry: ProseEntry): void;
+}>();
+
+const { toggleProseCommentReaction } = useProse();
+const { showAlert } = useUIStore();
+const { info: logInfo, error: logError } = useLog();
 
 const isNotCommentAuthor = (username: string) => {
     return username !== props.comment.userInfo.username;
 };
 
-const likesFromOthers = computed(() =>
-    (props.comment.likes ?? []).filter(isNotCommentAuthor)
-);
-
-const dislikesFromOthers = computed(() =>
-    (props.comment.dislikes ?? []).filter(isNotCommentAuthor)
-);
-
-const hasReactions = computed(
-    () =>
-        likesFromOthers.value.length > 0 || dislikesFromOthers.value.length > 0
-);
+const handleReaction = async (reactionKey: EmojiReactionKey) => {
+    if (!props.clickable) return;
+    try {
+        const updated = await toggleProseCommentReaction(
+            props.entry,
+            props.comment,
+            reactionKey
+        );
+        if (updated) emit("entry-updated", updated);
+        const reaction = getEmojiReactionOption(reactionKey);
+        await logInfo(`Reacted to prose comment: ${props.comment.id}`);
+        showAlert(
+            QUICK_SUCCESS([
+                "reaction updated successfully.",
+                `${reaction?.emoji || ""} ${reaction?.label || "reaction"}`,
+            ])
+        );
+    } catch (error) {
+        console.error(error);
+        await logError(`Error reacting to prose comment: ${props.comment.id}`);
+    }
+};
 </script>
-
-<style scoped>
-.comment-reaction-pills {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-</style>

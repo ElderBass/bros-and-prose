@@ -1,31 +1,21 @@
 <template>
     <div class="reaction-actions">
-        <ReactionButton
-            v-for="reaction in REACTION_TYPES"
-            :key="reaction"
-            :type="reaction"
-            :reactions="getReactions(reaction, props.entry)"
-            :onClick="() => handleReaction(reaction)"
-        />
+        <ReactionMenu :item="props.entry" @select="handleReaction" />
         <CommentButton :entry="entry" />
     </div>
 </template>
 
 <script setup lang="ts">
-import ReactionButton from "./ReactionButton.vue";
+import ReactionMenu from "./ReactionMenu.vue";
 import CommentButton from "./CommentButton.vue";
 import { usePalaver } from "@/composables/usePalaver";
 import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
-import {
-    REACTION_TYPES,
-    LIKED_PALAVER_ENTRY_SUCCESS_ALERT,
-    DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT,
-} from "@/constants";
-import type { PalaverEntry, ReactionType } from "@/types";
-import { getReactions } from "@/utils";
+import { QUICK_SUCCESS } from "@/constants";
+import type { EmojiReactionKey, PalaverEntry } from "@/types";
+import { getEmojiReactionOption } from "@/utils";
 
-const { likePalaverEntry, dislikePalaverEntry } = usePalaver();
+const { togglePalaverEntryReaction } = usePalaver();
 const { showAlert } = useUIStore();
 const { info: logInfo, error: logError } = useLog();
 
@@ -35,35 +25,24 @@ const emit = defineEmits<{
     (e: "entry-updated", entry: PalaverEntry): void;
 }>();
 
-const handleReaction = async (reaction: ReactionType) => {
-    if (reaction === "like") {
-        await handleLike();
-    } else {
-        await handleDislike();
-    }
-};
-
-const handleLike = async () => {
+const handleReaction = async (reactionKey: EmojiReactionKey) => {
     try {
-        const updated = await likePalaverEntry(props.entry);
+        const updated = await togglePalaverEntryReaction(
+            props.entry,
+            reactionKey
+        );
         if (updated) emit("entry-updated", updated);
-        await logInfo(`Liked palaver entry: ${props.entry.id}`);
-        showAlert(LIKED_PALAVER_ENTRY_SUCCESS_ALERT);
+        const reaction = getEmojiReactionOption(reactionKey);
+        await logInfo(`Reacted to palaver entry: ${props.entry.id}`);
+        showAlert(
+            QUICK_SUCCESS([
+                "reaction updated successfully.",
+                `${reaction?.emoji || ""} ${reaction?.label || "reaction"}`,
+            ])
+        );
     } catch (error) {
         console.error(error);
-        await logError(`Error liking palaver entry: ${props.entry.id}`);
-    }
-};
-
-const handleDislike = async () => {
-    try {
-        const updated = await dislikePalaverEntry(props.entry);
-        if (updated) emit("entry-updated", updated);
-        await logInfo(`Disliked palaver entry: ${props.entry.id}`);
-        showAlert(DISLIKED_PALAVER_ENTRY_SUCCESS_ALERT);
-    } catch (error) {
-        console.error(error);
-        await logError(`Error disliking palaver entry: ${props.entry.id}`);
+        await logError(`Error reacting to palaver entry: ${props.entry.id}`);
     }
 };
 </script>

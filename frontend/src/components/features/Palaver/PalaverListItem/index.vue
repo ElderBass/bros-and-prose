@@ -63,9 +63,10 @@
                 </template>
             </ExpandableText>
             <ReactionDetails
-                v-if="workingEntry.likes || workingEntry.dislikes"
-                :likes="workingEntry.likes || []"
-                :dislikes="workingEntry.dislikes || []"
+                v-if="hasReactions"
+                :entry="workingEntry"
+                :clickable="!isGuestUser()"
+                @select="handleEntryReaction"
             />
             <div v-if="showItemActions" class="item-actions">
                 <RouterLink
@@ -109,12 +110,21 @@ import ListItemActions from "@/components/features/Palaver/PalaverListItem/ListI
 import ReactionDetails from "@/components/features/Palaver/PalaverListItem/ReactionDetails.vue";
 import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
-import { EMPTY_TEXT } from "@/constants";
-import { buildProsePromptComposerPath, isGuestUser } from "@/utils";
+import { QUICK_SUCCESS, EMPTY_TEXT } from "@/constants";
+import { usePalaver } from "@/composables/usePalaver";
+import { useLog } from "@/composables/useLog";
+import { useUIStore } from "@/stores/ui";
+import {
+    buildProsePromptComposerPath,
+    getEmojiReactionOption,
+    hasEmojiReactions,
+    isGuestUser,
+} from "@/utils";
 import CommentsSection from "./CommentsSection.vue";
 import BookInfo from "./BookInfo.vue";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
+import type { EmojiReactionKey } from "@/types";
 
 defineOptions({ name: "PalaverListItem" });
 
@@ -128,10 +138,13 @@ const props = withDefaults(
     }
 );
 const { mobile } = useDisplay();
+const { togglePalaverEntryReaction } = usePalaver();
+const { showAlert } = useUIStore();
+const { info: logInfo, error: logError } = useLog();
 
 const showComments = ref(false);
 
-/** Keeps likes/dislikes (and comments UI) in sync immediately after reacting, before parent props refresh. */
+/** Keeps reactions and comments UI in sync immediately after reacting, before parent props refresh. */
 const workingEntry = ref<PalaverEntry>(props.entry);
 
 watch(
@@ -146,11 +159,36 @@ const syncEntryFromReaction = (e: PalaverEntry) => {
     workingEntry.value = e;
 };
 
+const handleEntryReaction = async (reactionKey: EmojiReactionKey) => {
+    try {
+        const updated = await togglePalaverEntryReaction(
+            workingEntry.value,
+            reactionKey
+        );
+        if (updated) syncEntryFromReaction(updated);
+        const reaction = getEmojiReactionOption(reactionKey);
+        await logInfo(`Reacted to palaver entry: ${workingEntry.value.id}`);
+        showAlert(
+            QUICK_SUCCESS([
+                "reaction updated successfully.",
+                `${reaction?.emoji || ""} ${reaction?.label || "reaction"}`,
+            ])
+        );
+    } catch (error) {
+        console.error(error);
+        await logError(
+            `Error reacting to palaver entry: ${workingEntry.value.id}`
+        );
+    }
+};
+
 const hasComments = computed(() => {
     return (
         workingEntry.value.comments && workingEntry.value.comments.length > 0
     );
 });
+
+const hasReactions = computed(() => hasEmojiReactions(workingEntry.value));
 
 const typeLabel = computed(() => {
     switch (props.entry.type) {

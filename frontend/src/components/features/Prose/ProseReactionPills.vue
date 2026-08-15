@@ -1,14 +1,10 @@
 <template>
     <div class="reaction-pills">
-        <ReactionPill
-            type="like"
-            :count="likesList.length"
-            :reactors="likesList"
-        />
-        <ReactionPill
-            type="dislike"
-            :count="dislikesList.length"
-            :reactors="dislikesList"
+        <EmojiReactionPills
+            :item="reactionSource"
+            :clickable="clickable"
+            :disabled="disabled"
+            @select="emit('select', $event)"
         />
         <ReactionPill
             type="favorite"
@@ -26,7 +22,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ReactionPill from "@/components/features/common/ReactionPill.vue";
-import type { Comment, ProseEntry } from "@/types";
+import EmojiReactionPills from "@/components/features/common/EmojiReactionPills.vue";
+import type { Comment, EmojiReactionKey, ProseEntry } from "@/types";
 import { uniqueCommenterUsernames } from "@/utils/reactionDisplayUtils";
 
 const props = defineProps<{
@@ -35,12 +32,20 @@ const props = defineProps<{
     dislikes?: string[];
     favorites?: string[];
     comments?: Comment[];
+    clickable?: boolean;
+    disabled?: boolean;
 }>();
 
-const likesList = computed(() => props.likes ?? props.entry?.likes ?? []);
+const emit = defineEmits<{
+    (e: "select", reactionKey: EmojiReactionKey): void;
+}>();
 
-const dislikesList = computed(
-    () => props.dislikes ?? props.entry?.dislikes ?? []
+const reactionSource = computed(
+    () =>
+        props.entry ?? {
+            likes: props.likes,
+            dislikes: props.dislikes,
+        }
 );
 
 const favoritesList = computed(
