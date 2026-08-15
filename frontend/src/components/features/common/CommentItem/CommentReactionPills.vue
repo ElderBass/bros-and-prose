@@ -1,15 +1,13 @@
 <template>
     <div v-if="hasReactions" class="comment-reaction-pills">
         <ReactionPill
-            type="like"
-            :count="likes.length"
-            :reactors="likes"
-            size="xsmall"
-        />
-        <ReactionPill
-            type="dislike"
-            :count="dislikes.length"
-            :reactors="dislikes"
+            v-for="reaction in reactionBuckets"
+            :key="reaction.key"
+            :type="reaction.key"
+            :emoji="reaction.emoji"
+            :label="reaction.label"
+            :count="reaction.reactors.length"
+            :reactors="reaction.reactors"
             size="xsmall"
         />
     </div>
@@ -19,17 +17,17 @@
 import { computed } from "vue";
 import ReactionPill from "@/components/features/common/ReactionPill.vue";
 import type { Comment } from "@/types";
+import { getVisibleReactionBuckets } from "@/utils";
 
 const props = defineProps<{
     comment: Comment;
 }>();
 
-const likes = computed(() => props.comment.likes ?? []);
-const dislikes = computed(() => props.comment.dislikes ?? []);
-
-const hasReactions = computed(
-    () => likes.value.length > 0 || dislikes.value.length > 0
+const reactionBuckets = computed(() =>
+    getVisibleReactionBuckets(props.comment)
 );
+
+const hasReactions = computed(() => reactionBuckets.value.length > 0);
 </script>
 
 <style scoped>

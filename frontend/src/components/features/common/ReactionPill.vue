@@ -24,7 +24,8 @@
                 @touchend="onTouchEnd"
                 @touchcancel="longPress.onTouchCancel"
             >
-                <FontAwesomeIcon :icon="icon" class="count-icon" />
+                <span v-if="emoji" class="emoji-icon">{{ emoji }}</span>
+                <FontAwesomeIcon v-else :icon="icon" class="count-icon" />
                 <span>{{ count }}</span>
             </span>
         </template>
@@ -36,7 +37,8 @@
                     :key="name"
                     class="reactor-row"
                 >
-                    @{{ name }}
+                    <span v-if="name === loggedInUser?.username">you</span>
+                    <UsernameLink v-else :username="name" fontSize="small" />
                 </li>
             </ul>
         </div>
@@ -44,10 +46,11 @@
     <span
         v-else
         class="count-pill"
-        :class="[`count-pill-${type.toLowerCase()}`, pillSize]"
+        :class="[`count-pill-${pillTone}`, pillSize]"
         :title="title"
     >
-        <FontAwesomeIcon :icon="icon" class="count-icon" />
+        <span v-if="emoji" class="emoji-icon">{{ emoji }}</span>
+        <FontAwesomeIcon v-else :icon="icon" class="count-icon" />
         <span>{{ count }}</span>
     </span>
 </template>
@@ -55,8 +58,11 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useDisplay } from "vuetify";
-import type { ReactionType } from "@/types";
+import { storeToRefs } from "pinia";
+import type { EmojiReactionKey, ReactionType } from "@/types";
 import { useLongPress } from "@/composables/useLongPress";
+import { useUserStore } from "@/stores/user";
+import UsernameLink from "@/components/ui/UsernameLink.vue";
 import {
     faThumbsUp,
     faThumbsDown,
@@ -66,14 +72,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const props = defineProps<{
-    type: ReactionType;
+    type: ReactionType | EmojiReactionKey;
     count: number;
     /** Usernames (prose reactions store usernames). */
     reactors?: string[];
     size?: "xsmall" | "small" | "medium";
+    emoji?: string;
+    label?: string;
 }>();
 
 const { mobile } = useDisplay();
+const { loggedInUser } = storeToRefs(useUserStore());
 
 const menuOpen = ref(false);
 const skipNextTapToggle = ref(false);
@@ -122,9 +131,14 @@ const pillSize = computed(() => {
 
 const pillClassList = computed(() => [
     "count-pill",
-    `count-pill-${props.type.toLowerCase()}`,
+    `count-pill-${pillTone.value}`,
     pillSize.value,
 ]);
+
+const pillTone = computed(() => {
+    if (props.emoji) return "emoji";
+    return props.type.toLowerCase();
+});
 
 const icon = computed(() => {
     switch (props.type) {
@@ -142,6 +156,10 @@ const icon = computed(() => {
 });
 
 const title = computed(() => {
+    if (props.emoji) {
+        return `${props.count} ${props.label || "emoji"} reactions`;
+    }
+
     switch (props.type) {
         case "like":
             return `${props.count} likes`;
@@ -157,6 +175,10 @@ const title = computed(() => {
 });
 
 const headingLabel = computed(() => {
+    if (props.emoji) {
+        return `reacted ${props.emoji}`;
+    }
+
     switch (props.type) {
         case "like":
             return "liked by";
@@ -225,8 +247,19 @@ const headingLabel = computed(() => {
     color: var(--accent-pink);
 }
 
-.count-icon {
+.count-pill-emoji {
+    background-color: color-mix(in srgb, var(--accent-blue) 18%, transparent);
+    border: 1px solid var(--accent-blue);
+    color: var(--main-text);
+}
+
+.count-icon,
+.emoji-icon {
     font-size: inherit;
+}
+
+.emoji-icon {
+    line-height: 1;
 }
 
 .reactor-panel {
@@ -258,6 +291,8 @@ const headingLabel = computed(() => {
 }
 
 .reactor-row {
+    display: flex;
+    align-items: center;
     padding: 0.2rem 0;
     font-size: 0.88rem;
     color: var(--main-text);

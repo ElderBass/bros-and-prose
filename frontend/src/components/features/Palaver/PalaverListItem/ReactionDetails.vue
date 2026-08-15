@@ -1,18 +1,22 @@
 <template>
     <div class="reaction-details">
-        <ReactionList v-if="likes.length" type="like" :reactions="likes" />
         <ReactionList
-            v-if="dislikes.length"
-            type="dislike"
-            :reactions="dislikes"
+            v-for="reaction in reactionBuckets"
+            :key="reaction.key"
+            :reaction="reaction"
         />
     </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import ReactionList from "./ReactionList.vue";
+import type { PalaverEntry } from "@/types";
+import { getVisibleReactionBuckets } from "@/utils";
 
-defineProps<{ likes: string[]; dislikes: string[] }>();
+const props = defineProps<{ entry: PalaverEntry }>();
+
+const reactionBuckets = computed(() => getVisibleReactionBuckets(props.entry));
 </script>
 
 <style scoped>

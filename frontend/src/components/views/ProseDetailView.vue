@@ -63,13 +63,7 @@
                         :entry="entry"
                         @entry-updated="onEntryUpdated"
                     />
-                    <ProseReactionPills
-                        v-else
-                        :likes="entry.likes"
-                        :dislikes="entry.dislikes"
-                        :favorites="entry.favorites"
-                        :comments="entry.comments"
-                    />
+                    <ProseReactionPills v-else :entry="entry" />
                     <div v-if="!isGuestUser()" class="entry-actions">
                         <IconButton
                             v-if="!isAuthor"

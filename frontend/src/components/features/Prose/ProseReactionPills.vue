@@ -1,14 +1,13 @@
 <template>
     <div class="reaction-pills">
         <ReactionPill
-            type="like"
-            :count="likesList.length"
-            :reactors="likesList"
-        />
-        <ReactionPill
-            type="dislike"
-            :count="dislikesList.length"
-            :reactors="dislikesList"
+            v-for="reaction in reactionBuckets"
+            :key="reaction.key"
+            :type="reaction.key"
+            :emoji="reaction.emoji"
+            :label="reaction.label"
+            :count="reaction.reactors.length"
+            :reactors="reaction.reactors"
         />
         <ReactionPill
             type="favorite"
@@ -28,6 +27,7 @@ import { computed } from "vue";
 import ReactionPill from "@/components/features/common/ReactionPill.vue";
 import type { Comment, ProseEntry } from "@/types";
 import { uniqueCommenterUsernames } from "@/utils/reactionDisplayUtils";
+import { getVisibleReactionBuckets } from "@/utils";
 
 const props = defineProps<{
     entry?: ProseEntry;
@@ -37,10 +37,16 @@ const props = defineProps<{
     comments?: Comment[];
 }>();
 
-const likesList = computed(() => props.likes ?? props.entry?.likes ?? []);
+const reactionSource = computed(
+    () =>
+        props.entry ?? {
+            likes: props.likes,
+            dislikes: props.dislikes,
+        }
+);
 
-const dislikesList = computed(
-    () => props.dislikes ?? props.entry?.dislikes ?? []
+const reactionBuckets = computed(() =>
+    getVisibleReactionBuckets(reactionSource.value)
 );
 
 const favoritesList = computed(

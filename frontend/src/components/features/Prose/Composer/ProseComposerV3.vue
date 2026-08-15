@@ -347,6 +347,7 @@ const buildProseEntry = (): ProseEntry => {
         userInfo: getUserInfo(loggedInUser.value),
         likes: [],
         dislikes: [],
+        reactions: {},
         comments: [],
     };
 };

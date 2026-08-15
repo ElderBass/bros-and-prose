@@ -1,15 +1,13 @@
 <template>
     <div v-if="hasReactions" class="comment-reaction-pills">
         <ReactionPill
-            type="like"
-            :count="likesFromOthers.length"
-            :reactors="likesFromOthers"
-            size="xsmall"
-        />
-        <ReactionPill
-            type="dislike"
-            :count="dislikesFromOthers.length"
-            :reactors="dislikesFromOthers"
+            v-for="reaction in reactionBucketsFromOthers"
+            :key="reaction.key"
+            :type="reaction.key"
+            :emoji="reaction.emoji"
+            :label="reaction.label"
+            :count="reaction.reactors.length"
+            :reactors="reaction.reactors"
             size="xsmall"
         />
     </div>
@@ -19,6 +17,7 @@
 import { computed } from "vue";
 import ReactionPill from "@/components/features/common/ReactionPill.vue";
 import type { Comment } from "@/types";
+import { getVisibleReactionBuckets } from "@/utils";
 
 const props = defineProps<{
     comment: Comment;
@@ -28,18 +27,16 @@ const isNotCommentAuthor = (username: string) => {
     return username !== props.comment.userInfo.username;
 };
 
-const likesFromOthers = computed(() =>
-    (props.comment.likes ?? []).filter(isNotCommentAuthor)
+const reactionBucketsFromOthers = computed(() =>
+    getVisibleReactionBuckets(props.comment)
+        .map((reaction) => ({
+            ...reaction,
+            reactors: reaction.reactors.filter(isNotCommentAuthor),
+        }))
+        .filter((reaction) => reaction.reactors.length > 0)
 );
 
-const dislikesFromOthers = computed(() =>
-    (props.comment.dislikes ?? []).filter(isNotCommentAuthor)
-);
-
-const hasReactions = computed(
-    () =>
-        likesFromOthers.value.length > 0 || dislikesFromOthers.value.length > 0
-);
+const hasReactions = computed(() => reactionBucketsFromOthers.value.length > 0);
 </script>
 
 <style scoped>

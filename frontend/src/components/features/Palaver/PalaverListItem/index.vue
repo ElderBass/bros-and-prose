@@ -62,11 +62,7 @@
                     <MentionText :text="displayText" fontSize="small" />
                 </template>
             </ExpandableText>
-            <ReactionDetails
-                v-if="workingEntry.likes || workingEntry.dislikes"
-                :likes="workingEntry.likes || []"
-                :dislikes="workingEntry.dislikes || []"
-            />
+            <ReactionDetails v-if="hasReactions" :entry="workingEntry" />
             <div v-if="showItemActions" class="item-actions">
                 <RouterLink
                     v-if="entry.type === 'prose_prompt'"
@@ -110,7 +106,11 @@ import ReactionDetails from "@/components/features/Palaver/PalaverListItem/React
 import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
 import { EMPTY_TEXT } from "@/constants";
-import { buildProsePromptComposerPath, isGuestUser } from "@/utils";
+import {
+    buildProsePromptComposerPath,
+    hasEmojiReactions,
+    isGuestUser,
+} from "@/utils";
 import CommentsSection from "./CommentsSection.vue";
 import BookInfo from "./BookInfo.vue";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
@@ -131,7 +131,7 @@ const { mobile } = useDisplay();
 
 const showComments = ref(false);
 
-/** Keeps likes/dislikes (and comments UI) in sync immediately after reacting, before parent props refresh. */
+/** Keeps reactions and comments UI in sync immediately after reacting, before parent props refresh. */
 const workingEntry = ref<PalaverEntry>(props.entry);
 
 watch(
@@ -151,6 +151,8 @@ const hasComments = computed(() => {
         workingEntry.value.comments && workingEntry.value.comments.length > 0
     );
 });
+
+const hasReactions = computed(() => hasEmojiReactions(workingEntry.value));
 
 const typeLabel = computed(() => {
     switch (props.entry.type) {

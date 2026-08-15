@@ -1,4 +1,5 @@
 import type { Comment } from "./palaver";
+import type { EmojiReactionKey, EmojiReactions } from "./palaver";
 import type { UserInfo } from "./user";
 
 export type ProseType = "creative" | "academic" | "poetic" | "misc";
@@ -7,6 +8,7 @@ export type ProseUpdateType =
     | "prose_created"
     | "prose_like"
     | "prose_dislike"
+    | "prose_reaction"
     | "prose_comment"
     | "prose_reply"
     | "prose_mention";
@@ -23,6 +25,7 @@ export interface ProseEntry {
     tags?: string[];
     likes?: string[];
     dislikes?: string[];
+    reactions?: EmojiReactions;
     favorites?: string[];
     comments?: Comment[];
     updatedAt?: string;
@@ -35,6 +38,8 @@ export interface ProseEntryMetadata {
     targetUsername?: string;
     targetUserEmail?: string;
     updateType?: ProseUpdateType;
+    reactionKey?: EmojiReactionKey;
+    reactionEmoji?: string;
     replyToText?: string;
     mentionedUsers?: Array<{ username: string; email: string }>;
 }

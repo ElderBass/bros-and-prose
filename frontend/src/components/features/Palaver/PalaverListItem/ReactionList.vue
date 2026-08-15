@@ -1,35 +1,28 @@
 <template>
-    <div v-if="reactions.length" class="section">
-        <span class="label" :class="color">{{ label }} by:</span>
+    <div v-if="reaction.reactors.length" class="section">
+        <span class="label">{{ reaction.emoji }} {{ reaction.label }} by:</span>
         <span
-            v-for="(username, index) in reactions"
+            v-for="(username, index) in reaction.reactors"
             :key="username"
             class="reaction-user"
         >
             {{ username === loggedInUser?.username ? "you" : `@${username}` }}
-            <span v-if="index !== reactions.length - 1" class="comma">,</span>
+            <span v-if="index !== reaction.reactors.length - 1" class="comma"
+                >,</span
+            >
         </span>
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import type { ReactionType } from "@/types";
+import type { EmojiReactionBucket } from "@/types";
 import { useUserStore } from "@/stores/user";
 
-const props = defineProps<{ type: ReactionType; reactions: string[] }>();
+defineProps<{ reaction: EmojiReactionBucket }>();
 
 const userStore = useUserStore();
 const { loggedInUser } = storeToRefs(userStore);
-
-const label = computed(() => {
-    return props.type === "like" ? "liked" : "disliked";
-});
-
-const color = computed(() => {
-    return props.type === "like" ? "green" : "red";
-});
 </script>
 
 <style scoped>
@@ -43,14 +36,7 @@ const color = computed(() => {
 
 .label {
     font-weight: 400;
-}
-
-.green {
-    color: var(--accent-green);
-}
-
-.red {
-    color: var(--accent-red);
+    color: var(--accent-blue);
 }
 
 .reaction-user {

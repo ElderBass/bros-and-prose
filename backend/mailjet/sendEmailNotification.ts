@@ -22,6 +22,11 @@ const getEmailMessaging = (
                 title: "Item Update",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> thinks your shit's weak.`,
             };
+        case "reaction":
+            return {
+                title: "Item Update",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> reacted ${data.reactionEmoji ?? ""} to your palaver.`,
+            };
         case "comment":
             return {
                 title: "Item Update",
@@ -115,6 +120,11 @@ const getEmailMessaging = (
             return {
                 title: "Prose Update",
                 message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> disliked your prose piece <span style="font-weight: bold;color:#ff4dff;">${data.proseTitle}</span>.`,
+            };
+        case "prose_reaction":
+            return {
+                title: "Prose Update",
+                message: `<span style="font-weight: bold;color:#00bfff;">@${data.username}</span> reacted ${data.reactionEmoji ?? ""} to your prose piece <span style="font-weight: bold;color:#ff4dff;">${data.proseTitle}</span>.`,
             };
         case "prose_comment":
             return {
