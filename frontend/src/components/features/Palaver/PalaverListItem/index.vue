@@ -1,5 +1,9 @@
 <template>
-    <div class="palaver-item" :style="{ '--theme-color': themeColor }">
+    <div
+        :data-palaver-id="entry.id"
+        class="palaver-item"
+        :style="{ '--theme-color': themeColor }"
+    >
         <div class="avatar">
             <AvatarImage
                 :avatar="entry.userInfo.avatar"
