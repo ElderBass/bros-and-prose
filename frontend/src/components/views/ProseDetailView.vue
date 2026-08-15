@@ -58,12 +58,16 @@
                 </div>
 
                 <div class="actions-row">
+                    <ProseReactionPills
+                        :entry="entry"
+                        :clickable="!isGuestUser()"
+                        @select="handleEntryReaction"
+                    />
                     <ProseEntryReactionActions
                         v-if="!isGuestUser() && !isAuthor"
                         :entry="entry"
                         @entry-updated="onEntryUpdated"
                     />
-                    <ProseReactionPills v-else :entry="entry" />
                     <div v-if="!isGuestUser()" class="entry-actions">
                         <IconButton
                             v-if="!isAuthor"
@@ -144,9 +148,13 @@ import { useProseStore } from "@/stores/prose";
 import { useUIStore } from "@/stores/ui";
 import { useUserStore } from "@/stores/user";
 import { useUserFavorites } from "@/composables";
-import { ADDED_COMMENT_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
-import type { Comment, ProseEntry } from "@/types";
-import { isGuestUser } from "@/utils";
+import {
+    ADDED_COMMENT_SUCCESS_ALERT,
+    QUICK_ERROR,
+    QUICK_SUCCESS,
+} from "@/constants";
+import type { Comment, EmojiReactionKey, ProseEntry } from "@/types";
+import { getEmojiReactionOption, isGuestUser } from "@/utils";
 import { useLog } from "@/composables";
 import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
@@ -162,7 +170,7 @@ const router = useRouter();
 const { mobile } = useDisplay();
 const proseStore = useProseStore();
 const { showAlert } = useUIStore();
-const { addComment, getProseEntry } = useProse();
+const { addComment, getProseEntry, toggleProseEntryReaction } = useProse();
 
 const { entries } = storeToRefs(proseStore);
 const { loggedInUser } = storeToRefs(useUserStore());
@@ -221,6 +229,32 @@ const cardSize = computed(() => {
 
 const onEntryUpdated = (e: ProseEntry) => {
     entry.value = e;
+};
+
+const handleEntryReaction = async (reactionKey: EmojiReactionKey) => {
+    if (!entry.value) return;
+    try {
+        const updated = await toggleProseEntryReaction(
+            entry.value,
+            reactionKey
+        );
+        if (updated) onEntryUpdated(updated);
+        const reaction = getEmojiReactionOption(reactionKey);
+        showAlert(
+            QUICK_SUCCESS([
+                "reaction updated successfully.",
+                `${reaction?.emoji || ""} ${reaction?.label || "reaction"}`,
+            ])
+        );
+    } catch (error) {
+        await useLog().error(`Error reacting to prose entry: ${error}`);
+        showAlert(
+            QUICK_ERROR([
+                "failed to update reaction",
+                (error as Error).message || "unknown error",
+            ])
+        );
+    }
 };
 
 const onCheekyFeedbackClick = () => {

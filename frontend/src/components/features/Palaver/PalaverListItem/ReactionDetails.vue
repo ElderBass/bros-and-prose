@@ -1,28 +1,32 @@
 <template>
     <div class="reaction-details">
-        <ReactionList
-            v-for="reaction in reactionBuckets"
-            :key="reaction.key"
-            :reaction="reaction"
+        <EmojiReactionPills
+            :item="entry"
+            size="small"
+            :clickable="clickable"
+            @select="emit('select', $event)"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import ReactionList from "./ReactionList.vue";
-import type { PalaverEntry } from "@/types";
-import { getVisibleReactionBuckets } from "@/utils";
+import EmojiReactionPills from "@/components/features/common/EmojiReactionPills.vue";
+import type { EmojiReactionKey, PalaverEntry } from "@/types";
 
-const props = defineProps<{ entry: PalaverEntry }>();
+defineProps<{
+    entry: PalaverEntry;
+    clickable?: boolean;
+}>();
 
-const reactionBuckets = computed(() => getVisibleReactionBuckets(props.entry));
+const emit = defineEmits<{
+    (e: "select", reactionKey: EmojiReactionKey): void;
+}>();
 </script>
 
 <style scoped>
 .reaction-details {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 0.25rem;
     padding: 0.25rem;
 }

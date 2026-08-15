@@ -21,8 +21,9 @@
                 </div>
                 <div class="actions">
                     <CommentReactionPills
-                        v-if="showReactionPills"
                         :comment="comment"
+                        :entryId="entryId"
+                        :clickable="!isGuestUser()"
                     />
                     <ReactionActions
                         v-if="showReactionActions"
@@ -141,13 +142,6 @@ const showReactionActions = computed(() => {
     return (
         !isGuestUser() &&
         props.comment.userInfo.id !== useUserStore().loggedInUser.id
-    );
-});
-
-const showReactionPills = computed(() => {
-    return (
-        !isGuestUser() &&
-        props.comment.userInfo.id === useUserStore().loggedInUser.id
     );
 });
 

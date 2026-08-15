@@ -1,13 +1,10 @@
 <template>
     <div class="reaction-pills">
-        <ReactionPill
-            v-for="reaction in reactionBuckets"
-            :key="reaction.key"
-            :type="reaction.key"
-            :emoji="reaction.emoji"
-            :label="reaction.label"
-            :count="reaction.reactors.length"
-            :reactors="reaction.reactors"
+        <EmojiReactionPills
+            :item="reactionSource"
+            :clickable="clickable"
+            :disabled="disabled"
+            @select="emit('select', $event)"
         />
         <ReactionPill
             type="favorite"
@@ -25,9 +22,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ReactionPill from "@/components/features/common/ReactionPill.vue";
-import type { Comment, ProseEntry } from "@/types";
+import EmojiReactionPills from "@/components/features/common/EmojiReactionPills.vue";
+import type { Comment, EmojiReactionKey, ProseEntry } from "@/types";
 import { uniqueCommenterUsernames } from "@/utils/reactionDisplayUtils";
-import { getVisibleReactionBuckets } from "@/utils";
 
 const props = defineProps<{
     entry?: ProseEntry;
@@ -35,6 +32,12 @@ const props = defineProps<{
     dislikes?: string[];
     favorites?: string[];
     comments?: Comment[];
+    clickable?: boolean;
+    disabled?: boolean;
+}>();
+
+const emit = defineEmits<{
+    (e: "select", reactionKey: EmojiReactionKey): void;
 }>();
 
 const reactionSource = computed(
@@ -43,10 +46,6 @@ const reactionSource = computed(
             likes: props.likes,
             dislikes: props.dislikes,
         }
-);
-
-const reactionBuckets = computed(() =>
-    getVisibleReactionBuckets(reactionSource.value)
 );
 
 const favoritesList = computed(

@@ -1,39 +1,50 @@
 <template>
-    <div v-if="hasReactions" class="comment-reaction-pills">
-        <ReactionPill
-            v-for="reaction in reactionBuckets"
-            :key="reaction.key"
-            :type="reaction.key"
-            :emoji="reaction.emoji"
-            :label="reaction.label"
-            :count="reaction.reactors.length"
-            :reactors="reaction.reactors"
-            size="xsmall"
-        />
-    </div>
+    <EmojiReactionPills
+        :item="comment"
+        size="xsmall"
+        :clickable="clickable"
+        @select="handleReaction"
+    />
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import ReactionPill from "@/components/features/common/ReactionPill.vue";
-import type { Comment } from "@/types";
-import { getVisibleReactionBuckets } from "@/utils";
+import EmojiReactionPills from "@/components/features/common/EmojiReactionPills.vue";
+import type { Comment, EmojiReactionKey } from "@/types";
+import { QUICK_SUCCESS } from "@/constants";
+import { usePalaver } from "@/composables/usePalaver";
+import { useLog } from "@/composables/useLog";
+import { useUIStore } from "@/stores/ui";
+import { getEmojiReactionOption } from "@/utils";
 
 const props = defineProps<{
     comment: Comment;
+    entryId: string;
+    clickable?: boolean;
 }>();
 
-const reactionBuckets = computed(() =>
-    getVisibleReactionBuckets(props.comment)
-);
+const { togglePalaverCommentReaction } = usePalaver();
+const { showAlert } = useUIStore();
+const { info: logInfo, error: logError } = useLog();
 
-const hasReactions = computed(() => reactionBuckets.value.length > 0);
+const handleReaction = async (reactionKey: EmojiReactionKey) => {
+    if (!props.clickable) return;
+    try {
+        await togglePalaverCommentReaction(
+            props.comment,
+            props.entryId,
+            reactionKey
+        );
+        const reaction = getEmojiReactionOption(reactionKey);
+        await logInfo(`Reacted to comment: ${props.comment.id}`);
+        showAlert(
+            QUICK_SUCCESS([
+                "reaction updated successfully.",
+                `${reaction?.emoji || ""} ${reaction?.label || "reaction"}`,
+            ])
+        );
+    } catch (error) {
+        console.error(error);
+        await logError(`Error reacting to comment: ${props.comment.id}`);
+    }
+};
 </script>
-
-<style scoped>
-.comment-reaction-pills {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-}
-</style>

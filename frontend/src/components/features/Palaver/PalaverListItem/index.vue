@@ -62,7 +62,12 @@
                     <MentionText :text="displayText" fontSize="small" />
                 </template>
             </ExpandableText>
-            <ReactionDetails v-if="hasReactions" :entry="workingEntry" />
+            <ReactionDetails
+                v-if="hasReactions"
+                :entry="workingEntry"
+                :clickable="!isGuestUser()"
+                @select="handleEntryReaction"
+            />
             <div v-if="showItemActions" class="item-actions">
                 <RouterLink
                     v-if="entry.type === 'prose_prompt'"
@@ -105,9 +110,13 @@ import ListItemActions from "@/components/features/Palaver/PalaverListItem/ListI
 import ReactionDetails from "@/components/features/Palaver/PalaverListItem/ReactionDetails.vue";
 import BookRecommendationDetails from "@/components/features/Palaver/PalaverListItem/BookRecommendationDetails.vue";
 import type { PalaverEntry, PalaverType } from "@/types/palaver";
-import { EMPTY_TEXT } from "@/constants";
+import { QUICK_SUCCESS, EMPTY_TEXT } from "@/constants";
+import { usePalaver } from "@/composables/usePalaver";
+import { useLog } from "@/composables/useLog";
+import { useUIStore } from "@/stores/ui";
 import {
     buildProsePromptComposerPath,
+    getEmojiReactionOption,
     hasEmojiReactions,
     isGuestUser,
 } from "@/utils";
@@ -115,6 +124,7 @@ import CommentsSection from "./CommentsSection.vue";
 import BookInfo from "./BookInfo.vue";
 import BookRatingInput from "@/components/form/BookRatingInput.vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
+import type { EmojiReactionKey } from "@/types";
 
 defineOptions({ name: "PalaverListItem" });
 
@@ -128,6 +138,9 @@ const props = withDefaults(
     }
 );
 const { mobile } = useDisplay();
+const { togglePalaverEntryReaction } = usePalaver();
+const { showAlert } = useUIStore();
+const { info: logInfo, error: logError } = useLog();
 
 const showComments = ref(false);
 
@@ -144,6 +157,29 @@ watch(
 
 const syncEntryFromReaction = (e: PalaverEntry) => {
     workingEntry.value = e;
+};
+
+const handleEntryReaction = async (reactionKey: EmojiReactionKey) => {
+    try {
+        const updated = await togglePalaverEntryReaction(
+            workingEntry.value,
+            reactionKey
+        );
+        if (updated) syncEntryFromReaction(updated);
+        const reaction = getEmojiReactionOption(reactionKey);
+        await logInfo(`Reacted to palaver entry: ${workingEntry.value.id}`);
+        showAlert(
+            QUICK_SUCCESS([
+                "reaction updated successfully.",
+                `${reaction?.emoji || ""} ${reaction?.label || "reaction"}`,
+            ])
+        );
+    } catch (error) {
+        console.error(error);
+        await logError(
+            `Error reacting to palaver entry: ${workingEntry.value.id}`
+        );
+    }
 };
 
 const hasComments = computed(() => {
