@@ -21,6 +21,7 @@ export * from "./mentionUtils";
 export * from "./palaverUtils";
 export * from "./pastBookUtils";
 export * from "./proseUtils";
+export * from "./reactionUtils";
 export * from "./reviewUtils";
 export * from "./routerUtils";
 export * from "./sanitizeUser";

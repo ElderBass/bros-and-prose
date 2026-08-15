@@ -292,6 +292,7 @@ const buildProseEntry = (blurb?: string): ProseEntry => {
         userInfo: getUserInfo(loggedInUser.value),
         likes: [],
         dislikes: [],
+        reactions: {},
         comments: [],
     };
 };

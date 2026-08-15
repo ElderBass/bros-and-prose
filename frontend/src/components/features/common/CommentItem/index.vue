@@ -20,6 +20,11 @@
                     }}</span>
                 </div>
                 <div class="actions">
+                    <CommentReactionPills
+                        :comment="comment"
+                        :entryId="entryId"
+                        :clickable="!isGuestUser()"
+                    />
                     <ReactionActions
                         v-if="showReactionActions"
                         :comment="comment"
@@ -60,6 +65,7 @@ import { useDisplay } from "vuetify";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faReply } from "@fortawesome/free-solid-svg-icons";
 import type { Comment } from "@/types";
+import CommentReactionPills from "./CommentReactionPills.vue";
 import ReactionActions from "./ReactionActions.vue";
 import ReplyButton from "./ReplyButton.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";

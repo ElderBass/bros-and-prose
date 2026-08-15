@@ -17,8 +17,10 @@
                 </div>
                 <div class="actions">
                     <ProseCommentReactionPills
-                        v-if="showReactionPills"
+                        :entry="entry"
                         :comment="comment"
+                        :clickable="!isGuestUser()"
+                        @entry-updated="$emit('entry-updated', $event)"
                     />
                     <ProseCommentReactionActions
                         v-if="showActions"
@@ -73,13 +75,6 @@ const showActions = computed(() => {
     return (
         !isGuestUser() &&
         props.comment.userInfo.id !== useUserStore().loggedInUser.id
-    );
-});
-
-const showReactionPills = computed(() => {
-    return (
-        !isGuestUser() &&
-        props.comment.userInfo.id === useUserStore().loggedInUser.id
     );
 });
 

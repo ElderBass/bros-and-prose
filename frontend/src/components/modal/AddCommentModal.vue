@@ -64,6 +64,8 @@ import type { Comment } from "@/types";
 import { buildPalaverComment } from "@/utils";
 import MentionTextArea from "@/components/form/MentionTextArea.vue";
 
+const MAX_COMMENT_LENGTH = 600;
+
 const emit = defineEmits<{
     (e: "close"): void;
     (e: "submit", value: Comment): void;
@@ -116,14 +118,9 @@ const labelText = computed(() => {
     }
 });
 
-const maxLength = computed(() => {
-    if (props.maxCommentLength != null) return props.maxCommentLength;
-    return props.isItemComment ? 200 : 500;
-});
-
 const charCountLabel = computed(() => {
     const len = localComment.value.length;
-    const max = maxLength.value;
+    const max = MAX_COMMENT_LENGTH;
     if (max >= 50000) return `${len} characters`;
     return `${len}/${max}`;
 });
@@ -147,14 +144,14 @@ const textareaPlaceholder = computed(() => {
 const validationMessage = computed(() => {
     const text = localComment.value.trim();
     if (text.length < 3) return "minimum 3 characters";
-    if (text.length > maxLength.value)
-        return `maximum ${maxLength.value} characters`;
+    if (text.length > MAX_COMMENT_LENGTH)
+        return `maximum ${MAX_COMMENT_LENGTH} characters`;
     return "";
 });
 
 const canSubmitComment = computed(() => {
     const text = localComment.value.trim();
-    return text.length >= 3 && text.length <= maxLength.value;
+    return text.length >= 3 && text.length <= MAX_COMMENT_LENGTH;
 });
 
 const primaryButtonLabel = computed(() =>

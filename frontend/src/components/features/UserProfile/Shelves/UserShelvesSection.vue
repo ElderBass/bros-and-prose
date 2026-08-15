@@ -1,6 +1,7 @@
 <template>
     <div class="shelves-section">
         <ShelfTabs
+            :user="user"
             :currentlyReading="currentlyReading"
             :wantToRead="wantToRead"
             :haveRead="haveRead || []"
@@ -11,9 +12,10 @@
 
 <script setup lang="ts">
 import ShelfTabs from "./ShelfTabs.vue";
-import type { BookshelfBook } from "@/types";
+import type { BookshelfBook, User } from "@/types";
 
 defineProps<{
+    user: User;
     isLoggedInUser: boolean;
     currentlyReading: BookshelfBook[];
     wantToRead: BookshelfBook[];

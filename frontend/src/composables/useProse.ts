@@ -3,9 +3,18 @@ import { getFirebase } from "@/setup/firebaseClient";
 import { proseService } from "@/services";
 import { useProseStore } from "@/stores/prose";
 import { useUserStore } from "@/stores/user";
-import type { Comment, ProseEntry, ProseEntryMetadata } from "@/types";
+import type {
+    Comment,
+    EmojiReactionKey,
+    ProseEntry,
+    ProseEntryMetadata,
+} from "@/types";
 import { checkForUnreadProseEntries } from "@/utils/proseUtils";
-import { getMentionedUsers } from "@/utils";
+import {
+    getEmojiReactionOption,
+    getMentionedUsers,
+    toggleEmojiReaction,
+} from "@/utils";
 import { useLog } from "./useLog";
 
 let unsubscribe: (() => void) | null = null;
@@ -25,10 +34,6 @@ const sortProseEntries = (entries: ProseEntry[]) => {
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime()
         );
-};
-
-const getUniqueUsernames = (users: string[] = []) => {
-    return Array.from(new Set(users));
 };
 
 const getMentionMetadata = (text: string) => {
@@ -55,12 +60,20 @@ const buildCreateMetadata = (entry: ProseEntry): ProseEntryMetadata => {
 const buildReactionMetadata = (
     proseEntry: ProseEntry,
     target: ProseEntry | Comment,
-    updateType: "prose_like" | "prose_dislike" | "prose_comment"
+    updateType:
+        | "prose_like"
+        | "prose_dislike"
+        | "prose_reaction"
+        | "prose_comment",
+    reactionKey?: EmojiReactionKey
 ): ProseEntryMetadata => {
     const commentText =
         updateType === "prose_comment" && "text" in target
             ? target.text
             : undefined;
+    const reaction = reactionKey
+        ? getEmojiReactionOption(reactionKey)
+        : undefined;
 
     return {
         username: useUserStore().loggedInUser.username,
@@ -68,6 +81,8 @@ const buildReactionMetadata = (
         targetUsername: target.userInfo.username,
         targetUserEmail: target.userInfo.email,
         updateType,
+        reactionKey,
+        reactionEmoji: reaction?.emoji,
         text: commentText,
         mentionedUsers: commentText
             ? getMentionMetadata(commentText)
@@ -200,41 +215,24 @@ export const useProse = () => {
         return response.data;
     };
 
-    const updateProseItemLikesDislikes = async (
+    const updateProseItemReaction = async (
         proseEntry: ProseEntry,
         target: ProseEntry | Comment,
-        action: "like" | "dislike",
+        reactionKey: EmojiReactionKey,
         commentId?: string
     ) => {
         const loggedInUsername = useUserStore().loggedInUser.username;
 
         if (commentId) {
             const updatedComments = (proseEntry.comments || []).map(
-                (comment) => {
-                    if (comment.id !== commentId) return comment;
-                    if (action === "like") {
-                        return {
-                            ...comment,
-                            likes: getUniqueUsernames([
-                                ...(comment.likes || []),
-                                loggedInUsername,
-                            ]),
-                            dislikes: (comment.dislikes || []).filter(
-                                (username) => username !== loggedInUsername
-                            ),
-                        };
-                    }
-                    return {
-                        ...comment,
-                        dislikes: getUniqueUsernames([
-                            ...(comment.dislikes || []),
-                            loggedInUsername,
-                        ]),
-                        likes: (comment.likes || []).filter(
-                            (username) => username !== loggedInUsername
-                        ),
-                    };
-                }
+                (comment) =>
+                    comment.id === commentId
+                        ? toggleEmojiReaction(
+                              comment,
+                              reactionKey,
+                              loggedInUsername
+                          )
+                        : comment
             );
             return updateProseEntry(
                 {
@@ -244,40 +242,25 @@ export const useProse = () => {
                 buildReactionMetadata(
                     proseEntry,
                     target,
-                    action === "like" ? "prose_like" : "prose_dislike"
+                    "prose_reaction",
+                    reactionKey
                 )
             );
         }
 
-        const updatedEntry =
-            action === "like"
-                ? {
-                      ...proseEntry,
-                      likes: getUniqueUsernames([
-                          ...(proseEntry.likes || []),
-                          loggedInUsername,
-                      ]),
-                      dislikes: (proseEntry.dislikes || []).filter(
-                          (username) => username !== loggedInUsername
-                      ),
-                  }
-                : {
-                      ...proseEntry,
-                      dislikes: getUniqueUsernames([
-                          ...(proseEntry.dislikes || []),
-                          loggedInUsername,
-                      ]),
-                      likes: (proseEntry.likes || []).filter(
-                          (username) => username !== loggedInUsername
-                      ),
-                  };
+        const updatedEntry = toggleEmojiReaction(
+            proseEntry,
+            reactionKey,
+            loggedInUsername
+        );
 
         return updateProseEntry(
             updatedEntry,
             buildReactionMetadata(
                 proseEntry,
                 target,
-                action === "like" ? "prose_like" : "prose_dislike"
+                "prose_reaction",
+                reactionKey
             )
         );
     };
@@ -311,12 +294,27 @@ export const useProse = () => {
         return updateProseEntry(updatedEntry, metadata);
     };
 
+    const toggleProseEntryReaction = async (
+        entry: ProseEntry,
+        reactionKey: EmojiReactionKey
+    ) => {
+        return updateProseItemReaction(entry, entry, reactionKey);
+    };
+
+    const toggleProseCommentReaction = async (
+        entry: ProseEntry,
+        comment: Comment,
+        reactionKey: EmojiReactionKey
+    ) => {
+        return updateProseItemReaction(entry, comment, reactionKey, comment.id);
+    };
+
     const likeProseEntry = async (entry: ProseEntry) => {
-        return updateProseItemLikesDislikes(entry, entry, "like");
+        return toggleProseEntryReaction(entry, "thumbs_up");
     };
 
     const dislikeProseEntry = async (entry: ProseEntry) => {
-        return updateProseItemLikesDislikes(entry, entry, "dislike");
+        return toggleProseEntryReaction(entry, "thumbs_down");
     };
 
     const favoriteProseEntry = async (entry: ProseEntry) => {
@@ -328,16 +326,11 @@ export const useProse = () => {
     };
 
     const likeComment = async (entry: ProseEntry, comment: Comment) => {
-        return updateProseItemLikesDislikes(entry, comment, "like", comment.id);
+        return toggleProseCommentReaction(entry, comment, "thumbs_up");
     };
 
     const dislikeComment = async (entry: ProseEntry, comment: Comment) => {
-        return updateProseItemLikesDislikes(
-            entry,
-            comment,
-            "dislike",
-            comment.id
-        );
+        return toggleProseCommentReaction(entry, comment, "thumbs_down");
     };
 
     return {
@@ -347,6 +340,8 @@ export const useProse = () => {
         updateProseEntry,
         deleteProseEntry,
         addComment,
+        toggleProseEntryReaction,
+        toggleProseCommentReaction,
         likeProseEntry,
         dislikeProseEntry,
         favoriteProseEntry,

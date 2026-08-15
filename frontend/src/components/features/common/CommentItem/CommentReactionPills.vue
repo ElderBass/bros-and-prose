@@ -3,49 +3,39 @@
         :item="comment"
         size="xsmall"
         :clickable="clickable"
-        :filterReactors="isNotCommentAuthor"
         @select="handleReaction"
     />
 </template>
 
 <script setup lang="ts">
 import EmojiReactionPills from "@/components/features/common/EmojiReactionPills.vue";
-import type { Comment, EmojiReactionKey, ProseEntry } from "@/types";
+import type { Comment, EmojiReactionKey } from "@/types";
 import { QUICK_SUCCESS } from "@/constants";
-import { useProse } from "@/composables/useProse";
+import { usePalaver } from "@/composables/usePalaver";
 import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
 import { getEmojiReactionOption } from "@/utils";
 
 const props = defineProps<{
-    entry: ProseEntry;
     comment: Comment;
+    entryId: string;
     clickable?: boolean;
 }>();
 
-const emit = defineEmits<{
-    (e: "entry-updated", entry: ProseEntry): void;
-}>();
-
-const { toggleProseCommentReaction } = useProse();
+const { togglePalaverCommentReaction } = usePalaver();
 const { showAlert } = useUIStore();
 const { info: logInfo, error: logError } = useLog();
-
-const isNotCommentAuthor = (username: string) => {
-    return username !== props.comment.userInfo.username;
-};
 
 const handleReaction = async (reactionKey: EmojiReactionKey) => {
     if (!props.clickable) return;
     try {
-        const updated = await toggleProseCommentReaction(
-            props.entry,
+        await togglePalaverCommentReaction(
             props.comment,
+            props.entryId,
             reactionKey
         );
-        if (updated) emit("entry-updated", updated);
         const reaction = getEmojiReactionOption(reactionKey);
-        await logInfo(`Reacted to prose comment: ${props.comment.id}`);
+        await logInfo(`Reacted to comment: ${props.comment.id}`);
         showAlert(
             QUICK_SUCCESS([
                 "reaction updated successfully.",
@@ -54,7 +44,7 @@ const handleReaction = async (reactionKey: EmojiReactionKey) => {
         );
     } catch (error) {
         console.error(error);
-        await logError(`Error reacting to prose comment: ${props.comment.id}`);
+        await logError(`Error reacting to comment: ${props.comment.id}`);
     }
 };
 </script>

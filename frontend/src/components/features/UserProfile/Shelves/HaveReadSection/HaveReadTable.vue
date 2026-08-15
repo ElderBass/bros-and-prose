@@ -58,7 +58,10 @@
                         <HaveReadTableRow
                             :book="item as BookshelfBook"
                             :review="
-                                getReviewForBook((item as BookshelfBook).id)
+                                getBookReview(
+                                    props.reviewUser,
+                                    (item as BookshelfBook).id
+                                )
                             "
                             :isLoggedInUser="isLoggedInUser"
                             @open="openBookDetails(item as BookshelfBook)"
@@ -72,24 +75,24 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import type { BookshelfBook, Review, User } from "@/types";
+import type { BookshelfBook, User } from "@/types";
 import HaveReadTableRow from "./HaveReadTableRow.vue";
 import TableSearchInput from "./TableSearchInput.vue";
 import NoSearchMatches from "./NoSearchMatches.vue";
 import HeaderSortButton from "./HeaderSortButton.vue";
 import { useShelfModalStore } from "@/stores/shelfModal";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { getBookReview } from "@/utils";
 
 const props = withDefaults(
     defineProps<{
         books: BookshelfBook[];
-        reviewUser?: User | null;
+        reviewUser: User;
         heightPx?: number;
         isLoggedInUser?: boolean;
     }>(),
     {
         books: () => [],
-        reviewUser: null,
         heightPx: 400,
         isLoggedInUser: false,
     }
@@ -109,11 +112,6 @@ const openBookDetails = (book: BookshelfBook) => {
     useShelfModalStore().openBookDetails(book, "haveRead");
 };
 
-const getReviewForBook = (bookId: string): Review | null => {
-    if (!props.reviewUser) return null;
-    return props.reviewUser.reviews?.[bookId] ?? null;
-};
-
 const toggleSort = (key: SortKey) => {
     if (sortKey.value === key) {
         sortDir.value = sortDir.value === "asc" ? "desc" : "asc";
@@ -129,7 +127,7 @@ const ariaSort = (key: SortKey) => {
 };
 
 const getRatingValue = (bookId: string): number | null => {
-    const r = getReviewForBook(bookId);
+    const r = getBookReview(props.reviewUser, bookId);
     return r ? (r.rating ?? 0) : null;
 };
 

@@ -1,24 +1,32 @@
 <template>
     <div class="reaction-details">
-        <ReactionList v-if="likes.length" type="like" :reactions="likes" />
-        <ReactionList
-            v-if="dislikes.length"
-            type="dislike"
-            :reactions="dislikes"
+        <EmojiReactionPills
+            :item="entry"
+            size="small"
+            :clickable="clickable"
+            @select="emit('select', $event)"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-import ReactionList from "./ReactionList.vue";
+import EmojiReactionPills from "@/components/features/common/EmojiReactionPills.vue";
+import type { EmojiReactionKey, PalaverEntry } from "@/types";
 
-defineProps<{ likes: string[]; dislikes: string[] }>();
+defineProps<{
+    entry: PalaverEntry;
+    clickable?: boolean;
+}>();
+
+const emit = defineEmits<{
+    (e: "select", reactionKey: EmojiReactionKey): void;
+}>();
 </script>
 
 <style scoped>
 .reaction-details {
     display: flex;
-    flex-direction: column;
+    align-items: center;
     gap: 0.25rem;
     padding: 0.25rem;
 }

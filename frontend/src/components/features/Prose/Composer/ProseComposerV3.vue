@@ -31,12 +31,12 @@
                 <p class="format-hint">
                     attempt to justify why you birthed this monstrosity.
                 </p>
-                <textarea
+                <MentionTextArea
                     id="prose-context-v3"
                     v-model="context"
-                    class="context-textarea"
-                    rows="4"
-                    maxlength="600"
+                    label="prose context"
+                    :rows="4"
+                    :maxlength="600"
                     placeholder="a short context line or two..."
                 />
                 <p class="context-count">{{ contextCharCount }}/600</p>
@@ -347,6 +347,7 @@ const buildProseEntry = (): ProseEntry => {
         userInfo: getUserInfo(loggedInUser.value),
         likes: [],
         dislikes: [],
+        reactions: {},
         comments: [],
     };
 };
@@ -516,23 +517,6 @@ label {
 .format-hint strong {
     font-weight: 600;
     color: var(--accent-lavender);
-}
-
-.context-textarea {
-    width: 100%;
-    min-height: 4rem;
-    padding: 0.75rem 0.9rem;
-    border-radius: 0.5rem;
-    border: 1px solid color-mix(in srgb, var(--accent-blue) 55%, transparent);
-    background: rgba(255, 255, 255, 0.03);
-    color: var(--main-text);
-    line-height: 1.45;
-    resize: vertical;
-}
-
-.context-textarea:focus {
-    outline: none;
-    border-color: var(--accent-lavender);
 }
 
 .context-count {

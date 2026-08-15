@@ -9,14 +9,13 @@
         </div>
         <div class="cell reactions" @click.stop>
             <ReactionPill
-                type="like"
-                :count="entry.likes?.length ?? 0"
-                :reactors="entry.likes"
-            />
-            <ReactionPill
-                type="dislike"
-                :count="entry.dislikes?.length ?? 0"
-                :reactors="entry.dislikes"
+                v-for="reaction in reactionBuckets"
+                :key="reaction.key"
+                :type="reaction.key"
+                :emoji="reaction.emoji"
+                :label="reaction.label"
+                :count="reaction.reactors.length"
+                :reactors="reaction.reactors"
             />
             <ReactionPill
                 type="comment"
@@ -34,6 +33,7 @@ import type { ProseEntry } from "@/types";
 import ProseTypePill from "@/components/features/Prose/ProseTypePill.vue";
 import ReactionPill from "@/components/features/common/ReactionPill.vue";
 import { uniqueCommenterUsernames } from "@/utils/reactionDisplayUtils";
+import { getVisibleReactionBuckets } from "@/utils";
 
 const props = defineProps<{
     entry: ProseEntry;
@@ -42,6 +42,8 @@ const props = defineProps<{
 const commentUsernames = computed(() =>
     uniqueCommenterUsernames(props.entry.comments)
 );
+
+const reactionBuckets = computed(() => getVisibleReactionBuckets(props.entry));
 
 const createdAtLabel = computed(() => {
     const date = new Date(props.entry.createdAt);

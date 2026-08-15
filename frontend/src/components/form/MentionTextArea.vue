@@ -1,20 +1,23 @@
 <template>
-    <div class="mention-textarea-container">
+    <div class="mention-textarea-container" :style="containerStyle">
         <textarea
             ref="textareaRef"
             :id="id"
             class="mention-textarea"
-            :value="modelValue"
+            :value="modelValue ?? ''"
             @input="onInput"
             @keydown="onKeyDown"
             :aria-label="label"
             :placeholder="placeholder"
             :disabled="disabled"
             :rows="rows"
+            :maxlength="maxlength"
             :style="style"
         />
         <UserMentionDropdown
             v-if="showDropdown"
+            :users="filteredUsers"
+            :query="searchQuery"
             :selectedIndex="selectedIndex"
             :position="dropdownPosition"
             @select="onUserSelect"
@@ -24,7 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type CSSProperties, onMounted, onBeforeUnmount } from "vue";
+import {
+    computed,
+    ref,
+    type CSSProperties,
+    onMounted,
+    onBeforeUnmount,
+} from "vue";
 import type { User } from "@/types";
 import UserMentionDropdown from "@/components/ui/UserMentionDropdown.vue";
 import { useUserStore } from "@/stores/user";
@@ -32,18 +41,22 @@ import { storeToRefs } from "pinia";
 
 const props = withDefaults(
     defineProps<{
-        modelValue: string;
+        modelValue?: string;
         label: string;
         placeholder: string;
         id: string;
         disabled?: boolean;
         rows?: number;
-        style?: string | CSSProperties;
+        maxlength?: number | string;
+        style?: CSSProperties;
+        containerStyle?: CSSProperties;
     }>(),
     {
         disabled: false,
         rows: 5,
+        maxlength: undefined,
         style: undefined,
+        containerStyle: undefined,
     }
 );
 
@@ -59,6 +72,15 @@ const selectedIndex = ref(0);
 const dropdownPosition = ref({ top: 0, left: 0 });
 
 const { allUsersExceptCurrent: users } = storeToRefs(useUserStore());
+
+const filteredUsers = computed(() => {
+    const query = searchQuery.value.trim().toLowerCase();
+    if (!query) return users.value;
+
+    return users.value.filter((user) =>
+        user.username.toLowerCase().includes(query)
+    );
+});
 
 const getCaretCoordinates = (
     element: HTMLTextAreaElement,
@@ -133,6 +155,7 @@ const onInput = (e: Event) => {
         // Check if there's a space or newline after @, if so, close dropdown
         if (textAfterAt.includes(" ") || textAfterAt.includes("\n")) {
             showDropdown.value = false;
+            searchQuery.value = "";
             return;
         }
 
@@ -141,12 +164,11 @@ const onInput = (e: Event) => {
         searchQuery.value = textAfterAt;
         selectedIndex.value = 0;
 
-        if (!showDropdown.value) {
-            showDropdown.value = true;
-            updateDropdownPosition(el, cursorPos);
-        }
+        showDropdown.value = true;
+        updateDropdownPosition(el, cursorPos);
     } else {
         showDropdown.value = false;
+        searchQuery.value = "";
     }
 };
 
@@ -156,9 +178,13 @@ const onKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
         case "ArrowDown":
             e.preventDefault();
+            if (filteredUsers.value.length === 0) {
+                selectedIndex.value = 0;
+                return;
+            }
             selectedIndex.value = Math.min(
                 selectedIndex.value + 1,
-                users.value.length - 1
+                filteredUsers.value.length - 1
             );
             break;
         case "ArrowUp":
@@ -167,9 +193,16 @@ const onKeyDown = (e: KeyboardEvent) => {
             break;
         case "Enter":
         case "Tab":
-            if (users.value.length > 0) {
+            if (filteredUsers.value.length > 0) {
                 e.preventDefault();
-                onUserSelect(users.value[selectedIndex.value]);
+                const selectedUser =
+                    filteredUsers.value[
+                        Math.min(
+                            selectedIndex.value,
+                            filteredUsers.value.length - 1
+                        )
+                    ];
+                onUserSelect(selectedUser);
             }
             break;
         case "Escape":
@@ -182,7 +215,7 @@ const onKeyDown = (e: KeyboardEvent) => {
 const onUserSelect = (user: User) => {
     if (!textareaRef.value) return;
 
-    const currentValue = props.modelValue;
+    const currentValue = props.modelValue ?? "";
     const beforeMention = currentValue.substring(0, mentionStart.value);
     const afterCursor = currentValue.substring(
         textareaRef.value.selectionStart

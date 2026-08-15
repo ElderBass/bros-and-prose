@@ -9,7 +9,7 @@
         }"
         :initialValues="initialValues"
         :onSubmit="onSubmitInternal"
-        :dirtyKeys="['tags', 'description']"
+        :dirtyKeys="['tags', 'userBlurb']"
     >
         <template #actions="{ canSubmit, loading, detailsVisible }">
             <div v-if="detailsVisible && !loading" class="form-actions">
@@ -80,6 +80,7 @@ const initialValues = computed(() => {
             ),
             tags: formModal.value.futureBook.tags || [],
             description: formModal.value.futureBook.description || "",
+            userBlurb: formModal.value.futureBook.userBlurb || "",
             imageSrc: formModal.value.futureBook.imageSrc || "",
         };
     }
@@ -98,7 +99,7 @@ const onSubmitInternal = async (values: BookFormValues) => {
     if (isEdit.value && formModal.value?.futureBook) {
         futureBookToSubmit = {
             ...formModal.value.futureBook,
-            description: values.description,
+            userBlurb: values.userBlurb?.trim() || "",
             tags: values.tags,
         };
     } else {
@@ -108,6 +109,7 @@ const onSubmitInternal = async (values: BookFormValues) => {
             author: values.author,
             pages: values.pages,
             description: values.description,
+            userBlurb: values.userBlurb?.trim() || "",
             yearPublished: Number.isFinite(year) ? year : 0,
             imageSrc: values.imageSrc || "",
             tags: values.tags,

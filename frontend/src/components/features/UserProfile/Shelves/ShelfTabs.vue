@@ -21,6 +21,7 @@
 
         <template #haveRead>
             <HaveReadTabContent
+                :user="user"
                 :haveRead="haveRead"
                 :isLoggedInUser="isLoggedInUser"
             />
@@ -36,9 +37,10 @@ import TabsContainer, {
 import CurrentlyReadingTabContent from "./TabContent/CurrentlyReadingTabContent.vue";
 import WantToReadTabContent from "./TabContent/WantToReadTabContent.vue";
 import HaveReadTabContent from "./TabContent/HaveReadTabContent.vue";
-import type { BookshelfBook } from "@/types";
+import type { BookshelfBook, User } from "@/types";
 
 defineProps<{
+    user: User;
     currentlyReading: BookshelfBook[];
     wantToRead: BookshelfBook[];
     haveRead: BookshelfBook[];

@@ -1,25 +1,18 @@
 <template>
     <div class="reaction-actions">
-        <ReactionButton
-            v-for="reaction in REACTION_TYPES"
-            :key="reaction"
-            :type="reaction"
+        <ReactionMenu
+            :item="comment"
             :isChildComment="true"
-            :reactions="getReactions(reaction, comment)"
-            :onClick="() => handleReaction(reaction)"
+            @select="handleReaction"
         />
     </div>
 </template>
 
 <script setup lang="ts">
-import ReactionButton from "@/components/features/Palaver/PalaverListItem/ReactionButton.vue";
-import type { Comment, ProseEntry, ReactionType } from "@/types";
-import { REACTION_TYPES } from "@/constants";
-import {
-    LIKED_PROSE_COMMENT_SUCCESS_ALERT,
-    DISLIKED_PROSE_COMMENT_SUCCESS_ALERT,
-} from "@/constants";
-import { getReactions } from "@/utils";
+import ReactionMenu from "@/components/features/Palaver/PalaverListItem/ReactionMenu.vue";
+import type { Comment, EmojiReactionKey, ProseEntry } from "@/types";
+import { QUICK_SUCCESS } from "@/constants";
+import { getEmojiReactionOption } from "@/utils";
 import { useProse } from "@/composables/useProse";
 import { useLog } from "@/composables/useLog";
 import { useUIStore } from "@/stores/ui";
@@ -33,24 +26,25 @@ const emit = defineEmits<{
     (e: "entry-updated", entry: ProseEntry): void;
 }>();
 
-const { likeComment, dislikeComment } = useProse();
+const { toggleProseCommentReaction } = useProse();
 const { error: logError, info: logInfo } = useLog();
 const { showAlert } = useUIStore();
 
-const handleReaction = async (reaction: ReactionType) => {
+const handleReaction = async (reactionKey: EmojiReactionKey) => {
     try {
-        const updated =
-            reaction === "like"
-                ? await likeComment(props.entry, props.comment)
-                : await dislikeComment(props.entry, props.comment);
-        if (updated) emit("entry-updated", updated);
-        await logInfo(
-            `${reaction === "like" ? "Liked" : "Disliked"} prose comment: ${props.comment.id}`
+        const updated = await toggleProseCommentReaction(
+            props.entry,
+            props.comment,
+            reactionKey
         );
+        if (updated) emit("entry-updated", updated);
+        const reaction = getEmojiReactionOption(reactionKey);
+        await logInfo(`Reacted to prose comment: ${props.comment.id}`);
         showAlert(
-            reaction === "like"
-                ? LIKED_PROSE_COMMENT_SUCCESS_ALERT
-                : DISLIKED_PROSE_COMMENT_SUCCESS_ALERT
+            QUICK_SUCCESS([
+                "reaction updated successfully.",
+                `${reaction?.emoji || ""} ${reaction?.label || "reaction"}`,
+            ])
         );
     } catch (error) {
         console.error(error);

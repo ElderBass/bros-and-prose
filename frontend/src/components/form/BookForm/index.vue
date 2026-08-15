@@ -151,7 +151,7 @@ const showManualModeSuggestion = computed(() => {
 });
 
 const canSubmit = computed(() => {
-    if (isEditMode.value) return !isDirty.value;
+    if (isEditMode.value) return isDirty.value;
 
     const v = validationResolved.value;
     if (!book.value.title) return false;
