@@ -70,7 +70,7 @@
                 <span v-if="requireExtras" class="req">*</span>
                 <span v-else class="opt">(optional)</span>
             </label>
-            <BaseTextArea
+            <MentionTextArea
                 v-model="bookProxy.userBlurb"
                 :id="userBlurbId"
                 label="your blurb"

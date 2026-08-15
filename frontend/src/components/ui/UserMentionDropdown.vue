@@ -1,31 +1,40 @@
 <template>
     <div
-        v-if="users.length > 0"
         class="user-mention-dropdown"
+        :aria-label="
+            query
+                ? `user mention suggestions for ${query}`
+                : 'user mention suggestions'
+        "
         :style="{
             top: `${position.top}px`,
             left: `${position.left}px`,
         }"
     >
-        <div
-            v-for="(user, index) in users"
-            :key="user.id"
-            class="dropdown-item"
-            :class="{ selected: index === selectedIndex }"
-            @mousedown.prevent="handleSelect(user)"
-            @mouseenter="handleHover(index)"
-        >
-            <AvatarImage
-                :avatar="user.avatar"
-                :avatarType="user.avatarType || 'icon'"
-                size="xsmall"
-            />
-            <div class="user-info">
-                <span class="username">@{{ user.username }}</span>
-                <span class="fullname"
-                    >{{ user.firstName }} {{ user.lastName }}</span
-                >
+        <template v-if="users.length > 0">
+            <div
+                v-for="(user, index) in users"
+                :key="user.id"
+                class="dropdown-item"
+                :class="{ selected: index === selectedIndex }"
+                @mousedown.prevent="handleSelect(user)"
+                @mouseenter="handleHover(index)"
+            >
+                <AvatarImage
+                    :avatar="user.avatar"
+                    :avatarType="user.avatarType || 'icon'"
+                    size="xsmall"
+                />
+                <div class="user-info">
+                    <span class="username">@{{ user.username }}</span>
+                    <span class="fullname"
+                        >{{ user.firstName }} {{ user.lastName }}</span
+                    >
+                </div>
             </div>
+        </template>
+        <div v-else class="dropdown-empty" aria-live="polite">
+            no bros found, yo
         </div>
     </div>
 </template>
@@ -33,10 +42,10 @@
 <script setup lang="ts">
 import type { User } from "@/types";
 import AvatarImage from "./AvatarImage.vue";
-import { useUserStore } from "@/stores/user";
-import { storeToRefs } from "pinia";
 
 defineProps<{
+    users: User[];
+    query: string;
     selectedIndex: number;
     position: { top: number; left: number };
 }>();
@@ -45,8 +54,6 @@ const emit = defineEmits<{
     (e: "select", user: User): void;
     (e: "hover", index: number): void;
 }>();
-
-const { allUsersExceptCurrent: users } = storeToRefs(useUserStore());
 
 const handleSelect = (user: User) => {
     emit("select", user);
@@ -89,6 +96,14 @@ const handleHover = (index: number) => {
 .dropdown-item:hover,
 .dropdown-item.selected {
     background: color-mix(in srgb, var(--accent-blue) 15%, transparent);
+}
+
+.dropdown-empty {
+    padding: 0.75rem 0.875rem;
+    color: var(--main-text);
+    font-size: 0.95rem;
+    font-style: italic;
+    opacity: 0.75;
 }
 
 .user-info {

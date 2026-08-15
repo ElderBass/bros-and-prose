@@ -11,13 +11,13 @@
     </div>
     <div class="review-comment-input-container">
         <label for="review-comment-input"> got more to say? (optional) </label>
-        <textarea
-            rows="8"
+        <MentionTextArea
             v-model="reviewComment"
             id="review-comment-input"
-            class="review-comment-input"
+            label="review comment"
             placeholder="remember that brevity is the soul of wit, you twat..."
-            :disabled="false"
+            :rows="8"
+            :maxlength="600"
         />
     </div>
 </template>
@@ -89,23 +89,6 @@ const handleFavoriteToggle = () => {
     gap: 0.5rem;
 }
 
-.review-comment-input {
-    width: 100%;
-    height: 100%;
-    resize: none;
-    border: 2px solid var(--accent-blue);
-    border-radius: 0.5rem;
-    padding: 0.75rem;
-    font-family: "Crimson Text", serif;
-    font-size: 1.125rem;
-    color: var(--main-text);
-    background-color: var(--background-color);
-}
-
-.review-comment-input::placeholder {
-    font-style: italic;
-}
-
 label {
     font-size: 1.25rem;
     font-weight: 600;
@@ -117,10 +100,6 @@ label {
     .rating-and-favorite-container {
         flex-direction: column;
         gap: 0.75rem;
-    }
-
-    .review-comment-input {
-        font-size: 1rem;
     }
 
     label {

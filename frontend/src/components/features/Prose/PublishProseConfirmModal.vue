@@ -44,12 +44,12 @@
                 <label class="legacy-label" for="prose-confirm-blurb"
                     >give this piece (of shit) context, if ya want</label
                 >
-                <textarea
+                <MentionTextArea
                     id="prose-confirm-blurb"
                     v-model="blurb"
-                    class="legacy-textarea"
+                    label="prose blurb"
                     placeholder="a short blurb that gives readers context..."
-                    rows="3"
+                    :rows="3"
                 />
             </div>
         </div>
@@ -256,25 +256,6 @@ function onConfirm() {
 .legacy-label {
     font-size: 0.9rem;
     color: var(--accent-blue);
-}
-
-.legacy-textarea {
-    width: 100%;
-    min-height: 4rem;
-    padding: 0.6rem 0.7rem;
-    font-family: inherit;
-    font-size: 1rem;
-    line-height: 1.4;
-    color: var(--main-text);
-    background: var(--input-bg, rgba(255, 255, 255, 0.06));
-    border: 1px solid color-mix(in srgb, var(--accent-green) 40%, transparent);
-    border-radius: 0.5rem;
-    resize: vertical;
-}
-
-.legacy-textarea:focus {
-    outline: none;
-    border-color: var(--accent-green);
 }
 
 @media (min-width: 768px) {
