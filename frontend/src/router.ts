@@ -93,6 +93,21 @@ const router = createRouter({
             },
         },
         {
+            path: "/books/:bookId/review",
+            name: "book-review",
+            component: () =>
+                import("@/components/views/ReviewComposerView.vue"),
+            beforeEnter: (to, from, next) => {
+                if (isGuestUser()) {
+                    next({ path: "/present" });
+                } else if (!useUserStore().loggedInUser.id) {
+                    next({ name: "landing" });
+                } else {
+                    next();
+                }
+            },
+        },
+        {
             path: "/prose/:proseId",
             component: () => import("@/components/views/ProseDetailView.vue"),
         },

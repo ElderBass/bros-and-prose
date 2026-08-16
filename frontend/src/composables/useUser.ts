@@ -6,6 +6,7 @@ import type {
     ProgressUpdateMetadata,
     ShelfAddMetadata,
     SubmitReviewArgs,
+    UnfinishedReview,
     User,
 } from "@/types";
 import { useUserStore } from "@/stores/user";
@@ -125,6 +126,35 @@ export const useUser = () => {
         return updatedUser;
     };
 
+    const saveUnfinishedReview = async (
+        reviewArgs: SubmitReviewArgs,
+        book: Book | FutureBook | BookshelfBook
+    ) => {
+        const now = new Date().toISOString();
+        const existingDraft = loggedInUser.value?.unfinishedReviews?.[book.id];
+        const draft: UnfinishedReview = {
+            book: {
+                id: book.id,
+                title: book.title,
+                author: book.author,
+            },
+            rating: reviewArgs.rating,
+            reviewComment: reviewArgs.reviewComment,
+            savedAt: existingDraft?.savedAt ?? now,
+            ...(existingDraft ? { updatedAt: now } : {}),
+        };
+
+        return await patchUser(loggedInUser.value.id, {
+            [`unfinishedReviews/${book.id}`]: draft,
+        });
+    };
+
+    const clearUnfinishedReview = async (bookId: string) => {
+        return await patchUser(loggedInUser.value.id, {
+            [`unfinishedReviews/${bookId}`]: null,
+        });
+    };
+
     const addReview = async (
         reviewArgs: SubmitReviewArgs,
         book: Book | FutureBook | BookshelfBook
@@ -176,6 +206,8 @@ export const useUser = () => {
         patchUser,
         updateUserAvatar,
         updateUserUsername,
+        saveUnfinishedReview,
+        clearUnfinishedReview,
         addReview,
         updateUserProgress,
     };

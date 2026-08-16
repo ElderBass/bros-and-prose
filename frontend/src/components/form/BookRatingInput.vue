@@ -1,6 +1,9 @@
 <template>
     <div class="book-rating-input" :data-size="size">
-        <h6 v-if="!readOnly">how'd you like this book?</h6>
+        <div v-if="!readOnly" class="rating-header">
+            <h6>how'd you like this book?</h6>
+            <slot name="header-action" />
+        </div>
         <div class="book-rating-container">
             <div
                 v-for="book in 10"
@@ -100,11 +103,19 @@ const handleMouseLeave = () => {
     gap: 0.75rem;
 }
 
+.rating-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    margin-bottom: 0.5rem;
+}
+
 h6 {
     font-size: 1.25rem;
     color: var(--main-text);
     border-bottom: 1px solid var(--accent-blue);
-    margin-bottom: 0.5rem;
+    margin: 0;
     text-align: left;
 }
 
