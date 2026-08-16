@@ -15,6 +15,14 @@ export interface SubmitReviewArgs {
     reviewComment: string;
 }
 
+export interface UnfinishedReview {
+    book: BookInfo;
+    rating: number;
+    reviewComment: string;
+    savedAt: string;
+    updatedAt?: string;
+}
+
 export interface BroReview {
     reviewer: User;
     review: Review;

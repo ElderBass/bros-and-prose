@@ -21,6 +21,10 @@ export const useUserStore = defineStore("user", {
                 ? `${state.loggedInUser.firstName} ${state.loggedInUser.lastName}`
                 : "",
         currentUserReviews: (state) => state.loggedInUser?.reviews || {},
+        currentUserUnfinishedReviews: (state) =>
+            state.loggedInUser?.unfinishedReviews || {},
+        currentUserUnfinishedReviewCount: (state) =>
+            Object.keys(state.loggedInUser?.unfinishedReviews || {}).length,
         userIsFutureBookSelector: (state) =>
             state.loggedInUser?.id === state.futureBookSelector.id,
         getUserByUsername: (state) => (username: string) =>

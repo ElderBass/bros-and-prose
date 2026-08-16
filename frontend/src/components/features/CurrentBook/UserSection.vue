@@ -13,7 +13,7 @@
                         title="you can't fix stupid, but I suppose you can try"
                         :icon="faMarker"
                         :size="mobile ? 'small' : 'medium'"
-                        :handleClick="openReviewModal"
+                        :handleClick="goToReviewComposer"
                     />
                 </div>
                 <LoadingSpinner
@@ -24,24 +24,18 @@
                 <CurrentUserProgress
                     v-if="!hasFinishedBook && !loadingMessage.length"
                     :totalPages="book?.totalPages"
-                    :setShowReviewModal="setShowReviewModal"
+                    :setShowReviewModal="goToReviewComposer"
                     :handleUpdate="onUpdateProgress"
                 />
                 <CurrentBookUserReview
                     v-if="hasFinishedBook && !loadingMessage.length"
                     :rating="bookReview?.rating"
                     :comment="bookReview?.reviewComment"
-                    :showReviewModal="openReviewModal"
+                    :showReviewModal="goToReviewComposer"
                 />
             </BaseCard>
         </Transition>
     </div>
-    <UserRateAndReviewModal
-        :open="showReviewModal"
-        :book="book"
-        :reviewPrefill="bookReview"
-        @close="closeReviewModal"
-    />
     <AddCommentModal
         v-if="showAddCommentModal"
         :open="showAddCommentModal"
@@ -55,11 +49,11 @@
 import { useDisplay } from "vuetify";
 import CurrentUserProgress from "./UserProgress.vue";
 import CurrentBookUserReview from "./UserReview.vue";
-import UserRateAndReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
 import { faMarker } from "@fortawesome/free-solid-svg-icons";
 import { useUserStore } from "@/stores/user";
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import {
     DEFAULT_REVIEW,
     FINISHED_BOOK_PROGRESS,
@@ -79,19 +73,21 @@ const props = defineProps<{
 const { loggedInUser } = storeToRefs(useUserStore());
 const { updateUserProgress } = useUser();
 const { createPalaverEntry } = usePalaver();
+const router = useRouter();
 
 const { mobile } = useDisplay();
 const { showAlert } = useUIStore();
 
 const loadingMessage = ref("");
 const showAddCommentModal = ref(false);
-const showReviewModal = ref(false);
 
-const setShowReviewModal = (show: boolean) => {
-    showReviewModal.value = show;
+const goToReviewComposer = () => {
+    router.push({
+        name: "book-review",
+        params: { bookId: props.book.id },
+        query: { source: "current", returnTo: "/present" },
+    });
 };
-const closeReviewModal = () => (showReviewModal.value = false);
-const openReviewModal = () => (showReviewModal.value = true);
 const setShowAddCommentModal = (show: boolean) => {
     showAddCommentModal.value = show;
 };
@@ -109,7 +105,7 @@ const onUpdateProgress = async (updatedProgress: number) => {
     loadingMessage.value = "";
 
     if (updatedProgress === props.book.totalPages) {
-        openReviewModal();
+        goToReviewComposer();
     } else {
         setShowAddCommentModal(true);
     }
