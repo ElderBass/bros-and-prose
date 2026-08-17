@@ -26,12 +26,40 @@ export const getEmojiReactionOption = (reactionKey: EmojiReactionKey) => {
     return EMOJI_REACTIONS.find((reaction) => reaction.key === reactionKey);
 };
 
+const getReactionUsernames = (value: unknown): string[] => {
+    if (Array.isArray(value)) {
+        return value.map(String).filter(Boolean);
+    }
+
+    if (typeof value === "string") {
+        return [value].filter(Boolean);
+    }
+
+    if (!value || typeof value !== "object") {
+        return [];
+    }
+
+    const entries = Object.entries(value);
+    const usernamesFromValues = entries
+        .map(([, reactor]) => reactor)
+        .filter((reactor): reactor is string => typeof reactor === "string");
+
+    if (usernamesFromValues.length > 0) {
+        return usernamesFromValues.filter(Boolean);
+    }
+
+    return entries
+        .filter(([, isReacted]) => Boolean(isReacted))
+        .map(([username]) => username)
+        .filter(Boolean);
+};
+
 const getLegacyReactors = (
     item: ReactionSource,
     reactionKey: EmojiReactionKey
 ) => {
     const legacyField = LEGACY_REACTION_KEY_MAP[reactionKey];
-    return legacyField ? item[legacyField] || [] : [];
+    return legacyField ? getReactionUsernames(item[legacyField]) : [];
 };
 
 export const normalizeEmojiReactions = (
@@ -39,7 +67,7 @@ export const normalizeEmojiReactions = (
 ): EmojiReactions => {
     return EMOJI_REACTIONS.reduce<EmojiReactions>((acc, reaction) => {
         const reactors = getUniqueUsernames([
-            ...(item.reactions?.[reaction.key] || []),
+            ...getReactionUsernames(item.reactions?.[reaction.key]),
             ...getLegacyReactors(item, reaction.key),
         ]);
 
