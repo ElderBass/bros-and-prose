@@ -3,7 +3,7 @@ import type {
     IconPrefix,
     IconName,
 } from "@fortawesome/fontawesome-svg-core";
-import type { Review } from "./review";
+import type { Review, UnfinishedReview } from "./review";
 import type { BookshelfBook } from "./books";
 import type { ProseEntry } from "./prose";
 
@@ -19,6 +19,9 @@ export interface User {
     avatarType?: "icon" | "image"; // Type of avatar: icon (FontAwesome) or image (uploaded file)
     reviews: {
         [key: string]: Review;
+    };
+    unfinishedReviews?: {
+        [key: string]: UnfinishedReview;
     };
     role: "admin" | "user";
     currentlyReading?: BookshelfBook[];

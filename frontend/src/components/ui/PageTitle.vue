@@ -19,7 +19,7 @@ withDefaults(
 
 <style scoped>
 .page-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: var(--main-text);
     font-weight: 600;
     text-align: center;
@@ -29,7 +29,7 @@ withDefaults(
 
 @media (min-width: 768px) {
     .page-title {
-        font-size: 1.75rem;
+        font-size: 1.5rem;
     }
 }
 </style>

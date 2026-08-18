@@ -6,6 +6,8 @@ export const sanitizeUser = (user: User): User => {
     return {
         ...user,
         avatarType: user.avatarType || "icon", // Default to icon for existing users
+        reviews: user.reviews || {},
+        unfinishedReviews: user.unfinishedReviews || {},
         currentlyReading: sanitizeBookshelfBooks(currentlyReading),
         haveRead: sanitizeBookshelfBooks(haveRead),
         wantToRead: sanitizeBookshelfBooks(wantToRead),

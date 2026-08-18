@@ -122,10 +122,12 @@ const PATCH_ALLOWED_TOP_KEYS = new Set([
     "wantToRead",
     "haveRead",
     "favorites",
+    "unfinishedReviews",
 ]);
 
 const PATCH_ALLOWED_PREFIXES = [
     "reviews/",
+    "unfinishedReviews/",
     "bookProgress/",
     "favorites/",
 ];

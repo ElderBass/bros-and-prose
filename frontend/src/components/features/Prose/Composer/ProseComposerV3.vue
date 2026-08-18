@@ -50,20 +50,11 @@
                     break; <strong>Enter twice</strong> makes a new paragraph;
                     <strong>Tab</strong> adds indentation.
                 </p>
-                <div class="tools-wrapper">
-                    <ComposerToolbar v-if="editor" :editor="editor" />
-                    <p v-if="lastSavedLabel && !isEdit" class="autosave-status">
-                        saved that shit for ya bud {{ lastSavedLabel }}
-                    </p>
-                </div>
-                <div class="editor-area" @click="focusEditor">
-                    <editor-content
-                        v-if="editor"
-                        :editor="editor"
-                        class="editor-content-host"
-                    />
-                    <div v-else class="editor-loading">loading editor…</div>
-                </div>
+                <CommonComposerEditor
+                    v-model="markdown"
+                    placeholder="write your prose... Enter for line break, Enter twice for paragraph, Tab for indent."
+                    :autosave-label="autosaveLabel"
+                />
             </div>
 
             <ComposerActions
@@ -93,24 +84,11 @@
 </template>
 
 <script setup lang="ts">
-import { Extension, type Editor as CoreEditor } from "@tiptap/core";
-import Link from "@tiptap/extension-link";
-import { Markdown } from "@tiptap/markdown";
-import Placeholder from "@tiptap/extension-placeholder";
-import StarterKit from "@tiptap/starter-kit";
-import { EditorContent, useEditor } from "@tiptap/vue-3";
 import { storeToRefs } from "pinia";
 import { v4 as uuidv4 } from "uuid";
-import {
-    computed,
-    nextTick,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-    watch,
-} from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import ComposerActions from "@/components/features/Prose/Composer/ComposerActions.vue";
-import ComposerToolbar from "@/components/features/Prose/Composer/ComposerToolbar.vue";
+import CommonComposerEditor from "@/components/features/Composer/CommonComposerEditor.vue";
 import ProseTypePillPicker from "@/components/features/Prose/Composer/ProseTypePillPicker.vue";
 import PublishProseConfirmModal from "@/components/features/Prose/PublishProseConfirmModal.vue";
 import { PUBLISHED_PROSE_ENTRY_SUCCESS_ALERT, QUICK_ERROR } from "@/constants";
@@ -126,19 +104,7 @@ import {
     getUserInfo,
     setProseDraft,
 } from "@/utils";
-import { PROSE_MARKDOWN_INDENTATION } from "@/utils/proseMarkedConfig";
 import { useRoute, useRouter } from "vue-router";
-
-const INDENT_TOKEN = "\u00A0\u00A0\u00A0\u00A0";
-
-const ProseV3Shortcuts = Extension.create({
-    name: "proseV3Shortcuts",
-    addKeyboardShortcuts() {
-        return {
-            Tab: () => this.editor.commands.insertContent(INDENT_TOKEN),
-        };
-    },
-});
 
 const route = useRoute();
 const router = useRouter();
@@ -176,10 +142,8 @@ const draftRestored = ref(false);
 const lastSavedAt = ref("");
 const editEntry = ref<ProseEntry | null>(null);
 const showPublishConfirm = ref(false);
-const dataLoaded = ref(false);
 
 let draftSaveTimeout: ReturnType<typeof setTimeout> | null = null;
-let markdownSyncTimeout: ReturnType<typeof setTimeout> | null = null;
 
 const typeOptions = [
     { label: "creative", value: "creative" },
@@ -189,66 +153,6 @@ const typeOptions = [
 ] as const;
 
 const getMarkdownForSave = (): string => markdown.value.trimEnd();
-
-function getMarkdownFromEditor(ed: CoreEditor): string {
-    const withMd = ed as unknown as { getMarkdown?: () => string };
-    return withMd.getMarkdown?.() ?? "";
-}
-
-function scheduleMarkdownSync(ed: CoreEditor) {
-    if (markdownSyncTimeout) clearTimeout(markdownSyncTimeout);
-    markdownSyncTimeout = setTimeout(() => {
-        markdown.value = getMarkdownFromEditor(ed);
-        markdownSyncTimeout = null;
-    }, 400);
-}
-
-const editor = useEditor({
-    extensions: [
-        StarterKit.configure({
-            heading: false,
-            blockquote: false,
-            bulletList: false,
-            orderedList: false,
-            listItem: false,
-            code: false,
-            codeBlock: false,
-            horizontalRule: false,
-            strike: false,
-        }),
-        Markdown.configure({
-            indentation: PROSE_MARKDOWN_INDENTATION,
-            markedOptions: {
-                gfm: true,
-                breaks: true,
-            },
-        }),
-        Link.configure({
-            openOnClick: false,
-            autolink: true,
-            defaultProtocol: "https",
-            HTMLAttributes: {
-                class: "prose-editor-link",
-            },
-        }),
-        Placeholder.configure({
-            placeholder:
-                "write your prose… Enter for line break, Enter twice for paragraph, Tab for indent.",
-        }),
-        ProseV3Shortcuts,
-    ],
-    content: "",
-    contentType: "markdown",
-    editorProps: {
-        attributes: {
-            class: "tiptap-prose-mirror",
-            spellcheck: "true",
-        },
-    },
-    onUpdate: ({ editor: ed }) => {
-        scheduleMarkdownSync(ed);
-    },
-});
 
 const validationMessage = computed(() => {
     const trimmedTitle = title.value.trim();
@@ -282,6 +186,12 @@ const lastSavedLabel = computed(() => {
     }
 });
 
+const autosaveLabel = computed(() =>
+    lastSavedLabel.value && !isEdit.value
+        ? `saved that shit for ya bud ${lastSavedLabel.value}`
+        : ""
+);
+
 const saveDraft = () => {
     if (isEdit.value || submitting.value) return;
     const hasDraftContent =
@@ -311,27 +221,11 @@ watch([title, type, context, markdown], () => {
     draftSaveTimeout = setTimeout(saveDraft, 500);
 });
 
-watch(
-    [editor, dataLoaded],
-    ([ed, loaded]) => {
-        if (!ed || !loaded) return;
-        ed.commands.setContent(markdown.value || "", {
-            contentType: "markdown",
-        });
-    },
-    { flush: "post" }
-);
-
 onBeforeUnmount(() => {
     if (draftSaveTimeout) {
         clearTimeout(draftSaveTimeout);
         draftSaveTimeout = null;
     }
-    if (markdownSyncTimeout) {
-        clearTimeout(markdownSyncTimeout);
-        markdownSyncTimeout = null;
-    }
-    editor.value?.destroy();
 });
 
 const getExcerptForSave = (): string => context.value.trim();
@@ -367,16 +261,8 @@ const onCancel = () => {
     router.back();
 };
 
-const focusEditor = () => {
-    editor.value?.chain().focus().run();
-};
-
 function openPublishConfirm() {
     if (submitDisabled.value) return;
-    const ed = editor.value;
-    if (ed) {
-        markdown.value = getMarkdownFromEditor(ed);
-    }
     showPublishConfirm.value = true;
 }
 
@@ -430,7 +316,6 @@ function handlePublishConfirm() {
 }
 
 onMounted(async () => {
-    dataLoaded.value = false;
     if (isEdit.value && proseId.value) {
         const stored = entries.value.find((e) => e.id === proseId.value);
         if (stored) {
@@ -474,8 +359,6 @@ onMounted(async () => {
             context.value = prosePromptContextPrefill.value;
         }
     }
-    await nextTick();
-    dataLoaded.value = true;
 });
 </script>
 
@@ -525,90 +408,5 @@ label {
     font-size: 0.78rem;
     opacity: 0.7;
     padding-right: 0.2rem;
-}
-
-.tools-wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.editor-area {
-    min-height: 480px;
-    border: 2px solid var(--accent-blue);
-    border-radius: 0.5rem;
-    background-color: var(--background-color);
-    box-sizing: border-box;
-    transition: border-color 0.2s ease;
-    padding: 0.5rem;
-}
-
-.editor-area:focus-within {
-    border-color: var(--accent-lavender);
-}
-
-.editor-content-host {
-    min-height: 360px;
-}
-
-.editor-loading {
-    min-height: 360px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.7;
-    font-style: italic;
-}
-
-.autosave-status {
-    margin: 0;
-    font-size: 0.82rem;
-    color: var(--main-text);
-    opacity: 0.72;
-    text-align: right;
-}
-
-::deep(.tiptap-prose-mirror) {
-    outline: none;
-    min-height: 320px;
-    padding: 1.1rem 1.2rem;
-    font-family: "Crimson Text", serif;
-    font-size: 1.125rem;
-    line-height: 1.6;
-    color: var(--main-text);
-}
-
-::deep(.tiptap-prose-mirror p.is-editor-empty:first-child::before) {
-    content: attr(data-placeholder);
-    float: left;
-    color: var(--main-text);
-    opacity: 0.45;
-    pointer-events: none;
-    height: 0;
-}
-
-::deep(.tiptap-prose-mirror p) {
-    margin: 0 0 0.5rem;
-}
-
-::deep(.tiptap-prose-mirror a) {
-    color: var(--accent-fuschia);
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-@media (max-width: 768px) {
-    ::deep(.tiptap-prose-mirror) {
-        font-size: 1rem;
-        min-height: 280px;
-    }
-
-    .editor-area,
-    .editor-content-host,
-    .editor-loading {
-        min-height: 360px;
-    }
 }
 </style>

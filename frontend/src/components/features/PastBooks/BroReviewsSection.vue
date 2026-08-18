@@ -28,31 +28,25 @@
         :brosReview="selectedBroReview"
         :onClose="() => setShowOtherBroReviewModal(false)"
     />
-    <UserReviewModal
-        v-if="showUserReviewModal"
-        :open="showUserReviewModal"
-        :book="book"
-        :reviewPrefill="selectedBroReview"
-        @close="() => setShowUserReviewModal(false)"
-    />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
+import { useRouter } from "vue-router";
 import type { Book, BroReview, Review, User } from "@/types";
 import BroProgressItem from "../common/BroProgressItem.vue";
 import OtherBroReviewModal from "@/components/modal/OtherBroReviewModal.vue";
-import UserReviewModal from "@/components/modal/UserRateAndReviewModal.vue";
 import { getRatingReviewString } from "@/utils";
 import { useUserStore } from "@/stores/user";
 
 const { loggedInUser } = storeToRefs(useUserStore());
 
 const { mobile } = useDisplay();
+const router = useRouter();
 
-defineProps<{
+const props = defineProps<{
     book: Book;
     broReviews: BroReview[];
 }>();
@@ -60,21 +54,19 @@ defineProps<{
 const showOtherBroReviewModal = ref(false);
 const selectedBroName = ref("");
 const selectedBroReview = ref({} as Review);
-const showUserReviewModal = ref(false);
 const loggedInUserName = ref("");
 
 const setShowOtherBroReviewModal = (value: boolean) => {
     showOtherBroReviewModal.value = value;
 };
 
-const setShowUserReviewModal = (show: boolean) => {
-    showUserReviewModal.value = show;
-};
-
 const onPeepReviewClick = (broReview: BroReview) => {
     if (loggedInUserName.value === broReview.reviewer?.username) {
-        selectedBroReview.value = broReview.review;
-        setShowUserReviewModal(true);
+        router.push({
+            name: "book-review",
+            params: { bookId: props.book.id },
+            query: { returnTo: `/past/${props.book.id}` },
+        });
     } else {
         selectedBroName.value = broReview.reviewer?.username;
         selectedBroReview.value = broReview.review;

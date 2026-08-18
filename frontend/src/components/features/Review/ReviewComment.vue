@@ -1,7 +1,11 @@
 <template>
     <div class="review-comment-section" v-if="comment">
         <p class="review-comment-text">what {{ reviewer }} said</p>
-        <ExpandableText :text="comment" />
+        <ExpandableText :text="comment">
+            <template #default="{ displayText }">
+                <MarkdownContentV3 :markdown="displayText" />
+            </template>
+        </ExpandableText>
     </div>
     <div v-else class="no-comment-section">
         <p class="no-comment-text">{{ reviewer }} ain't said shit, boi</p>
@@ -11,6 +15,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ExpandableText from "@/components/features/common/ExpandableText.vue";
+import MarkdownContentV3 from "@/components/features/common/MarkdownContentV3.vue";
 
 const props = defineProps<{
     comment: string;
