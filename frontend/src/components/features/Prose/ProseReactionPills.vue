@@ -2,6 +2,7 @@
     <div class="reaction-pills">
         <EmojiReactionPills
             :item="reactionSource"
+            :size="size"
             :clickable="clickable"
             :disabled="disabled"
             @select="emit('select', $event)"
@@ -10,11 +11,13 @@
             type="favorite"
             :count="favoritesList.length"
             :reactors="favoritesList"
+            :size="size"
         />
         <ReactionPill
             type="comment"
             :count="commentsList.length"
             :reactors="commentUsernames"
+            :size="size"
         />
     </div>
 </template>
@@ -32,6 +35,7 @@ const props = defineProps<{
     dislikes?: string[];
     favorites?: string[];
     comments?: Comment[];
+    size?: "xsmall" | "small" | "medium";
     clickable?: boolean;
     disabled?: boolean;
 }>();

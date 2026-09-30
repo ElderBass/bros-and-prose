@@ -41,7 +41,11 @@
         </div>
 
         <div class="footer-row">
-            <ProseReactionPills v-if="!compact" :entry="entry" />
+            <ProseReactionPills
+                v-if="!compact"
+                :entry="entry"
+                :size="mobile ? 'small' : 'medium'"
+            />
             <RouterLink v-if="!compact" :to="`/prose/${entry.id}`">
                 <BaseButton
                     :size="mobile ? 'xsmall' : 'small'"
