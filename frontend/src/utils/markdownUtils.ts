@@ -49,3 +49,12 @@ export const getPlainTextFromMarkdown = (markdown: string): string => {
         .replace(/\s+/g, " ")
         .trim();
 };
+
+const WORDS_PER_MINUTE = 200;
+
+export const getReadingTimeMinutes = (markdown: string): number => {
+    const text = getPlainTextFromMarkdown(markdown);
+    if (!text) return 0;
+    const wordCount = text.split(" ").length;
+    return Math.max(1, Math.round(wordCount / WORDS_PER_MINUTE));
+};
