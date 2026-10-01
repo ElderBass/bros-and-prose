@@ -1,46 +1,54 @@
 <template>
-    <ul class="prose-stats" :class="{ compact }">
-        <li
-            v-if="reactionTotal > 0"
-            class="stat"
-            :title="`${reactionTotal} reactions`"
-        >
-            <span class="emoji-stack" aria-hidden="true">
-                <span
-                    v-for="reaction in topReactions"
-                    :key="reaction.key"
-                    class="emoji-icon"
-                >
-                    {{ reaction.emoji }}
-                </span>
-            </span>
-            <span>{{ reactionTotal }}</span>
-        </li>
-        <li
-            v-if="commentCount > 0"
-            class="stat stat-comment"
-            :title="`${commentCount} comments`"
-        >
-            <FontAwesomeIcon :icon="faComment" class="stat-icon" />
-            <span>{{ commentCount }}</span>
-        </li>
-        <li
-            v-if="favoriteCount > 0"
-            class="stat"
-            :title="`${favoriteCount} favorites`"
-        >
-            <FontAwesomeIcon :icon="faHeart" class="stat-icon" />
-            <span>{{ favoriteCount }}</span>
-        </li>
-        <li v-if="readingMinutes > 0" class="stat">
-            {{ readingMinutes }} min read
-        </li>
-    </ul>
+    <v-menu
+        :disabled="mobile"
+        :open-on-hover="true"
+        :open-on-click="false"
+        :close-on-content-click="true"
+        location="bottom"
+        :offset="8"
+        content-class="prose-engagement-menu-overlay"
+        transition="scale-transition"
+    >
+        <template #activator="{ props: menuActivatorProps }">
+            <ul
+                v-bind="menuActivatorProps"
+                class="prose-stats"
+                :class="{ compact }"
+            >
+                <li v-if="reactionTotal > 0" class="stat">
+                    <span class="emoji-stack" aria-hidden="true">
+                        <span
+                            v-for="reaction in topReactions"
+                            :key="reaction.key"
+                            class="emoji-icon"
+                        >
+                            {{ reaction.emoji }}
+                        </span>
+                    </span>
+                    <span>{{ reactionTotal }}</span>
+                </li>
+                <li v-if="commentCount > 0" class="stat stat-comment">
+                    <FontAwesomeIcon :icon="faComment" class="stat-icon" />
+                    <span>{{ commentCount }}</span>
+                </li>
+                <li v-if="favoriteCount > 0" class="stat">
+                    <FontAwesomeIcon :icon="faHeart" class="stat-icon" />
+                    <span>{{ favoriteCount }}</span>
+                </li>
+                <li v-if="readingMinutes > 0" class="stat">
+                    {{ readingMinutes }} min read
+                </li>
+            </ul>
+        </template>
+        <ProseEngagementHoverCard :entry="entry" />
+    </v-menu>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useDisplay } from "vuetify";
 import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
+import ProseEngagementHoverCard from "./ProseEngagementHoverCard.vue";
 import type { ProseEntry } from "@/types";
 import { getReadingTimeMinutes, getVisibleReactionBuckets } from "@/utils";
 
@@ -50,6 +58,8 @@ const props = defineProps<{
     entry: ProseEntry;
     compact?: boolean;
 }>();
+
+const { mobile } = useDisplay();
 
 const reactionBuckets = computed(() =>
     [...getVisibleReactionBuckets(props.entry)].sort(
@@ -111,7 +121,7 @@ const readingMinutes = computed(() =>
 .emoji-stack {
     display: inline-flex;
     align-items: center;
-    opacity: 0.72;
+    opacity: 0.9;
 }
 
 .emoji-icon {
@@ -136,5 +146,11 @@ const readingMinutes = computed(() =>
     .stat + .stat::before {
         margin: 0 0.4rem;
     }
+}
+</style>
+
+<style>
+.prose-engagement-menu-overlay {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
 }
 </style>

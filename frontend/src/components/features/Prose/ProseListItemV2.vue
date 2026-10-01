@@ -27,7 +27,7 @@
         </div>
 
         <h3 class="prose-title">
-            <RouterLink :to="`/prose/${entry.id}`" class="prose-title-link">
+            <RouterLink :to="entryPath" class="prose-title-link">
                 {{ entry.title }}
             </RouterLink>
         </h3>
@@ -35,7 +35,9 @@
         <p v-if="blurb" class="prose-blurb">{{ blurb }}</p>
 
         <div class="footer-row">
-            <ProseListItemStats :entry="entry" :compact="compact" />
+            <div class="stats-hit-area" @click="openEntry">
+                <ProseListItemStats :entry="entry" :compact="compact" />
+            </div>
             <span class="read-cue" aria-hidden="true">
                 read
                 <span class="read-arrow">&rarr;</span>
@@ -47,7 +49,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useDisplay } from "vuetify";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import ProseTypePill from "./ProseTypePill.vue";
 import ProseListItemStats from "./ProseListItemStats.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
@@ -61,6 +63,17 @@ const props = defineProps<{
 }>();
 
 const { mobile } = useDisplay();
+const router = useRouter();
+
+const entryPath = computed(() => `/prose/${props.entry.id}`);
+
+function openEntry(event: MouseEvent) {
+    if (event.metaKey || event.ctrlKey) {
+        window.open(router.resolve(entryPath.value).href, "_blank");
+        return;
+    }
+    router.push(entryPath.value);
+}
 
 const createdAtLabel = computed(() => {
     const date = new Date(props.entry.createdAt);
@@ -185,6 +198,13 @@ const cardSize = computed(() => {
     justify-content: space-between;
     gap: 0.75rem;
     margin-top: 0.25rem;
+}
+
+.stats-hit-area {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    cursor: pointer;
 }
 
 .read-cue {
