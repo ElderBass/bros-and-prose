@@ -1,6 +1,11 @@
 <template>
     <section class="comments-section">
-        <p class="section-title">feedback</p>
+        <p class="section-title">
+            feedback
+            <span v-if="comments.length" class="section-count">
+                · {{ comments.length }}
+            </span>
+        </p>
 
         <p v-if="!comments.length" class="empty-copy">
             no feedback yet - be the first to tell bro he's trash.
@@ -335,6 +340,12 @@ defineExpose({
     margin: 0;
     color: var(--accent-lavender);
     font-size: 1.15rem;
+}
+
+.section-count {
+    color: var(--main-text);
+    opacity: 0.55;
+    font-size: 0.95rem;
 }
 
 .empty-copy {

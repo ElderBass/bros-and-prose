@@ -1,8 +1,8 @@
 <template>
     <v-menu
-        :disabled="mobile"
-        :open-on-hover="true"
-        :open-on-click="false"
+        :disabled="mobile && !tapToOpenOnMobile"
+        :open-on-hover="!mobile"
+        :open-on-click="mobile"
         :close-on-content-click="true"
         location="bottom"
         :offset="8"
@@ -35,8 +35,11 @@
                     <FontAwesomeIcon :icon="faHeart" class="stat-icon" />
                     <span>{{ favoriteCount }}</span>
                 </li>
-                <li v-if="readingMinutes > 0" class="stat">
+                <li v-if="showReadingTime && readingMinutes > 0" class="stat">
                     {{ readingMinutes }} min read
+                </li>
+                <li v-if="!hasEngagement && $slots.empty" class="stat">
+                    <slot name="empty" />
                 </li>
             </ul>
         </template>
@@ -54,10 +57,20 @@ import { getReadingTimeMinutes, getVisibleReactionBuckets } from "@/utils";
 
 const MAX_STACKED_EMOJIS = 3;
 
-const props = defineProps<{
-    entry: ProseEntry;
-    compact?: boolean;
-}>();
+const props = withDefaults(
+    defineProps<{
+        entry: ProseEntry;
+        compact?: boolean;
+        showReadingTime?: boolean;
+        /** Open the engagement card on tap when hover isn't available. */
+        tapToOpenOnMobile?: boolean;
+    }>(),
+    {
+        compact: false,
+        showReadingTime: true,
+        tapToOpenOnMobile: false,
+    }
+);
 
 const { mobile } = useDisplay();
 
@@ -77,6 +90,12 @@ const reactionTotal = computed(() =>
 
 const commentCount = computed(() => props.entry.comments?.length ?? 0);
 const favoriteCount = computed(() => props.entry.favorites?.length ?? 0);
+const hasEngagement = computed(
+    () =>
+        reactionTotal.value > 0 ||
+        commentCount.value > 0 ||
+        favoriteCount.value > 0
+);
 const readingMinutes = computed(() =>
     getReadingTimeMinutes(props.entry.markdown || "")
 );
@@ -121,7 +140,7 @@ const readingMinutes = computed(() =>
 .emoji-stack {
     display: inline-flex;
     align-items: center;
-    opacity: 0.9;
+    opacity: 0.95;
 }
 
 .emoji-icon {
