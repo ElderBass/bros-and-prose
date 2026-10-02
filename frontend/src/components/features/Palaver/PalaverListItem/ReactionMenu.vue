@@ -8,26 +8,33 @@
         :close-on-content-click="false"
     >
         <template #activator="{ props: menuActivatorProps }">
-            <div class="menu-trigger-wrapper">
-                <button
-                    v-bind="menuActivatorProps"
-                    class="reaction-menu-trigger"
-                    :class="[
-                        `size-${buttonSize}`,
-                        { selected: userHasReacted },
-                    ]"
-                    title="add a reaction"
-                    type="button"
-                >
-                    <span class="trigger-emoji">🙂</span>
-                    <span class="trigger-plus">+</span>
-                </button>
-                <ReactionCountBadge
-                    :count="totalReactionCount"
-                    color="blue"
-                    :isChildComment="isChildComment"
-                />
-            </div>
+            <slot
+                name="trigger"
+                :props="menuActivatorProps"
+                :userHasReacted="userHasReacted"
+                :myReactions="myReactions"
+            >
+                <div class="menu-trigger-wrapper">
+                    <button
+                        v-bind="menuActivatorProps"
+                        class="reaction-menu-trigger"
+                        :class="[
+                            `size-${buttonSize}`,
+                            { selected: userHasReacted },
+                        ]"
+                        title="add a reaction"
+                        type="button"
+                    >
+                        <span class="trigger-emoji">🙂</span>
+                        <span class="trigger-plus">+</span>
+                    </button>
+                    <ReactionCountBadge
+                        :count="totalReactionCount"
+                        color="blue"
+                        :isChildComment="isChildComment"
+                    />
+                </div>
+            </slot>
         </template>
 
         <div class="reaction-menu" @click.stop>
@@ -119,9 +126,11 @@ const userHasReactedWith = (reactionKey: EmojiReactionKey) => {
     );
 };
 
-const userHasReacted = computed(() =>
-    EMOJI_REACTIONS.some((reaction) => userHasReactedWith(reaction.key))
+const myReactions = computed(() =>
+    EMOJI_REACTIONS.filter((reaction) => userHasReactedWith(reaction.key))
 );
+
+const userHasReacted = computed(() => myReactions.value.length > 0);
 
 const reactorCount = (reactionKey: EmojiReactionKey) => {
     return reactorsByKey.value[reactionKey].length;

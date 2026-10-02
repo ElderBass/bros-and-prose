@@ -57,48 +57,28 @@
                     <MarkdownContentV1 v-else :markdown="entry.markdown" />
                 </div>
 
-                <div class="actions-row">
-                    <ProseReactionPills
-                        :entry="entry"
-                        :clickable="!isGuestUser()"
-                        @select="handleEntryReaction"
-                    />
-                    <ProseEntryReactionActions
-                        v-if="!isGuestUser() && !isAuthor"
-                        :entry="entry"
-                        @entry-updated="onEntryUpdated"
-                    />
-                    <div v-if="!isGuestUser()" class="entry-actions">
-                        <IconButton
-                            v-if="!isAuthor"
-                            :icon="
-                                isProseFavorited ? faHeartSolid : faHeartRegular
-                            "
-                            color="pink"
-                            size="small"
-                            :title="
-                                isProseFavorited
-                                    ? 'remove this prose from your annals'
-                                    : 'add this prose to your annals'
-                            "
-                            :disabled="savingEntry"
-                            :handleClick="toggleFavoriteState"
-                        />
-                        <BaseButton
-                            variant="outline"
-                            size="small"
-                            title="add a cheeky comment, don't hold back"
-                            :showTooltip="false"
-                            class="comment-btn"
-                            @click="onCheekyFeedbackClick"
-                        >
-                            <FontAwesomeIcon :icon="faCommentMedical" />
-                            <span class="comment-btn-text"
-                                >cheeky feedback</span
-                            >
-                        </BaseButton>
-                    </div>
-                </div>
+                <ProseDetailActionsV2
+                    v-if="useV2ProseDetailActions"
+                    :entry="entry"
+                    :isAuthor="isAuthor"
+                    :isFavorited="isProseFavorited"
+                    :savingFavorite="savingEntry"
+                    @react="handleEntryReaction"
+                    @toggle-favorite="toggleFavoriteState"
+                    @feedback="onCheekyFeedbackClick"
+                    @entry-updated="onEntryUpdated"
+                />
+                <ProseDetailActionsV1
+                    v-else
+                    :entry="entry"
+                    :isAuthor="isAuthor"
+                    :isFavorited="isProseFavorited"
+                    :savingFavorite="savingEntry"
+                    @react="handleEntryReaction"
+                    @toggle-favorite="toggleFavoriteState"
+                    @feedback="onCheekyFeedbackClick"
+                    @entry-updated="onEntryUpdated"
+                />
             </BaseCard>
 
             <BaseCard
@@ -134,15 +114,14 @@ import { useDisplay } from "vuetify";
 import AppLayout from "@/components/layout/AppLayout.vue";
 import AvatarImage from "@/components/ui/AvatarImage.vue";
 import AddCommentModal from "@/components/modal/AddCommentModal.vue";
-import ProseEntryReactionActions from "@/components/features/Prose/ProseEntryReactionActions.vue";
+import ProseDetailActionsV1 from "@/components/features/Prose/ProseDetail/ProseDetailActionsV1.vue";
+import ProseDetailActionsV2 from "@/components/features/Prose/ProseDetail/ProseDetailActionsV2.vue";
 import ProseCommentsSection from "@/components/features/Prose/Comments/ProseCommentsSection.vue";
 import MarkdownContentV1 from "@/components/features/common/MarkdownContentV1.vue";
 import MarkdownContentV2 from "@/components/features/common/MarkdownContentV2.vue";
 import MarkdownContentV3 from "@/components/features/common/MarkdownContentV3.vue";
 import BlurbSection from "@/components/features/Prose/ProseDetail/BlurbSection.vue";
-import ProseReactionPills from "@/components/features/Prose/ProseReactionPills.vue";
 import EditButton from "@/components/ui/EditButton.vue";
-import IconButton from "@/components/ui/IconButton.vue";
 import { useProse } from "@/composables/useProse";
 import { useProseStore } from "@/stores/prose";
 import { useUIStore } from "@/stores/ui";
@@ -154,14 +133,12 @@ import {
     QUICK_SUCCESS,
 } from "@/constants";
 import type { Comment, EmojiReactionKey, ProseEntry } from "@/types";
-import { getEmojiReactionOption, isGuestUser } from "@/utils";
+import { getEmojiReactionOption } from "@/utils";
 import { useLog } from "@/composables";
-import { faCommentMedical } from "@fortawesome/free-solid-svg-icons";
-import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
-import { faHeart as faHeartRegular } from "@fortawesome/free-regular-svg-icons";
 import {
     useV2ProseComposer,
     useV2ProseComments,
+    useV2ProseDetailActions,
     useV3ProseComposer,
 } from "@/constants/features";
 
@@ -436,26 +413,6 @@ watch(
     padding: 0.9rem;
 }
 
-.actions-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
-
-.entry-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.comment-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
 @media (max-width: 768px) {
     .prose-detail-view {
         padding: 0.5rem;
@@ -497,25 +454,6 @@ watch(
     .markdown-body :deep(h5),
     .markdown-body :deep(h6) {
         font-size: 0.95em;
-    }
-
-    .actions-row {
-        gap: 0.75rem;
-        flex-wrap: nowrap;
-    }
-
-    .entry-actions {
-        gap: 0.35rem;
-    }
-
-    .comment-btn-text {
-        display: none;
-    }
-
-    .comment-btn {
-        min-width: auto;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
     }
 
     .empty-state {
