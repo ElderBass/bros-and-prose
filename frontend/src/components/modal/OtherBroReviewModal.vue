@@ -11,7 +11,7 @@
                 <p class="heading-text">
                     peeping
                     <UsernameLink :username="brosName" fontSize="large" />
-                    >'s review for
+                    's review for
                 </p>
                 <div class="book-info">
                     <span class="book-title">{{

@@ -100,9 +100,10 @@ const props = withDefaults(
 const initialValuesResolved = getInitialBookValues(props.initialValues);
 
 // Form state
-const book = ref<BookshelfBook | FutureBook>(
-    initialValuesResolved as BookshelfBook | FutureBook
-);
+const book = ref<BookshelfBook | FutureBook>({
+    ...initialValuesResolved,
+    tags: [...(initialValuesResolved.tags ?? [])],
+} as BookshelfBook | FutureBook);
 const review = ref(DEFAULT_REVIEW);
 const isFavorited = ref(props.initialIsFavorited);
 
@@ -163,6 +164,7 @@ const canSubmit = computed(() => {
 });
 
 const isDirty = computed(() => {
+    if (isFavorited.value !== props.initialIsFavorited) return true;
     return props.dirtyKeys.some((k) => {
         const a = (book.value as BookFormValues)[k];
         const b = (initialValuesResolved as BookFormValues)[k];
@@ -178,6 +180,7 @@ const resetAll = (resetResults = true) => {
 
     book.value = {
         ...initialValuesResolved,
+        tags: [...(initialValuesResolved.tags ?? [])],
         title: book.value.title,
     };
 

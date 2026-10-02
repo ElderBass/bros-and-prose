@@ -1,5 +1,5 @@
 <template>
-    <span class="type-pill" :class="typeColor">{{ type }}</span>
+    <span class="type-pill" :class="[typeColor, { subtle }]">{{ type }}</span>
 </template>
 
 <script setup lang="ts">
@@ -9,6 +9,8 @@ import { getProseTypeColor } from "@/utils";
 
 const props = defineProps<{
     type: ProseType;
+    /** Borderless, tinted tag that doesn't read as a button. */
+    subtle?: boolean;
 }>();
 
 const typeColor = computed(() => {
@@ -51,10 +53,25 @@ const typeColor = computed(() => {
     color: var(--accent-green);
 }
 
+.type-pill.subtle {
+    border: none;
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    background-color: color-mix(in srgb, currentColor 14%, transparent);
+}
+
 @media (max-width: 768px) {
     .type-pill {
         padding: 0.1rem 0.5rem;
         font-size: 0.75rem;
+    }
+
+    .type-pill.subtle {
+        padding: 0.1rem 0.5rem;
+        font-size: 0.76rem;
     }
 }
 </style>

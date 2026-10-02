@@ -1,4 +1,6 @@
 export const useV3ProseComposer = true;
 export const useV2ProseComposer = false;
 export const useV2ProseComments = true;
+export const useV2ProseListItem = true;
+export const useV2ProseDetailActions = true;
 export const useGenericMovableFab = true;
