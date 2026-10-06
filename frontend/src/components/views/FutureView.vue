@@ -66,6 +66,7 @@ import { useLog } from "@/composables/useLog";
 import type { FutureBook } from "@/types";
 import { useFutureBooksStore } from "@/stores/futureBooks";
 import { useFutureBooks } from "@/composables/useFutureBooks";
+import { MAX_FUTURE_BOOK_SELECTIONS } from "@/constants";
 
 const { addCurrentSelection, updateCurrentSelection } = useFutureBooks();
 const { isAppLoading } = storeToRefs(useUIStore());
@@ -130,7 +131,7 @@ const shouldRenderErrorModal = computed(
     () => resultModal.value?.status === "error"
 );
 const fabDisabled = computed(() => {
-    return currentSelections.value.length >= 3;
+    return currentSelections.value.length >= MAX_FUTURE_BOOK_SELECTIONS;
 });
 </script>
 
