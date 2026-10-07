@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
+import { ref, computed } from "vue";
 import { QUICK_ERROR, futureBookVotedSuccessAlert } from "@/constants";
 import VoteCount from "./VoteCount.vue";
 import VoteActions from "./VoteActions.vue";
@@ -60,7 +60,12 @@ import { useFutureBooks } from "@/composables/useFutureBooks";
 import { useUIStore } from "@/stores/ui";
 import { useLog } from "@/composables/useLog";
 import { useFutureBooksStore } from "@/stores/futureBooks";
-import { isGuestUser, getUsernamesFromIds, hasUserMarkedAsRead } from "@/utils";
+import {
+    isGuestUser,
+    getUsernamesFromIds,
+    hasUserMarkedAsRead,
+    userHasVotedForBook,
+} from "@/utils";
 
 const props = defineProps<{
     book: FutureBook;
@@ -76,7 +81,9 @@ const deleteFutureBookModalOpen = ref(false);
 const handleEdit = () => openFormModal(props.book, "update");
 const handleDelete = () => (deleteFutureBookModalOpen.value = true);
 
-const userHasVoted = ref(props.book.votes?.includes(loggedInUser.id));
+const userHasVoted = computed(() =>
+    userHasVotedForBook(props.book, loggedInUser.id)
+);
 
 const userHasMarkedRead = computed(() =>
     hasUserMarkedAsRead(props.book, loggedInUser.id)
@@ -93,18 +100,19 @@ const showNonSelectorActions = computed(
 );
 
 const handleVote = async () => {
+    const hadVoted = userHasVoted.value;
     try {
         setIsAppLoading(true);
         await useFutureBooks().voteForFutureBook(
             props.book.id,
             loggedInUser.id
         );
+        showAlert(futureBookVotedSuccessAlert(hadVoted));
     } catch (error) {
         await useLog().error(`Error voting for future book: ${error}`);
         showAlert(QUICK_ERROR(["voter fraud!", error as string]));
     } finally {
         useUIStore().setIsAppLoading(false);
-        showAlert(futureBookVotedSuccessAlert(userHasVoted.value ?? false));
     }
 };
 
@@ -122,10 +130,6 @@ const handleToggleRead = async () => {
         useUIStore().setIsAppLoading(false);
     }
 };
-
-watch(props.book.votes, (newVotes) => {
-    userHasVoted.value = newVotes.includes(loggedInUser.id);
-});
 </script>
 
 <style scoped>
