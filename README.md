@@ -73,12 +73,12 @@ _See what everyone thought about it_
 
 ### 🔮 future: democracy in action (sort of)
 
-When it's your turn to pick, nominate three books. The bros vote.
+When it's your turn to pick, nominate as many books as you want. The bros vote.
 
 **Key features:**
 
--   Current selector uploads 3 nominations
--   Everyone else votes for their favorite
+-   Current selector uploads as many nominations as they want
+-   Everyone else votes for any (or all) of the books they'd read
 -   Mark books you've already read (triggers email: _"has, allegedly, already read... Cheeky fuck."_)
 -   Real-time vote tracking
 -   Visual indicators for who's being honest about having read what

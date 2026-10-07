@@ -1,15 +1,5 @@
-import { useFutureBooksStore } from "@/stores/futureBooks";
 import type { FutureBook, ArchivedBooksEntry } from "@/types";
 import { useUserStore } from "@/stores/user";
-
-export const getUsersFutureBookVoteId = (userId: string) => {
-    const futureBooksStore = useFutureBooksStore();
-    return (
-        futureBooksStore.currentSelections.find((b) =>
-            b.votes?.includes(userId)
-        )?.id || ""
-    );
-};
 
 export const getUsernamesFromIds = (userIds: string[]): string[] => {
     const allUsers = useUserStore().allUsers;
@@ -18,29 +8,24 @@ export const getUsernamesFromIds = (userIds: string[]): string[] => {
         .map((user) => user.username);
 };
 
-export const userHasVotedForBook = (bookId: string, userId: string) => {
-    return getUsersFutureBookVoteId(userId) === bookId;
-};
-
-const getMaxNumber = (numbers: number[]) => {
-    return numbers.reduce((max, number) => (number > max ? number : max), 0);
+export const userHasVotedForBook = (book: FutureBook, userId: string) => {
+    return book.votes?.includes(userId) ?? false;
 };
 
 export const getMostVotedFutureBookId = (futureBooks: FutureBook[]) => {
-    const santizedVotes = sanitizeFutureBookVotes(futureBooks);
-    const maxVoteCount = getMaxNumber(
-        santizedVotes.map((book) => book.votes?.length || 0)
-    );
+    const voteCounts = sanitizeFutureBookVotes(futureBooks).map((book) => ({
+        id: book.id,
+        count: book.votes.length,
+    }));
+    const maxVoteCount = Math.max(0, ...voteCounts.map((b) => b.count));
+    const leaders = voteCounts.filter((b) => b.count === maxVoteCount);
 
-    const highestBook = sanitizeFutureBookVotes(futureBooks).reduce(
-        (max, book) => (book.votes?.length > max.votes?.length ? book : max)
-    );
-
-    if (highestBook.votes?.length > maxVoteCount) {
-        return highestBook.id;
+    // ties and zero-vote rounds have no single winner
+    if (maxVoteCount === 0 || leaders.length > 1) {
+        return "";
     }
 
-    return "";
+    return leaders[0].id;
 };
 
 export const sanitizeFutureBookVotes = (futureBooks: FutureBook[]) => {

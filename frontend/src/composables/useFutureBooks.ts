@@ -8,7 +8,6 @@ import {
     buildArchiveEntry,
     buildFutureBookUpdateMetadata,
     getMostVotedFutureBookId,
-    getUsersFutureBookVoteId,
     sanitizeFutureBookVotes,
 } from "@/utils";
 import { usersService } from "@/services/users";
@@ -116,15 +115,11 @@ export const useFutureBooks = () => {
         const book = futureBooksStore.currentSelections.find(
             (b) => b.id === bookId
         );
-        const voteId = getUsersFutureBookVoteId(userId);
         if (!book) {
             await useLog().error(`Future book not found: ${bookId}`);
             return;
         }
-        const hasVotedForCurrentBook = voteId === bookId;
-        if (!hasVotedForCurrentBook) {
-            await removeVoteForFutureBook(voteId, userId);
-        }
+        const hasVotedForCurrentBook = book.votes?.includes(userId) ?? false;
         const updatedVotes = hasVotedForCurrentBook
             ? book.votes?.filter((v) => v !== userId)
             : [...(book.votes || []), userId];
@@ -142,18 +137,6 @@ export const useFutureBooks = () => {
             metadata
         );
         return updatedSelection;
-    };
-
-    const removeVoteForFutureBook = async (bookId: string, userId: string) => {
-        const book = futureBooksStore.currentSelections.find(
-            (b) => b.id === bookId
-        );
-        if (!book) {
-            await useLog().error(`Future book not found: ${bookId}`);
-            return;
-        }
-        const votes = book.votes?.filter((v) => v !== userId) || [];
-        await updateCurrentSelection({ ...book, votes });
     };
 
     const toggleAlreadyRead = async (bookId: string, userId: string) => {
@@ -236,7 +219,6 @@ export const useFutureBooks = () => {
         updateCurrentSelection,
         deleteCurrentSelection,
         voteForFutureBook,
-        removeVoteForFutureBook,
         toggleAlreadyRead,
         getArchivedSelections,
         archiveSelections,
