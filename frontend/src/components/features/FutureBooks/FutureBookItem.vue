@@ -4,16 +4,14 @@
             <FutureBookItemInfo :book="book" />
             <div class="footer">
                 <div class="metrics-and-actions">
-                    <div class="vote-row">
-                        <VoteCount :voteCount="book.votes?.length - 1 || 0" />
-                        <VoteActions
-                            v-if="showNonSelectorActions"
-                            :voteCount="book.votes?.length - 1 || 0"
-                            :userHasVoted="userHasVoted"
-                            :handleVote="handleVote"
-                        />
-                    </div>
-                    <div class="already-read-row">
+                    <FutureBookVoters
+                        :voterIds="book.votes || []"
+                        :showVoteAction="showNonSelectorActions"
+                        :userHasVoted="userHasVoted"
+                        :isVoting="isVoting"
+                        :handleVote="handleVote"
+                    />
+                    <div v-if="SHOW_ALREADY_READ" class="already-read-row">
                         <AlreadyReadCount
                             :alreadyReadCount="alreadyReadCount"
                             :usernames="alreadyReadUsernames"
@@ -47,8 +45,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { QUICK_ERROR, futureBookVotedSuccessAlert } from "@/constants";
-import VoteCount from "./VoteCount.vue";
-import VoteActions from "./VoteActions.vue";
+import FutureBookVoters from "./FutureBookVoters.vue";
 import AlreadyReadCount from "./AlreadyReadCount.vue";
 import AlreadyReadActions from "./AlreadyReadActions.vue";
 import EditActions from "./EditActions.vue";
@@ -67,6 +64,8 @@ import {
     userHasVotedForBook,
 } from "@/utils";
 
+const SHOW_ALREADY_READ = false;
+
 const props = defineProps<{
     book: FutureBook;
     isMostVoted: boolean;
@@ -77,6 +76,7 @@ const { showAlert, setIsAppLoading } = useUIStore();
 const { openFormModal } = useFutureBooksStore();
 
 const deleteFutureBookModalOpen = ref(false);
+const isVoting = ref(false);
 
 const handleEdit = () => openFormModal(props.book, "update");
 const handleDelete = () => (deleteFutureBookModalOpen.value = true);
@@ -100,9 +100,10 @@ const showNonSelectorActions = computed(
 );
 
 const handleVote = async () => {
+    if (isVoting.value) return;
     const hadVoted = userHasVoted.value;
+    isVoting.value = true;
     try {
-        setIsAppLoading(true);
         await useFutureBooks().voteForFutureBook(
             props.book.id,
             loggedInUser.id
@@ -112,7 +113,7 @@ const handleVote = async () => {
         await useLog().error(`Error voting for future book: ${error}`);
         showAlert(QUICK_ERROR(["voter fraud!", error as string]));
     } finally {
-        useUIStore().setIsAppLoading(false);
+        isVoting.value = false;
     }
 };
 
@@ -143,8 +144,10 @@ const handleToggleRead = async () => {
 
 .footer {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
+    gap: 1rem;
+    margin-top: auto;
 }
 
 .metrics-and-actions {
@@ -154,7 +157,6 @@ const handleToggleRead = async () => {
     gap: 0.75rem;
 }
 
-.vote-row,
 .already-read-row {
     width: 100%;
     display: flex;
