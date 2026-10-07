@@ -31,10 +31,9 @@
                 </div>
             </div>
         </div>
-        <BlurbAndDescription
+        <FutureBookBlurbTabs
             :blurb="book.userBlurb"
             :description="book.description"
-            :showDescription="true"
         />
     </div>
 </template>
@@ -45,7 +44,7 @@ import type { FutureBook } from "@/types";
 import { computed } from "vue";
 import { faGlasses } from "@fortawesome/free-solid-svg-icons";
 import BookTag from "@/components/ui/BookTag.vue";
-import BlurbAndDescription from "@/components/features/common/BlurbAndDescription.vue";
+import FutureBookBlurbTabs from "./FutureBookBlurbTabs.vue";
 
 const props = defineProps<{
     book: FutureBook;
@@ -149,17 +148,6 @@ const goodreadsUrl = computed(() => {
     gap: 0.25rem;
 }
 
-.description {
-    margin: 0;
-    opacity: 0.9;
-    border-top: 2px solid var(--accent-blue);
-    border-left: 2px solid var(--accent-blue);
-    border-top-left-radius: 1rem;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-    font-size: 1.125rem;
-}
-
 @media (max-width: 768px) {
     .cover-and-info {
         gap: 0.5rem;
@@ -190,12 +178,6 @@ const goodreadsUrl = computed(() => {
         transform: scale(0.9);
         gap: 0.125rem;
         margin-right: -0.5rem;
-    }
-
-    .description {
-        font-size: 1rem;
-        padding: 0.375rem;
-        margin-top: 0.375rem;
     }
 }
 </style>
