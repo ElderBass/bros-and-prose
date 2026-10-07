@@ -25,26 +25,30 @@ const { mostVotedFutureBookId } = storeToRefs(useFutureBooksStore());
 <style scoped>
 .future-books-list {
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: stretch;
     gap: 1.5rem;
     width: 100%;
 }
 
 .future-books-list > :deep(*) {
-    flex: 0 0 calc((100% - 3rem) / 3);
+    flex: 1 1 320px;
+    max-width: 420px;
     min-width: 0;
 }
 
-@media (max-width: 1024px) {
-    .future-books-list > :deep(*) {
-        flex: 0 0 calc(50% - 0.75rem);
-    }
-}
-
 @media (max-width: 768px) {
+    .future-books-list {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        gap: 1rem;
+    }
     .future-books-list > :deep(*) {
-        flex: 0 0 100%;
+        flex: 0 0 auto;
+        max-width: 100%;
+        width: 100%;
     }
 }
 </style>
